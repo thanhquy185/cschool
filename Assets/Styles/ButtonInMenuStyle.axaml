@@ -1,0 +1,44 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  Button In Menu Style  -->
+    <Style Selector="Button.ButtonInMenu">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Foreground" Value="{DynamicResource ButtonInMenuTextColor}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.ButtonInMenu Border">
+        <Setter Property="Padding" Value="4,6" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+    <Style Selector="Button.ButtonInMenu StackPanel">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Spacing" Value="8" />
+    </Style>
+
+    <Style Selector="Button.ButtonInMenu Image">
+        <Setter Property="Width" Value="35" />
+        <Setter Property="Height" Value="35" />
+    </Style>
+
+    <Style Selector="Button.ButtonInMenu TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.ButtonInMenu:pointerover,Button.ButtonInMenu.active">
+        <Setter Property="Background" Value="{DynamicResource ButtonInMenuBgColorOver}" />
+        <Setter Property="Foreground" Value="{DynamicResource ButtonInMenuTextColorOver}" />
+    </Style>
+
+    <Style Selector="Button.ButtonInMenu:pressed">
+        <Setter Property="Background" Value="#CCC" />
+        <Setter Property="Foreground" Value="DarkRed" />
+    </Style>
+</Styles>

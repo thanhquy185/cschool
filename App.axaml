@@ -1,0 +1,42 @@
+<Application
+    x:Class="cschool.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:cschool"
+    RequestedThemeVariant="Default">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <StyleInclude Source="Assets/Styles/ButtonInMenuStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/CrudButtonStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/LogoutButtonStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/MainLayoutStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/TableDataStyle.axaml" />
+    </Application.Styles>
+
+    <Application.Resources>
+        <SolidColorBrush x:Key="PrimaryColor" Color="#1A73E8" />
+        <SolidColorBrush x:Key="BodyColor" Color="#E4EEFF" />
+
+        <SolidColorBrush x:Key="RedPrimaryColor" Color="#9f4d4d" />
+        <SolidColorBrush x:Key="RedSecondaryColor" Color="#f44336" />
+        <SolidColorBrush x:Key="BluePrimaryColor" Color="#0048ff" />
+        <SolidColorBrush x:Key="BlueSecondaryColor" Color="#4294ff" />
+        <SolidColorBrush x:Key="GreenPrimaryColor" Color="#4bae4f" />
+        <SolidColorBrush x:Key="GreenSecondaryColor" Color="#3dc55d" />
+        <SolidColorBrush x:Key="YellowPrimaryColor" Color="#bf873e" />
+        <SolidColorBrush x:Key="YellowSecondaryColor" Color="#f5c011" />
+        <SolidColorBrush x:Key="PurplePrimaryColor" Color="#1e0096" />
+        <SolidColorBrush x:Key="PurpleSecondaryColor" Color="#5d3fd3" />
+
+        <SolidColorBrush x:Key="ButtonInMenuTextColor" Color="#777" />
+        <SolidColorBrush x:Key="ButtonInMenuBgColorOver" Color="#badefb" />
+        <SolidColorBrush x:Key="ButtonInMenuTextColorOver" Color="#000" />
+    </Application.Resources>
+</Application>

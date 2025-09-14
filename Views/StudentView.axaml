@@ -1,0 +1,77 @@
+<UserControl
+  x:Class="cschool.Views.StudentView"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:view="using:cschool.Views"
+  xmlns:vm="using:cschool.ViewModels"
+  x:DataType="vm:StudentViewModel"
+  mc:Ignorable="d">
+  <Design.DataContext>
+    <vm:StudentViewModel />
+  </Design.DataContext>
+  <Grid Classes="MainLayout" RowDefinitions="Auto,*">
+    <!--  Header  -->
+    <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+      <!--  Title And SubTitle  -->
+      <StackPanel Classes="MainLayoutHeaderInfo">
+        <!--  Titlte  -->
+        <TextBlock Classes="Title" Text="Thông tin học sinh" />
+        <!--  SubTitle  -->
+        <TextBlock Classes="SubTitle" Text="Thông tin cơ bản của học sinh" />
+      </StackPanel>
+      <!--  Buttons  -->
+      <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+        <Button Classes="CrudButton Info">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="avares://cschool/Assets/Images/Others/info-icon.png" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+            </StackPanel>
+          </Border>
+        </Button>
+        <Button Classes="CrudButton Create">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="avares://cschool/Assets/Images/Others/create-icon.png" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
+            </StackPanel>
+          </Border>
+        </Button>
+        <Button Classes="CrudButton Update">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="avares://cschool/Assets/Images/Others/update-icon.png" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
+            </StackPanel>
+          </Border>
+        </Button>
+        <Button Classes="CrudButton Lock">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="avares://cschool/Assets/Images/Others/lock-icon.png" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Khoá" />
+            </StackPanel>
+          </Border>
+        </Button>
+      </StackPanel>
+    </Grid>
+    <!--  Table  -->
+    <Border Grid.Row="1" Classes="TableDataWarper">
+      <DataGrid Classes="TableData" ItemsSource="{Binding Students}">
+        <DataGrid.Columns>
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding Fullname}"
+            Header="Fullname" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding Age}"
+            Header="Age" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Border>
+
+  </Grid>
+</UserControl>
