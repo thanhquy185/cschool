@@ -3,6 +3,8 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:cschool"
+    xmlns:services="clr-namespace:cschool.Services"
+    xmlns:sty="using:FluentAvalonia.Styling"
     RequestedThemeVariant="Default">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
@@ -11,19 +13,27 @@
     </Application.DataTemplates>
 
     <Application.Styles>
+        <!--  Fluent Avalonia Style  -->
+        <sty:FluentAvaloniaTheme />
+        <!--  Avalonia Style  -->
         <FluentTheme />
+        <!--  Custom Styles  -->
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
         <StyleInclude Source="Assets/Styles/ButtonInMenuStyle.axaml" />
         <StyleInclude Source="Assets/Styles/CrudButtonStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/DialogStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/FilterDataStyle.axaml" />
         <StyleInclude Source="Assets/Styles/LogoutButtonStyle.axaml" />
         <StyleInclude Source="Assets/Styles/MainLayoutStyle.axaml" />
         <StyleInclude Source="Assets/Styles/TableDataStyle.axaml" />
     </Application.Styles>
 
     <Application.Resources>
+        <!--  Colors  -->
+        <!--    -->
         <SolidColorBrush x:Key="PrimaryColor" Color="#1A73E8" />
         <SolidColorBrush x:Key="BodyColor" Color="#E4EEFF" />
-
+        <!--    -->
         <SolidColorBrush x:Key="RedPrimaryColor" Color="#9f4d4d" />
         <SolidColorBrush x:Key="RedSecondaryColor" Color="#f44336" />
         <SolidColorBrush x:Key="BluePrimaryColor" Color="#0048ff" />
@@ -34,9 +44,22 @@
         <SolidColorBrush x:Key="YellowSecondaryColor" Color="#f5c011" />
         <SolidColorBrush x:Key="PurplePrimaryColor" Color="#1e0096" />
         <SolidColorBrush x:Key="PurpleSecondaryColor" Color="#5d3fd3" />
-
+        <!--    -->
         <SolidColorBrush x:Key="ButtonInMenuTextColor" Color="#777" />
         <SolidColorBrush x:Key="ButtonInMenuBgColorOver" Color="#badefb" />
         <SolidColorBrush x:Key="ButtonInMenuTextColorOver" Color="#000" />
+
+        <!--  Icons  -->
+        <!-- -->
+        <Bitmap x:Key="InfoIcon">avares://cschool/Assets/Images/Others/info-icon.png</Bitmap>
+        <Bitmap x:Key="CreateIcon">avares://cschool/Assets/Images/Others/create-icon.png</Bitmap>
+        <Bitmap x:Key="UpdateIcon">avares://cschool/Assets/Images/Others/update-icon.png</Bitmap>
+        <Bitmap x:Key="LockIcon">avares://cschool/Assets/Images/Others/lock-icon.png</Bitmap>
+        <!-- -->
+        <Bitmap x:Key="SearchIcon">avares://cschool/Assets/Images/Others/search-icon.png</Bitmap>
+        <Bitmap x:Key="ResetIcon">avares://cschool/Assets/Images/Others/reset-icon.png</Bitmap>
+
+        <!--  Converters  -->
+        <services:StatusToBrushConverter x:Key="StatusToBrushConverter" />
     </Application.Resources>
 </Application>

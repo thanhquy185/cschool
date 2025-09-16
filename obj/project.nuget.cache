@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "q2QldPGNIvA=",
+  "dgSpecHash": "TUm2d7p+d+E=",
   "success": true,
   "projectFilePath": "/Users/macbook/Desktop/cschool/cschool.csproj",
   "expectedPackageFiles": [
@@ -23,6 +23,7 @@
     "/Users/macbook/.nuget/packages/avalonia.x11/11.3.5/avalonia.x11.11.3.5.nupkg.sha512",
     "/Users/macbook/.nuget/packages/communitytoolkit.mvvm/8.2.1/communitytoolkit.mvvm.8.2.1.nupkg.sha512",
     "/Users/macbook/.nuget/packages/excss/4.3.0/excss.4.3.0.nupkg.sha512",
+    "/Users/macbook/.nuget/packages/fluentavaloniaui/2.4.0/fluentavaloniaui.2.4.0.nupkg.sha512",
     "/Users/macbook/.nuget/packages/harfbuzzsharp/8.3.1.1/harfbuzzsharp.8.3.1.1.nupkg.sha512",
     "/Users/macbook/.nuget/packages/harfbuzzsharp.nativeassets.linux/8.3.1.1/harfbuzzsharp.nativeassets.linux.8.3.1.1.nupkg.sha512",
     "/Users/macbook/.nuget/packages/harfbuzzsharp.nativeassets.macos/8.3.1.1/harfbuzzsharp.nativeassets.macos.8.3.1.1.nupkg.sha512",

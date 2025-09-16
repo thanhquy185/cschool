@@ -30,6 +30,12 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [/Users/macbook/Desktop/cschool/Assets/Styles/CrudButtonStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[/Users/macbook/Desktop/cschool/Assets/Styles/DialogStyle.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/Users/macbook/Desktop/cschool/Assets/Styles/FilterDataStyle.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [/Users/macbook/Desktop/cschool/Assets/Styles/LogoutButtonStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
@@ -37,6 +43,9 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [/Users/macbook/Desktop/cschool/Assets/Styles/TableDataStyle.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/Users/macbook/Desktop/cschool/Views/AccountView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [/Users/macbook/Desktop/cschool/Views/MainWindow.axaml]

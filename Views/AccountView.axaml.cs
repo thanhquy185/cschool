@@ -6,12 +6,12 @@ using FluentAvalonia.UI.Controls;
 
 namespace cschool.Views;
 
-public partial class StudentView : UserControl
+public partial class AccountView : UserControl
 {
-    public StudentView()
+    public AccountView()
     {
         InitializeComponent();
-        DataContext = new StudentViewModel();
+        DataContext = new AccountViewModel();
     }
 
     private async void TestDialogButton_Click(object sender, RoutedEventArgs e)
@@ -96,4 +96,3 @@ public partial class StudentView : UserControl
         };
     }
 }
-

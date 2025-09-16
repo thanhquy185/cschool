@@ -1,0 +1,58 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  Filter Data Style  -->
+    <!--  Warper  -->
+    <Style Selector="Border.FilterDataWarper">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Margin" Value="0,8,0,0" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+
+    <!--  Inputs  -->
+    <Style Selector="StackPanel.FilterDataInputs">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Spacing" Value="10" />
+    </Style>
+
+    <!--  Find Input  -->
+    <Style Selector="Grid.FilterDataFindInput TextBox">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Width" Value="300" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Padding" Value="40,0,5,0" />
+    </Style>
+    <Style Selector="Grid.FilterDataFindInput Image">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Margin" Value="10,0,0,0" />
+    </Style>
+
+    <!--  Find Select  -->
+    <Style Selector="ComboBox.FilterDataFindSelect">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Height" Value="40" />
+    </Style>
+
+    <!--  Reset Button  -->
+    <Style Selector="Button.FilterDataResetButton">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.FilterDataResetButton Image">
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+    </Style>
+</Styles>

@@ -26,19 +26,20 @@
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
-    <Setter Property="Height" Value="40" />
-    <Setter Property="Background" Value="#EFEFEF" />
+    <Setter Property="Height" Value="50" />
+    <Setter Property="Background" Value="#F2F2F2" />
     <Setter Property="Padding" Value="0" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="Foreground" Value="#555" />
     <Setter Property="FontSize" Value="14" />
     <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="CornerRadius" Value="8,8,0,0" />
   </Style>
 
   <!--  Row  -->
   <Style Selector="DataGrid.TableData DataGridRow">
-    <Setter Property="Height" Value="40" />
+    <Setter Property="Height" Value="50" />
     <Setter Property="Background" Value="White" />
     <Setter Property="BorderBrush" Value="#E2E2E2" />
     <Setter Property="BorderThickness" Value="0 0 0 1" />
@@ -56,12 +57,14 @@
   <!--  Row selected  -->
   <Style Selector="DataGrid.TableData DataGridRow:selected">
     <Setter Property="Background" Value="#E3F2FD" />
-    <Setter Property="Foreground" Value="#0D47A1" />
+    <Setter Property="Foreground" Value="#4f8fefff" />
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 
   <!--  Cell  -->
   <Style Selector="DataGrid.TableData DataGridCell">
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Padding" Value="4,0" />
     <Setter Property="BorderBrush" Value="Transparent" />
@@ -74,5 +77,32 @@
   <Style Selector="DataGrid.TableData DataGridCell:selected">
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <!--  Row nếu có hình ảnh  -->
+  <Style Selector="DataGrid.TableData DataGridRow Border.HasImage">
+    <Setter Property="Width" Value="36" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="ClipToBounds" Value="True" />
+  </Style>
+  <Style Selector="DataGrid.TableData.Account DataGridRow Image">
+    <Setter Property="Width" Value="36" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="Stretch" Value="UniformToFill" />
+  </Style>
+  <!--  Có hình ảnh là đối tượng: tài khoản (account)  -->
+  <Style Selector="DataGrid.TableData.Account DataGridRow Border.HasImage">
+    <Setter Property="CornerRadius" Value="18" />
+  </Style>
+
+  <!--  Cell có cột là Status  -->
+  <Style Selector="DataGrid.TableData DataGridCell Border.Status">
+    <Setter Property="Padding" Value="6,4" />
+    <Setter Property="CornerRadius" Value="4" />
+  </Style>
+  <Style Selector="DataGrid.TableData DataGridCell Border.Status TextBlock">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 </Styles>

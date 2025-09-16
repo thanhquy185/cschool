@@ -75,6 +75,10 @@
             "CommunityToolkit.Mvvm": {
               "target": "Package",
               "version": "[8.2.1, )"
+            },
+            "FluentAvaloniaUI": {
+              "target": "Package",
+              "version": "[2.4.0, )"
             }
           },
           "imports": [

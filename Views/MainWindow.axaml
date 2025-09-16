@@ -14,10 +14,6 @@
     mc:Ignorable="d">
 
     <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
@@ -50,12 +46,12 @@
                         <!--  Name + Role  -->
                         <StackPanel
                             Grid.Column="1"
-                            Width="220"
+                            Width="200"
                             Margin="10,0,0,0"
                             VerticalAlignment="Center"
                             Orientation="Vertical">
                             <TextBlock
-                                FontSize="18"
+                                FontSize="20"
                                 FontWeight="Bold"
                                 Foreground="#FFF"
                                 Text="Nguyễn Văn A" />
@@ -82,8 +78,8 @@
                             Command="{Binding GoToStudentViewCommand}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
-                                    <Image Source="avares://cschool/Assets/Images/Others/student-icon.png" />
-                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Học sinh" />
+                                    <Image Source="{Binding StudentButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding StudentButtonLabel}" />
                                 </StackPanel>
                             </Border>
                         </Button>
@@ -93,8 +89,19 @@
                             Command="{Binding GoToTeacherViewCommand}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
-                                    <Image Source="avares://cschool/Assets/Images/Others/teacher-icon.png" />
-                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Giáo viên" />
+                                    <Image Source="{Binding TeacherButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding TeacherButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding AccountButtonActive}"
+                            Command="{Binding GoToAccountViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding AccountButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding AccountButtonLabel}" />
                                 </StackPanel>
                             </Border>
                         </Button>
@@ -127,5 +134,4 @@
         <!--  Main Content  -->
         <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
     </Grid>
-
 </Window>

@@ -13,6 +13,27 @@ public partial class StudentViewModel : ViewModelBase
             {
                 new Student("Neil",  55),
                 new Student("Buzz", 38),
+                new Student("James",  44),
+                new Student("Neil",  55),
+                new Student("Buzz", 38),
+                new Student("James",  44),
+                new Student("Neil",  55),
+                new Student("Buzz", 38),
+                new Student("James",  44),
+                new Student("Neil",  55),
+                new Student("Buzz", 38),
+                new Student("James",  44),
+                new Student("Neil",  55),
+                new Student("Buzz", 38),
+                new Student("James",  44),
+                new Student("Neil",  55),
+                new Student("Buzz", 38),
+                new Student("James",  44),new Student("Neil",  55),
+                new Student("Buzz", 38),
+                new Student("James",  44),new Student("Neil",  55),
+                new Student("Buzz", 38),
+                new Student("James",  44),new Student("Neil",  55),
+                new Student("Buzz", 38),
                 new Student("James",  44)
             };
         Students = new ObservableCollection<Student>(student);

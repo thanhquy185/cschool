@@ -381,6 +381,26 @@
           "lib/net8.0/ExCSS.dll": {}
         }
       },
+      "FluentAvaloniaUI/2.4.0": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.2.5",
+          "Avalonia.Controls.ColorPicker": "11.2.5",
+          "Avalonia.Controls.DataGrid": "11.2.5",
+          "Avalonia.Skia": "11.2.5",
+          "MicroCom.Runtime": "0.11.0"
+        },
+        "compile": {
+          "lib/net6.0/FluentAvalonia.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/FluentAvalonia.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "HarfBuzzSharp/8.3.1.1": {
         "type": "package",
         "dependencies": {
@@ -1216,6 +1236,27 @@
         "readme.md"
       ]
     },
+    "FluentAvaloniaUI/2.4.0": {
+      "sha512": "KWpXexfCgDcVNanzzR+QXQKk300Xd9rImAZkMIrCG3TdKZ+s9sdMW3JfvKJWpzS74Y3JSZkY67Ngeh5nbtEtEw==",
+      "type": "package",
+      "path": "fluentavaloniaui/2.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "FAIcon.png",
+        "fluentavaloniaui.2.4.0.nupkg.sha512",
+        "fluentavaloniaui.nuspec",
+        "lib/net6.0/FluentAvalonia.dll",
+        "lib/net6.0/FluentAvalonia.pdb",
+        "lib/net6.0/FluentAvalonia.xml",
+        "lib/netstandard2.0/FluentAvalonia.dll",
+        "lib/netstandard2.0/FluentAvalonia.pdb",
+        "lib/netstandard2.0/FluentAvalonia.xml",
+        "lib/netstandard2.1/FluentAvalonia.dll",
+        "lib/netstandard2.1/FluentAvalonia.pdb",
+        "lib/netstandard2.1/FluentAvalonia.xml"
+      ]
+    },
     "HarfBuzzSharp/8.3.1.1": {
       "sha512": "tLZN66oe/uiRPTZfrCU4i8ScVGwqHNh5MHrXj0yVf4l7Mz0FhTGnQ71RGySROTmdognAs0JtluHkL41pIabWuQ==",
       "type": "package",
@@ -1682,7 +1723,8 @@
       "Avalonia.Fonts.Inter >= 11.3.5",
       "Avalonia.Svg.Skia >= 11.3.0",
       "Avalonia.Themes.Fluent >= 11.3.5",
-      "CommunityToolkit.Mvvm >= 8.2.1"
+      "CommunityToolkit.Mvvm >= 8.2.1",
+      "FluentAvaloniaUI >= 2.4.0"
     ]
   },
   "packageFolders": {
@@ -1759,6 +1801,10 @@
           "CommunityToolkit.Mvvm": {
             "target": "Package",
             "version": "[8.2.1, )"
+          },
+          "FluentAvaloniaUI": {
+            "target": "Package",
+            "version": "[2.4.0, )"
           }
         },
         "imports": [

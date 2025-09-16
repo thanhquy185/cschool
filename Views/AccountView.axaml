@@ -1,5 +1,5 @@
 <UserControl
-  x:Class="cschool.Views.StudentView"
+  x:Class="cschool.Views.AccountView"
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,10 +7,10 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:view="using:cschool.Views"
   xmlns:vm="using:cschool.ViewModels"
-  x:DataType="vm:StudentViewModel"
+  x:DataType="vm:AccountViewModel"
   mc:Ignorable="d">
   <Design.DataContext>
-    <vm:StudentViewModel />
+    <vm:AccountViewModel />
   </Design.DataContext>
   <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
     <!--  Header  -->
@@ -18,9 +18,9 @@
       <!--  Title And SubTitle  -->
       <StackPanel Classes="MainLayoutHeaderInfo">
         <!--  Titlte  -->
-        <TextBlock Classes="Title" Text="Thông tin học sinh" />
+        <TextBlock Classes="Title" Text="{Binding TitlePage}" />
         <!--  SubTitle  -->
-        <TextBlock Classes="SubTitle" Text="Thông tin cơ bản của học sinh" />
+        <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
       </StackPanel>
       <!--  Buttons  -->
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
@@ -63,7 +63,7 @@
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập ID / Họ tên học sinh" />
+            <TextBox Watermark="Nhập ID / Họ tên tài khoản" />
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
           <ComboBox
@@ -85,18 +85,53 @@
     </Border>
     <!--  Table  -->
     <Border Grid.Row="2" Classes="TableDataWarper">
-      <DataGrid Classes="TableData" ItemsSource="{Binding Students}">
+      <DataGrid Classes="TableData Account" ItemsSource="{Binding Accounts}">
         <DataGrid.Columns>
           <DataGridTextColumn
-            Width="*"
-            Binding="{Binding Fullname}"
-            Header="Fullname" />
+            Width="1*"
+            Binding="{Binding Id}"
+            Header="ID" />
+          <DataGridTemplateColumn
+            Width="1*"
+            CanUserSort="False"
+            Header="Hình ảnh">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Border Classes="HasImage">
+                  <Image Source="{Binding AvatarImage}" />
+                </Border>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
           <DataGridTextColumn
-            Width="*"
-            Binding="{Binding Age}"
-            Header="Age" />
+            Width="3*"
+            Binding="{Binding Fullname}"
+            Header="Họ và tên" />
+          <DataGridTextColumn
+            Width="2*"
+            Binding="{Binding Username}"
+            CanUserSort="False"
+            Header="Tên tài khoản" />
+          <DataGridTextColumn
+            Width="2*"
+            Binding="{Binding RoleId}"
+            CanUserSort="False"
+            Header="Nhóm quyền" />
+          <DataGridTemplateColumn Width="1*" Header="Trạng thái">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Border Background="{Binding Status, Converter={StaticResource StatusToBrushConverter}}" Classes="Status">
+                  <TextBlock Text="{Binding Status}" />
+                </Border>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
         </DataGrid.Columns>
       </DataGrid>
     </Border>
+    <Button
+      Grid.Row="3"
+      Click="TestDialogButton_Click"
+      Content="Test Dialog" />
   </Grid>
 </UserControl>

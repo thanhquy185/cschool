@@ -80,3 +80,5 @@
 /Users/macbook/Desktop/cschool/obj/Debug/net9.0/cschool.csproj.Up2Date
 /Users/macbook/Desktop/cschool/obj/Debug/net9.0/cschool.genruntimeconfig.cache
 /Users/macbook/Desktop/cschool/obj/Debug/net9.0/ref/cschool.dll
+/Users/macbook/Desktop/cschool/obj/Debug/net9.0/cschool.sourcelink.json
+/Users/macbook/Desktop/cschool/bin/Debug/net9.0/FluentAvalonia.dll

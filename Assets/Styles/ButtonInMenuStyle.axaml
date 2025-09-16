@@ -8,12 +8,12 @@
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Foreground" Value="{DynamicResource ButtonInMenuTextColor}" />
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="Cursor" Value="Hand" />
     </Style>
 
     <Style Selector="Button.ButtonInMenu Border">
-        <Setter Property="Padding" Value="4,6" />
+        <Setter Property="Padding" Value="8,10" />
         <Setter Property="CornerRadius" Value="4" />
     </Style>
 
@@ -24,8 +24,8 @@
     </Style>
 
     <Style Selector="Button.ButtonInMenu Image">
-        <Setter Property="Width" Value="35" />
-        <Setter Property="Height" Value="35" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
     </Style>
 
     <Style Selector="Button.ButtonInMenu TextBlock">
