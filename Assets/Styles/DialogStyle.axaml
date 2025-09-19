@@ -3,27 +3,39 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:fa="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia">
     <!--  Dialog Style  -->
-    <Style x:SetterTargetType="Border" Selector=".Dialog Border">
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="0" />
+    <!--  Base  -->
+    <Style Selector="Window.DialogWarper">
+        <Setter Property="WindowStartupLocation" Value="CenterOwner" />
+        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="CanResize" Value="False" />
+    </Style>
+
+    <!--    -->
+    <Style Selector="Border.Dialog">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Width" Value="400" />
+    </Style>
+
+    <Style Selector="Border.Dialog.Account">
+        <Setter Property="Width" Value="1200" />
     </Style>
 
     <!--  Header  -->
-    <Style x:SetterTargetType="StackPanel" Selector=".Dialog .DialogHeader">
-        <Setter Property="Height" Value="45" />
+    <Style Selector=".Dialog Grid.DialogHeader">
+        <Setter Property="Height" Value="50" />
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-        <Setter Property="Margin" Value="0,-12,0,0" />
     </Style>
-    <Style x:SetterTargetType="StackPanel" Selector=".Dialog.Info .DialogHeader">
+    <Style Selector=".Dialog.Info Grid.DialogHeader">
         <Setter Property="Background" Value="{DynamicResource BlueSecondaryColor}" />
     </Style>
-    <Style x:SetterTargetType="StackPanel" Selector=".Dialog.Create .DialogHeader">
+    <Style Selector=".Dialog.Create Grid.DialogHeader">
         <Setter Property="Background" Value="{DynamicResource GreenPrimaryColor}" />
     </Style>
-    <Style x:SetterTargetType="StackPanel" Selector=".Dialog.Update .DialogHeader">
+    <Style Selector=".Dialog.Update Grid.DialogHeader">
         <Setter Property="Background" Value="{DynamicResource YellowPrimaryColor}" />
     </Style>
-    <Style x:SetterTargetType="StackPanel" Selector=".Dialog.Lock .DialogHeader">
+    <Style Selector=".Dialog.Lock Grid.DialogHeader">
         <Setter Property="Background" Value="{DynamicResource RedPrimaryColor}" />
     </Style>
 
@@ -32,7 +44,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Foreground" Value="White" />
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
@@ -48,7 +60,7 @@
         <Setter Property="Margin" Value="0,0,4,0" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Foreground" Value="#EAEAEA" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Cursor" Value="Hand" />
     </Style>
@@ -58,13 +70,87 @@
     </Style>
 
     <!--  Form Warper  -->
-    <Style Selector="Border.DialogFormCWarper">
-        <Setter Property="Padding" Value="10" />
+    <Style Selector="Border.DialogFormWarper">
+        <Setter Property="Padding" Value="20" />
+        <!-- <Setter Property="Background" Value="Red" /> -->
     </Style>
 
     <!--  Form  -->
     <Style Selector="StackPanel.DialogForm">
         <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <!--  Form Group Warper  -->
+    <Style Selector="Grid.DialogFormGroupWarper">
+        <Setter Property="RowSpacing" Value="30" />
+    </Style>
+
+    <!--  Form Group Row  -->
+    <Style Selector="Grid.DialogFormGroupRow">
+        <Setter Property="ColumnSpacing" Value="30" />
+    </Style>
+
+    <!--  Form Group  -->
+    <Style Selector="StackPanel.DialogFormGroup">
+        <Setter Property="Orientation" Value="Vertical" />
+    </Style>
+    <!--  Account - Multiple 2  -->
+    <Style Selector=".Dialog.Account StackPanel.DialogFormGroup.Multiple2">
+        <Setter Property="Width" Value="765" />
+        <Setter Property="Margin" Value="-10,0,0,0" />
+    </Style>
+
+    <!--  Form Group Label  -->
+    <Style Selector="TextBlock.DialogFormGroupLabel">
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <!--  Form Group Input  -->
+    <Style Selector="TextBox.DialogFormGroupInput">
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Margin" Value="0,6,0,0" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+    <!--  Text Center  -->
+    <Style Selector="TextBox.DialogFormGroupInput.TextCenter">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+
+    <!--  Form Group ComboBox  -->
+    <Style Selector="ComboBox.DialogFormGroupComboBox">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Margin" Value="0,6,0,0" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <!--  Form Group Image Preview  -->
+    <Style Selector="Image.DialogFormGroupImagePreview">
+        <Setter Property="Width" Value="100" />
+        <Setter Property="Height" Value="100" />
+        <Setter Property="Stretch" Value="UniformToFill" />
+        <Setter Property="Source" Value="{DynamicResource NoImage}" />
+    </Style>
+    <!--  Đối tượng Account  -->
+    <Style Selector=".Dialog.Account Image.DialogFormGroupImagePreview">
+        <Setter Property="Width" Value="160" />
+        <Setter Property="Height" Value="200" />
+        <Setter Property="Margin" Value="0,80,0,0" />
+    </Style>
+
+    <!--  Form Group Image Button  -->
+    <Style Selector="Button.DialogFormGroupImageButton">
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <!--  Đối tượng Account  -->
+    <Style Selector=".Dialog.Account Button.DialogFormGroupImageButton">
+        <Setter Property="Width" Value="370" />
+        <Setter Property="Margin" Value="0,85,0,0" />
     </Style>
 
     <!--  Submit Button  -->
@@ -73,13 +159,13 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="Height" Value="30" />
+        <Setter Property="Height" Value="35" />
         <Setter Property="Background" Value="{DynamicResource PrimaryColor}" />
-        <Setter Property="Margin" Value="0,20,0,0" />
+        <Setter Property="Margin" Value="0,50,0,0" />
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Foreground" Value="#FFF" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector=".Dialog.Info Button.DialogSubmitButton">
