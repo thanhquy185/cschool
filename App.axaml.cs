@@ -1,12 +1,12 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using FluentAvalonia.Styling; // <--- Thêm namespace FluentAvalonia
 using cschool.ViewModels;
 using cschool.Views;
 using System.Linq;
+using cschool.Services;
+using System;
 
 namespace cschool;
 
@@ -25,6 +25,11 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
+
+            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=123456;SslMode=None;";
+            AppService.DBService = new DBService(connectionString);
+            AppService.UserService = new UserService(AppService.DBService);
+            
             desktop.MainWindow = new MainWindow
             {
                 DataContext = new MainWindowViewModel(),

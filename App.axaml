@@ -25,6 +25,7 @@
         <StyleInclude Source="Assets/Styles/FilterDataStyle.axaml" />
         <StyleInclude Source="Assets/Styles/LogoutButtonStyle.axaml" />
         <StyleInclude Source="Assets/Styles/MainLayoutStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/MessageBoxStyle.axaml" />
         <StyleInclude Source="Assets/Styles/TableDataStyle.axaml" />
     </Application.Styles>
 
@@ -57,6 +58,7 @@
         <Bitmap x:Key="CreateIcon">avares://cschool/Assets/Images/Others/create-icon.png</Bitmap>
         <Bitmap x:Key="UpdateIcon">avares://cschool/Assets/Images/Others/update-icon.png</Bitmap>
         <Bitmap x:Key="LockIcon">avares://cschool/Assets/Images/Others/lock-icon.png</Bitmap>
+        <Bitmap x:Key="ChangePasswordIcon">avares://cschool/Assets/Images/Others/change-password-icon.png</Bitmap>
         <!--    -->
         <Bitmap x:Key="SearchIcon">avares://cschool/Assets/Images/Others/search-icon.png</Bitmap>
         <Bitmap x:Key="ResetIcon">avares://cschool/Assets/Images/Others/reset-icon.png</Bitmap>
@@ -64,7 +66,7 @@
         <!--  Values  -->
         <!-- <sys:Integer x:Key="DialogLabelFontSize">15</sys:Integer> -->
         <!-- <sys:Integer x:Key="DialogInputHeight">35</sys:Integer>
-        <sys:Integer x:Key="DialogInputFontSize">14</sys:Integer> -->
+        <sys:Integer x:Key="DialogInputFontSize">14</sys:Integer>-->
 
         <!--  Converters  -->
         <services:StatusToBrushConverter x:Key="StatusToBrushConverter" />

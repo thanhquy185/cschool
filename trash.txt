@@ -1,0 +1,239 @@
+// private async void TestDialogButton_Click(object sender, RoutedEventArgs e)
+    // {
+    //     // Header
+    //     var header = new Grid
+    //     {
+    //         ColumnDefinitions = new ColumnDefinitions("*, Auto, *"),
+    //         Classes = { "DialogHeader" }
+    //     };
+    //     // - Title
+    //     var title = new TextBlock
+    //     {
+    //         Text = "Thông tin học sinh",
+    //         Classes = { "DialogHeaderTitle" }
+    //     };
+    //     Grid.SetColumn(title, 1);
+    //     header.Children.Add(title);
+    //     // - Close Button
+    //     var closeButton = new Button
+    //     {
+    //         Content = "X",
+    //         Classes = { "DialogCloseButton" }
+    //     };
+    //     Grid.SetColumn(closeButton, 2);
+    //     header.Children.Add(closeButton);
+
+    //     // Form 
+    //     var form = new StackPanel
+    //     {
+    //         Classes = { "DialogForm" },
+    //     };
+    //     // - Label, Input, Select...
+    //     // Grid chính
+    //     var formGroupWarper = new Grid { Classes = { "DialogFormGroupWarper" }, Width = 700 };
+    //     // Dòng 0
+    //     formGroupWarper.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+    //     var row0Grid = new Grid { Classes = { "DialogFormGroupRow" } };
+    //     row0Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+    //     row0Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+    //     // Cột 0: Tên học sinh
+    //     var nameStack = new StackPanel { Classes = { "DialogFormGroup" } };
+    //     var nameLabel = new TextBlock { Classes = { "DialogFormGroupLabel" }, Text = "Tên học sinh", };
+    //     var nameTextBox = new TextBox { Classes = { "DialogFormGroupInput" } };
+    //     nameStack.Children.Add(nameLabel);
+    //     nameStack.Children.Add(nameTextBox);
+    //     Grid.SetColumn(nameStack, 0);
+    //     row0Grid.Children.Add(nameStack);
+    //     // Cột 1: Tuổi
+    //     var ageStack = new StackPanel { Classes = { "DialogFormGroup" } };
+    //     var ageLabel = new TextBlock { Classes = { "DialogFormGroupLabel" }, Text = "Tuổi", };
+    //     var ageTextBox = new TextBox { Classes = { "DialogFormGroupInput" } };
+    //     ageStack.Children.Add(ageLabel);
+    //     ageStack.Children.Add(ageTextBox);
+    //     Grid.SetColumn(ageStack, 1);
+    //     row0Grid.Children.Add(ageStack);
+    //     // Gán vị trí các dòng
+    //     Grid.SetRow(row0Grid, 0);
+    //     // Thêm các dòng
+    //     formGroupWarper.Children.Add(row0Grid);
+    //     // Thêm formGroupWarper vào form
+    //     form.Children.Add(formGroupWarper);
+    //     // - Submit Button
+    //     var submitButton = new Button
+    //     {
+    //         Content = "Xác nhận",
+    //         Classes = { "DialogSubmitButton" }
+    //     };
+    //     form.Children.Add(submitButton);
+    //     // - Form Warper
+    //     var formWarper = new Border
+    //     {
+    //         Classes = { "DialogFormWarper" },
+    //         Child = form
+    //     };
+
+    //     // Nội dung dialog (vì không dùng title và các nút mặc định của control)
+    //     var dialogContent = new StackPanel
+    //     {
+    //         Children =
+    //     {
+    //         header,
+    //         formWarper
+    //     }
+    //     };
+
+    //     // Tạo dialog
+    //     var dialog = new ContentDialog
+    //     {
+    //         Title = null,
+    //         Content = dialogContent,
+    //         PrimaryButtonText = null,
+    //         Classes = { "Dialog", "Create" },
+    //     };
+    //     // dialog.SetValue(ContentDialog., new Size(1000, 800));
+
+    //     // Đóng dialog khi bấm X
+    //     closeButton.Click += (_, __) => dialog.Hide();
+
+    //     // Hiện dialog
+    //     var result = await dialog.ShowAsync();
+    //     submitButton.Click += (_, __) =>
+    //     {
+    //         Console.WriteLine($"Tên: {nameTextBox.Text}, Tuổi: {ageTextBox.Text}");
+    //         dialog.Hide(ContentDialogResult.Primary);
+    //     };
+    // }
+
+private async Task ShowUserDialog(DialogMode mode)
+    {
+        bool isView = mode == DialogMode.Info;
+
+        var dialog = new Window
+        {
+            Title = mode switch
+            {
+                DialogMode.Info => "Chi tiết tài khoản",
+                DialogMode.Create => "Thêm tài khoản",
+                DialogMode.Update => "Cập nhật tài khoản",
+                DialogMode.Lock => "Khoá tài khoản",
+                _ => "Tài khoản"
+            },
+            Classes = { "DialogWarper" },
+            Width = 600,
+            Height = 700
+        };
+
+        // --- Header ---
+        var header = new Grid
+        {
+            ColumnDefinitions = new ColumnDefinitions("*, Auto"),
+            Classes = { "DialogHeader" }
+        };
+        var headerTitle = new TextBlock { Text = dialog.Title, Classes = { "DialogHeaderTitle" } };
+        header.Children.Add(headerTitle);
+
+        var closeBtn = new Button { Content = "X", Classes = { "DialogCloseButton" } };
+        Grid.SetColumn(closeBtn, 1);
+        closeBtn.Click += (_, __) => dialog.Close();
+        header.Children.Add(closeBtn);
+
+        // --- Image Avatar ---
+        string? selectedImagePath = null;
+        var imagePreview = new Image { Classes = { "DialogFormGroupImagePreview" }, Width = 100, Height = 100 };
+        var imageButton = new Button { Content = "Chọn ảnh", Classes = { "DialogFormGroupImageButton" } };
+        imageButton.Click += async (_, __) =>
+        {
+            var dlg = new OpenFileDialog
+            {
+                AllowMultiple = false,
+                Filters = { new FileDialogFilter { Name = "Ảnh", Extensions = { "png", "jpg", "jpeg" } } }
+            };
+            var result = await dlg.ShowAsync(dialog);
+            if (result != null && result.Length > 0)
+            {
+                selectedImagePath = result[0];
+                imagePreview.Source = new Avalonia.Media.Imaging.Bitmap(selectedImagePath);
+            }
+        };
+        var avatarStack = new StackPanel { Classes = { "DialogFormGroup" } };
+        avatarStack.Children.Add(new TextBlock { Text = "Ảnh đại diện", Classes = { "DialogFormGroupLabel" } });
+        avatarStack.Children.Add(imagePreview);
+        avatarStack.Children.Add(imageButton);
+
+        // --- Helper tạo field ---
+        StackPanel CreateFormField(string label, Control input)
+        {
+            var stack = new StackPanel { Classes = { "DialogFormGroup" } };
+            stack.Children.Add(new TextBlock { Text = label, Classes = { "DialogFormGroupLabel" } });
+            stack.Children.Add(input);
+            return stack;
+        }
+
+        Grid CreateRowGrid(params (string label, Control input)[] fields)
+        {
+            var grid = new Grid();
+            for (int i = 0; i < fields.Length; i++)
+            {
+                if (fields[i].input != null)
+                {
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    var stack = CreateFormField(fields[i].label, fields[i].input);
+                    grid.Children.Add(stack);
+                    Grid.SetColumn(stack, i);
+                }
+            }
+            return grid;
+        }
+
+        // --- Form Fields ---
+        var fieldsList = new List<(string label, Control input)>
+    {
+        ("Mã tài khoản", new TextBox { IsEnabled = mode == DialogMode.Create, Classes = { "TextCenter" } }),
+        ("Trạng thái", new ComboBox { Items = { "Chọn trạng thái", "Hoạt động", "Tạm dừng" }, SelectedIndex = 0, IsEnabled = !isView }),
+        ("Tên tài khoản", new TextBox { IsEnabled = !isView }),
+        ("Mật khẩu", new TextBox { IsEnabled = !isView }),
+        ("Nhóm quyền", new ComboBox { Items = { "Chọn Nhóm quyền", "#1 - Quản lý học sinh", "#2 - Quản lý giáo viên" }, SelectedIndex = 0, IsEnabled = !isView }),
+        ("Họ và tên", new TextBox { IsEnabled = !isView }),
+        ("Số điện thoại", new MaskedTextBox { Mask = "(+09) 000 000 000", IsEnabled = !isView }),
+        ("Email", new TextBox { IsEnabled = !isView }),
+        ("Địa chỉ", new TextBox { IsEnabled = !isView })
+    };
+
+        var formStack = new StackPanel { Classes = { "DialogFormWarper" } };
+        formStack.Children.Add(avatarStack);
+
+        for (int i = 0; i < fieldsList.Count; i += 3)
+        {
+            var rowFields = fieldsList.Skip(i).Take(3).ToArray();
+            formStack.Children.Add(CreateRowGrid(rowFields));
+        }
+
+        // --- Submit Button ---
+        var submitBtn = new Button
+        {
+            Content = mode switch
+            {
+                DialogMode.Create => "Thêm",
+                DialogMode.Update => "Cập nhật",
+                DialogMode.Lock => "Khoá",
+                DialogMode.Info => "Đóng",
+                _ => "Xác nhận"
+            },
+            Classes = { "DialogSubmitButton" }
+        };
+        submitBtn.Click += (_, __) => dialog.Close();
+
+        formStack.Children.Add(submitBtn);
+
+        // --- Set Content ---
+        dialog.Content = new StackPanel
+        {
+            Children = { header, formStack }
+        };
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        if (owner != null)
+            await dialog.ShowDialog(owner);
+        else
+            dialog.Show();
+    }

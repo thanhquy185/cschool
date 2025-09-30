@@ -85,13 +85,13 @@
     <Setter Property="Height" Value="36" />
     <Setter Property="ClipToBounds" Value="True" />
   </Style>
-  <Style Selector="DataGrid.TableData.Account DataGridRow Image">
+  <Style Selector="DataGrid.TableData.User DataGridRow Image">
     <Setter Property="Width" Value="36" />
     <Setter Property="Height" Value="36" />
     <Setter Property="Stretch" Value="UniformToFill" />
   </Style>
-  <!--  Có hình ảnh là đối tượng: tài khoản (account)  -->
-  <Style Selector="DataGrid.TableData.Account DataGridRow Border.HasImage">
+  <!--  Có hình ảnh là đối tượng: người dùng (User)  -->
+  <Style Selector="DataGrid.TableData.User DataGridRow Border.HasImage">
     <Setter Property="CornerRadius" Value="18" />
   </Style>
 

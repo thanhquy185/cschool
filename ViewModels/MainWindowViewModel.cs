@@ -12,7 +12,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StudentButtonActive))]
     [NotifyPropertyChangedFor(nameof(TeacherButtonActive))]
-    [NotifyPropertyChangedFor(nameof(AccountButtonActive))]
+    [NotifyPropertyChangedFor(nameof(UserButtonActive))]
     private ViewModelBase _currentPage;
     // - Các biến giữ thông tin các nút (hình ảnh, nhãn dán)
     // -- Học sinh
@@ -24,22 +24,24 @@ public partial class MainWindowViewModel : ViewModelBase
         = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/teacher-icon.png")));
     public string TeacherButtonLabel { get; } = "Giáo viên";
     // -- Tài khoản
-    public Bitmap AccountButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/account-icon.png")));
-    public string AccountButtonLabel { get; } = "Tài khoản";
+    public Bitmap UserButtonImage { get; }
+        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/user-icon.png")));
+    public string UserButtonLabel { get; } = "Người dùng";
     // - Các biến models
     private readonly StudentViewModel _studentViewModel = new();
     private readonly TeacherViewModel _teacherViewModel = new();
-    private readonly AccountViewModel _accountViewModel = new();
+    private readonly UserViewModel _userViewModel = new();
     // Các biến giữ trạng thái thể hiện nút được nhấn hoặc không được nhấn
     public bool StudentButtonActive => this.CurrentPage == this._studentViewModel;
     public bool TeacherButtonActive => this.CurrentPage == this._teacherViewModel;
-    public bool AccountButtonActive => this.CurrentPage == this._accountViewModel;
+    public bool UserButtonActive => this.CurrentPage == this._userViewModel;
 
     // Khởi tạo mặc định là trang Thông tin học sinh
     public MainWindowViewModel()
     {
-        this.CurrentPage = this._accountViewModel;
+        // Mặc định trang người dùng sẽ hiện
+         _userViewModel = new UserViewModel();
+        this.CurrentPage = this._userViewModel;
     }
 
     // Chuyển đến trang Thông tin học sinh
@@ -48,7 +50,7 @@ public partial class MainWindowViewModel : ViewModelBase
     // Chuyển đến trang Thông tin giáo viên
     [RelayCommand]
     public void GoToTeacherView() => this.CurrentPage = this._teacherViewModel;
-    // Chuyển đến trang Thông tin tài khoản
+    // Chuyển đến trang Thông tin người dùng
     [RelayCommand]
-    public void GoToAccountView() => this.CurrentPage = this._accountViewModel;
+    public void GoToUserView() => this.CurrentPage = this._userViewModel;
 }

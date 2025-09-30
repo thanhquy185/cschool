@@ -79,6 +79,18 @@
             "FluentAvaloniaUI": {
               "target": "Package",
               "version": "[2.4.0, )"
+            },
+            "MsBox.Avalonia": {
+              "target": "Package",
+              "version": "[3.0.0-rc2, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[9.4.0, )"
+            },
+            "ReactiveUI": {
+              "target": "Package",
+              "version": "[21.0.1, )"
             }
           },
           "imports": [

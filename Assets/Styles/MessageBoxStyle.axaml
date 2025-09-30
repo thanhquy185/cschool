@@ -1,0 +1,16 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+     <!-- Message Box Style 
+    <Style Selector="Window.msbox">
+        <Setter Property="Background" Value="#222" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="WindowStartupLocation" Value="CenterScreen" />
+    </Style>
+
+    <Style Selector=".msbox Button">
+        <Setter Property="Background" Value="#3b82f6" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="8,4" />
+    </Style> -->
+</Styles>
