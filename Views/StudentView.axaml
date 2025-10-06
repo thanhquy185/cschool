@@ -89,12 +89,28 @@
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="*"
-            Binding="{Binding Fullname}"
-            Header="Fullname" />
+            Binding="{Binding Id}"
+            Header="ID" />
           <DataGridTextColumn
             Width="*"
-            Binding="{Binding Age}"
-            Header="Age" />
+            Binding="{Binding Fullname}"
+            Header="Họ và tên" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding Gender}"
+            Header="Giới tính" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding BirthDay, StringFormat={}{0:dd/MM/yyyy}}"
+            Header="Ngày sinh" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding LearnYear}"
+            Header="Năm học" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding LearnStatus}"
+            Header="Tình trạng học" />
         </DataGrid.Columns>
       </DataGrid>
     </Border>

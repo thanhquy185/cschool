@@ -29,6 +29,7 @@ public partial class App : Application
             var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=123456;SslMode=None;";
             AppService.DBService = new DBService(connectionString);
             AppService.UserService = new UserService(AppService.DBService);
+            AppService.StudentService = new StudentService(AppService.DBService);
             
             desktop.MainWindow = new MainWindow
             {

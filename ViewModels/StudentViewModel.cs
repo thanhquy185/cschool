@@ -5,37 +5,12 @@ namespace cschool.ViewModels;
 
 public partial class StudentViewModel : ViewModelBase
 {
-    public ObservableCollection<Student> Students { get; }
+    public ObservableCollection<StudentModel> Students { get; }
 
     public StudentViewModel()
     {
-        var student = new List<Student>
-            {
-                new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),
-                new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),
-                new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),
-                new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),
-                new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),
-                new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44),new Student("Neil",  55),
-                new Student("Buzz", 38),
-                new Student("James",  44)
-            };
-        Students = new ObservableCollection<Student>(student);
+        Students = new ObservableCollection<StudentModel>();
+        var students = AppService.StudentService.GetStudents();
+        foreach (var student in students) Students.Add(student);
     }
 }
