@@ -1,0 +1,46 @@
+# Build results
+bin/
+obj/
+out/
+Debug/
+Release/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+.vs/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+# Resharper / Rider
+_ReSharper*/
+.idea/
+
+# Generated files
+*.dll
+*.exe
+*.pdb
+
+# Publish files
+publish/
+
+# Others
+Thumbs.db
+Desktop.ini
