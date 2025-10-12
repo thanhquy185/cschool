@@ -12,6 +12,13 @@ namespace cschool.Services
             _connectionString = connectionString;
         }
 
+        public MySqlConnection GetConnection()
+        {
+            var Connection = new MySqlConnection(_connectionString);
+            Connection.Open();
+            return Connection;
+        }
+
         // Thực thi SELECT
         public DataTable ExecuteQuery(string query)
         {
@@ -35,5 +42,6 @@ namespace cschool.Services
             using var command = new MySqlCommand(query, connection);
             return command.ExecuteNonQuery();
         }
+
     }
 }

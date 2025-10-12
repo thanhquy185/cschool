@@ -18,26 +18,31 @@ public partial class App : Application
     }
 
     public override void OnFrameworkInitializationCompleted()
+{
+    try
     {
-        // // Thêm FluentAvaloniaTheme
-        // Styles.Add(new FluentAvaloniaTheme());
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
-
-            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=123456;SslMode=None;";
+            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=;SslMode=None;";
             AppService.DBService = new DBService(connectionString);
             AppService.UserService = new UserService(AppService.DBService);
-            
+            AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
+            Console.WriteLine("Creating MainWindow...");
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = new MainWindowViewModel()
             };
+            Console.WriteLine("MainWindow created successfully");
         }
-
-        base.OnFrameworkInitializationCompleted();
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Fatal error: {ex}");
+    }
+
+    base.OnFrameworkInitializationCompleted();
+}
 
     private void DisableAvaloniaDataAnnotationValidation()
     {

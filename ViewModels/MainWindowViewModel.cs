@@ -2,55 +2,72 @@
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using cschool.Services;
+using System;
 
 namespace cschool.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    // Các thuộc tính...
-    // - Biến giữ trạng thái trang hiện tại
+    // - Trang hiện tại
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StudentButtonActive))]
     [NotifyPropertyChangedFor(nameof(TeacherButtonActive))]
     [NotifyPropertyChangedFor(nameof(UserButtonActive))]
+    [NotifyPropertyChangedFor(nameof(AssignTeacherButtonActive))]
     private ViewModelBase _currentPage;
-    // - Các biến giữ thông tin các nút (hình ảnh, nhãn dán)
-    // -- Học sinh
-    public Bitmap StudentButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/student-icon.png")));
-    public string StudentButtonLabel { get; } = "Học sinh";
-    // -- Giáo viên
-    public Bitmap TeacherButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/teacher-icon.png")));
-    public string TeacherButtonLabel { get; } = "Giáo viên";
-    // -- Tài khoản
-    public Bitmap UserButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/user-icon.png")));
-    public string UserButtonLabel { get; } = "Người dùng";
-    // - Các biến models
-    private readonly StudentViewModel _studentViewModel = new();
-    private readonly TeacherViewModel _teacherViewModel = new();
-    private readonly UserViewModel _userViewModel = new();
-    // Các biến giữ trạng thái thể hiện nút được nhấn hoặc không được nhấn
-    public bool StudentButtonActive => this.CurrentPage == this._studentViewModel;
-    public bool TeacherButtonActive => this.CurrentPage == this._teacherViewModel;
-    public bool UserButtonActive => this.CurrentPage == this._userViewModel;
 
-    // Khởi tạo mặc định là trang Thông tin học sinh
+    // - Các ViewModel con
+    private readonly StudentViewModel _studentViewModel;
+    private readonly TeacherViewModel _teacherViewModel;
+    private readonly UserViewModel _userViewModel;
+    private readonly AssignTeacherViewModel _assignTeacherViewModel;
+
+    // - Hình ảnh và nhãn menu
+    public Bitmap StudentButtonImage { get; }
+        = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/student-icon.png")));
+    public string StudentButtonLabel => "Học sinh";
+
+    public Bitmap TeacherButtonImage { get; }
+        = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/teacher-icon.png")));
+    public string TeacherButtonLabel => "Giáo viên";
+
+    public Bitmap UserButtonImage { get; }
+        = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/user-icon.png")));
+    public string UserButtonLabel => "Người dùng";
+
+public Bitmap AssignTeacherButtonImage { get; }
+    = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/subject-icon.png")));
+    public string AssignTeacherButtonLabel => "Phân công giáo viên";
+
+    // - Trạng thái nút active
+    public bool StudentButtonActive => CurrentPage == _studentViewModel;
+    public bool TeacherButtonActive => CurrentPage == _teacherViewModel;
+    public bool UserButtonActive => CurrentPage == _userViewModel;
+    public bool AssignTeacherButtonActive => CurrentPage == _assignTeacherViewModel;
+
+    // Constructor
     public MainWindowViewModel()
     {
-        // Mặc định trang người dùng sẽ hiện
-         _userViewModel = new UserViewModel();
-        this.CurrentPage = this._userViewModel;
+        //Khởi tạo các view model con
+        _studentViewModel = new StudentViewModel();
+        _teacherViewModel = new TeacherViewModel();
+        _userViewModel = new UserViewModel();
+         _assignTeacherViewModel = new AssignTeacherViewModel(new AssignTeacherService(AppService.DBService));
+        // Trang mặc định hiển thị
+        CurrentPage = _userViewModel;
     }
 
-    // Chuyển đến trang Thông tin học sinh
+    // - Chuyển trang
     [RelayCommand]
-    public void GoToStudentView() => this.CurrentPage = this._studentViewModel;
-    // Chuyển đến trang Thông tin giáo viên
+    public void GoToStudentView() => CurrentPage = _studentViewModel;
+
     [RelayCommand]
-    public void GoToTeacherView() => this.CurrentPage = this._teacherViewModel;
-    // Chuyển đến trang Thông tin người dùng
+    public void GoToTeacherView() => CurrentPage = _teacherViewModel;
+
     [RelayCommand]
-    public void GoToUserView() => this.CurrentPage = this._userViewModel;
+    public void GoToUserView() => CurrentPage = _userViewModel;
+
+    [RelayCommand]
+    public void GoToAssignTeacherView() => CurrentPage = _assignTeacherViewModel;
 }

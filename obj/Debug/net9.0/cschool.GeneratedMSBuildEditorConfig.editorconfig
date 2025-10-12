@@ -15,47 +15,50 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = cschool
-build_property.ProjectDir = /Users/macbook/Desktop/cschool/
+build_property.ProjectDir = E:\HK1-NH-2025-2026\C#\cschool\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[/Users/macbook/Desktop/cschool/App.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/ButtonInMenuStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/ButtonInMenuStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/CrudButtonStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/CrudButtonStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/DialogStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/DialogStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/FilterDataStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/FilterDataStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/LogoutButtonStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/LogoutButtonStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/MainLayoutStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/MainLayoutStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/MessageBoxStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/MessageBoxStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Assets/Styles/TableDataStyle.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Assets/Styles/TableDataStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Views/MainWindow.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/AssignTeacherView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Views/StudentView.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Views/TeacherView.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/StudentView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/macbook/Desktop/cschool/Views/UserView.axaml]
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/TeacherView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/UserView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

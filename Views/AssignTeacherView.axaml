@@ -1,0 +1,206 @@
+<UserControl
+    x:Class="cschool.Views.AssignTeacherView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:cschool.ViewModels"
+    xmlns:model="using:cschool.Models"
+    x:DataType="vm:AssignTeacherViewModel"
+    x:Name="Root">
+    
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <!-- Header giống UserView -->
+        <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+            <!-- Title And SubTitle -->
+            <StackPanel Classes="MainLayoutHeaderInfo">
+                <TextBlock Classes="Title" Text="QUẢN LÝ PHÂN CÔNG" />
+                <TextBlock Classes="SubTitle" Text="Quản lý phân công giảng dạy giáo viên" />
+            </StackPanel>
+            <!-- Buttons giống UserView -->
+            <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+                <Button Classes="CrudButton Create" Command="{Binding ToggleFormCommand}">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource CreateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button Classes="CrudButton Update" Command="{Binding Edit}">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource UpdateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button Classes="CrudButton Lock" Command="{Binding Delete}">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource DeleteIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Filter giống UserView -->
+        <Border Grid.Row="1" Classes="FilterDataWarper">
+            <Grid Classes="FilterData" RowDefinitions="*,Auto">
+                <StackPanel Classes="FilterDataInputs">
+                    <Grid Classes="FilterDataFindInput">
+                        <TextBox Watermark="Nhập tên giáo viên, môn học hoặc lớp học" 
+                                 Text="{Binding SearchText, Mode=TwoWay}"/>
+                         <Button Grid.Column="1"
+                            Command="{Binding SearchCommand}"
+                            Classes="FilterDataSearchButton"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="Tìm kiếm">
+                        <Image Source="{DynamicResource SearchIcon}" Width="20" Height="20"/>
+                    </Button>
+                    </Grid>
+                </StackPanel>
+                <Button
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Classes="FilterDataResetButton">
+                    <Image Source="{DynamicResource ResetIcon}" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Table giống UserView -->
+        <Border Grid.Row="2" Classes="TableDataWarper">
+            <DataGrid
+                x:Name="AssignTeachersDataGrid"
+                Classes="TableData AssignTeacher"
+                ItemsSource="{Binding AssignTeachers}"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+               >
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="1.5*"
+                        Binding="{Binding ClassName}"
+                        Header="Lớp học" />
+                    <DataGridTextColumn
+                        Width="1*"
+                        Binding="{Binding RoomName}"
+                        Header="Phòng" />
+                    <DataGridTextColumn
+                        Width="2*"
+                        Binding="{Binding Teachers}"
+                        Header="Giáo viên" />
+                    <DataGridTextColumn
+                        Width="2*"
+                        Binding="{Binding CourseName}"
+                        Header="Môn học" />
+                    <DataGridTextColumn
+                        Width="1*"
+                        Binding="{Binding Day}"
+                        Header="Thứ / Ngày" />
+                    <DataGridTextColumn
+                        Width="1*"
+                        Binding="{Binding Start}"
+                        Header="Tiết bắt đầu" />
+                    <DataGridTextColumn
+                        Width="1*"
+                        Binding="{Binding End}"
+                        Header="Tiết kết thúc" />
+                    <DataGridTextColumn
+                        Width="1*"
+                        Binding="{Binding QuizCount}"
+                        Header="Số bài kiểm tra" /> 
+                    <DataGridTextColumn
+                        Width="1*"
+                        Binding="{Binding OralCount}"
+                        Header="Số bài miệng" />
+                    
+                    <DataGridTemplateColumn Header="Thao tác" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <Button Content="✏️" 
+                                            ToolTip.Tip="Sửa"
+                                            Command="{Binding DataContext.EditCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}" 
+                                            Background="#07ff1cff" 
+                                            Padding="8,2"/>
+                                    <Button Content="🗑️" 
+                                            ToolTip.Tip="Xóa"
+                                            Command="{Binding DataContext.DeleteCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}" 
+                                            Background="#d6291cff" 
+                                            Foreground="White"
+                                            Padding="8,2"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                        
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Form thêm/sửa (giữ nguyên binding) -->
+        <Border Grid.Row="3" 
+                Background="#F5F5F5" 
+                Padding="15" 
+                Margin="0,10,0,0"
+                CornerRadius="5"
+                BorderBrush="#DDD" 
+                BorderThickness="1"
+                IsVisible="{Binding IsFormVisible}">
+            <StackPanel Spacing="10">
+                <TextBlock Text="THÊM/ SỬA PHÂN CÔNG" FontWeight="Bold" FontSize="16"/>
+                
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                    <!-- Hàng 1 -->
+                    <ComboBox Grid.Row="0" Grid.Column="0" 
+                              ItemsSource="{Binding Teachers}" 
+                              SelectedItem="{Binding SelectedTeacher}" 
+                              DisplayMemberBinding="{Binding Name}"
+                              PlaceholderText="Chọn giáo viên"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1" 
+                              ItemsSource="{Binding Subjects}" 
+                              SelectedItem="{Binding SelectedSubject}"
+                              DisplayMemberBinding="{Binding Name}"
+                              PlaceholderText="Chọn môn học"/>
+
+                    <!-- Hàng 2 -->
+                    <ComboBox Grid.Row="1" Grid.Column="0" 
+                              ItemsSource="{Binding Classes}" 
+                              SelectedItem="{Binding SelectedClass}"
+                              DisplayMemberBinding="{Binding Name}"
+                              PlaceholderText="Chọn lớp học"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" 
+                              ItemsSource="{Binding DaysOfWeek}" 
+                              SelectedItem="{Binding SelectedDay}"
+                              PlaceholderText="Chọn ngày"/>
+
+                    <!-- Hàng 3 -->
+                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                        <TextBox Width="120" Text="{Binding Start, Mode=TwoWay}" Watermark="Tiết bắt đầu"/>
+                        <TextBlock Text="đến" VerticalAlignment="Center"/>
+                        <TextBox Width="120" Text="{Binding End, Mode=TwoWay}" Watermark="Tiết kết thúc"/>
+                    </StackPanel>
+
+                    <!-- Hàng 4 -->
+                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                        <TextBox Width="120" Text="{Binding QuizCount, Mode=TwoWay}" Watermark="Số bài kiểm tra"/>
+                        <TextBox Width="120" Text="{Binding OralCount, Mode=TwoWay}" Watermark="Số bài miệng"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Nút hành động -->
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="💾 Lưu" Command="{Binding SaveCommand}" 
+                            Background="#4CAF50" Foreground="White" Padding="15,5"/>
+                    <Button Content="❌ Hủy" Command="{Binding ToggleFormCommand}" 
+                            Background="#f44336" Foreground="White" Padding="15,5"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

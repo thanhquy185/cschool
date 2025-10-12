@@ -8,9 +8,9 @@
     xmlns:vm="using:cschool.ViewModels"
     Title="cschool"
     x:DataType="vm:MainWindowViewModel"
-    CanResize="False"
+    CanResize="True"
     ShowInTaskbar="True"
-    WindowState="Maximized"
+    WindowState="Normal"
     mc:Ignorable="d">
 
     <Design.DataContext>
@@ -83,6 +83,20 @@
                                 </StackPanel>
                             </Border>
                         </Button>
+
+                         <Button
+    Classes="ButtonInMenu"
+    Classes.active="{Binding AssignTeacherButtonActive}"
+    Command="{Binding GoToAssignTeacherViewCommand}">
+    <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+        <StackPanel>
+            <Image Source="{Binding AssignTeacherButtonImage}" />
+            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                       Text="{Binding AssignTeacherButtonLabel}" />
+        </StackPanel>
+    </Border>
+</Button>
+
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding TeacherButtonActive}"

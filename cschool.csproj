@@ -9,7 +9,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <AvaloniaResource Include="Assets\**" />
+    <!-- <AvaloniaResource Include="Assets\**" /> -->
+  </ItemGroup>
+    <ItemGroup>
+    <AvaloniaResource Include="Assets\Images\**" />
+    <AvaloniaResource Include="Assets\Styles\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.5" />
