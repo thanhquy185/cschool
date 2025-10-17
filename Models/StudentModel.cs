@@ -1,4 +1,7 @@
 using System;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using System.IO;
 
 public class StudentModel
 {
@@ -15,25 +18,42 @@ public class StudentModel
     public string LearnYear { get; set; }
     public string LearnStatus { get; set; }
     public sbyte Status { get; set; }
-
-    public StudentModel() {}
-
-    public StudentModel(int Id, string Fullname, string Avatar, DateTime BirthDay,
-        string Gender, string Ethnicity, string Religion, string Phone, string Email,
-        string Address, string LearnYear, string LearnStatus, sbyte Status)
+    // - Giúp lưu trữ đường dẫn ảnh khi thêm và cập nhật
+    public string AvatarFile { get; set; }
+    // - Giúp chuyển đổi thành ảnh kiểu bitmap khi hiển thị trên giao diện
+    // Dùng cho hiển thị ảnh trong Avalonia UI
+    public Bitmap AvatarImage
     {
-        this.Id = Id;
-        this.Fullname = Fullname;
-        this.Avatar = Avatar;
-        this.BirthDay = BirthDay;
-        this.Gender = Gender;
-        this.Ethnicity = Ethnicity;
-        this.Religion = Religion;
-        this.Phone = Phone;
-        this.Email = Email;
-        this.Address = Address;
-        this.LearnYear = LearnYear;
-        this.LearnStatus = LearnStatus;
-        this.Status = Status;
+        get
+        {
+            try
+            {
+                // Nếu người dùng đã chọn ảnh từ ổ cứng
+                if (!string.IsNullOrEmpty(AvatarFile) && File.Exists(AvatarFile))
+                {
+                    return new Bitmap(AvatarFile);
+                }
+
+                // Nếu ảnh đã có sẵn trong thư mục dự án (ví dụ đã lưu vào Assets/Images/Students)
+                if (!string.IsNullOrEmpty(Avatar))
+                {
+                    var uri = new Uri($"avares://cschool/Assets/Images/Students/{Avatar}");
+                    return new Bitmap(AssetLoader.Open(uri));
+                }
+
+                // Nếu không có ảnh → dùng ảnh mặc định
+                var defaultUri = new Uri($"avares://cschool/Assets/Images/Others/no-image.png");
+                return new Bitmap(AssetLoader.Open(defaultUri));
+            }
+            catch
+            {
+                // Nếu xảy ra lỗi → fallback sang ảnh mặc định
+                var defaultUri = new Uri($"avares://cschool/Assets/Images/Others/no-image.png");
+                return new Bitmap(AssetLoader.Open(defaultUri));
+            }
+        }
     }
+
+    public string ClassName { get; set; }
+    public string TeacherName { get; set; }
 }

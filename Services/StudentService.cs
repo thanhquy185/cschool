@@ -13,22 +13,6 @@ public class StudentService
         _db = db;
     }
 
-    // public bool UserIsExistsByUsername(string username)
-    // {
-    //     var dt = _db.ExecuteQuery($"SELECT * FROM cschool.users WHERE username = '{username}'");
-    //     return dt.Rows.Count > 0;
-
-    // }
-
-    // public int GetIdLastUser()
-    // {
-    //     // Console.WriteLine(123);
-    //     var dt = _db.ExecuteQuery("SELECT id FROM cschool.users ORDER BY id DESC LIMIT 1");
-    //     if (dt.Rows.Count > 0)
-    //         return System.Convert.ToInt32(dt.Rows[0]["id"]);
-    //     return 0;
-    // }
-
     public List<StudentModel> GetStudents()
     {
         var dt = _db.ExecuteQuery("SELECT * FROM cschool.students");
@@ -36,56 +20,114 @@ public class StudentService
 
         foreach (DataRow row in dt.Rows)
         {
-            list.Add(new StudentModel(
-                (int)row["id"],
-                row["fullname"].ToString()!,
-                row["avatar"].ToString()!,
-                row["birthday"] == DBNull.Value 
-                    ? DateTime.MinValue 
-                    : Convert.ToDateTime(row["birthday"]),
-                row["gender"].ToString()!,
-                row["ethnicity"].ToString()!,
-                row["religion"].ToString()!,
-                row["phone"].ToString()!,
-                row["email"].ToString()!,
-                row["address"].ToString()!,
-                row["learn_year"].ToString()!,
-                row["learn_status"].ToString()!,
-                (sbyte)row["status"]
-            ));
+            list.Add(new StudentModel
+            {
+                Id = (int)row["id"],
+                Fullname = row["fullname"].ToString()!,
+                Avatar = row["avatar"].ToString()!,
+                BirthDay = row["birthday"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(row["birthday"]),
+                Gender = row["gender"].ToString()!,
+                Ethnicity = row["ethnicity"].ToString()!,
+                Religion = row["religion"].ToString()!,
+                Phone = row["phone"].ToString()!,
+                Email = row["email"].ToString()!,
+                Address = row["address"].ToString()!,
+                LearnYear = row["learn_year"].ToString()!,
+                LearnStatus = row["learn_status"].ToString()!,
+                Status = (sbyte)row["status"]
+            });
         }
 
         return list;
     }
 
-    // public int CreateUser(UserModel user)
-    // {
-    //     string sql = $"INSERT INTO cschool.users (avatar, username, password, role_id, fullname, phone, email, address, status) " +
-    //                  $"VALUES ('{user.Avatar}', '{user.Username}', '{user.Password}', {user.RoleId}, " +
-    //                  $"'{user.Fullname}', '{user.Phone}', '{user.Email}', '{user.Address}', '{user.Status}')";
-    //     return _db.ExecuteNonQuery(sql);
-    // }
+    public StudentModel? GetStudentById(int id)
+    {
+        string sql = @$"SELECT students.id, students.fullname, students.avatar, students.birthday, students.gender, students.ethnicity,
+                    students.religion, students.phone, students.email, students.address, students.learn_year, students.learn_status, 
+                    classes.name AS class_name, teachers.fullname AS teacher_name, students.status
+                    FROM students
+                    JOIN assign_class_students ON students.id = assign_class_students.student_id
+                    JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
+                    JOIN classes ON assign_classes.class_id = classes.id
+                    JOIN teachers ON assign_classes.head_teacher_id = teachers.id
+                    WHERE students.id = {id}";
+        var dt = _db.ExecuteQuery(sql);
 
-    // public int UpdateUser(UserModel user)
-    // {
-    //     string sql = $"UPDATE cschool.users SET " +
-    //                  $"avatar = '{user.Avatar}', " +
-    //                  $"role_id = {user.RoleId}, " +
-    //                  $"fullname = '{user.Fullname}', " +
-    //                  $"phone = '{user.Phone}', " +
-    //                  $"email = '{user.Email}', " +
-    //                  $"address = '{user.Address}' " +
-    //                  $"WHERE id = {user.Id}";
+        if (dt.Rows.Count == 0)
+            return null;
 
-    //     return _db.ExecuteNonQuery(sql);
-    // }
+        var row = dt.Rows[0];
 
-    // public int LockUser(UserModel user)
-    // {
-    //     string sql = $"UPDATE cschool.users SET " +
-    //                  $"status = '{user.Status}' " +
-    //                  $"WHERE id = {user.Id}";
+        return new StudentModel
+        {
+            Id = (int)row["id"],
+            Fullname = row["fullname"].ToString()!,
+            Avatar = row["avatar"].ToString()!,
+            BirthDay = row["birthday"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(row["birthday"]),
+            Gender = row["gender"].ToString()!,
+            Ethnicity = row["ethnicity"].ToString()!,
+            Religion = row["religion"].ToString()!,
+            Phone = row["phone"].ToString()!,
+            Email = row["email"].ToString()!,
+            Address = row["address"].ToString()!,
+            LearnYear = row["learn_year"].ToString()!,
+            LearnStatus = row["learn_status"].ToString()!,
+            Status = (sbyte)row["status"],
+            ClassName = row["class_name"].ToString()!,
+            TeacherName = row["teacher_name"].ToString()!
+        };
+    }
 
-    //     return _db.ExecuteNonQuery(sql);
-    // }
+    // Thêm học sinh mới
+    public bool CreateStudent(StudentModel student)
+    {
+        string sql = @$"
+            INSERT INTO cschool.students 
+            (fullname, avatar, birthday, gender, ethnicity, religion, address, phone, email, learn_year, learn_status)
+            VALUES 
+            ('{student.Fullname}', '{student.Avatar}', 
+                {(student.BirthDay == DateTime.MinValue ? "NULL" : $"'{student.BirthDay:yyyy-MM-dd}'")}, 
+                '{student.Gender}', '{student.Ethnicity}', '{student.Religion}', 
+                '{student.Address}', '{student.Phone}', '{student.Email}', 
+                '{student.LearnYear}', '{student.LearnStatus}');";
+
+        int rows = _db.ExecuteNonQuery(sql);
+        return rows > 0;
+    }
+
+    // Cập nhật thông tin học sinh
+    public bool UpdateStudent(StudentModel student)
+    {
+        string sql = @$"
+            UPDATE cschool.students SET 
+                fullname = '{student.Fullname}',
+                avatar = '{student.Avatar}',
+                birthday = {(student.BirthDay == DateTime.MinValue ? "NULL" : $"'{student.BirthDay:yyyy-MM-dd}'")},
+                gender = '{student.Gender}',
+                ethnicity = '{student.Ethnicity}',
+                religion = '{student.Religion}',
+                phone = '{student.Phone}',
+                email = '{student.Email}',
+                address = '{student.Address}',
+                learn_year = '{student.LearnYear}',
+                learn_status = '{student.LearnStatus}'
+            WHERE id = {student.Id};";
+
+        int rows = _db.ExecuteNonQuery(sql);
+        return rows > 0;
+    }
+
+    // Khóa hoặc mở khóa học sinh
+    public bool LockStudent(StudentModel student)
+    {
+        string sql = @$"
+            UPDATE cschool.students 
+            SET status = {student.Status} 
+            WHERE id = {student.Id};";
+
+        int rows = _db.ExecuteNonQuery(sql);
+        return rows > 0;
+    }
+
 }

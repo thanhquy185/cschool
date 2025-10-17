@@ -1,0 +1,196 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:cschool.ViewModels;assembly=cschool"
+        x:Class="cschool.Views.Student.StudentCreateDialog"
+        x:DataType="vm:StudentViewModel"
+        Title="Thêm học sinh"
+        Width="1200"
+        Height="600"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- 🔹 Header -->
+            <Border Background="#4CAF50" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <!-- Cột trái rỗng để cân -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tiêu đề ở giữa -->
+                    <TextBlock Grid.Column="1"
+                            Text="Thêm học sinh"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            />
+
+                    <!-- Nút đóng ở bên phải -->
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="CloseButton_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- 🔹 Nội dung -->
+            <ScrollViewer Grid.Row="1" Padding="20">
+                <Grid ColumnDefinitions="1.2*,2.8*" RowDefinitions="Auto">
+                    <!-- 🖼️ Ảnh đại diện -->
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <TextBlock Text="Ảnh đại diện"
+                                   FontSize="15"
+                                   Margin="0,0,0,10"/>
+                        
+                        <Border Width="300" Height="300"
+                                Padding="40"
+                                CornerRadius="4"
+                                HorizontalAlignment="Center">
+                            <Image Source="avares://cschool/Assets/Images/Others/no-image.png"
+                                   Stretch="UniformToFill"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   x:Name="AvatarImage"/>
+                        </Border>
+
+                        <Button Content="Chọn ảnh"
+                                Width="300"
+                                Margin="0,20,0,10"
+                                Background="#E0E0E0"
+                                Foreground="#555"
+                                BorderThickness="0"
+                                Padding="10,5"
+                                FontSize="18"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                CornerRadius="4"
+                                Click="ChooseImage_Click"/>
+                    </StackPanel>
+
+                    <!-- 🧾 Thông tin học sinh -->
+                    <Grid Grid.Column="1" Margin="30,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Mã học sinh -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã học sinh" FontSize="15" Margin="0,0,0,5"/>
+                        <TextBox Grid.Row="1" Grid.Column="0" Text="Mã sẽ được xác định sau khi xác nhận thông tin" HorizontalContentAlignment="Center" IsHitTestVisible="False"
+                                 Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"/>
+
+                        <!-- Tình trạng học -->
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Tình trạng học" FontSize="15" Margin="20,0,0,5"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="LearnStatus" MaxDropDownHeight="300" SelectedIndex="0" Margin="20,0,0,10">
+                                <ComboBoxItem>--- Chọn Tình trạng học ---</ComboBoxItem>
+                                <ComboBoxItem>Đang học</ComboBoxItem>
+                                <ComboBoxItem>Tốt nghiệp</ComboBoxItem>
+                                <ComboBoxItem>Bảo lưu</ComboBoxItem>
+                                <ComboBoxItem>Nghỉ học</ComboBoxItem>
+                        </ComboBox>
+
+                        <!-- Tên học sinh -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Họ tên học sinh" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBox Grid.Row="4" Grid.Column="0" x:Name="Fullname" Margin="0,0,0,10"/>
+
+                        <!-- Giới tính -->
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Giới tính" FontSize="15" Margin="20,10,0,5"/>
+                        <ComboBox Grid.Row="4" Grid.Column="1" x:Name="Gender" MaxDropDownHeight="300" SelectedIndex="0" Margin="20,0,0,10">
+                                <ComboBoxItem>--- Chọn Giới tính ---</ComboBoxItem>
+                                <ComboBoxItem>Nam</ComboBoxItem>
+                                <ComboBoxItem>Nữ</ComboBoxItem>
+                        </ComboBox>
+
+                        <!-- Ngày sinh -->
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Ngày sinh" FontSize="15" Margin="0,10,0,5"/>
+                        <DatePicker Grid.Row="7" Grid.Column="0" x:Name="BirthDay" Margin="0,0,0,10" BorderThickness="1" CornerRadius="4"/>
+
+                        <!-- Dân tộc -->
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="Dân tộc" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" x:Name="Ethnicity" Margin="20,0,0,10"/>
+
+                        <!-- Tôn giáo -->
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Tôn giáo" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBox Grid.Row="10" Grid.Column="0" x:Name="Religion" Margin="0,0,0,10"/>
+
+                        <!-- Năm học -->
+                        <TextBlock Grid.Row="9" Grid.Column="1" Text="Năm học" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBox Grid.Row="10" Grid.Column="1" x:Name="LearnYear" Margin="20,0,0,10"/>
+
+                        <!-- Số điện thoại -->
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Số điện thoại" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBox Grid.Row="13" Grid.Column="0" x:Name="Phone" Margin="0,0,0,10"/>
+
+                        <!-- Email -->
+                        <TextBlock Grid.Row="12" Grid.Column="1" Text="Email" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBox Grid.Row="13" Grid.Column="1" x:Name="Email" Margin="20,0,0,10"/>
+
+                        <!-- Địa chỉ -->
+                        <TextBlock Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBox Grid.Row="16" Grid.Column="0" x:Name="Address" Grid.ColumnSpan="2" Margin="0,0,0,60"/>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- 🔹 Nút xác nhận -->
+            <Border Grid.Row="2"
+                    Padding="0,0,0,20"
+                    CornerRadius="0,0,8,8"
+                    Background="White">
+                <Button Content="Xác nhận"
+                        Width="1100"
+                        Height="40"
+                        FontSize="18"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="ConfirmButton_Click" />
+            </Border>
+        </Grid>
+    </Border>
+</Window>

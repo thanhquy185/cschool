@@ -1,9 +1,10 @@
 using System;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using cschool.ViewModels;
-using FluentAvalonia.UI.Controls;
-
+using System.Threading.Tasks;
+using Avalonia.Media;
+using cschool.Utils;
+using cschool.Views.Student;
 namespace cschool.Views;
 
 public partial class StudentView : UserControl
@@ -12,88 +13,64 @@ public partial class StudentView : UserControl
     {
         InitializeComponent();
         DataContext = new StudentViewModel();
+
+        InfoButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Info);
+        CreateButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Create);
+        UpdateButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Update);
+        LockButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Lock);
     }
 
-    private async void TestDialogButton_Click(object sender, RoutedEventArgs e)
+    private async Task ShowStudentDialog(DialogModeEnum mode)
     {
-        // Header
-        var header = new Grid
-        {
-            ColumnDefinitions = new ColumnDefinitions("*, Auto, *"),
-            Classes = { "DialogHeader" }
-        };
-        // - Title
-        var title = new TextBlock
-        {
-            Text = "Thông tin học sinh",
-            Classes = { "DialogHeaderTitle" }
-        };
-        Grid.SetColumn(title, 1);
-        header.Children.Add(title);
-        // - Close Button
-        var closeButton = new Button
-        {
-            Content = "X",
-            Classes = { "DialogCloseButton" }
-        };
-        Grid.SetColumn(closeButton, 2);
-        header.Children.Add(closeButton);
+        var vm = DataContext as StudentViewModel;
+        var selectedStudent = StudentsDataGrid.SelectedItem as StudentModel;
 
-        // Form 
-        var form = new StackPanel
+        if (selectedStudent == null && mode != DialogModeEnum.Create)
         {
-            Classes = { "DialogForm" },
-        };
-        // - Label, Input, Select...
-        form.Children.Add(new TextBlock { Text = "Tên học sinh:" });
-        var nameTextBox = new TextBox { Width = 200 };
-        form.Children.Add(nameTextBox);
-        form.Children.Add(new TextBlock { Text = "Tuổi:" });
-        var ageTextBox = new TextBox { Width = 50 };
-        form.Children.Add(ageTextBox);
-        // - Submit Button
-        var submitButton = new Button
-        {
-            Content = "Xác nhận",
-            Classes = { "DialogSubmitButton" }
-        };
-        form.Children.Add(submitButton);
-        // - Form Warper
-        var formCWarper = new Border
-        {
-            Classes = { "DialogFormCWarper" },
-            Child = form
-        };
-
-        // Nội dung dialog (vì không dùng title và các nút mặc định của control)
-        var dialogContent = new StackPanel
-        {
-            Children =
-        {
-            header,
-            formCWarper
+            await MessageBoxUtil.ShowError("Vui lòng chọn người dùng để thực hiện thao tác!");
+            return;
         }
-        };
 
-        // Tạo dialog
-        var dialog = new ContentDialog
+        Window? dialog = null;
+        switch (mode)
         {
-            Title = null,
-            Content = dialogContent,
-            PrimaryButtonText = null,
-            Classes = { "Dialog", "Create" },
-        };
+            case DialogModeEnum.Info:
+                if (vm != null && selectedStudent != null)
+                {
+                    var fullStudent = AppService.StudentService.GetStudentById(selectedStudent.Id);
+                    vm.StudentDetails = fullStudent ?? selectedStudent;
+                }
+                dialog = new StudentInfoDialog(vm);
+                break;
 
-        // Đóng dialog khi bấm X
-        closeButton.Click += (_, __) => dialog.Hide();
+            case DialogModeEnum.Create:
+                dialog = new StudentCreateDialog();
+                break;
 
-        // Hiện dialog
-        var result = await dialog.ShowAsync();
-        submitButton.Click += (_, __) =>
-        {
-            Console.WriteLine($"Tên: {nameTextBox.Text}, Tuổi: {ageTextBox.Text}");
-            dialog.Hide(ContentDialogResult.Primary);
-        };
+            case DialogModeEnum.Update:
+                dialog = new StudentUpdateDialog(selectedStudent);
+                break;
+
+            case DialogModeEnum.Lock:
+                dialog = new StudentLockDialog(selectedStudent);
+                break;
+        }
+
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        if (owner != null)
+            await dialog.ShowDialog(owner);
+        else
+            dialog.Show();
     }
+
 }
 
+public enum DialogModeEnum
+{
+    Info,
+    Create,
+    Update,
+    Lock,
+    ChangePassword
+}
