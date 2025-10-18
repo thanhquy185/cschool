@@ -44,7 +44,7 @@ public partial class StudentView : UserControl
                 break;
 
             case DialogModeEnum.Create:
-                dialog = new StudentCreateDialog();
+                dialog = new StudentCreateDialog{studentViewModel = vm};
                 break;
 
             case DialogModeEnum.Update:

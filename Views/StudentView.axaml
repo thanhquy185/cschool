@@ -143,7 +143,7 @@
             Header="Giới tính" />
           <DataGridTextColumn
             Width="*"
-            Binding="{Binding BirthDay, StringFormat={}{0:dd/MM/yyyy}}"
+            Binding="{Binding BirthDayDisplay}"
             Header="Ngày sinh" />
           <DataGridTextColumn
             Width="*"

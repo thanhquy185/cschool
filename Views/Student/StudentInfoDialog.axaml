@@ -142,7 +142,7 @@
 
                         <!-- Ngày sinh -->
                         <TextBlock Grid.Row="6" Grid.Column="1" Text="Ngày sinh" FontSize="15" Margin="20,10,0,5"/>
-                        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding StudentDetails.BirthDay, StringFormat={}{0:dd/MM/yyyy}}" IsHitTestVisible="False"
+                        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding StudentDetails.BirthDayDisplay}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Dân tộc -->

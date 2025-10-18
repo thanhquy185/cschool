@@ -88,7 +88,7 @@ namespace cschool.Views.Student
             await dialog.ShowDialog(this);
         }
 
-        private async Task ConfirmButton_Click(object? sender, RoutedEventArgs e)
+        private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
         {
             // Lấy dữ liệu từ các TextBox, ComboBox, DatePicker
             var learnStatus = (LearnStatus.SelectedItem as ComboBoxItem)?.Content?.ToString();
@@ -119,23 +119,77 @@ namespace cschool.Views.Student
                 return;
             }
 
-            if (!Rules.rulePhone(phone ?? ""))
+            if (string.IsNullOrWhiteSpace(gender))
+            {
+                await MessageBoxUtil.ShowError("Giới tính không được để trống!", owner: this);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(ethnicity))
+            {
+                await MessageBoxUtil.ShowError("Dân tộc không được để trống!", owner: this);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(religion))
+            {
+                await MessageBoxUtil.ShowError("Tôn giáo không được để trống!", owner: this);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(learnStatus))
+            {
+                await MessageBoxUtil.ShowError("Tình trạng học tập không được để trống!", owner: this);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(learnYear))
+            {
+                await MessageBoxUtil.ShowError("Năm học không được để trống!", owner: this);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(phone))
+            {
+                await MessageBoxUtil.ShowError("Số điện thoại không được để trống!", owner: this);
+                return;
+            }
+            else if (!Rules.rulePhone(phone))
             {
                 await MessageBoxUtil.ShowError("Số điện thoại không hợp lệ!", owner: this);
                 return;
             }
 
-            if (!Rules.ruleEmail(email ?? ""))
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                await MessageBoxUtil.ShowError("Email không được để trống!", owner: this);
+                return;
+            }
+            else if (!Rules.ruleEmail(email))
             {
                 await MessageBoxUtil.ShowError("Email không đúng định dạng!", owner: this);
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                await MessageBoxUtil.ShowError("Địa chỉ không được để trống!", owner: this);
+                return;
+            }
+
+            // Kiểm tra ngày sinh (không cho chọn tương lai)
+            if (birthDay > DateTime.Now)
+            {
+                await MessageBoxUtil.ShowError("Ngày sinh không được lớn hơn ngày hiện tại!", owner: this);
+                return;
+            }
+
+
             // Gửi dữ liệu tới backend hoặc lưu vào model
             var student = new StudentModel
             {
                 Fullname = fullName,
-                BirthDay = birthDay,
+                BirthDay = birthDay.ToString("yyyy-MM-dd"),
                 Gender = gender,
                 Ethnicity = ethnicity,
                 Religion = religion,
@@ -144,8 +198,8 @@ namespace cschool.Views.Student
                 Address = address,
                 LearnYear = learnYear,
                 LearnStatus = learnStatus,
-                AvatarFile = _selectedAvatarPath,          // gán vào model
-                Avatar = _selectedAvatarPath is null ? "" : Path.GetFileName(_selectedAvatarPath)
+                // AvatarFile = _selectedAvatarPath,
+                // Avatar = _selectedAvatarPath is null ? "" : Path.GetFileName(_selectedAvatarPath)
             };
 
             // - Xử lý
@@ -157,14 +211,14 @@ namespace cschool.Views.Student
                 await MessageBoxUtil.ShowSuccess("Thêm người dùng thành công!", owner: this);
 
                 await studentViewModel.GetStudentsCommand.Execute().ToTask();
+
+                this.Close();
             }
             else
             {
                 await MessageBoxUtil.ShowSuccess("Thêm người dùng thất bại!", owner: this);
+                this.Close();
             }
-
-            MessageBox($"Đã thêm học sinh: {student.Fullname}");
         }
-
     }
 }

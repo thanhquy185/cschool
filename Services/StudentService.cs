@@ -25,7 +25,7 @@ public class StudentService
                 Id = (int)row["id"],
                 Fullname = row["fullname"].ToString()!,
                 Avatar = row["avatar"].ToString()!,
-                BirthDay = row["birthday"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(row["birthday"]),
+                BirthDay = row["birthday"].ToString()!,
                 Gender = row["gender"].ToString()!,
                 Ethnicity = row["ethnicity"].ToString()!,
                 Religion = row["religion"].ToString()!,
@@ -64,7 +64,7 @@ public class StudentService
             Id = (int)row["id"],
             Fullname = row["fullname"].ToString()!,
             Avatar = row["avatar"].ToString()!,
-            BirthDay = row["birthday"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(row["birthday"]),
+            BirthDay = row["birthday"].ToString()!,
             Gender = row["gender"].ToString()!,
             Ethnicity = row["ethnicity"].ToString()!,
             Religion = row["religion"].ToString()!,
@@ -82,12 +82,17 @@ public class StudentService
     // Thêm học sinh mới
     public bool CreateStudent(StudentModel student)
     {
+        string formattedBirthDay = "NULL";
+        if (!string.IsNullOrWhiteSpace(student.BirthDay) && DateTime.TryParse(student.BirthDay, out var birth))
+        {
+            formattedBirthDay = $"'{birth:yyyy-MM-dd}'";
+        }
         string sql = @$"
             INSERT INTO cschool.students 
-            (fullname, avatar, birthday, gender, ethnicity, religion, address, phone, email, learn_year, learn_status)
+            (fullname, birthday, gender, ethnicity, religion, address, phone, email, learn_year, learn_status)
             VALUES 
-            ('{student.Fullname}', '{student.Avatar}', 
-                {(student.BirthDay == DateTime.MinValue ? "NULL" : $"'{student.BirthDay:yyyy-MM-dd}'")}, 
+            ('{student.Fullname}', 
+                {formattedBirthDay}, 
                 '{student.Gender}', '{student.Ethnicity}', '{student.Religion}', 
                 '{student.Address}', '{student.Phone}', '{student.Email}', 
                 '{student.LearnYear}', '{student.LearnStatus}');";
@@ -99,11 +104,16 @@ public class StudentService
     // Cập nhật thông tin học sinh
     public bool UpdateStudent(StudentModel student)
     {
+        string formattedBirthDay = "NULL";
+        if (!string.IsNullOrWhiteSpace(student.BirthDay) && DateTime.TryParse(student.BirthDay, out var birth))
+        {
+            formattedBirthDay = $"'{birth:yyyy-MM-dd}'";
+        }
         string sql = @$"
             UPDATE cschool.students SET 
                 fullname = '{student.Fullname}',
                 avatar = '{student.Avatar}',
-                birthday = {(student.BirthDay == DateTime.MinValue ? "NULL" : $"'{student.BirthDay:yyyy-MM-dd}'")},
+                birthday = {formattedBirthDay},
                 gender = '{student.Gender}',
                 ethnicity = '{student.Ethnicity}',
                 religion = '{student.Religion}',
