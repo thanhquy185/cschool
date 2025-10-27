@@ -220,27 +220,29 @@ INSERT INTO `department_details` (`department_id`, `teacher_id`, `start_date`, `
 --
 
 CREATE TABLE `exams` (
-  `id` int(11) NOT NULL,
-  `exam_detail_id` int(11) NOT NULL,
-  `exam_room` varchar(50) DEFAULT NULL,
-  `candidate_count` int(11) DEFAULT NULL
+    `id` int(11) NOT NULL,
+    `exam_detail_id` int(11) NOT NULL,      -- Tham chiếu đến ca thi
+    `exam_room` varchar(50) NOT NULL,   -- Phòng thi
+    `supervisor_id` int(11) DEFAULT NULL,   -- Giáo viên coi thi (nếu có)
+    `candidate_count` int(11) DEFAULT 0    -- Số lượng thí sinh trong phòng
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `exams`
 --
 
-INSERT INTO `exams` (`id`, `exam_detail_id`, `exam_room`, `candidate_count`) VALUES
-(1, 1, 'Phòng A101', 30),
-(2, 2, 'Phòng A102', 28),
-(3, 3, 'Phòng B201', 32),
-(4, 4, 'Phòng B202', 29),
-(5, 5, 'Phòng C301', 31),
-(6, 6, 'Phòng C302', 27),
-(7, 7, 'Phòng D401', 33),
-(8, 8, 'Phòng D402', 30),
-(9, 9, 'Phòng E501', 26),
-(10, 10, 'Phòng E502', 34);
+INSERT INTO `exams` (`id`, `exam_detail_id`, `exam_room`, `supervisor_id`, `candidate_count`) VALUES
+(1, 1, 'Phòng A101', 5, 30),
+(2, 2, 'Phòng A102', 7, 28),
+(3, 3, 'Phòng B201', 8, 32),
+(4, 4, 'Phòng B202', 6, 29),
+(5, 5, 'Phòng C301', 9, 31),
+(6, 6, 'Phòng C302', 10, 27),
+(7, 7, 'Phòng D401', 1, 33),
+(8, 8, 'Phòng D402', 2, 30),
+(9, 9, 'Phòng E501', 3, 26),
+(10, 10, 'Phòng E502', 4, 34);
+
 
 -- --------------------------------------------------------
 
@@ -249,28 +251,29 @@ INSERT INTO `exams` (`id`, `exam_detail_id`, `exam_room`, `candidate_count`) VAL
 --
 
 CREATE TABLE `exam_details` (
-  `id` int(11) NOT NULL,
-  `subject_id` int(11) NOT NULL,
-  `term_id` int(11) NOT NULL,
-  `start_time` datetime DEFAULT NULL,
-  `end_time` datetime DEFAULT NULL
+    `id` int(11) NOT NULL,
+    `subject_id` int(11) NOT NULL,          -- Môn học được thi
+    `term_id` int(11) NOT NULL,             -- Học kỳ / năm học
+    `exam_type_id` int(11) DEFAULT NULL,    -- Loại bài thi: giữa kỳ, cuối kỳ (tham chiếu exam_types)
+    `start_time` datetime NOT NULL,     -- Giờ bắt đầu thi
+    `end_time` datetime NOT NULL       -- Giờ kết thúc thi
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `exam_details`
 --
 
-INSERT INTO `exam_details` (`id`, `subject_id`, `term_id`, `start_time`, `end_time`) VALUES
-(1, 1, 1, '2025-11-01 08:00:00', '2025-11-01 09:30:00'),
-(2, 2, 1, '2025-11-02 08:00:00', '2025-11-02 09:30:00'),
-(3, 3, 1, '2025-11-03 08:00:00', '2025-11-03 09:30:00'),
-(4, 4, 1, '2025-11-04 08:00:00', '2025-11-04 09:30:00'),
-(5, 5, 1, '2025-11-05 08:00:00', '2025-11-05 09:30:00'),
-(6, 6, 2, '2026-04-01 08:00:00', '2026-04-01 09:30:00'),
-(7, 7, 2, '2026-04-02 08:00:00', '2026-04-02 09:30:00'),
-(8, 8, 2, '2026-04-03 08:00:00', '2026-04-03 09:30:00'),
-(9, 9, 2, '2026-04-04 08:00:00', '2026-04-04 09:30:00'),
-(10, 10, 2, '2026-04-05 08:00:00', '2026-04-05 09:30:00');
+INSERT INTO `exam_details` (`id`, `subject_id`, `term_id`, `exam_type_id`, `start_time`, `end_time`) VALUES
+(1, 1, 1, 1, '2025-11-01 08:00:00', '2025-11-01 09:30:00'),
+(2, 2, 1, 1, '2025-11-02 08:00:00', '2025-11-02 09:30:00'),
+(3, 3, 1, 1, '2025-11-03 08:00:00', '2025-11-03 09:30:00'),
+(4, 4, 1, 1, '2025-11-04 08:00:00', '2025-11-04 09:30:00'),
+(5, 1, 1, 1, '2025-11-05 08:00:00', '2025-11-05 09:30:00'),
+(6, 6, 2, 2, '2026-04-01 08:00:00', '2026-04-01 09:30:00'),
+(7, 7, 2, 2, '2026-04-02 08:00:00', '2026-04-02 09:30:00'),
+(8, 2, 2, 2, '2026-04-03 08:00:00', '2026-04-03 09:30:00'),
+(9, 9, 2, 2, '2026-04-04 08:00:00', '2026-04-04 09:30:00'),
+(10, 10, 2, 2, '2026-04-05 08:00:00', '2026-04-05 09:30:00');
 
 -- --------------------------------------------------------
 
@@ -585,9 +588,9 @@ INSERT INTO `students` (`id`, `fullname`, `avatar`, `birthday`, `gender`, `ethni
 --
 
 CREATE TABLE `student_exams` (
-  `examinee_id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `exam_id` int(11) NOT NULL
+    `examinee_id` int(11),
+    `student_id` int(11) NOT NULL,          -- Học sinh nào
+    `exam_id` int(11) NOT NULL              -- Thuộc phòng thi nào
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -1243,14 +1246,16 @@ ALTER TABLE `department_details`
 -- Constraints for table `exams`
 --
 ALTER TABLE `exams`
-  ADD CONSTRAINT `exams_ibfk_1` FOREIGN KEY (`exam_detail_id`) REFERENCES `exam_details` (`id`);
+  ADD CONSTRAINT `exams_ibfk_1` FOREIGN KEY (`exam_detail_id`) REFERENCES `exam_details`(`id`),
+  ADD CONSTRAINT `exams_ibfk_2` FOREIGN KEY (`supervisor_id`) REFERENCES `teachers`(`id`);
 
 --
 -- Constraints for table `exam_details`
 --
 ALTER TABLE `exam_details`
-  ADD CONSTRAINT `exam_details_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`),
-  ADD CONSTRAINT `exam_details_ibfk_2` FOREIGN KEY (`term_id`) REFERENCES `terms` (`id`);
+  ADD CONSTRAINT `exam_details_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `subjects`(`id`),
+  ADD CONSTRAINT `exam_details_ibfk_2` FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`),
+  ADD CONSTRAINT `exam_details_ibfk_3` FOREIGN KEY (`exam_type_id`) REFERENCES `exam_types`(`id`);
 
 --
 -- Constraints for table `relations`
