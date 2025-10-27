@@ -36,11 +36,15 @@ public class StudentModel
                     return new Bitmap(AvatarFile);
                 }
 
-                // Nếu ảnh đã có sẵn trong thư mục dự án (ví dụ đã lưu vào Assets/Images/Students)
+                // Nếu ảnh đã lưu trong thư mục Assets/Images/Students
                 if (!string.IsNullOrEmpty(Avatar))
                 {
-                    var uri = new Uri($"avares://cschool/Assets/Images/Students/{Avatar}");
-                    return new Bitmap(AssetLoader.Open(uri));
+                    // Xác định đường dẫn tuyệt đối đến ảnh
+                    var projectRoot = Directory.GetParent(AppContext.BaseDirectory)!.Parent!.Parent!.Parent!.FullName;
+                    var imagePath = Path.Combine(projectRoot, "Assets", "Images", "Students", Avatar);
+
+                    if (File.Exists(imagePath))
+                        return new Bitmap(imagePath);
                 }
 
                 // Nếu không có ảnh → dùng ảnh mặc định

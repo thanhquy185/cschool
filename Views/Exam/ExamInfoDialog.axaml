@@ -1,0 +1,60 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:cschool.ViewModels;assembly=cschool"
+        x:Class="cschool.Views.Exam.ExamInfoDialog"
+        x:DataType="vm:ExamViewModel"
+        Title="Chi tiết lịch thi"
+        Width="1200"
+        Height="620"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*">
+            
+            <!-- 🔹 Header -->
+            <Border Background="#4285F4" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <!-- Cột trái rỗng để cân -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tiêu đề ở giữa -->
+                    <TextBlock Grid.Column="1"
+                            Text="Chi tiết lịch thi"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            />
+
+                    <!-- Nút đóng ở bên phải -->
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="CloseButton_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- 🔹 Nội dung -->
+            <ScrollViewer Grid.Row="1" Padding="20">
+
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>

@@ -58,31 +58,17 @@
                     <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <TextBlock Text="Ảnh đại diện"
                                    FontSize="15"
-                                   Margin="0,0,0,10"/>
+                                   Margin="0,0,0,10" Foreground="Black"/>
                         
                         <Border Width="300" Height="300"
                                 Padding="40"
                                 CornerRadius="4"
                                 HorizontalAlignment="Center">
-                            <Image Source="avares://cschool/Assets/Images/Others/no-image.png"
+                            <Image Source="{Binding StudentDetails.AvatarImage}"
                                    Stretch="UniformToFill"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"/>
                         </Border>
-
-                        <Button Content="Chọn ảnh"
-                                Width="300"
-                                Margin="0,20,0,10"
-                                Background="#E0E0E0"
-                                Foreground="#555"
-                                BorderThickness="0"
-                                Padding="10,5"
-                                FontSize="18"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                CornerRadius="4"/>
                     </StackPanel>
 
                     <!-- 🧾 Thông tin học sinh -->
@@ -116,67 +102,67 @@
                         </Grid.RowDefinitions>
 
                         <!-- Mã học sinh -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã học sinh" FontSize="15" Margin="0,0,0,5"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã học sinh" FontSize="15" Margin="0,0,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding StudentDetails.Id}" HorizontalContentAlignment="Center" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"/>
 
                         <!-- Tình trạng học -->
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Tình trạng học" FontSize="15" Margin="20,0,0,5"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Tình trạng học" FontSize="15" Margin="20,0,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding StudentDetails.LearnStatus}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Tên học sinh -->
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Họ tên học sinh" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Họ tên học sinh" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="4" Grid.Column="0" Text="{Binding StudentDetails.Fullname}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"/>
 
                         <!-- Lớp học -->
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Lớp học" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Lớp học" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding StudentDetails.ClassName}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Giới tính -->
-                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Giới tính" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Giới tính" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="7" Grid.Column="0" Text="{Binding StudentDetails.Gender}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="00,0,0,10"/>
 
                         <!-- Ngày sinh -->
-                        <TextBlock Grid.Row="6" Grid.Column="1" Text="Ngày sinh" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="Ngày sinh" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding StudentDetails.BirthDayDisplay}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Dân tộc -->
-                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Dân tộc" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Dân tộc" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="10" Grid.Column="0" Text="{Binding StudentDetails.Ethnicity}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="00,0,0,10"/>
 
                         <!-- Tôn giáo -->
-                        <TextBlock Grid.Row="9" Grid.Column="1" Text="Tôn giáo" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBlock Grid.Row="9" Grid.Column="1" Text="Tôn giáo" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding StudentDetails.Religion}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Năm học -->
-                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Năm học" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Năm học" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="13" Grid.Column="0" Text="{Binding StudentDetails.LearnYear}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="00,0,0,10"/>
 
                         <!-- Giáo viên chủ nhiệm -->
-                        <TextBlock Grid.Row="12" Grid.Column="1" Text="Giáo viên chủ nhiệm" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBlock Grid.Row="12" Grid.Column="1" Text="Giáo viên chủ nhiệm" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding StudentDetails.TeacherName}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Số điện thoại -->
-                        <TextBlock Grid.Row="15" Grid.Column="0" Text="Số điện thoại" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBlock Grid.Row="15" Grid.Column="0" Text="Số điện thoại" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="16" Grid.Column="0" Text="{Binding StudentDetails.Phone}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"/>
 
                         <!-- Email -->
-                        <TextBlock Grid.Row="15" Grid.Column="1" Text="Email" FontSize="15" Margin="20,10,0,5"/>
+                        <TextBlock Grid.Row="15" Grid.Column="1" Text="Email" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="16" Grid.Column="1" Text="{Binding StudentDetails.Email}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Địa chỉ -->
-                        <TextBlock Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" Margin="0,10,0,5"/>
+                        <TextBlock Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2"
                                  Text="{Binding StudentDetails.Address}"
                                  IsHitTestVisible="False"

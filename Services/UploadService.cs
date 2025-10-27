@@ -23,8 +23,11 @@ public static class UploadService
         // Tạo tên file mới
         var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}-{objectType}-{objectId}{ext}";
 
-        // Đường dẫn thư mục đích
-        var destDir = Path.Combine(AppService.AppPath, "Assets", "Images", Capitalize($"{objectType}s"));
+        // Lấy thư mục gốc dự án (lùi lên từ bin/Debug/net8.0)
+        var projectRoot = Directory.GetParent(AppService.AppPath)!.Parent!.Parent!.Parent!.FullName;
+
+        // Tạo thư mục đích Assets/Images/[ObjectType]s
+        var destDir = Path.Combine(projectRoot, "Assets", "Images", Capitalize($"{objectType}s"));
         if (!Directory.Exists(destDir))
             Directory.CreateDirectory(destDir);
 

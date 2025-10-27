@@ -9,6 +9,7 @@ using System.Reactive.Threading.Tasks;
 
 using cschool.ViewModels;
 using cschool.Utils;
+using System.Linq;
 
 namespace cschool.Views.Student
 {
@@ -64,28 +65,10 @@ namespace cschool.Views.Student
                     catch
                     {
                         // Báo lỗi nếu không thể load ảnh
-                        await MessageBox("Không thể tải ảnh đã chọn!");
+                        await MessageBoxUtil.ShowError("Không thể tải ảnh đã chọn!");
                     }
                 }
             }
-        }
-
-        private async Task MessageBox(string message)
-        {
-            var dialog = new Window
-            {
-                Width = 300,
-                Height = 120,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                Content = new TextBlock
-                {
-                    Text = message,
-                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                    TextWrapping = Avalonia.Media.TextWrapping.Wrap
-                }
-            };
-            await dialog.ShowDialog(this);
         }
 
         private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
@@ -125,18 +108,6 @@ namespace cschool.Views.Student
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(ethnicity))
-            {
-                await MessageBoxUtil.ShowError("Dân tộc không được để trống!", owner: this);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(religion))
-            {
-                await MessageBoxUtil.ShowError("Tôn giáo không được để trống!", owner: this);
-                return;
-            }
-
             if (string.IsNullOrWhiteSpace(learnStatus))
             {
                 await MessageBoxUtil.ShowError("Tình trạng học tập không được để trống!", owner: this);
@@ -149,31 +120,15 @@ namespace cschool.Views.Student
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(phone))
-            {
-                await MessageBoxUtil.ShowError("Số điện thoại không được để trống!", owner: this);
-                return;
-            }
-            else if (!Rules.rulePhone(phone))
+            if (Rules.rulePhone(phone))
             {
                 await MessageBoxUtil.ShowError("Số điện thoại không hợp lệ!", owner: this);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                await MessageBoxUtil.ShowError("Email không được để trống!", owner: this);
-                return;
-            }
-            else if (!Rules.ruleEmail(email))
+            if (Rules.ruleEmail(email))
             {
                 await MessageBoxUtil.ShowError("Email không đúng định dạng!", owner: this);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(address))
-            {
-                await MessageBoxUtil.ShowError("Địa chỉ không được để trống!", owner: this);
                 return;
             }
 
@@ -184,6 +139,34 @@ namespace cschool.Views.Student
                 return;
             }
 
+            // Kiểm tra trùng học sinh trong danh sách hiện có
+            var exists = studentViewModel.AllStudents.Any(s =>
+                string.Equals(s.Fullname, fullName, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(s.Gender, gender, StringComparison.OrdinalIgnoreCase) &&
+                DateTime.TryParse(s.BirthDay, out var bDate) && bDate.Date == birthDay.Date);
+
+            if (exists)
+            {
+                await MessageBoxUtil.ShowWarning("Học sinh này đã tồn tại trong danh sách!", owner: this);
+                return;
+            }
+
+            // // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
+            // var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
+            //                     studentViewModel.Students.Any(s => s.Phone == phone);
+            // if (duplicatePhone)
+            // {
+            //     await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
+            //     return;
+            // }
+
+            // var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
+            //                     studentViewModel.Students.Any(s => s.Email == email);
+            // if (duplicateEmail)
+            // {
+            //     await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
+            //     return;
+            // }
 
             // Gửi dữ liệu tới backend hoặc lưu vào model
             var student = new StudentModel
@@ -198,8 +181,7 @@ namespace cschool.Views.Student
                 Address = address,
                 LearnYear = learnYear,
                 LearnStatus = learnStatus,
-                // AvatarFile = _selectedAvatarPath,
-                // Avatar = _selectedAvatarPath is null ? "" : Path.GetFileName(_selectedAvatarPath)
+                AvatarFile = _selectedAvatarPath,
             };
 
             // - Xử lý
@@ -208,17 +190,15 @@ namespace cschool.Views.Student
             // Thông báo xử lý, nếu thành công thì ẩn dialog
             if (isSuccess)
             {
-                await MessageBoxUtil.ShowSuccess("Thêm người dùng thành công!", owner: this);
-
+                await MessageBoxUtil.ShowSuccess("Thêm học sinh thành công!", owner: this);
                 await studentViewModel.GetStudentsCommand.Execute().ToTask();
-
                 this.Close();
             }
             else
             {
-                await MessageBoxUtil.ShowSuccess("Thêm người dùng thất bại!", owner: this);
+                await MessageBoxUtil.ShowSuccess("Thêm học sinh thất bại!", owner: this);
                 this.Close();
             }
-        }
+        }   
     }
 }

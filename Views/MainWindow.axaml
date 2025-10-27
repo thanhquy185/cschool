@@ -105,6 +105,39 @@
                                 </StackPanel>
                             </Border>
                         </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding ExamButtonActive}"
+                            Command="{Binding GoToExamViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding ExamButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding ExamButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding TuitionButtonActive}"
+                            Command="{Binding GoToTuitionViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding TuitionButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding TuitionButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding AttendanceButtonActive}"
+                            Command="{Binding GoToAttendanceViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding AttendanceButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding AttendanceButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
                     </StackPanel>
                 </ScrollViewer>
             </Border>

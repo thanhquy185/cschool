@@ -4,11 +4,11 @@ using System.Data;
 
 namespace cschool.Services;
 
-public class StudentService
+public class TuitionService
 {
     private readonly DBService _db;
 
-    public StudentService(DBService db)
+    public TuitionService(DBService db)
     {
         _db = db;
     }
