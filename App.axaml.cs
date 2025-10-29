@@ -28,6 +28,8 @@ public partial class App : Application
             AppService.DBService = new DBService(connectionString);
             AppService.UserService = new UserService(AppService.DBService);
             AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
+            AppService.statisticalService = new StatisticalService(AppService.DBService);
+            AppService.homeClassService = new HomeClassService(AppService.DBService);
             Console.WriteLine("Creating MainWindow...");
             desktop.MainWindow = new MainWindow
             {

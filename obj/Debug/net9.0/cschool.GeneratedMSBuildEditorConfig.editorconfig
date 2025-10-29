@@ -51,7 +51,25 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [E:/HK1-NH-2025-2026/C\#/cschool/Views/AssignTeacherView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/DialogAssignTeacher/AssignTeacherAddDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/DialogAssignTeacher/AssignTeacherDetailDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/DialogAssignTeacher/AssignTeacherEditDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/HomeClassView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [E:/HK1-NH-2025-2026/C\#/cschool/Views/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/ScoreView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/HK1-NH-2025-2026/C\#/cschool/Views/StatisticalView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [E:/HK1-NH-2025-2026/C\#/cschool/Views/StudentView.axaml]

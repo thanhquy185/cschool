@@ -5,6 +5,7 @@ enum DialogModeEnum
     Create,
     Update,
     Lock,
+    Excel,
     ChangePassword
 }
 

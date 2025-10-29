@@ -17,6 +17,8 @@
           "Avalonia.Themes.Fluent": "11.3.5",
           "CommunityToolkit.Mvvm": "8.2.1",
           "FluentAvaloniaUI": "2.4.0",
+          "LiveChartsCore": "2.0.0-rc6.1",
+          "LiveChartsCore.SkiaSharpView.Avalonia": "2.0.0-rc6.1",
           "MsBox.Avalonia": "3.0.0-rc2",
           "MySql.Data": "9.4.0",
           "ReactiveUI": "21.0.1"
@@ -487,6 +489,40 @@
           "lib/net6.0/K4os.Hash.xxHash.dll": {
             "assemblyVersion": "1.0.8.0",
             "fileVersion": "1.0.8.0"
+          }
+        }
+      },
+      "LiveChartsCore/2.0.0-rc6.1": {
+        "runtime": {
+          "lib/net8.0/LiveChartsCore.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "LiveChartsCore.SkiaSharpView/2.0.0-rc6.1": {
+        "dependencies": {
+          "LiveChartsCore": "2.0.0-rc6.1",
+          "SkiaSharp": "3.116.1",
+          "SkiaSharp.HarfBuzz": "3.116.1"
+        },
+        "runtime": {
+          "lib/net8.0/LiveChartsCore.SkiaSharpView.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "LiveChartsCore.SkiaSharpView.Avalonia/2.0.0-rc6.1": {
+        "dependencies": {
+          "Avalonia": "11.3.5",
+          "Avalonia.Skia": "11.3.5",
+          "LiveChartsCore.SkiaSharpView": "2.0.0-rc6.1"
+        },
+        "runtime": {
+          "lib/net8.0/LiveChartsCore.SkiaSharpView.Avalonia.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
           }
         }
       },
@@ -1156,6 +1192,27 @@
       "sha512": "sha512-Wp2F7BamQ2Q/7Hk834nV9vRQapgcr8kgv9Jvfm8J3D0IhDqZMMl+a2yxUq5ltJitvXvQfB8W6K4F4fCbw/P6YQ==",
       "path": "k4os.hash.xxhash/1.0.8",
       "hashPath": "k4os.hash.xxhash.1.0.8.nupkg.sha512"
+    },
+    "LiveChartsCore/2.0.0-rc6.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yaeFXCpH7AspjMKzXNdfr1Ikg06Dm+a4XRW/8wBtHAa/TEVJLY8yBsG6pNpjrPk+FpRaSImlNYw7pv298W1XPw==",
+      "path": "livechartscore/2.0.0-rc6.1",
+      "hashPath": "livechartscore.2.0.0-rc6.1.nupkg.sha512"
+    },
+    "LiveChartsCore.SkiaSharpView/2.0.0-rc6.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-FU+0uIxL3xR631+4aN296L+M3f6qWrIEUJr8+SSmcGVVa27iB0+ko55IRInZGdYlmaR+8mRTPAXObXT6/1EMDQ==",
+      "path": "livechartscore.skiasharpview/2.0.0-rc6.1",
+      "hashPath": "livechartscore.skiasharpview.2.0.0-rc6.1.nupkg.sha512"
+    },
+    "LiveChartsCore.SkiaSharpView.Avalonia/2.0.0-rc6.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-r5KIlmOWKCYznnNsED3G5V1kRaq4dVxxcfvMfgt9YKsjyDPD1ARVSJJimARQ2C6Zlavk9JqZohrAm4sQA4T4Lg==",
+      "path": "livechartscore.skiasharpview.avalonia/2.0.0-rc6.1",
+      "hashPath": "livechartscore.skiasharpview.avalonia.2.0.0-rc6.1.nupkg.sha512"
     },
     "Markdown.Avalonia.Tight/11.0.0-d1": {
       "type": "package",

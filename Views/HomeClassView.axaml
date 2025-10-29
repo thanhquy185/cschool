@@ -1,0 +1,102 @@
+<UserControl
+    x:Class="cschool.Views.HomeClassView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:cschool.ViewModels"
+    xmlns:model="using:cschool.Models"
+    x:DataType="vm:HomeClassViewModel"
+    xmlns:conv="clr-namespace:cschool.Utils"
+    x:Name="Root">
+    
+    <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
+        
+        <!-- Header -->
+        <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+            <StackPanel Classes="MainLayoutHeaderInfo">
+                <TextBlock Classes="Title" Text="Quản lý lớp chủ nhiệm" />
+                <TextBlock Classes="SubTitle" Text="Quản lý lớp chủ nhiệm" />
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons" >
+                <Button Classes="CrudButton Info">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel >
+                            <Image Source="{DynamicResource InfoIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                
+                <Button Classes="CrudButton Create">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel >
+                            <Image Source="{DynamicResource ExcelIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất excel" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Filter -->
+        <Border Grid.Row="1" Classes="FilterDataWarper" Margin="0,10,0,10">
+            <Grid Classes="FilterData">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Classes="FilterDataInputs" Orientation="Horizontal" Grid.Column="0">
+                    <Grid Classes="FilterDataFindInput" Width="300">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Watermark="Nhập tên học sinh" />
+                        <Button Grid.Column="1"
+                            Classes="FilterDataSearchButton" 
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"                   
+                            ToolTip.Tip="Tìm kiếm">
+                            <Image Source="{DynamicResource SearchIcon}" Width="20" Height="20"/>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+                
+                <Button Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Classes="FilterDataResetButton">
+                    <Image Source="{DynamicResource ResetIcon}" Width="16" Height="16"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- DataGrid hiển thị dữ liệu -->
+        <DataGrid Grid.Row="2"
+                  x:Name="GridStudents"
+                  ItemsSource="{Binding Students}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,10,0,0">
+            
+            <!-- Định nghĩa columns sẽ được thêm từ code-behind -->
+            <DataGrid.Columns>
+                <!-- Các cột cơ bản -->
+                <DataGridTextColumn Header="Mã HS" Binding="{Binding StudentId}" Width="80"/>
+                <DataGridTextColumn Header="Tên học sinh" Binding="{Binding StudentName}" Width="200"/>
+                
+                <!-- Các cột môn học sẽ được thêm động từ code-behind -->
+                
+                <!-- Cột tổng hợp -->
+                <DataGridTextColumn Header="GPA" Binding="{Binding GpaTotal, StringFormat={}{0:F2}}" Width="80"/>
+                <DataGridTextColumn Header="Hạnh kiểm" Binding="{Binding ConductLevel}" Width="100"/>
+                <DataGridTextColumn Header="Học lực" Binding="{Binding Academic}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>

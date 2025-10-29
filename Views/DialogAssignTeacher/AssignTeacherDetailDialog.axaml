@@ -1,0 +1,7 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="cschool.Views.DialogAssignTeacher.AssignTeacherDetailDialog">
+    <StackPanel Margin="10">
+        <TextBlock Text="Assign Teacher Detail Dialog" FontWeight="Bold" FontSize="16" />
+    </StackPanel>
+</UserControl>

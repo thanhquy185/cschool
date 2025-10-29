@@ -1,0 +1,85 @@
+<UserControl
+  x:Class="cschool.Views.StatisticalView"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:cschool.ViewModels"
+  xmlns:model="using:cschool.Models"
+  x:DataType="vm:StatisticalViewModel"
+  xmlns:conv="clr-namespace:cschool.Utils"
+  xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+  x:Name="Root">
+
+  <!-- GRID CHA BAO HẾT -->
+  <Grid RowDefinitions="Auto,Auto,*">
+
+    <!-- 1) HEADER + FILTER (giữ nguyên nội dung cũ) -->
+    <Grid Grid.Row="0" Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
+      <!-- Header giống UserView -->
+      <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+        <StackPanel Classes="MainLayoutHeaderInfo">
+          <TextBlock Classes="Title" Text="Nhập điểm môn học" />
+          <TextBlock Classes="SubTitle" Text="Quản lý nhập điểm môn học" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+          <Button Classes="CrudButton Info">
+            <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+              <StackPanel>
+                <Image Source="{DynamicResource InfoIcon}" />
+                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+              </StackPanel>
+            </Border>
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <!-- Filter -->
+      <Border Grid.Row="1" Classes="FilterDataWarper">
+        <Grid Classes="FilterData" RowDefinitions="*,Auto">
+          <StackPanel Classes="FilterDataInputs">
+            <Grid Classes="FilterDataFindInput">
+              <TextBox Watermark="Nhập năm học"/>
+              <Button Grid.Column="1"
+                      Classes="FilterDataSearchButton"
+                      Background="Transparent"
+                      BorderBrush="Transparent"
+                      BorderThickness="0"
+                      ToolTip.Tip="Tìm kiếm">
+                <Image Source="{DynamicResource SearchIcon}" Width="20" Height="20"/>
+              </Button>
+            </Grid>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Grid>
+
+    <!-- 2) BIỂU ĐỒ -->
+    <Grid Grid.Row="2" RowDefinitions="Auto,*" Margin="12">
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,8" Spacing="12">
+        <TextBlock Text="Thống kê điểm &amp; hành kiểm" FontSize="18" FontWeight="Bold"/>
+        <Button Content="Làm mới" Command="{Binding LoadDataCommand}" HorizontalAlignment="Right"/>
+      </StackPanel>
+
+      <Grid Grid.Row="1" ColumnDefinitions="*,*,*" RowDefinitions="Auto">
+        <StackPanel Grid.Column="0" Margin="6">
+          <TextBlock Text="Academic (Good/Fair/Satisfactory)" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          <lvc:PieChart Series="{Binding AcademicSeries}" LegendPosition="Right" Height="200" />
+          <TextBlock Text="{Binding AcademicSummary}" Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="6">
+          <TextBlock Text="Conduct Level (Good/Fair/Satisfactory)" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          <lvc:PieChart Series="{Binding ConductSeries}" LegendPosition="Right" Height="200" />
+          <TextBlock Text="{Binding ConductSummary}" Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Margin="6">
+          <TextBlock Text="GPA classification (Good >=8, Fair >=6.5, Sat >=5)" FontWeight="SemiBold" Margin="0,0,0,6" TextWrapping="Wrap"/>
+          <lvc:PieChart Series="{Binding GpaSeries}" LegendPosition="Right" Height="200"/>
+          <TextBlock Text="{Binding GpaSummary}" Margin="0,6,0,0"/>
+        </StackPanel>
+      </Grid>
+    </Grid>
+
+  </Grid>
+</UserControl>
