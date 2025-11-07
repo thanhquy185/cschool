@@ -62,7 +62,52 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (14, 7, 'Thành viên'),
 (15, 9, 'Thành viên'),
 (16, 8, 'Thành viên'),
-(17, 10, 'Thành viên');
+(17, 10, 'Thành viên'),
+
+(18, 11, 'Lớp trưởng'),
+(19, 12, 'Lớp phó học tập'),
+(20, 13, 'Lớp phó lao động'),
+(11, 14, 'Thành viên'),
+(11, 15, 'Thành viên'),
+(12, 16, 'Thành viên'),
+(12, 17, 'Thành viên'),
+(13, 18, 'Thành viên'),
+(13, 19, 'Thành viên'),
+(14, 20, 'Thành viên'),
+
+(15, 21, 'Lớp trưởng'),
+(16, 22, 'Lớp phó học tập'),
+(17, 23, 'Lớp phó lao động'),
+(18, 24, 'Thành viên'),
+(18, 25, 'Thành viên'),
+(19, 26, 'Thành viên'),
+(19, 27, 'Thành viên'),
+(20, 28, 'Thành viên'),
+(20, 29, 'Thành viên'),
+(11, 30, 'Thành viên'),
+
+(12, 31, 'Lớp trưởng'),
+(13, 32, 'Lớp phó học tập'),
+(14, 33, 'Lớp phó lao động'),
+(15, 34, 'Thành viên'),
+(15, 35, 'Thành viên'),
+(16, 36, 'Thành viên'),
+(16, 37, 'Thành viên'),
+(17, 38, 'Thành viên'),
+(17, 39, 'Thành viên'),
+(18, 40, 'Thành viên'),
+
+(19, 41, 'Lớp trưởng'),
+(20, 42, 'Lớp phó học tập'),
+(11, 43, 'Lớp phó lao động'),
+(12, 44, 'Thành viên'),
+(12, 45, 'Thành viên'),
+(13, 46, 'Thành viên'),
+(13, 47, 'Thành viên'),
+(14, 48, 'Thành viên'),
+(14, 49, 'Thành viên'),
+(15, 50, 'Thành viên');
+
 
 -- --------------------------------------------------------
 
@@ -222,27 +267,53 @@ INSERT INTO `department_details` (`department_id`, `teacher_id`, `start_date`, `
 CREATE TABLE `exams` (
     `id` int(11) NOT NULL,
     `exam_detail_id` int(11) NOT NULL,      -- Tham chiếu đến ca thi
-    `exam_room` varchar(50) NOT NULL,   -- Phòng thi
-    `supervisor_id` int(11) DEFAULT NULL,   -- Giáo viên coi thi (nếu có)
-    `candidate_count` int(11) DEFAULT 0    -- Số lượng thí sinh trong phòng
+    `exam_room` int(11) NOT NULL,   -- Phòng thi
+    `supervisor_id` int(11) DEFAULT NULL   -- Giáo viên coi thi (nếu có)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `exams`
 --
 
-INSERT INTO `exams` (`id`, `exam_detail_id`, `exam_room`, `supervisor_id`, `candidate_count`) VALUES
-(1, 1, 'Phòng A101', 5, 30),
-(2, 2, 'Phòng A102', 7, 28),
-(3, 3, 'Phòng B201', 8, 32),
-(4, 4, 'Phòng B202', 6, 29),
-(5, 5, 'Phòng C301', 9, 31),
-(6, 6, 'Phòng C302', 10, 27),
-(7, 7, 'Phòng D401', 1, 33),
-(8, 8, 'Phòng D402', 2, 30),
-(9, 9, 'Phòng E501', 3, 26),
-(10, 10, 'Phòng E502', 4, 34);
+INSERT INTO `exams` (`id`, `exam_detail_id`, `exam_room`, `supervisor_id`) VALUES
+(1, 1, 1, 5),
+(2, 2, 2, 7),
+(3, 3, 3, 8),
+(4, 4, 4, 6),
+(5, 5, 5, 9),
+(6, 6, 6, 10),
+(7, 7, 7, 1),
+(8, 8, 8, 2),
+(9, 9, 9, 3),
+(10, 10, 10, 4);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rooms`
+--
+
+CREATE TABLE `rooms` (
+    `id` int(11) NOT NULL,
+    `name` varchar(50) NOT NULL,
+    `quantity` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `rooms`
+--
+
+INSERT INTO `rooms` (`id`, `name`, `quantity`) VALUES
+(1, 'Phòng A101', 10),
+(2, 'Phòng A102', 10),
+(3, 'Phòng B201', 10),
+(4, 'Phòng B202', 10),
+(5, 'Phòng C301', 10),
+(6, 'Phòng C302', 10),
+(7, 'Phòng D401', 10),
+(8, 'Phòng D402', 10),
+(9, 'Phòng E501', 10),
+(10, 'Phòng E502', 10);
 
 -- --------------------------------------------------------
 
@@ -264,16 +335,16 @@ CREATE TABLE `exam_details` (
 --
 
 INSERT INTO `exam_details` (`id`, `subject_id`, `term_id`, `exam_type_id`, `start_time`, `end_time`) VALUES
-(1, 1, 1, 1, '2025-11-01 08:00:00', '2025-11-01 09:30:00'),
-(2, 2, 1, 1, '2025-11-02 08:00:00', '2025-11-02 09:30:00'),
-(3, 3, 1, 1, '2025-11-03 08:00:00', '2025-11-03 09:30:00'),
-(4, 4, 1, 1, '2025-11-04 08:00:00', '2025-11-04 09:30:00'),
-(5, 1, 1, 1, '2025-11-05 08:00:00', '2025-11-05 09:30:00'),
-(6, 6, 2, 2, '2026-04-01 08:00:00', '2026-04-01 09:30:00'),
-(7, 7, 2, 2, '2026-04-02 08:00:00', '2026-04-02 09:30:00'),
-(8, 2, 2, 2, '2026-04-03 08:00:00', '2026-04-03 09:30:00'),
-(9, 9, 2, 2, '2026-04-04 08:00:00', '2026-04-04 09:30:00'),
-(10, 10, 2, 2, '2026-04-05 08:00:00', '2026-04-05 09:30:00');
+(1, 1, 9, 3, '2025-11-01 08:00:00', '2025-11-01 09:30:00'),
+(2, 2, 9, 3, '2025-11-02 08:00:00', '2025-11-02 09:30:00'),
+(3, 3, 9, 4, '2025-11-03 08:00:00', '2025-11-03 09:30:00'),
+(4, 4, 9, 4, '2025-11-04 08:00:00', '2025-11-04 09:30:00'),
+(5, 1, 9, 3, '2025-11-05 08:00:00', '2025-11-05 09:30:00'),
+(6, 6, 10, 4, '2026-04-01 08:00:00', '2026-04-01 09:30:00'),
+(7, 7, 10, 3, '2026-04-02 08:00:00', '2026-04-02 09:30:00'),
+(8, 2, 10, 4, '2026-04-03 08:00:00', '2026-04-03 09:30:00'),
+(9, 9, 10, 4, '2026-04-04 08:00:00', '2026-04-04 09:30:00'),
+(10, 10, 10, 3, '2026-04-05 08:00:00', '2026-04-05 09:30:00');
 
 -- --------------------------------------------------------
 
@@ -535,11 +606,11 @@ INSERT INTO `students` (`id`, `fullname`, `avatar`, `birthday`, `gender`, `ethni
 (3, 'Lê Văn Cường', NULL, '2009-03-15', 'Nam', 'Mường', 'Không', '67 Hai Bà Trưng, TP. Hồ Chí Minh', '0934567890', 'cuong.le@example.com', '2020-2023', 'Bảo lưu', 1),
 (4, 'Phạm Thị Dung', NULL, '2011-07-08', 'Nữ', 'Kinh', 'Công giáo', '89 Điện Biên Phủ, TP. Hồ Chí Minh', '0945678901', 'dung.pham@example.com', '2021-2024', 'Đang học', 1),
 (5, 'Hoàng Văn Em', NULL, '2011-11-30', 'Nam', 'Thái', 'Không', '12 Cách Mạng Tháng Tám, TP. Hồ Chí Minh', '0956789012', 'em.hoang@example.com', '2022-2025', 'Đang học', 1),
-(6, 'Đỗ Thị Hạnh', NULL, '2008-04-22', 'Nữ', 'Kinh', 'Phật giáo', '234 Nguyễn Văn Cừ, TP. Hồ Chí Minh', '0967890123', 'hanh.do@example.com', '2019-2020', 'Tốt nghiệp', 1),
-(7, 'Bùi Văn Khánh', NULL, '2010-01-19', 'Nam', 'Tày', 'Không', '56 Võ Văn Tần, TP. Hồ Chí Minh', '0978901234', 'khanh.bui@example.com', '2021-2022', 'Đang học', 1),
-(8, 'Ngô Thị Lan', NULL, '2011-06-05', 'Nữ', 'Kinh', 'Không', '78 Trần Hưng Đạo, TP. Hồ Chí Minh', '0989012345', 'lan.ngo@example.com', '2022-2023', 'Nghỉ học', 1),
-(9, 'Vũ Văn Minh', NULL, '2009-08-17', 'Nam', 'Hoa', 'Không', '90 Pasteur, TP. Hồ Chí Minh', '0990123456', 'minh.vu@example.com', '2020-2021', 'Bảo lưu', 1),
-(10, 'Phan Thị Ngọc', NULL, '2011-12-25', 'Nữ', 'Khmer', 'Không', '321 Nguyễn Thị Minh Khai, TP. Hồ Chí Minh', '0901234567', 'ngoc.phan@example.com', '2023-2024', 'Đang học', 1),
+(6, 'Đỗ Thị Hạnh', NULL, '2008-04-22', 'Nữ', 'Kinh', 'Phật giáo', '234 Nguyễn Văn Cừ, TP. Hồ Chí Minh', '0967890123', 'hanh.do@example.com', '2019-2022', 'Tốt nghiệp', 1),
+(7, 'Bùi Văn Khánh', NULL, '2010-01-19', 'Nam', 'Tày', 'Không', '56 Võ Văn Tần, TP. Hồ Chí Minh', '0978901234', 'khanh.bui@example.com', '2021-2024', 'Đang học', 1),
+(8, 'Ngô Thị Lan', NULL, '2011-06-05', 'Nữ', 'Kinh', 'Không', '78 Trần Hưng Đạo, TP. Hồ Chí Minh', '0989012345', 'lan.ngo@example.com', '2022-2025', 'Nghỉ học', 1),
+(9, 'Vũ Văn Minh', NULL, '2009-08-17', 'Nam', 'Hoa', 'Không', '90 Pasteur, TP. Hồ Chí Minh', '0990123456', 'minh.vu@example.com', '2020-2023', 'Bảo lưu', 1),
+(10, 'Phan Thị Ngọc', NULL, '2011-12-25', 'Nữ', 'Khmer', 'Không', '321 Nguyễn Thị Minh Khai, TP. Hồ Chí Minh', '0901234567', 'ngoc.phan@example.com', '2021-2024', 'Đang học', 1),
 (11, 'Nguyễn Văn A', NULL, '2007-05-12', 'Nam', 'Kinh', 'Không', '123 Lê Lợi, TP.HCM', '0901234567', 'nva@example.com', '2022-2025', 'Đang học', 1),
 (12, 'Trần Thị B', NULL, '2008-03-22', 'Nữ', 'Kinh', 'Phật giáo', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttb@example.com', '2022-2025', 'Đang học', 1),
 (13, 'Lê Văn C', NULL, '2007-11-30', 'Nam', 'Kinh', 'Thiên chúa', '789 Hai Bà Trưng, TP.HCM', '0903456789', 'lvc@example.com', '2022-2025', 'Đang học', 1),
@@ -601,22 +672,22 @@ INSERT INTO `student_exams` (`examinee_id`, `student_id`, `exam_id`) VALUES
 (1, 1, 1),
 (2, 2, 1),
 (3, 3, 2),
-(4, 4, 2),
-(5, 5, 3),
+(4, 4, 4),
+(5, 5, 2),
 (6, 6, 3),
 (7, 7, 4),
-(8, 8, 4),
-(9, 9, 5),
+(8, 8, 5),
+(9, 9, 4),
 (10, 10, 5),
 (11, 11, 6),
-(12, 12, 6),
+(12, 12, 7),
 (13, 13, 7),
 (14, 14, 7),
 (15, 15, 8),
 (16, 16, 8),
 (17, 17, 9),
 (18, 18, 9),
-(19, 19, 10),
+(19, 19, 3),
 (20, 20, 10);
 
 -- --------------------------------------------------------
@@ -720,7 +791,7 @@ INSERT INTO `teachers` (`id`, `fullname`, `avatar`, `birthday`, `gender`, `addre
 CREATE TABLE `terms` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `year` int(11) DEFAULT NULL,
+  `year` varchar(50) DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1
@@ -731,14 +802,16 @@ CREATE TABLE `terms` (
 --
 
 INSERT INTO `terms` (`id`, `name`, `year`, `start_date`, `end_date`, `status`) VALUES
-(1, 'Học kỳ 1', 2021, '2021-09-01', '2022-01-15', 1),
-(2, 'Học kỳ 2', 2021, '2022-02-01', '2022-06-15', 1),
-(3, 'Học kỳ 1', 2022, '2022-09-01', '2023-01-15', 1),
-(4, 'Học kỳ 2', 2022, '2023-02-01', '2023-06-15', 1),
-(5, 'Học kỳ 1', 2023, '2023-09-01', '2024-01-15', 1),
-(6, 'Học kỳ 2', 2023, '2024-02-01', '2024-06-15', 1),
-(7, 'Học kỳ 1', 2024, '2024-09-01', '2025-01-15', 1),
-(8, 'Học kỳ 2', 2024, '2025-02-01', '2025-06-15', 1);
+(1, 'Học kỳ 1', '2021-2022', '2021-09-01', '2022-01-15', 1),
+(2, 'Học kỳ 2', '2021-2022', '2022-02-01', '2022-06-15', 1),
+(3, 'Học kỳ 1', '2022-2023', '2022-09-01', '2023-01-15', 1),
+(4, 'Học kỳ 2', '2022-2023', '2023-02-01', '2023-06-15', 1),
+(5, 'Học kỳ 1', '2023-2024', '2023-09-01', '2024-01-15', 1),
+(6, 'Học kỳ 2', '2023-2024', '2024-02-01', '2024-06-15', 1),
+(7, 'Học kỳ 1', '2024-2025', '2024-09-01', '2025-01-15', 1),
+(8, 'Học kỳ 2', '2024-2025', '2025-02-01', '2025-06-15', 1),
+(9, 'Học kỳ 1', '2025-2026', '2025-09-01', '2026-01-15', 1),
+(10, 'Học kỳ 2', '2025-2026', '2026-02-01', '2026-06-15', 1);
 
 -- --------------------------------------------------------
 
@@ -945,6 +1018,12 @@ ALTER TABLE `department_details`
 ALTER TABLE `exams`
   ADD PRIMARY KEY (`id`,`exam_detail_id`),
   ADD KEY `exam_detail_id` (`exam_detail_id`);
+
+--
+-- Indexes for table `rooms`
+--
+ALTER TABLE `rooms`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `exam_details`
@@ -1176,7 +1255,7 @@ ALTER TABLE `teachers`
 -- AUTO_INCREMENT for table `terms`
 --
 ALTER TABLE `terms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tuitions`
@@ -1247,7 +1326,8 @@ ALTER TABLE `department_details`
 --
 ALTER TABLE `exams`
   ADD CONSTRAINT `exams_ibfk_1` FOREIGN KEY (`exam_detail_id`) REFERENCES `exam_details`(`id`),
-  ADD CONSTRAINT `exams_ibfk_2` FOREIGN KEY (`supervisor_id`) REFERENCES `teachers`(`id`);
+  ADD CONSTRAINT `exams_ibfk_2` FOREIGN KEY (`supervisor_id`) REFERENCES `teachers`(`id`),
+  ADD CONSTRAINT `exams_ibfk_3` FOREIGN KEY (`exam_room`) REFERENCES `rooms`(`id`);
 
 --
 -- Constraints for table `exam_details`
