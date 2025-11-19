@@ -1,6 +1,11 @@
-
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using ReactiveUI;
 
 namespace cschool.ViewModels;
@@ -10,13 +15,95 @@ public partial class ExamViewModel : ViewModelBase
     // Danh sách lịch thi
     public ObservableCollection<ExamModel> Exams { get; }
     public ExamModel? ExamDetails { get; set; }
+    public ObservableCollection<StudentExamModel> StudentDetails { get; set; }
+    public ObservableCollection<TermModel> StudyTerm { get; set; }
+    public ObservableCollection<RoomExamModel> RoomDetails { get; set; }
+    public ObservableCollection<SubjectModel> SubjectList { get; set; }
+    public ObservableCollection<RoomModel> RoomList { get; set; }
+    public ObservableCollection<TeacherModel> TeacherList { get; set; }
+    public ObservableCollection<ExamAssignment> ExamAssignments { get; } = new();
+    public ObservableCollection<RoomModel> SelectedRooms { get; } = new();
+    public ObservableCollection<TeacherModel> SelectedTeachers { get; } = new();
+    public ICommand AddCommand { get; }
+    public ICommand DeleteCommand { get; }
     public string FilterKeyword { get; set; } = "";
     public string FilterStatus { get; set; } = "";
+    public int TotalStudents { get; set; }
+    private int _remainingStudents;
+    public int RemainingStudents
+    {
+        get => _remainingStudents;
+        set
+        {
+            if (_remainingStudents != value)
+            {
+                _remainingStudents = value;
+                OnPropertyChanged(nameof(RemainingStudents));
+                RemainingStudentsText = $"Còn lại {_remainingStudents} học sinh chưa được phân vào phòng thi";
+            }
+        }
+    }
+    private string _remainingStudentsText = "";
+    public string RemainingStudentsText
+    {
+        get => _remainingStudentsText;
+        set
+        {
+            if (_remainingStudentsText != value)
+            {
+                _remainingStudentsText = value;
+                OnPropertyChanged(nameof(RemainingStudentsText));
+            }
+        }
+    }
+    private int? _selectedGrade;
+    public int? SelectedGrade
+    {
+        get => _selectedGrade;
+        set
+        {
+            if (_selectedGrade != value)
+            {
+                _selectedGrade = value;
+                OnPropertyChanged(nameof(SelectedGrade));
+            }
+            RecalculateRemainingStudents();
+        }
+    }
+    public void RecalculateRemainingStudents()
+    {
+        if (SelectedGrade is null)
+        {
+            RemainingStudents = 0;
+            return;
+        }
+
+        // Tổng số học sinh theo khối/lớp
+        int total = AppService.ExamService.GetStudentGrade(SelectedGrade.Value);
+
+        // Tổng số học sinh đã phân công trong ExamAssignments
+        int assigned = ExamAssignments.Sum(a => a.AssignedStudents);
+
+        int remaining = Math.Max(total - assigned, 0);
+
+        // Gán RemainingStudents và cập nhật text hiển thị luôn
+        RemainingStudents = remaining;
+
+        // Nếu bạn dùng property string riêng cho binding TextBlock
+        RemainingStudentsText = $"Còn lại {remaining} học sinh chưa được phân vào phòng thi";
+    }
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
     // Các command thao tác với lịch thi
     public ReactiveCommand<Unit, ObservableCollection<ExamModel>> GetExamsCommand { get; }
-    public ReactiveCommand<int, ExamModel?> GetExamByIdCommand { get; }
-    public ReactiveCommand<ExamModel, bool> CreateExamCommand { get; }
+    public ReactiveCommand<int, Unit> GetExamByIdCommand { get; }
+    public ReactiveCommand<(int details_id, int room_id), Unit> GetStudentExamByIdCommand { get; }
+    public ReactiveCommand<int, Unit> GetRoomExamByIdCommand { get; }
+    public ReactiveCommand<ExamCreateModel, bool> CreateExamCommand { get; }
     public ReactiveCommand<ExamModel, bool> UpdateExamCommand { get; }
     public ReactiveCommand<ExamModel, bool> LockExamCommand { get; }
 
@@ -24,7 +111,9 @@ public partial class ExamViewModel : ViewModelBase
     {
         // Load danh sách ban đầu
         Exams = new ObservableCollection<ExamModel>();
-
+        StudentDetails = new ObservableCollection<StudentExamModel>();
+        RoomDetails = new ObservableCollection<RoomExamModel>();
+        
         var exams = AppService.ExamService.GetExamSchedule();
         foreach (var exam in exams)
         {
@@ -42,25 +131,73 @@ public partial class ExamViewModel : ViewModelBase
         });
 
         // Lấy lịch thi theo ID
-        // GetExamByIdCommand = ReactiveCommand.Create<int, ExamModel?>(id =>
-        // {
-        //     var Exam = AppService.ExamService.GetExamById(id);
-        //     ExamDetails = Exam;
-        //     return Exam;
-        // });
+        GetExamByIdCommand = ReactiveCommand.Create<int>(id =>
+        {
+            var exam = AppService.ExamService.GetExamById(id);
+            ExamDetails = exam;
+        });
 
-        // // Tạo lịch thi mới
-        // CreateStudentCommand = ReactiveCommand.CreateFromTask<ExamModel, bool>(async (student) =>
-        // {
-        //     string newAvatarFile = await UploadService.SaveImageAsync(student.AvatarFile, "student", AppService.StudentService.GetIdLastStudent() + 1);
-        //     student.Avatar = newAvatarFile;
-        //     var result = AppService.StudentService.CreateStudent(student);
-        //     if (result)
-        //     {
-        //         return true;
-        //     }
-        //     return false;
-        // });
+        // Lấy danh sách phòng thi theo lịch
+        GetRoomExamByIdCommand = ReactiveCommand.CreateFromTask<int>(async (id) =>
+        {
+            var room_exam = AppService.ExamService.GetRoomExamById(id);
+            RoomDetails.Clear();
+            foreach (var s in room_exam)
+                RoomDetails.Add(s);
+        });
+
+        // Lấy danh sách học sinh theo phòng
+        GetStudentExamByIdCommand = ReactiveCommand.CreateFromTask<(int details_id, int room_id), Unit>(
+        async tuple =>
+        {
+            var (details_id, room_id) = tuple;
+
+            // Gọi hàm đồng bộ bên service trong Task.Run để không chặn UI
+            var student_exam = await Task.Run(() =>
+                AppService.ExamService.GetStudentExamById(details_id, room_id)
+            );
+
+            StudentDetails.Clear();
+            foreach (var s in student_exam)
+                StudentDetails.Add(s);
+
+            return Unit.Default;
+        });
+
+        // Lấy danh sách môn học
+        SubjectList = new ObservableCollection<SubjectModel>();
+        var subjects = AppService.ExamService.GetSubjectList();
+        foreach (var subject in subjects)
+            SubjectList.Add(subject);
+
+        // Lấy danh sách học kỳ
+        StudyTerm = new ObservableCollection<TermModel>();
+        var terms = AppService.ExamService.GetTermList();
+        foreach (var term in terms)
+            StudyTerm.Add(term);
+      
+        // Lấy danh sách phòng thi
+        RoomList = new ObservableCollection<RoomModel>();
+        var rooms = AppService.ExamService.GetRoomList();
+        foreach (var room in rooms)
+            RoomList.Add(room);
+
+        // Lấy danh sách giáo viên
+        TeacherList = new ObservableCollection<TeacherModel>();
+        var teachers = AppService.ExamService.GetTeacherList();
+        foreach (var teacher in teachers)
+            TeacherList.Add(teacher);
+
+        // Tạo lịch thi mới
+        CreateExamCommand = ReactiveCommand.CreateFromTask<ExamCreateModel, bool>(async (exam) =>
+        {
+            var result = AppService.ExamService.CreateExam(exam);
+            if (result)
+            {
+                return true;
+            }
+            return false;
+        });
 
         // // Cập nhật thông tin lịch thi
         // UpdateStudentCommand = ReactiveCommand.CreateFromTask<ExamModel, bool>(async (student) =>

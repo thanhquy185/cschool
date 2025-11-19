@@ -90,7 +90,6 @@ namespace cschool.Views.Student
             var avatar = AvatarImage.Source;
 
             // Kiểm tra xác nhận
-
             var confirm = await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn muốn thêm học sinh này?");
             if (!confirm)
                 return;
@@ -143,30 +142,18 @@ namespace cschool.Views.Student
             var exists = studentViewModel.AllStudents.Any(s =>
                 string.Equals(s.Fullname, fullName, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(s.Gender, gender, StringComparison.OrdinalIgnoreCase) &&
-                DateTime.TryParse(s.BirthDay, out var bDate) && bDate.Date == birthDay.Date);
+                DateTime.TryParse(s.BirthDay, out var bDate) && bDate.Date == birthDay.Date &&
+                string.Equals(s.Ethnicity, ethnicity, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(s.Religion, religion, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(s.Phone, phone, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(s.Email, email, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(s.Address, address, StringComparison.OrdinalIgnoreCase));
 
             if (exists)
             {
                 await MessageBoxUtil.ShowWarning("Học sinh này đã tồn tại trong danh sách!", owner: this);
                 return;
             }
-
-            // // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
-            // var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
-            //                     studentViewModel.Students.Any(s => s.Phone == phone);
-            // if (duplicatePhone)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
-            //     return;
-            // }
-
-            // var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
-            //                     studentViewModel.Students.Any(s => s.Email == email);
-            // if (duplicateEmail)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
-            //     return;
-            // }
 
             // Gửi dữ liệu tới backend hoặc lưu vào model
             var student = new StudentModel

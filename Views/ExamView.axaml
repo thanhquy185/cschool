@@ -98,32 +98,32 @@
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="*"
-            Binding="{Binding Id}"
-            Header="ID" />
-          <DataGridTextColumn
-            Width="*"
-            Binding="{Binding Room}"
-            Header="Số phòng" />
-          <DataGridTextColumn
-            Width="*"
             Binding="{Binding Subject}"
             Header="Môn học" />
           <DataGridTextColumn
             Width="*"
-            Binding="{Binding TeacherName}"
-            Header="Giáo viên" />
+            Binding="{Binding Grade}"
+            Header="Khối lớp" />
           <DataGridTextColumn
             Width="*"
             Binding="{Binding ExamDateDisplay}"
             Header="Ngày thi" />
           <DataGridTextColumn
             Width="*"
+            Binding="{Binding StartTimeDisplay}"
+            Header="Giờ bắt đầu" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding EndTimeDisplay}"
+            Header="Giờ kết thúc" />
+          <DataGridTextColumn
+            Width="*"
             Binding="{Binding TermName}"
             Header="Học kỳ" />
           <DataGridTextColumn
             Width="*"
-            Binding="{Binding CandidateCount}"
-            Header="Số lượng thí sinh" />
+            Binding="{Binding TermYear}"
+            Header="Năm học" />
         </DataGrid.Columns>
       </DataGrid>
     </Border>

@@ -45,8 +45,7 @@ public partial class StudentView : UserControl
             case DialogModeEnum.Info:
                 if (vm != null && selectedStudent != null)
                 {
-                    var fullStudent = AppService.StudentService.GetStudentById(selectedStudent.Id);
-                    vm.StudentDetails = fullStudent ?? selectedStudent;
+                    vm.GetStudentByIdCommand.Execute(selectedStudent.Id).ToTask();
                 }
                 dialog = new StudentInfoDialog(vm);
                 break;
@@ -58,8 +57,7 @@ public partial class StudentView : UserControl
             case DialogModeEnum.Update:
                 if (vm != null && selectedStudent != null)
                 {
-                    var fullStudent = AppService.StudentService.GetStudentById(selectedStudent.Id);
-                    vm.StudentDetails = fullStudent ?? selectedStudent;
+                    vm.GetStudentByIdCommand.Execute(selectedStudent.Id).ToTask();
                 }
                 dialog = new StudentUpdateDialog(vm);
                 break;
@@ -67,8 +65,7 @@ public partial class StudentView : UserControl
             case DialogModeEnum.Lock:
                 if (vm != null && selectedStudent != null)
                 {
-                    var fullStudent = AppService.StudentService.GetStudentById(selectedStudent.Id);
-                    vm.StudentDetails = fullStudent ?? selectedStudent;
+                    vm.GetStudentByIdCommand.Execute(selectedStudent.Id).ToTask();
                 }
                 dialog = new StudentLockDialog(vm);
                 break;

@@ -58,6 +58,7 @@
                     <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <TextBlock Text="Ảnh đại diện"
                                    FontSize="15"
+                                   FontWeight="Bold"
                                    Margin="0,0,0,10" Foreground="Black"/>
                         
                         <Border Width="300" Height="300"
@@ -115,13 +116,13 @@
                         </Grid.RowDefinitions>
 
                         <!-- Mã học sinh -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã học sinh" FontSize="15" Margin="0,0,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã học sinh" FontSize="15" FontWeight="Bold" Margin="0,0,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="1" Grid.Column="0" Text="Mã sẽ được xác định sau khi xác nhận thông tin" HorizontalContentAlignment="Center" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"/>
 
                         <!-- Tình trạng học -->
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Tình trạng học" FontSize="15" Margin="20,0,0,5" Foreground="Black"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="LearnStatus" MaxDropDownHeight="300" SelectedIndex="0" Margin="20,0,0,10">
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Tình trạng học" FontSize="15" FontWeight="Bold" Margin="20,0,0,5" Foreground="Black"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="LearnStatus" MaxDropDownHeight="300" SelectedIndex="0" Width="230" Margin="20,0,0,10">
                                 <ComboBoxItem>--- Chọn Tình trạng học ---</ComboBoxItem>
                                 <ComboBoxItem>Đang học</ComboBoxItem>
                                 <ComboBoxItem>Tốt nghiệp</ComboBoxItem>
@@ -130,43 +131,43 @@
                         </ComboBox>
 
                         <!-- Tên học sinh -->
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Họ tên học sinh" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Họ tên học sinh" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="4" Grid.Column="0" x:Name="Fullname" Margin="0,0,0,10"/>
 
                         <!-- Giới tính -->
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Giới tính" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
-                        <ComboBox Grid.Row="4" Grid.Column="1" x:Name="Gender" MaxDropDownHeight="300" SelectedIndex="0" Margin="20,0,0,10">
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Giới tính" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
+                        <ComboBox Grid.Row="4" Grid.Column="1" x:Name="Gender" MaxDropDownHeight="300" SelectedIndex="0" Width="190" Margin="20,0,0,10">
                                 <ComboBoxItem>--- Chọn Giới tính ---</ComboBoxItem>
                                 <ComboBoxItem>Nam</ComboBoxItem>
                                 <ComboBoxItem>Nữ</ComboBoxItem>
                         </ComboBox>
 
                         <!-- Ngày sinh -->
-                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Ngày sinh" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Ngày sinh" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
                         <DatePicker Grid.Row="7" Grid.Column="0" x:Name="BirthDay" Margin="0,0,0,10" BorderThickness="1" CornerRadius="4"/>
 
                         <!-- Dân tộc -->
-                        <TextBlock Grid.Row="6" Grid.Column="1" Text="Dân tộc" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="Dân tộc" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="7" Grid.Column="1" x:Name="Ethnicity" Margin="20,0,0,10"/>
 
                         <!-- Tôn giáo -->
-                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Tôn giáo" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Tôn giáo" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="10" Grid.Column="0" x:Name="Religion" Margin="0,0,0,10"/>
 
                         <!-- Năm học -->
-                        <TextBlock Grid.Row="9" Grid.Column="1" Text="Năm học" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="9" Grid.Column="1" Text="Năm học" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="10" Grid.Column="1" x:Name="LearnYear" Margin="20,0,0,10"/>
 
                         <!-- Số điện thoại -->
-                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Số điện thoại" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Số điện thoại" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="13" Grid.Column="0" x:Name="Phone" Margin="0,0,0,10"/>
 
                         <!-- Email -->
-                        <TextBlock Grid.Row="12" Grid.Column="1" Text="Email" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="12" Grid.Column="1" Text="Email" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="13" Grid.Column="1" x:Name="Email" Margin="20,0,0,10"/>
 
                         <!-- Địa chỉ -->
-                        <TextBlock Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBlock Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
                         <TextBox Grid.Row="16" Grid.Column="0" x:Name="Address" Grid.ColumnSpan="2" Margin="0,0,0,60"/>
                     </Grid>
                 </Grid>

@@ -1,8 +1,9 @@
-using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using cschool.Utils;
+using cschool.Views.Exam;
 using cschool.ViewModels;
+using System.Reactive.Threading.Tasks;
 
 namespace cschool.Views;
 
@@ -14,8 +15,8 @@ public partial class ExamView : UserControl
         DataContext = new ExamViewModel();
 
         InfoButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Info);
-        // CreateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Create);
-        // UpdateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Update);
+        CreateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Create);
+        UpdateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Update);
         // LockButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Lock);
     }
 
@@ -34,35 +35,41 @@ public partial class ExamView : UserControl
         switch (mode)
         {
             case DialogModeEnum.Info:
-                // if (vm != null && selectedExam != null)
-                // {
-                //     var fullExam = AppService.ExamService.GetExamById(selectedExam.Id);
-                //     vm.ExamDetails = fullExam ?? selectedExam;
-                // }
-                // dialog = new ExamInfoDialog(vm);
+                if (vm != null && selectedExam != null)
+                {
+                    // Lấy thông tin chi tiết lịch thi
+                    vm.GetExamByIdCommand.Execute(selectedExam.Id).ToTask();
+
+                    // Lấy danh sách phòng thi
+                    vm.GetRoomExamByIdCommand.Execute(selectedExam.Id).ToTask();
+                }
+                dialog = new ExamInfoDialog(vm);
                 break;
 
             case DialogModeEnum.Create:
-                // dialog = new ExamCreateDialog { ExamViewModel = vm };
+                dialog = new ExamCreateDialog (vm);
                 break;
 
             case DialogModeEnum.Update:
-                // if (vm != null && selectedExam != null)
-                // {
-                //     var fullExam = AppService.ExamService.GetExamById(selectedExam.Id);
-                //     vm.ExamDetails = fullExam ?? selectedExam;
-                // }
-                // dialog = new ExamUpdateDialog(vm);
+                if (vm != null && selectedExam != null)
+                {
+                    // Lấy thông tin chi tiết lịch thi
+                    vm.GetExamByIdCommand.Execute(selectedExam.Id).ToTask();
+
+                    // Lấy danh sách phòng thi
+                    vm.GetRoomExamByIdCommand.Execute(selectedExam.Id).ToTask();
+                }
+                dialog = new ExamUpdateDialog(vm);
                 break;
 
-            case DialogModeEnum.Lock:
-                // if (vm != null && selectedExam != null)
-                // {
-                //     var fullExam = AppService.ExamService.GetExamById(selectedExam.Id);
-                //     vm.ExamDetails = fullExam ?? selectedExam;
-                // }
-                // dialog = new ExamLockDialog(vm);
-                break;
+            // case DialogModeEnum.Lock:
+            //     // if (vm != null && selectedExam != null)
+            //     // {
+            //     //     var fullExam = AppService.ExamService.GetExamById(selectedExam.Id);
+            //     //     vm.ExamDetails = fullExam ?? selectedExam;
+            //     // }
+            //     // dialog = new ExamLockDialog(vm);
+            //     break;
         }
 
 
