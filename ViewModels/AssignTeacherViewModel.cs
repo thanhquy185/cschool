@@ -20,7 +20,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private readonly AssignTeacherService _service;
 
     public ObservableCollection<AssignTeacher> AssignTeachers { get; } = new();
-    public ObservableCollection<TeacherModel> TeacherModels { get; } = new();
+    public ObservableCollection<TeacherModel> Teachers { get; } = new();
     public ObservableCollection<Subjects> Subjects { get; } = new();
     public ObservableCollection<ClassModel> Classes { get; } = new();
     public ObservableCollection<string> DaysOfWeek { get; } = new();
@@ -77,7 +77,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             var days = _service.GetDaysOfWeek(DateTime.Now) ?? new List<string>();
 
                 AssignTeachers.Clear();
-                TeacherModels.Clear();
+                Teachers.Clear();
                 Subjects.Clear();
                 Classes.Clear();
                 DaysOfWeek.Clear();
@@ -86,7 +86,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
                     AssignTeachers.Add(a);
 
                 foreach (var t in teachers)
-                    TeacherModels.Add(t);
+                    Teachers.Add(t);
 
                 foreach (var s in subjects)
                     Subjects.Add(s);
@@ -225,7 +225,7 @@ public async Task SaveEdit()
         await Task.Delay(100);
 
     _editingItem = a;
-    SelectedTeacher = TeacherModels.FirstOrDefault(t => t.Id == a.Teachers_id);
+    SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
     SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
     SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
     SelectedDay = a.Day;
@@ -252,7 +252,7 @@ private async Task OpenDetailDialog(AssignTeacher a)
 
     _editingItem = a;
 
-    SelectedTeacher = TeacherModels.FirstOrDefault(t => t.Id == a.Teachers_id);
+    SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
     SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
     SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
     SelectedDay = a.Day;
