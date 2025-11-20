@@ -1,0 +1,88 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:cschool.ViewModels"
+        x:DataType="vm:HomeClassViewModel"
+        x:Class="cschool.Views.DialogHomeClass.HomeClassDetailDialog"
+        Title="Chi tiết điểm học sinh"
+        Width="800"
+        Height="600"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- Header - MÀU XANH LÁ CÂY -->
+            <Border Background="#4CAF50" Padding="16,12" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1"
+                            Text="{Binding SelectedStudentName, StringFormat='CHI TIẾT ĐIỂM - {0}'}"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <!-- Nội dung bảng điểm -->
+            <Border Grid.Row="1" Classes="TableDataWarper">
+                <DataGrid
+                    x:Name="ScoreDetailDataGrid"
+                    Classes="TableData ScoreDetail"
+                    ItemsSource="{Binding StudentDetailScores}"
+                    IsReadOnly="True"
+                    AutoGenerateColumns="False"
+                   >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="1.5*"
+                            Binding="{Binding NameSubject}"
+                            Header="Môn học" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding DiemMieng, StringFormat='{}{0:N1}'}"
+                            Header="Điểm miệng" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding Diem15p, StringFormat='{}{0:N1}'}"
+                            Header="Điểm 15 phút" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding DiemGK, StringFormat='{}{0:N1}'}"
+                            Header="Điểm giữa kỳ" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding DiemCK, StringFormat='{}{0:N1}'}"
+                            Header="Điểm cuối kỳ" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Nút đóng -->
+            <Border Grid.Row="2"
+                    Padding="0,15,0,20"
+                    CornerRadius="0,0,8,8"
+                    Background="White">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="❌ Đóng" 
+                            Background="#6c757d" 
+                            Foreground="White" 
+                            Width="120"
+                            Height="36"
+                            FontSize="14"
+                            BorderThickness="0"
+                            CornerRadius="4"
+                            Click="OnCloseButtonClick"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

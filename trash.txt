@@ -238,6 +238,7 @@ private async Task ShowUserDialog(DialogMode mode)
             dialog.Show();
     }
     xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+    
     dotnet add package LiveChartsCore --version 2.0.0-rc6.1
-dotnet add package LiveChartsCore.SkiaSharpView.Avalonia --version 2.0.0-rc6.1
+    dotnet add package LiveChartsCore.SkiaSharpView.Avalonia --version 2.0.0-rc6.1
 

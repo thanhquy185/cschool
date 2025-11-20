@@ -25,10 +25,15 @@ C:\Users\pc\.nuget\packages\avalonia.win32\11.3.5\lib\net8.0\Avalonia.Win32.Auto
 C:\Users\pc\.nuget\packages\avalonia.win32\11.3.5\lib\net8.0\Avalonia.Win32.dll
 C:\Users\pc\.nuget\packages\avalonia.x11\11.3.5\lib\net8.0\Avalonia.X11.dll
 C:\Users\pc\.nuget\packages\bouncycastle.cryptography\2.5.1\lib\net6.0\BouncyCastle.Cryptography.dll
+C:\Users\pc\.nuget\packages\closedxml\0.105.0\lib\netstandard2.1\ClosedXML.dll
+C:\Users\pc\.nuget\packages\closedxml.parser\2.0.0\lib\netstandard2.1\ClosedXML.Parser.dll
 C:\Users\pc\.nuget\packages\colortextblock.avalonia\11.0.0-d1\lib\net6.0\ColorTextBlock.Avalonia.dll
 C:\Users\pc\.nuget\packages\communitytoolkit.mvvm\8.2.1\lib\net6.0\CommunityToolkit.Mvvm.dll
 C:\Users\pc\.nuget\packages\dialoghost.avalonia\0.7.5\lib\netstandard2.0\DialogHost.Avalonia.dll
+C:\Users\pc\.nuget\packages\documentformat.openxml\3.1.1\lib\net8.0\DocumentFormat.OpenXml.dll
+C:\Users\pc\.nuget\packages\documentformat.openxml.framework\3.1.1\lib\net8.0\DocumentFormat.OpenXml.Framework.dll
 C:\Users\pc\.nuget\packages\dynamicdata\9.4.1\lib\net9.0\DynamicData.dll
+C:\Users\pc\.nuget\packages\excelnumberformat\1.1.0\lib\netstandard2.0\ExcelNumberFormat.dll
 C:\Users\pc\.nuget\packages\excss\4.3.0\lib\net8.0\ExCSS.dll
 C:\Users\pc\.nuget\packages\fluentavaloniaui\2.4.0\lib\net6.0\FluentAvalonia.dll
 C:\Users\pc\.nuget\packages\google.protobuf\3.30.0\lib\net5.0\Google.Protobuf.dll
@@ -50,8 +55,10 @@ C:\Users\pc\.nuget\packages\msbox.avalonia\3.0.0-rc2\lib\netstandard2.0\MsBox.Av
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\mscorlib.dll
 C:\Users\pc\.nuget\packages\mysql.data\9.4.0\lib\net9.0\MySql.Data.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\netstandard.dll
+C:\Users\pc\.nuget\packages\rbush.signed\4.0.0\lib\net8.0\RBush.dll
 C:\Users\pc\.nuget\packages\reactiveui\21.0.1\lib\net9.0\ReactiveUI.dll
 C:\Users\pc\.nuget\packages\shimskiasharp\3.0.2\lib\net8.0\ShimSkiaSharp.dll
+C:\Users\pc\.nuget\packages\sixlabors.fonts\1.0.0\lib\netcoreapp3.1\SixLabors.Fonts.dll
 C:\Users\pc\.nuget\packages\skiasharp\3.116.1\ref\net8.0\SkiaSharp.dll
 C:\Users\pc\.nuget\packages\skiasharp.harfbuzz\3.116.1\lib\net8.0\SkiaSharp.HarfBuzz.dll
 C:\Users\pc\.nuget\packages\splat.builder\16.1.1\lib\net9.0\Splat.Builder.dll
@@ -113,6 +120,7 @@ C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\System.
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\System.IO.FileSystem.Watcher.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\System.IO.IsolatedStorage.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\System.IO.MemoryMappedFiles.dll
+C:\Users\pc\.nuget\packages\system.io.packaging\8.0.1\lib\net8.0\System.IO.Packaging.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\System.IO.Pipelines.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\System.IO.Pipes.AccessControl.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.8\ref\net9.0\System.IO.Pipes.dll

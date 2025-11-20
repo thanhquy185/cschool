@@ -22,7 +22,7 @@ namespace cschool.Views.DialogAssignTeacher
             if (DataContext is AssignTeacherViewModel vm)
             {
                 vm.SaveAddCommand.Execute(null);
-                // Close(true);
+                //  Close(true);
             }
         }
 

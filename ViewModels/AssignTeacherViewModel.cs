@@ -63,7 +63,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
 
     private AssignTeacher? _editingItem;
     
-
+   
     // SỬA: Sử dụng RelayCommand của CommunityToolkit
     [RelayCommand]
     public void LoadData()
@@ -104,8 +104,11 @@ public partial class AssignTeacherViewModel : ViewModelBase
             Console.WriteLine($"Error loading data: {ex.Message}");
         }
     }
-
-
+// Hàm tìm kiếm khi nhập dữ liệu
+partial void OnSearchTextChanged(string value)
+{
+    Search();
+}
     [RelayCommand]
     public async Task SaveAdd()
 
@@ -132,8 +135,8 @@ public partial class AssignTeacherViewModel : ViewModelBase
                 End
             )
             {
-                QuizCount = QuizCount,
-                OralCount = OralCount
+                QuizCount = 2,
+                OralCount = 2
             };
             if (_service.IsTeacherBusy(assign.Teachers_id, assign.Day, assign.Start, assign.End))
             {
@@ -152,8 +155,6 @@ public partial class AssignTeacherViewModel : ViewModelBase
                     Console.WriteLine("Error: Could not add assignment.");
                 }
 
-
-                // ToggleFormCommand.Execute(null);
             }
             catch (Exception ex)
             {
@@ -161,7 +162,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             }
         }
     
-  [RelayCommand]
+[RelayCommand]
 public async Task SaveEdit()
 
     {
@@ -188,10 +189,10 @@ public async Task SaveEdit()
                 _editingItem.Start = Start;
                 _editingItem.End = End;
                 _editingItem.QuizCount = QuizCount;
-                _editingItem.OralCount = OralCount;
+                 _editingItem.OralCount = OralCount;
 
-                // Gọi update
-                
+            // Gọi update
+            
                 if (_service.Update(_editingItem))
                 {
                     await MessageBoxUtil.ShowSuccess("Cập nhật thành công",owner: owner);
@@ -218,13 +219,12 @@ public async Task SaveEdit()
     [RelayCommand]
     private async Task OpenEditDialog(AssignTeacher a)
     {
-
+        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
         LoadDataCommand.Execute(null);
-    // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
-    await Task.Delay(100);
+        // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
+        await Task.Delay(100);
 
     _editingItem = a;
-
     SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
     SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
     SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
@@ -242,11 +242,42 @@ public async Task SaveEdit()
         (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
     );
 }
+[RelayCommand]
+private async Task OpenDetailDialog(AssignTeacher a)
+    {
+        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        LoadDataCommand.Execute(null);
+        // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
+        await Task.Delay(100);
 
+    _editingItem = a;
+
+    SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
+    SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
+    SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
+    SelectedDay = a.Day;
+    Start = a.Start;
+    End = a.End;
+    QuizCount = a.QuizCount;
+    OralCount = a.OralCount;
+
+    var dialog = new AssignTeacherDetailDialog
+    {
+        DataContext = this
+    };
+    await dialog.ShowDialog(
+        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
+    );
+}
     [RelayCommand]
     public async Task Delete(AssignTeacher a)
     {
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        if (a == null)
+        {
+            await MessageBoxUtil.ShowError("vui lòng chọn 1 dòng để xóa", owner: owner);
+            return;
+        }
         if (await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn muốn xóa phân công này không?"))
         {
 
@@ -264,9 +295,23 @@ public async Task SaveEdit()
     }
 
     [RelayCommand]
-    public void Search()
+public void Search()
+{
+    try
     {
-        var results = _service.Search(SearchText ?? "");
+        var keyword = _searchText?.Trim() ?? "";
+        IEnumerable<AssignTeacher> results;
+
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            // Nếu trống → load lại toàn bộ
+            results = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
+        }
+        else
+        {
+            results = _service.Search(keyword);
+        }
+
         Dispatcher.UIThread.Post(() =>
         {
             AssignTeachers.Clear();
@@ -274,6 +319,11 @@ public async Task SaveEdit()
                 AssignTeachers.Add(a);
         });
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Search error: {ex.Message}");
+    }
+}
      [RelayCommand]
     public void SearchNameSubject()
     {
@@ -300,8 +350,8 @@ private async Task OpenAddDialog()
             SelectedDay = null;
             Start = 0;
             End = 0;
-            QuizCount = 0;
-            OralCount = 0;
+            // QuizCount = 0;
+            // OralCount = 0;
         });
         
         // ⏳ Đợi data load xong
@@ -326,27 +376,12 @@ private async Task OpenAddDialog()
         Console.WriteLine($"❌ Error opening add dialog: {ex.Message}");
     }
 }
-private async Task ResetForm()
+
+[RelayCommand]
+public void ResetSearch()
 {
-    // Reset trên UI thread
-    await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        _editingItem = null;
-        SelectedTeacher = null;
-        SelectedSubject = null;
-        SelectedClass = null;
-        SelectedDay = null;
-        Start = 0;
-        End = 0;
-        QuizCount = 0;
-        OralCount = 0;
-        
-        Console.WriteLine("✅ Form reset completed");
-    });
-    
-    // Đảm bảo data đã được load
-    // LoadDataCommand.Execute(null);
-    // await Task.Delay(100);
+    SearchText = string.Empty;
+    LoadDataCommand.Execute(null); // 🔁 Hiển thị lại toàn bộ danh sách
 }
 
     public AssignTeacherViewModel(AssignTeacherService service)

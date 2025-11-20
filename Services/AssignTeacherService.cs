@@ -47,7 +47,7 @@ public class AssignTeacherService
         SELECT COUNT(*)
         FROM assign_class_teachers
         WHERE teacher_id = @teacherId
-          AND day = @day
+          AND day = @day      
           AND (
                 (@start BETWEEN start_period AND end_period)
                 OR (@end BETWEEN start_period AND end_period)
@@ -59,6 +59,7 @@ public class AssignTeacherService
         using var cmd = new MySqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@teacherId", teacherId);
         cmd.Parameters.AddWithValue("@day", day);
+        // cmd.Parameters.AddWithValue("@assign_class_id",assign_class_id);
         cmd.Parameters.AddWithValue("@start", start);
         cmd.Parameters.AddWithValue("@end", end);
 
@@ -72,10 +73,9 @@ public bool IsConflict(AssignTeacher at)
         SELECT COUNT(*) FROM assign_class_teachers
         WHERE teacher_id = @teacher_id
           AND day = @day
-          AND assign_class_id <> @assign_class_id -- loại bỏ dòng đang sửa
+          AND assign_class_id != @assign_class_id
           AND (
-                @start_period < end_period
-                AND @end_period > start_period
+                (start_period < @end_period AND end_period > @start_period)
               )";
 
     using var cmd = new MySqlCommand(sql, connection);
@@ -259,7 +259,8 @@ public bool IsConflict(AssignTeacher at)
 
         var connection = _db.GetConnection();
         var command = new MySqlCommand(sql, connection);
-        command.Parameters.AddWithValue("@search", $"%{s}%"); // Sử dụng LIKE cho tìm kiếm
+            command.Parameters.AddWithValue("@search", $"%{s}%");
+         // Sử dụng LIKE cho tìm kiếm
         var reader = command.ExecuteReader();
         while (reader.Read())
         {

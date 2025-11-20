@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using MySql.Data.MySqlClient;
 using cschool.Models;
+using System.Threading.Tasks;
+using cschool.Utils;
 
 
 namespace cschool.Services;
@@ -13,6 +15,94 @@ public class StatisticalService
     public StatisticalService(DBService dbService)
     {
         _dbService = dbService;
+    }
+
+    public int  GetCountStudents()
+        {
+            try
+            {
+                string sql = "SELECT COUNT(*) as total FROM students WHERE status = 1 ";
+                var connection = _dbService.GetConnection();
+                var cmd = new MySqlCommand(sql,connection);
+                int total = Convert.ToInt32(cmd.ExecuteScalar());
+                return total;
+            }catch(Exception e)
+            {
+                Console.WriteLine("Không thể đếm số lượng học sinh" + e);
+                return 0;
+            }
+        }
+      public int  GetCountTeacher()
+        {
+            try
+            {
+                string sql = "SELECT COUNT(*) as total FROM teachers WHERE status = 1 ";
+                var connection = _dbService.GetConnection();
+                var cmd = new MySqlCommand(sql,connection);
+                int total = Convert.ToInt32(cmd.ExecuteScalar());
+                return total;
+            }catch(Exception e)
+            {
+                Console.WriteLine("Không thể đếm số lượng giáo viên" + e);
+                return 0;
+            }
+        }
+
+        public int  GetCountClass()
+        {
+            try
+            {
+                string sql = "SELECT COUNT(*) as total FROM classes WHERE status = 1 ";
+                var connection = _dbService.GetConnection();
+                var cmd = new MySqlCommand(sql,connection);
+                int total = Convert.ToInt32(cmd.ExecuteScalar());
+                return total;
+            }catch(Exception e)
+            {
+                Console.WriteLine("Không thể đếm số lượng lớp học" + e);
+                return 0;
+            }
+        }
+         public int  GetCountSubject()
+        {
+            try
+            {
+                string sql = "SELECT COUNT(*) as total FROM subjects WHERE status = 1 ";
+                var connection = _dbService.GetConnection();
+                var cmd = new MySqlCommand(sql,connection);
+                int total = Convert.ToInt32(cmd.ExecuteScalar());
+                return total;
+            }catch(Exception e)
+            {
+                Console.WriteLine("Không thể đếm số lượng lớp học" + e);
+                return 0;
+            }
+        }
+
+    public List<Term> GetTerms()
+    {
+        try
+        {
+            List<Term> ds = new List<Term>();
+            string sql = "SELECT * FROM terms WHERE status = 1 ";
+            var dt = _dbService.ExecuteQuery(sql);
+            foreach(DataRow data in dt.Rows)
+            {
+                ds.Add(new Term
+                {
+                    Id = (int)data["id"],
+                    Name = data["name"].ToString()!,
+                    Year = (int)data["year"],
+                    Start = Convert.ToDateTime(data["start_date"]),
+                    End = Convert.ToDateTime(data["end_date"]),
+                });
+            }
+            return ds;
+        }catch(Exception e)
+        {
+            Console.WriteLine("Không thể lấy các kì học");
+            return new List<Term>();
+        }
     }
 
     // Example method to get statistics
@@ -52,6 +142,45 @@ public class StatisticalService
         }
 
     }
+    public List<Statistical> SearchStatistics(int id)
+    {
+        try
+        {
+            List<Statistical> statistics = new List<Statistical>();
+
+            string query = @"SELECT t.assign_class_id, t.student_id,t.gpa,t.conduct_level,t.academic,ac.term_id,
+                            c.name AS className, s.fullname AS studentName
+                            FROM term_gpa t
+                            JOIN students s ON t.student_id = s.id
+                            JOIN assign_classes ac ON t.assign_class_id = ac.id
+                            JOIN classes c ON ac.class_id = c.id 
+                            WHERE ac.term_id = "+ id;
+            var dt = _dbService.ExecuteQuery(query);
+            foreach (DataRow row in dt.Rows)
+            {
+                Statistical stat = new Statistical(
+                    Convert.ToInt32(row["assign_class_id"]),
+                    row["className"].ToString() ?? "",
+                    Convert.ToInt32(row["student_id"]),
+                    row["studentName"].ToString() ?? "",
+                    Convert.ToSingle(row["gpa"]),
+                    row["conduct_level"].ToString() ?? "",
+                    row["academic"].ToString() ?? ""
+                );
+                stat.Term_id = (int)row["term_id"];
+
+                statistics.Add(stat);
+            }
+            return statistics;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error fetching statistics: " + ex.Message);
+            return new List<Statistical>();
+        }
+
+    }
+
 
     public List<Statistical> DetailStatistic(string rank)
     {

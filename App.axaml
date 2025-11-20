@@ -28,6 +28,7 @@
         <StyleInclude Source="Assets/Styles/MainLayoutStyle.axaml" />
         <StyleInclude Source="Assets/Styles/MessageBoxStyle.axaml" />
         <StyleInclude Source="Assets/Styles/TableDataStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/Dashboard.axaml"/>
     </Application.Styles>
 
     <Application.Resources>
@@ -61,6 +62,10 @@
         <Bitmap x:Key="ExcelIcon">avares://cschool/Assets/Images/Others/excel.png</Bitmap>
         <Bitmap x:Key="DeleteIcon">avares://cschool/Assets/Images/Others/delete.png</Bitmap>
         <Bitmap x:Key="LockIcon">avares://cschool/Assets/Images/Others/lock-icon.png</Bitmap>
+        <Bitmap x:Key="StudentIcon">avares://cschool/Assets/Images/Others/student-icon.png</Bitmap>
+        <Bitmap x:Key="TeacherIcon">avares://cschool/Assets/Images/Others/teacher-icon.png</Bitmap>
+        <Bitmap x:Key="SubjectIcon">avares://cschool/Assets/Images/Others/books.png</Bitmap>
+        <Bitmap x:Key="ClassIcon">avares://cschool/Assets/Images/Others/business-persentation.png</Bitmap>
         <Bitmap x:Key="ChangePasswordIcon">avares://cschool/Assets/Images/Others/change-password-icon.png</Bitmap>
         <!--    -->
         <Bitmap x:Key="SearchIcon">avares://cschool/Assets/Images/Others/search-icon.png</Bitmap>

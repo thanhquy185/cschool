@@ -13,10 +13,12 @@ namespace cschool.Views.DialogAssignTeacher
         }
         private void OnSaveButtonClick(object? sender, RoutedEventArgs e)
         {
+      
             if (DataContext is AssignTeacherViewModel vm)
             {
+                
                 vm.SaveEditCommand.Execute(null);
-                // Close(true);
+                Close(true);
             }
         }
         private void OnCancelButtonClick(object? sender, RoutedEventArgs e)

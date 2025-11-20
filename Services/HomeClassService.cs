@@ -7,6 +7,7 @@ using Microsoft.VisualBasic;
 using MySql.Data.MySqlClient;
 using System.Globalization;
 using System.Linq;
+using System.Xml;
 
 namespace cschool.Services;
 
@@ -19,172 +20,299 @@ public class HomeClassService
         _db = db;
     } 
 
-    public List<Subjects> GetSubject(int assignClassID)
+public List<Models.Information> GetInformation (int assignClassId)
     {
         try
         {
-            List<Subjects> ds = new List<Subjects>();
-            string sql = @"SELECT subject_id,name
-                            FROM assign_class_teachers 
-                            JOIN subjects ON subjects.id = assign_class_teachers.subject_id
-                            JOIN assign_classes ON assign_classes.id = assign_class_teachers.assign_class_id
-                            WHERE assign_class_teachers.assign_class_id = @classId ";
+            List<Models.Information> ds = new List<Models.Information>();
+            string sql = @"SELECT a.id,a.class_id, a.head_teacher_id, a.term_id, t.fullname, c.name as nameClass,tr.name as nameTerm, tr.year
+                        FROM assign_classes a 
+                        JOIN teachers t ON t.id = a.head_teacher_id
+                        JOIN classes c ON c.id = a.class_id
+                        JOIN terms tr ON tr.id = a.term_id
+                        WHERE a.id = @assignClassId";
+            var connection = _db.GetConnection();
+            var cmd = new MySqlCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                ds.Add(new Models.Information
+                {
+                    NameTeacher = reader["fullname"].ToString()!,
+                    NameClass = reader["nameClass"].ToString()!,
+                    NameTerm = reader["nameTerm"].ToString()!,
+                    Year = (int)reader["year"]
+                });
+            }
+            return ds;
+        }catch(Exception e)
+        {
+            Console.WriteLine("Lỗi không lấy được thông tin:" + e);
+            return new List<Models.Information>();
+        }
+    }
 
+
+
+    public List<HomeClass> GetStudents(int assignClassId)
+    {
+        try
+        {
+            List<HomeClass> rawList = new List<HomeClass>();
+
+            string sql = @"
+                SELECT 
+                    st.fullname,st.id as studentId, 
+                    s.name AS subject_name,
+                    sta.score AS subject_score,
+                    tg.gpa,
+                    tg.conduct_level,
+                    tg.academic
+                FROM students st
+                JOIN subject_term_avg sta ON sta.student_id = st.id
+                JOIN subjects s ON s.id = sta.subject_id
+                JOIN term_gpa tg ON tg.student_id = st.id
+                WHERE sta.assign_class_id = @assignClassId
+                ORDER BY st.fullname, s.name";
+
+            var connection = _db.GetConnection();
+            var cmd = new MySqlCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
+
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    rawList.Add(new HomeClass
+                    {
+                        StudentId = (int)reader["studentId"],
+                        StudentName = reader["fullname"].ToString()!,
+                        SubjectName = reader["subject_name"].ToString()!,
+                        GpaSubject = Convert.ToSingle(reader["subject_score"]),
+                        GpaTotal = Convert.ToSingle(reader["gpa"]),
+                        ConductLevel = reader["conduct_level"].ToString()!,
+                        Academic = reader["academic"].ToString()!
+                    });
+                }
+            }
+
+            // 🧩 Gom nhóm theo học sinh
+       var grouped = rawList
+            .GroupBy(x => new { x.StudentId, x.StudentName }) // Group by cả ID và Name
+            .Select(g => new HomeClass
+            {
+                StudentId = g.Key.StudentId,
+                StudentName = g.Key.StudentName, // THÊM DÒNG NÀY
+                GpaTotal = g.First().GpaTotal,
+                ConductLevel = g.First().ConductLevel,
+                Academic = g.First().Academic,
+                // Ghép danh sách môn và điểm thành 1 chuỗi
+                SubjectName = string.Join("\n", g.Select(x => $"{x.SubjectName}: {x.GpaSubject}"))
+            })
+            .ToList();
+
+        Console.WriteLine($"✅ Đã load {grouped.Count} học sinh");
+        foreach (var student in grouped)
+        {
+            Console.WriteLine($"  - {student.StudentName} (ID: {student.StudentId})");
+        }
+
+        return grouped;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("❌ Lỗi không thể lấy dữ liệu: " + ex.Message);
+        return new List<HomeClass>();
+    }
+    }
+    public List<DetailScore> GetDetailScores1(int id)
+    {
+        try
+        {
+                 Console.WriteLine($"=== DEBUG GetDetailScores1 ===");
+                Console.WriteLine($"Student ID: {id}");
+            List<DetailScore> ds = new List<DetailScore>();
+            string sql = @" SELECT s.name as nameSubject, sd.score 
+                            FROM score_details sd
+                            JOIN subjects s ON s.id = sd.subject_id
+                            WHERE sd.exam_type_id=1 AND sd.student_id = @studentId ";
             var connection = _db.GetConnection();
             var command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@classId", assignClassID);
-
+            command.Parameters.AddWithValue("@studentId", id);
             var reader = command.ExecuteReader();
-            while(reader.Read())
+            while (reader.Read())
             {
-                ds.Add(new Subjects(
-                    (int)reader["subject_id"],
-                    reader["name"].ToString()!
-                ));
+                ds.Add(new DetailScore
+                {
+                    NameSubject = reader["nameSubject"].ToString()!,
+                    DiemMieng = Convert.ToSingle(reader["score"])
+                });
             }
 
             return ds;
-        }catch(Exception ex)
+        } catch (Exception e)
         {
-            Console.WriteLine("Lỗi không thể lấy dữ liệu: " + ex);
-            return new List<Subjects>();
+            Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
+            return new List<DetailScore>();
         }
-        
-    }
 
-    public List<Student> GetStudent(int assignClassId)
+    }
+    public List<DetailScore> GetDetailScores2(int id)
     {
         try
         {
-            List<Student> ds = new List<Student>();
-            string sql = @"SELECT id,fullname
-                            FROM students
-                            JOIN assign_class_students ON student_id = students.id
-                            WHERE assign_class_id = @assignClassId";
+            List<DetailScore> ds = new List<DetailScore>();
+            string sql = @"SELECT s.name as nameSubject, sd.score 
+                            FROM score_details sd
+                            JOIN subjects s ON s.id = sd.subject_id
+                            WHERE sd.exam_type_id=2 AND sd.student_id = @studentId ";
+            var connection = _db.GetConnection();
+            var command = new MySqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@studentId", id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                ds.Add(new DetailScore
+                {
+                    NameSubject = reader["nameSubject"].ToString()!,
+                    Diem15p = Convert.ToSingle(reader["score"])
+                });
+            }
+
+            return ds;
+        } catch (Exception e)
+        {
+            Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
+            return new List<DetailScore>();
+        }
+
+    }
+    public List<DetailScore> GetDetailScores3(int id)
+    {
+         try
+        {
+            List<DetailScore> ds = new List<DetailScore>();
+            string sql = @"SELECT s.name as nameSubject, sd.score 
+                            FROM score_details sd
+                            JOIN subjects s ON s.id = sd.subject_id
+                            WHERE sd.exam_type_id = 3 AND sd.student_id = @studentId ";
+            var connection = _db.GetConnection();
+            var command = new MySqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@studentId", id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                ds.Add(new DetailScore
+                {
+                    NameSubject = reader["nameSubject"].ToString()!,
+                    DiemGK = Convert.ToSingle(reader["score"])
+                });
+            }
+
+            return ds;
+        } catch (Exception e)
+        {
+            Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
+            return new List<DetailScore>();
+        }
+
+
+    }
+    public List<DetailScore> GetDetailScores4(int id)
+    {
+         try
+        {
+            List<DetailScore> ds = new List<DetailScore>();
+            string sql = @"SELECT s.name as nameSubject, sd.score 
+                            FROM score_details sd
+                            JOIN subjects s ON s.id = sd.subject_id
+                            WHERE sd.exam_type_id = 4 AND sd.student_id = @studentId ";
+            var connection = _db.GetConnection();
+            var command = new MySqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@studentId", id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                ds.Add(new DetailScore
+                {
+                    NameSubject = reader["nameSubject"].ToString()!,
+                    DiemCK = Convert.ToSingle(reader["score"])
+                });
+            }
+
+            return ds;
+        } catch (Exception e)
+        {
+            Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
+            return new List<DetailScore>();
+        }
+       
+
+    }
+  public List<HomeClass> Search(int assignClassId, string name)
+    {
+        try
+        {
+            List<HomeClass> rawList = new List<HomeClass>();
+
+            string sql = @"
+                SELECT 
+                    st.fullname, 
+                    s.name AS subject_name,
+                    sta.score AS subject_score,
+                    tg.gpa,
+                    tg.conduct_level,
+                    tg.academic
+                FROM students st
+                JOIN subject_term_avg sta ON sta.student_id = st.id
+                JOIN subjects s ON s.id = sta.subject_id
+                JOIN term_gpa tg ON tg.student_id = st.id
+                WHERE sta.assign_class_id = @assignClassId AND st.fullname LIKE @nameStudent
+                ORDER BY st.fullname, s.name";
+
             var connection = _db.GetConnection();
             var cmd = new MySqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            cmd.Parameters.AddWithValue("@nameStudent", $"%{name}%");
+
+            using (var reader = cmd.ExecuteReader())
             {
-                ds.Add(new Student(
-                    (int)reader["id"],
-                    reader["fullname"].ToString()!
-                ));
+                while (reader.Read())
+                {
+                    rawList.Add(new HomeClass
+                    {
+                        StudentName = reader["fullname"].ToString()!,
+                        SubjectName = reader["subject_name"].ToString()!,
+                        GpaSubject = Convert.ToSingle(reader["subject_score"]),
+                        GpaTotal = Convert.ToSingle(reader["gpa"]),
+                        ConductLevel = reader["conduct_level"].ToString()!,
+                        Academic = reader["academic"].ToString()!
+                    });
+                }
             }
-            return ds;
+
+            // 🧩 Gom nhóm theo học sinh
+            var grouped = rawList
+                .GroupBy(x => x.StudentName)
+                .Select(g => new HomeClass
+                {
+                    StudentName = g.Key,
+                    GpaTotal = g.First().GpaTotal,
+                    ConductLevel = g.First().ConductLevel,
+                    Academic = g.First().Academic,
+                    // Ghép danh sách môn và điểm thành 1 chuỗi
+                    SubjectName = string.Join("\n", g.Select(x => $"{x.SubjectName}: {x.GpaSubject}"))
+                })
+                .ToList();
+
+            return grouped;
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Lỗi không thể lấy dữ liệu: " + ex);
-            return new List<Student>();
+            Console.WriteLine("❌ Lỗi không thể lấy dữ liệu: " + ex.Message);
+            return new List<HomeClass>();
         }
-    }
-    
-    public List<Score> GetScores(int assignClassId)
-    {
-        try
-        {
-            List<Score> ds = new List<Score>();
-           
-            string sql = @"SELECT student_id, subject_id,score
-                           FROM subject_term_avg
-                           WHERE assign_class_id = @assignClassId";
-            var connection = _db.GetConnection();
-            var cmd = new MySqlCommand(sql, connection);
-
-            cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                ds.Add(new Score(
-                    (int)reader["student_id"],
-
-                    (int)reader["subject_id"],
-
-                    (float)reader["score"]
-                ));
-            }
-             return ds;
-        }catch(Exception ex)
-        {
-            Console.WriteLine("Lỗi không thể truy vấn: " + ex);
-            return new List<Score>();
-        }
-    }
-
-    public List<Statistical> GetGpaData(int assignClassId)
-    {
-        try
-        {
-            List<Statistical> ds = new List<Statistical>();
-            string sql = @"SELECT student_id, gpa, conduct_level, academic
-                        FROM term_gpa
-                        WHERE assign_class_id = @assignClassId ";
-            var connection = _db.GetConnection();
-            var cmd = new MySqlCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                ds.Add(new Statistical(
-                    (int)reader["student_id"],
-                    (float)reader["gpa"],
-                    reader["conduct_level"].ToString()!,
-                    reader["academic"].ToString()!
-
-                ));
-            }
-            return ds;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Lỗi không thể truy vấn dữ liệu", ex);
-            return new List<Statistical>();
-        }
-    }
-    
-
-    public List<HomeClass> GetStudents( int assignClassId)
-{
-    var result = new List<HomeClass>();
-
-    var subjects = GetSubject(assignClassId); // return List<(id,name)>
-    var students = GetStudent(assignClassId); // return List<(id,name)>
-    var scores = GetScores(assignClassId);     // return List<(student_id,subject_id,score)>
-    var gpaData = GetGpaData(assignClassId);   // return List<(student_id,gpa,conduct,academic)>
-
-    foreach (var stu in students)
-    {
-        var row = new HomeClass
-        {
-            StudentId = stu.Id,
-            StudentName = stu.Fullname
-        };
-
-        // khởi tạo tất cả môn = null
-        foreach (var sbj in subjects)
-            row.SubjectScores[sbj.Name] = null;
-
-        // gán điểm từng môn
-        foreach (var sc in scores.Where(x => x.Student_id == stu.Id))
-        {
-            var sbjName = subjects.First(s => s.Id == sc.Subject_id).Name;
-            row.SubjectScores[sbjName] = sc.ScoreSubject;
-        }
-
-        // gán gpa, conduct, academic
-        var gpa = gpaData.FirstOrDefault(x => x.Student_id == stu.Id);
-        if (gpa != null)
-        {
-            row.GpaTotal = gpa.Gpa;
-            row.ConductLevel = gpa.ConductLevel;
-            row.Academic = gpa.Academic;
-        }
-
-        result.Add(row);
-    }
-
-    return result;
 }
+
 }

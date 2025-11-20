@@ -12,6 +12,7 @@ public class Teachers
     public string Address { get; set; } = "";
     public string Department { get; set; } = ""; // Thêm dòng này
     public int Status { get; set; } = 1;
+  
 
     public Teachers(int id, string name, string gender, string birtday, string email, string phone, string address, string department)
     {

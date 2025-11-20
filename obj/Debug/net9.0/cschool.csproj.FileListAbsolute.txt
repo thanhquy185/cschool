@@ -116,3 +116,11 @@ E:\HK1-NH-2025-2026\C#\cschool\obj\Debug\net9.0\refint\cschool.dll
 E:\HK1-NH-2025-2026\C#\cschool\obj\Debug\net9.0\cschool.pdb
 E:\HK1-NH-2025-2026\C#\cschool\obj\Debug\net9.0\cschool.genruntimeconfig.cache
 E:\HK1-NH-2025-2026\C#\cschool\obj\Debug\net9.0\ref\cschool.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\ClosedXML.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\ClosedXML.Parser.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\ExcelNumberFormat.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\RBush.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\SixLabors.Fonts.dll
+E:\HK1-NH-2025-2026\C#\cschool\bin\Debug\net9.0\System.IO.Packaging.dll
