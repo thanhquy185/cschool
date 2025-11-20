@@ -1,0 +1,59 @@
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using cschool.Utils;
+using cschool.ViewModels;
+using cschool.Models;
+using System;
+using System.Reactive.Linq;
+using cschool.Services;
+
+namespace cschool.Views.Teacher;
+
+public partial class TeacherLockDialog : Window
+{
+    private TeacherModel? _teacher;
+    private TeacherViewModel? _teacherViewModel;
+
+    public TeacherLockDialog(TeacherViewModel? vm, TeacherModel teacher)
+    {
+        InitializeComponent();
+        _teacher = teacher;
+        _teacherViewModel = vm;
+        DataContext = teacher;
+    }
+
+    private void CloseButton_Click(object? sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (_teacher == null || _teacherViewModel == null)
+            {
+                await MessageBoxUtil.ShowError("Không có giáo viên được chọn!", owner: this);
+                return;
+            }
+
+            var result = await _teacherViewModel.LockTeacherCommand.Execute(_teacher.Id);
+
+            if (result)
+            {
+                await MessageBoxUtil.ShowSuccess($"Đã khóa giáo viên {_teacher.Name} thành công!", owner: this);
+                await _teacherViewModel.GetTeachersCommand.Execute();
+                this.Close();
+            }
+            else
+            {
+                await MessageBoxUtil.ShowError("Không thể khóa giáo viên. Vui lòng thử lại!", owner: this);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in ConfirmButton_Click: {ex.Message}");
+            await MessageBoxUtil.ShowError($"Lỗi: {ex.Message}", owner: this);
+        }
+    }
+}

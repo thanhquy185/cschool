@@ -25,6 +25,7 @@ public static class UploadService
 
         // Đường dẫn thư mục đích
         var destDir = Path.Combine(AppService.AppPath, "Assets", "Images", Capitalize($"{objectType}s"));
+        Console.WriteLine(destDir);
         if (!Directory.Exists(destDir))
             Directory.CreateDirectory(destDir);
 

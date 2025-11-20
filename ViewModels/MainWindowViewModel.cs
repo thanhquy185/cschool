@@ -63,7 +63,7 @@ public Bitmap AssignTeacherButtonImage { get; }
     public void GoToStudentView() => CurrentPage = _studentViewModel;
 
     [RelayCommand]
-    public void GoToTeacherView() => CurrentPage = _teacherViewModel;
+    public void GoToTeacherView() => CurrentPage = new TeacherViewModel();
 
     [RelayCommand]
     public void GoToUserView() => CurrentPage = _userViewModel;

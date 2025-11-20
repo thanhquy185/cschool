@@ -15,13 +15,13 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private readonly AssignTeacherService _service;
 
     public ObservableCollection<AssignTeacher> AssignTeachers { get; } = new();
-    public ObservableCollection<Teachers> Teachers { get; } = new();
+    public ObservableCollection<TeacherModel> TeacherModels { get; } = new();
     public ObservableCollection<Subjects> Subjects { get; } = new();
     public ObservableCollection<Classes> Classes { get; } = new();
     public ObservableCollection<string> DaysOfWeek { get; } = new();
 
     [ObservableProperty]
-    private Teachers? _selectedTeacher;
+    private TeacherModel? _selectedTeacher;
 
     [ObservableProperty]
     private Subjects? _selectedSubject;
@@ -59,7 +59,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
         try
         {
             var assignTeachers = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
-            var teachers = _service.GetTeachers() ?? new List<Teachers>();
+            var teachers = _service.GetTeachers() ?? new List<TeacherModel>();
             var subjects = _service.GetCourses() ?? new List<Subjects>();
             var classes = _service.GetClasses() ?? new List<Classes>();
             var days = _service.GetDaysOfWeek(DateTime.Now) ?? new List<string>();
@@ -67,7 +67,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             Dispatcher.UIThread.Post(() =>
             {
                 AssignTeachers.Clear();
-                Teachers.Clear();
+                TeacherModels.Clear();
                 Subjects.Clear();
                 Classes.Clear();
                 DaysOfWeek.Clear();
@@ -76,7 +76,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
                     AssignTeachers.Add(a);
 
                 foreach (var t in teachers)
-                    Teachers.Add(t);
+                    TeacherModels.Add(t);
 
                 foreach (var s in subjects)
                     Subjects.Add(s);
@@ -151,7 +151,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private void Edit(AssignTeacher a)
     {
         _editingItem = a;
-        SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
+        SelectedTeacher = TeacherModels.FirstOrDefault(t => t.Id == a.Teachers_id);
         SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
         SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
         SelectedDay = a.Day;

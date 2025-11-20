@@ -69,10 +69,10 @@ public class AssignTeacherService
     }
 
 
-    public List<Teachers> GetTeachers()
+    public List<TeacherModel> GetTeachers()
     {
         try{
-        var ds = new List<Teachers>();
+        var ds = new List<TeacherModel>();
         string sql = @" select t.id , t.fullname, d.name as department_name
          FROM teachers t
          JOIN department_details dd ON dd.teacher_id = t.id
@@ -82,12 +82,12 @@ public class AssignTeacherService
 
         foreach (DataRow data in dt.Rows)
         {
-            ds.Add(new Teachers(
-                (int)data["id"],
-                data["fullname"].ToString()!,
-                data["department_name"].ToString()!
-
-            ));
+            ds.Add(new TeacherModel
+            {
+                Id = (int)data["id"],
+                Name = data["fullname"].ToString()!,
+                DepartmentName = data["department_name"].ToString()!
+            });
 
         }
         return ds;
@@ -95,7 +95,7 @@ public class AssignTeacherService
         catch (Exception ex)
         {
             Console.WriteLine("Lỗi không thể lấy dữ liệu giáo viên: " + ex);
-            return new List<Teachers>();
+            return new List<TeacherModel>();
         }
     }
 

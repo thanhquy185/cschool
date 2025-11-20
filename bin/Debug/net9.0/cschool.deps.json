@@ -15,9 +15,12 @@
           "Avalonia.Fonts.Inter": "11.3.5",
           "Avalonia.Svg.Skia": "11.3.0",
           "Avalonia.Themes.Fluent": "11.3.5",
+          "ClosedXML": "0.105.0",
           "CommunityToolkit.Mvvm": "8.2.1",
+          "DocumentFormat.OpenXml": "3.3.0",
+          "ExcelNumberFormat": "1.1.0",
           "FluentAvaloniaUI": "2.4.0",
-          "MsBox.Avalonia": "3.0.0-rc2",
+          "MessageBox.Avalonia": "3.1.5.1",
           "MySql.Data": "9.4.0",
           "ReactiveUI": "21.0.1"
         },
@@ -288,14 +291,37 @@
           }
         }
       },
-      "ColorTextBlock.Avalonia/11.0.0-d1": {
+      "ClosedXML/0.105.0": {
+        "dependencies": {
+          "ClosedXML.Parser": "2.0.0",
+          "DocumentFormat.OpenXml": "3.3.0",
+          "ExcelNumberFormat": "1.1.0",
+          "RBush.Signed": "4.0.0",
+          "SixLabors.Fonts": "1.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.1/ClosedXML.dll": {
+            "assemblyVersion": "0.105.0.0",
+            "fileVersion": "0.105.0.0"
+          }
+        }
+      },
+      "ClosedXML.Parser/2.0.0": {
+        "runtime": {
+          "lib/netstandard2.1/ClosedXML.Parser.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "ColorTextBlock.Avalonia/11.0.2": {
         "dependencies": {
           "Avalonia": "11.3.5"
         },
         "runtime": {
           "lib/net6.0/ColorTextBlock.Avalonia.dll": {
-            "assemblyVersion": "11.0.0.0",
-            "fileVersion": "11.0.0.0"
+            "assemblyVersion": "11.0.2.0",
+            "fileVersion": "11.0.2.0"
           }
         }
       },
@@ -307,15 +333,37 @@
           }
         }
       },
-      "DialogHost.Avalonia/0.7.5": {
+      "DialogHost.Avalonia/0.7.7": {
         "dependencies": {
           "Avalonia": "11.3.5",
           "System.Reactive": "6.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/DialogHost.Avalonia.dll": {
-            "assemblyVersion": "0.7.5.0",
-            "fileVersion": "0.7.5.0"
+            "assemblyVersion": "0.7.7.0",
+            "fileVersion": "0.7.7.0"
+          }
+        }
+      },
+      "DocumentFormat.OpenXml/3.3.0": {
+        "dependencies": {
+          "DocumentFormat.OpenXml.Framework": "3.3.0"
+        },
+        "runtime": {
+          "lib/net8.0/DocumentFormat.OpenXml.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.3.0.0"
+          }
+        }
+      },
+      "DocumentFormat.OpenXml.Framework/3.3.0": {
+        "dependencies": {
+          "System.IO.Packaging": "8.0.1"
+        },
+        "runtime": {
+          "lib/net8.0/DocumentFormat.OpenXml.Framework.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.3.0.0"
           }
         }
       },
@@ -327,6 +375,14 @@
           "lib/net9.0/DynamicData.dll": {
             "assemblyVersion": "9.4.0.0",
             "fileVersion": "9.4.1.30094"
+          }
+        }
+      },
+      "ExcelNumberFormat/1.1.0": {
+        "runtime": {
+          "lib/netstandard2.0/ExcelNumberFormat.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
           }
         }
       },
@@ -490,15 +546,28 @@
           }
         }
       },
-      "Markdown.Avalonia.Tight/11.0.0-d1": {
+      "Markdown.Avalonia.Tight/11.0.2": {
         "dependencies": {
           "Avalonia": "11.3.5",
-          "ColorTextBlock.Avalonia": "11.0.0-d1"
+          "ColorTextBlock.Avalonia": "11.0.2"
         },
         "runtime": {
           "lib/net6.0/Markdown.Avalonia.dll": {
-            "assemblyVersion": "11.0.0.0",
-            "fileVersion": "11.0.0.0"
+            "assemblyVersion": "11.0.2.0",
+            "fileVersion": "11.0.2.0"
+          }
+        }
+      },
+      "MessageBox.Avalonia/3.1.5.1": {
+        "dependencies": {
+          "Avalonia": "11.3.5",
+          "DialogHost.Avalonia": "0.7.7",
+          "Markdown.Avalonia.Tight": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/MsBox.Avalonia.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -512,19 +581,6 @@
       },
       "Microsoft.NETCore.Platforms/1.1.0": {},
       "Microsoft.NETCore.Targets/1.1.0": {},
-      "MsBox.Avalonia/3.0.0-rc2": {
-        "dependencies": {
-          "Avalonia": "11.3.5",
-          "DialogHost.Avalonia": "0.7.5",
-          "Markdown.Avalonia.Tight": "11.0.0-d1"
-        },
-        "runtime": {
-          "lib/netstandard2.0/MsBox.Avalonia.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
       "MySql.Data/9.4.0": {
         "dependencies": {
           "BouncyCastle.Cryptography": "2.5.1",
@@ -575,6 +631,14 @@
           }
         }
       },
+      "RBush.Signed/4.0.0": {
+        "runtime": {
+          "lib/net8.0/RBush.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
       "ReactiveUI/21.0.1": {
         "dependencies": {
           "DynamicData": "9.4.1",
@@ -594,6 +658,14 @@
           "lib/net8.0/ShimSkiaSharp.dll": {
             "assemblyVersion": "3.0.2.0",
             "fileVersion": "3.0.2.0"
+          }
+        }
+      },
+      "SixLabors.Fonts/1.0.0": {
+        "runtime": {
+          "lib/netcoreapp3.1/SixLabors.Fonts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -806,6 +878,14 @@
           "System.Runtime": "4.3.0",
           "System.Text.Encoding": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.IO.Packaging/8.0.1": {
+        "runtime": {
+          "lib/net8.0/System.IO.Packaging.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.1024.46610"
+          }
         }
       },
       "System.IO.Pipelines/8.0.0": {},
@@ -1052,12 +1132,26 @@
       "path": "bouncycastle.cryptography/2.5.1",
       "hashPath": "bouncycastle.cryptography.2.5.1.nupkg.sha512"
     },
-    "ColorTextBlock.Avalonia/11.0.0-d1": {
+    "ClosedXML/0.105.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-sQAZgCwCS7vT5qGlxivrx6WAb1xkP47p4gAVmv5GQapfW8YXuk9a/t6QLmjJqFTJAAdk8M1EAUde0Ox5HPxjHA==",
-      "path": "colortextblock.avalonia/11.0.0-d1",
-      "hashPath": "colortextblock.avalonia.11.0.0-d1.nupkg.sha512"
+      "sha512": "sha512-U0hAdnYyPvF7TqHMFloxrS7pmozab79tFFF4c/bgPtqeelUs7ILpUd3r3c7C0a/DXsUZb3k1n4Pf7Q2LMyMQOg==",
+      "path": "closedxml/0.105.0",
+      "hashPath": "closedxml.0.105.0.nupkg.sha512"
+    },
+    "ClosedXML.Parser/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ngTqjYreDYNytG1W5d3ewHsw0ukmmrgV7EKnS4/40rXoYZGt07jrBvo+N+GxT49rcageUMUiprV0jYT4nwVBHQ==",
+      "path": "closedxml.parser/2.0.0",
+      "hashPath": "closedxml.parser.2.0.0.nupkg.sha512"
+    },
+    "ColorTextBlock.Avalonia/11.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MsWu5aAbDpstAmJ+TTSgC6Q7YdjKB7Na912GMr3oWl9ag8TH2HNpglzgo+kIAuB4C4wswKfrzhso4UcpvgMuHg==",
+      "path": "colortextblock.avalonia/11.0.2",
+      "hashPath": "colortextblock.avalonia.11.0.2.nupkg.sha512"
     },
     "CommunityToolkit.Mvvm/8.2.1": {
       "type": "package",
@@ -1066,12 +1160,26 @@
       "path": "communitytoolkit.mvvm/8.2.1",
       "hashPath": "communitytoolkit.mvvm.8.2.1.nupkg.sha512"
     },
-    "DialogHost.Avalonia/0.7.5": {
+    "DialogHost.Avalonia/0.7.7": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-jpXMSP2dy/K5UY6lclNjVgeqkitT+Vh8Aj4cLD64TShnDoBxfKOqHd8TMaFCkU5fa7hfhysdxZLZN2IrSwUZcw==",
-      "path": "dialoghost.avalonia/0.7.5",
-      "hashPath": "dialoghost.avalonia.0.7.5.nupkg.sha512"
+      "sha512": "sha512-V5zq0e6dBeK1A8xDsyNouzfSx3d+aOhxPgjguaFyaDexgDF8WiSQDsawkv0fRGKbDnaPIqMk9m7P/2G5c7HPzw==",
+      "path": "dialoghost.avalonia/0.7.7",
+      "hashPath": "dialoghost.avalonia.0.7.7.nupkg.sha512"
+    },
+    "DocumentFormat.OpenXml/3.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JogRPJNiE6kKvbuCqVRX691pPWeGMqdQgjrUwRYkdpfkMmtElfqAgcRR73geYj7OtBeEpstldZXXzJw27LUI9w==",
+      "path": "documentformat.openxml/3.3.0",
+      "hashPath": "documentformat.openxml.3.3.0.nupkg.sha512"
+    },
+    "DocumentFormat.OpenXml.Framework/3.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-R5CLzEoeyr7XDB7g3NTxRobcU19agaxVAhGZm+fZUShJGiU4bw8oUgnA2BNFepigJckfFMayOBMAbV3kDXNInA==",
+      "path": "documentformat.openxml.framework/3.3.0",
+      "hashPath": "documentformat.openxml.framework.3.3.0.nupkg.sha512"
     },
     "DynamicData/9.4.1": {
       "type": "package",
@@ -1079,6 +1187,13 @@
       "sha512": "sha512-+SoDTbuzY9j0K+sZfRbbVpGjjylkVMhUQnw6qiPhxzYLBJlwxFpmunXSaNBtTxwC2C9d/XIp0kO7VhMAVuUt7w==",
       "path": "dynamicdata/9.4.1",
       "hashPath": "dynamicdata.9.4.1.nupkg.sha512"
+    },
+    "ExcelNumberFormat/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-R3BVHPs9O+RkExbZYTGT0+9HLbi8ZrNij1Yziyw6znd3J7P3uoIR07uwTLGOogtz1p6+0sna66eBoXu7tBiVQA==",
+      "path": "excelnumberformat/1.1.0",
+      "hashPath": "excelnumberformat.1.1.0.nupkg.sha512"
     },
     "ExCSS/4.3.0": {
       "type": "package",
@@ -1157,12 +1272,19 @@
       "path": "k4os.hash.xxhash/1.0.8",
       "hashPath": "k4os.hash.xxhash.1.0.8.nupkg.sha512"
     },
-    "Markdown.Avalonia.Tight/11.0.0-d1": {
+    "Markdown.Avalonia.Tight/11.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-fwl4wrvTdLFLUfkFezRY6SSfPmXIJcRyYChMDiMKFEGo1rKdPMnmcJbK+BWYXxZS+g66E6SFl/ca4kakhTk1HQ==",
-      "path": "markdown.avalonia.tight/11.0.0-d1",
-      "hashPath": "markdown.avalonia.tight.11.0.0-d1.nupkg.sha512"
+      "sha512": "sha512-Ylg0EkSUId42dVUFQvU7UJGWcKiJ+g7TesRe/KCzUYzlypWf1lTiVveT2j60QSldCtuAw3o/aEOEjIahMdRGig==",
+      "path": "markdown.avalonia.tight/11.0.2",
+      "hashPath": "markdown.avalonia.tight.11.0.2.nupkg.sha512"
+    },
+    "MessageBox.Avalonia/3.1.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iE6AzefOgcNHwdmQoUIeuii09UsFzMJoo027dZ/oKXmIaX9C8isTejODlGsuRmWgvvgMNULXsQTaH0VknMSEnw==",
+      "path": "messagebox.avalonia/3.1.5.1",
+      "hashPath": "messagebox.avalonia.3.1.5.1.nupkg.sha512"
     },
     "MicroCom.Runtime/0.11.0": {
       "type": "package",
@@ -1185,19 +1307,19 @@
       "path": "microsoft.netcore.targets/1.1.0",
       "hashPath": "microsoft.netcore.targets.1.1.0.nupkg.sha512"
     },
-    "MsBox.Avalonia/3.0.0-rc2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-wncoyGqQ6iTx+0MqAzQPaLi8x4yqrWhNW4Yc25BgubYhZHa3GJAKmEqxEug40CFXOVpHAGhonlhHx/f3VZXURQ==",
-      "path": "msbox.avalonia/3.0.0-rc2",
-      "hashPath": "msbox.avalonia.3.0.0-rc2.nupkg.sha512"
-    },
     "MySql.Data/9.4.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-yGfcv5TSj72rwUdywZqtM90qlZ9AuSNckG2Fb9OxuXkskhnqi/DGBaOji9z2G4q3BgFfddbm/WmZzFfAggjbSw==",
       "path": "mysql.data/9.4.0",
       "hashPath": "mysql.data.9.4.0.nupkg.sha512"
+    },
+    "RBush.Signed/4.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aP5KQxL5RnFNGW1f0euYVBfCatkLw5iEzMRJcXKq8LWWP4Cp3+qoSq1tDDL2vvJ2rM0ychmVMa2VaEKLS6uX4w==",
+      "path": "rbush.signed/4.0.0",
+      "hashPath": "rbush.signed.4.0.0.nupkg.sha512"
     },
     "ReactiveUI/21.0.1": {
       "type": "package",
@@ -1212,6 +1334,13 @@
       "sha512": "sha512-VRLaZRQ7llIgQXf6H6Bjpt47RG/9UQvWZdJz97ReFlb4PHwjoId6HkoO84ETyqS/8J2GNT2fDnzmdVBMr5YXOg==",
       "path": "shimskiasharp/3.0.2",
       "hashPath": "shimskiasharp.3.0.2.nupkg.sha512"
+    },
+    "SixLabors.Fonts/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LFQsCZlV0xlUyXAOMUo5kkSl+8zAQXXbbdwWchtk0B4o7zotZhQsQOcJUELGHdfPfm/xDAsz6hONAuV25bJaAg==",
+      "path": "sixlabors.fonts/1.0.0",
+      "hashPath": "sixlabors.fonts.1.0.0.nupkg.sha512"
     },
     "SkiaSharp/3.116.1": {
       "type": "package",
@@ -1345,6 +1474,13 @@
       "sha512": "sha512-3qjaHvxQPDpSOYICjUoTsmoq5u6QJAFRUITgeT/4gqkF1bajbSmb1kwSxEA8AHlofqgcKJcM8udgieRNhaJ5Cg==",
       "path": "system.io/4.3.0",
       "hashPath": "system.io.4.3.0.nupkg.sha512"
+    },
+    "System.IO.Packaging/8.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KYkIOAvPexQOLDxPO2g0BVoWInnQhPpkFzRqvNrNrMhVT6kqhVr0zEb6KCHlptLFukxnZrjuMVAnxK7pOGUYrw==",
+      "path": "system.io.packaging/8.0.1",
+      "hashPath": "system.io.packaging.8.0.1.nupkg.sha512"
     },
     "System.IO.Pipelines/8.0.0": {
       "type": "package",

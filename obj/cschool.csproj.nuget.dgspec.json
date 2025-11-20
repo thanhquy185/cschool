@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\HK1-NH-2025-2026\\C#\\cschool\\cschool.csproj": {}
+    "D:\\test\\cschool\\cschool.csproj": {}
   },
   "projects": {
-    "E:\\HK1-NH-2025-2026\\C#\\cschool\\cschool.csproj": {
+    "D:\\test\\cschool\\cschool.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\HK1-NH-2025-2026\\C#\\cschool\\cschool.csproj",
+        "projectUniqueName": "D:\\test\\cschool\\cschool.csproj",
         "projectName": "cschool",
-        "projectPath": "E:\\HK1-NH-2025-2026\\C#\\cschool\\cschool.csproj",
-        "packagesPath": "C:\\Users\\pc\\.nuget\\packages\\",
-        "outputPath": "E:\\HK1-NH-2025-2026\\C#\\cschool\\obj\\",
+        "projectPath": "D:\\test\\cschool\\cschool.csproj",
+        "packagesPath": "C:\\Users\\bim\\.nuget\\packages\\",
+        "outputPath": "D:\\test\\cschool\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\pc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\bim\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -72,17 +72,37 @@
               "target": "Package",
               "version": "[11.3.5, )"
             },
+            "ClosedXML": {
+              "target": "Package",
+              "version": "[0.105.0, )"
+            },
             "CommunityToolkit.Mvvm": {
               "target": "Package",
               "version": "[8.2.1, )"
+            },
+            "DocumentFormat.OpenXml": {
+              "target": "Package",
+              "version": "[3.3.0, )"
+            },
+            "ExcelNumberFormat": {
+              "target": "Package",
+              "version": "[1.1.0, )"
             },
             "FluentAvaloniaUI": {
               "target": "Package",
               "version": "[2.4.0, )"
             },
-            "MsBox.Avalonia": {
+            "LiveChartsCore": {
               "target": "Package",
-              "version": "[3.0.0-rc2, )"
+              "version": "[2.0.0-rc6.1, )"
+            },
+            "LiveChartsCore.SkiaSharpView.Avalonia": {
+              "target": "Package",
+              "version": "[2.0.0-rc6.1, )"
+            },
+            "MessageBox.Avalonia": {
+              "target": "Package",
+              "version": "[3.1.5.1, )"
             },
             "MySql.Data": {
               "target": "Package",
@@ -109,7 +129,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

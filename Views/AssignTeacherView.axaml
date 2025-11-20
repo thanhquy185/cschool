@@ -158,7 +158,7 @@
                 <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10">
                     <!-- Hàng 1 -->
                     <ComboBox Grid.Row="0" Grid.Column="0" 
-                              ItemsSource="{Binding Teachers}" 
+                              ItemsSource="{Binding TeacherModels}" 
                               SelectedItem="{Binding SelectedTeacher}" 
                               DisplayMemberBinding="{Binding Name}"
                               PlaceholderText="Chọn giáo viên"/>
