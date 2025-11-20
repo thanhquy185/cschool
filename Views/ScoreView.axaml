@@ -1,0 +1,82 @@
+<UserControl
+  x:Class="cschool.Views.ScoreView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:cschool.ViewModels"
+    xmlns:model="using:cschool.Models"
+    x:DataType="vm:ScoreViewModel"
+    xmlns:conv="clr-namespace:cschool.Utils"
+    x:Name="Root">
+ <Grid  Classes="MainLayout"  RowDefinitions="Auto,Auto,*,Auto">
+        <!-- Header giống UserView -->
+        <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+            <!-- Title And SubTitle -->
+            <StackPanel Classes="MainLayoutHeaderInfo">
+                <TextBlock Classes="Title" Text="Nhập điểm môn học" />
+                <TextBlock Classes="SubTitle" Text="Quản lý nhập điểm môn học" />
+            </StackPanel>
+            <!-- Buttons giống UserView -->
+            
+            <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+                <Button Classes="CrudButton Info" >
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="{DynamicResource InfoIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+            </StackPanel>
+          </Border>
+        </Button>
+                <Button Classes="CrudButton Create"
+                         >
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource CreateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Nhập điểm" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button Classes="CrudButton Update"                    
+               
+                >
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource UpdateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <!-- <Button Classes="CrudButton Lock" Command="{Binding Delete}"
+                CommandParameter="{Binding SelectedAssignTeacher}"
+                IsEnabled="{Binding SelectedAssignTeacher, Converter={StaticResource NullToBoolConverter}}">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource DeleteIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
+                        </StackPanel>
+                    </Border>
+                </Button> -->
+            </StackPanel>
+        </Grid>
+
+        <!-- Filter giống UserView -->
+        <Border Grid.Row="1" Classes="FilterDataWarper">
+            <Grid Classes="FilterData" RowDefinitions="*,Auto">
+                <StackPanel Classes="FilterDataInputs">
+                    <Grid Classes="FilterDataFindInput">
+                        <TextBox Watermark="Nhập điểm" 
+                                 Text="Nhập điểm"/>
+                         <Button Grid.Column="1"
+                            
+                            Classes="FilterDataSearchButton" 
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"                   
+                            ToolTip.Tip="Tìm kiếm">
+                        <Image Source="{DynamicResource SearchIcon}" Width="20" Height="20"/>
+                    </Button>
+                                   </Grid> <!-- Đóng FilterDataFindInput -->
+                </StackPanel> <!-- Đóng FilterDataInputs -->
+            </Grid> <!-- Đóng FilterData -->
+        </Border>       
+        </Grid>
+</UserControl>

@@ -1,0 +1,155 @@
+<UserControl
+  x:Class="cschool.Views.StatisticalView"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:cschool.ViewModels"
+  xmlns:model="using:cschool.Models"
+  x:DataType="vm:StatisticalViewModel"
+  xmlns:conv="clr-namespace:cschool.Utils"
+  xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+  x:Name="Root">
+
+  <!-- GRID CHA BAO HẾT -->
+  <Grid RowDefinitions="Auto,Auto,Auto,*">
+
+    <!-- 1) HEADER + FILTER (giữ nguyên nội dung cũ) -->
+    <Grid Grid.Row="0" Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
+      <!-- Header giống UserView -->
+      <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+        <StackPanel Classes="MainLayoutHeaderInfo">
+          <TextBlock Classes="Title" Text="Thống kê điểm và hạnh kiểm " />
+          <TextBlock Classes="SubTitle" Text="Thống kê điểm và hạnh kiểm" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+          <Button Classes="CrudButton Info">
+            <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+              <StackPanel>
+                <Image Source="{DynamicResource InfoIcon}" />
+                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+              </StackPanel>
+            </Border>
+          </Button>
+          <Button Classes="CrudButton Create">
+            <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+              <StackPanel>
+                <Image Source="{DynamicResource ExcelIcon}" />
+                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất excel" />
+              </StackPanel>
+            </Border>
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <!-- Filter -->
+      <Border Grid.Row="1" Classes="FilterDataWarper">
+        <Grid Classes="FilterData" RowDefinitions="*,Auto">
+          <StackPanel Classes="FilterDataInputs">
+
+           <ComboBox ItemsSource="{Binding Terms}" 
+                      SelectedItem="{Binding SelectedTerm, Mode=TwoWay}"
+                      DisplayMemberBinding="{Binding DisplayText}"
+                      PlaceholderText="Chọn năm học"
+                      Width="400"
+                      Height="40"/>
+          </StackPanel>
+          <Button
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Classes="FilterDataResetButton"
+            Command = "{Binding ResetSearchCommand}">
+            <Image Source="{DynamicResource ResetIcon}" />
+          </Button>
+        </Grid>
+      </Border>
+    </Grid>
+
+<!-- 2) THÔNG TIN TỔNG QUAN - DASHBOARD STYLE -->
+<Border Grid.Row="1" Classes="SummaryContainer" Margin="12,8,12,8">
+    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+        
+        <!-- Tổng số học sinh -->
+        <Border Classes="DashboardCard" Background="#2196F3">
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
+                    <Image Source="{DynamicResource StudentIcon}" Width="30" Height="30" Stretch="Uniform"/>
+                </Border>
+                <StackPanel>
+                    <TextBlock Text="Tổng học sinh" Classes="DashboardLabel"/>
+                    <TextBlock Text="{Binding TotalStudents}" Classes="DashboardValue"/>
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
+
+        <!-- Tổng số giáo viên -->
+        <Border Grid.Column="1" Classes="DashboardCard" Background="#4CAF50">
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
+                    <Image Source="{DynamicResource TeacherIcon}" Width="30" Height="30" Stretch="Uniform"/>
+                </Border>
+                <StackPanel>
+                    <TextBlock Text="Tổng giáo viên" Classes="DashboardLabel"/>
+                    <TextBlock Text="{Binding TotalTeacher}" Classes="DashboardValue"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Tổng số lớp học -->
+        <Border Grid.Column="2" Classes="DashboardCard" Background="#FF9800">
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
+                    <Image Source="{DynamicResource ClassIcon}" Width="30" Height="30" Stretch="Uniform"/>
+                </Border>
+                <StackPanel>
+                    <TextBlock Text="Tổng lớp học" Classes="DashboardLabel"/>
+                    <TextBlock Text="{Binding TotalClass}" Classes="DashboardValue"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Tổng số môn học -->
+        <Border Grid.Column="3" Classes="DashboardCard" Background="#f84141ff">
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
+                    <Image Source="{DynamicResource SubjectIcon}" Width="30" Height="30" Stretch="Uniform"/>
+                </Border>
+                <StackPanel>
+                    <TextBlock Text="Tổng môn học" Classes="DashboardLabel"/>
+                    <TextBlock Text="{Binding TotalSubject}" Classes="DashboardValue"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</Border>
+
+    <!-- 3) BIỂU ĐỒ -->
+    <Grid Grid.Row="3" RowDefinitions="Auto,*" Margin="12">
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,8" Spacing="12">
+        <TextBlock Text="Thống kê điểm &amp; hạnh kiểm" FontSize="18" FontWeight="Bold"/>
+      </StackPanel>
+
+      <Grid Grid.Row="1" ColumnDefinitions="*,*,*" RowDefinitions="Auto">
+        <StackPanel Grid.Column="0" Margin="6">
+          <TextBlock Text="Academic (Giỏi/Trung bình/Khá)" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          <lvc:PieChart Series="{Binding AcademicSeries}" LegendPosition="Right" Height="250" />
+          <TextBlock Text="{Binding AcademicSummary}" Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="6">
+          <TextBlock Text="Conduct Level (Tốt/Khá/Trung bình)" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          <lvc:PieChart Series="{Binding ConductSeries}" LegendPosition="Right" Height="250" />
+          <TextBlock Text="{Binding ConductSummary}" Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Margin="6">
+          <TextBlock Text="GPA classification (Good >=8, Fair >=6.5, Sat >=5)" FontWeight="SemiBold" Margin="0,0,0,6" TextWrapping="Wrap"/>
+          <lvc:PieChart Series="{Binding GpaSeries}" LegendPosition="Right" Height="250"/>
+          <TextBlock Text="{Binding GpaSummary}" Margin="0,6,0,0"/>
+        </StackPanel>
+      </Grid>
+    </Grid>
+
+  </Grid>
+</UserControl>

@@ -440,7 +440,7 @@ public partial class UserView : UserControl
                         var user = new UserModel();
                         if (isUpdate) user.Id = int.Parse(idTextBox.Text);
                         if (isCreate || isUpdate) user.AvatarFile = selectedImagePath;
-                        if (isCreate || isUpdate) user.RoleId = 0;
+                        if (isCreate || isUpdate) user.RoleId = 1;
                         if (isCreate) user.Username = usernameTextBox.Text;
                         if (isCreate) user.Password = passwordTextBox.Text;
                         if (isCreate || isUpdate) user.Fullname = fullnameTextBox.Text;

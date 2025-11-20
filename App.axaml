@@ -5,7 +5,8 @@
     xmlns:local="using:cschool"
     xmlns:services="clr-namespace:cschool.Services"
     xmlns:sty="using:FluentAvalonia.Styling"
-    RequestedThemeVariant="Default">
+    RequestedThemeVariant="Default"
+    xmlns:conv="clr-namespace:cschool.Utils">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.DataTemplates>
@@ -27,6 +28,7 @@
         <StyleInclude Source="Assets/Styles/MainLayoutStyle.axaml" />
         <StyleInclude Source="Assets/Styles/MessageBoxStyle.axaml" />
         <StyleInclude Source="Assets/Styles/TableDataStyle.axaml" />
+        <StyleInclude Source="Assets/Styles/Dashboard.axaml"/>
     </Application.Styles>
 
     <Application.Resources>
@@ -57,7 +59,13 @@
         <Bitmap x:Key="InfoIcon">avares://cschool/Assets/Images/Others/info-icon.png</Bitmap>
         <Bitmap x:Key="CreateIcon">avares://cschool/Assets/Images/Others/create-icon.png</Bitmap>
         <Bitmap x:Key="UpdateIcon">avares://cschool/Assets/Images/Others/update-icon.png</Bitmap>
+        <Bitmap x:Key="ExcelIcon">avares://cschool/Assets/Images/Others/excel.png</Bitmap>
+        <Bitmap x:Key="DeleteIcon">avares://cschool/Assets/Images/Others/delete.png</Bitmap>
         <Bitmap x:Key="LockIcon">avares://cschool/Assets/Images/Others/lock-icon.png</Bitmap>
+        <Bitmap x:Key="StudentIcon">avares://cschool/Assets/Images/Others/student-icon.png</Bitmap>
+        <Bitmap x:Key="TeacherIcon">avares://cschool/Assets/Images/Others/teacher-icon.png</Bitmap>
+        <Bitmap x:Key="SubjectIcon">avares://cschool/Assets/Images/Others/books.png</Bitmap>
+        <Bitmap x:Key="ClassIcon">avares://cschool/Assets/Images/Others/business-persentation.png</Bitmap>
         <Bitmap x:Key="ChangePasswordIcon">avares://cschool/Assets/Images/Others/change-password-icon.png</Bitmap>
         <!--    -->
         <Bitmap x:Key="SearchIcon">avares://cschool/Assets/Images/Others/search-icon.png</Bitmap>
@@ -72,5 +80,7 @@
 
         <!--  Converters  -->
         <services:StatusToBrushConverter x:Key="StatusToBrushConverter" />
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter"/>
+
     </Application.Resources>
 </Application>

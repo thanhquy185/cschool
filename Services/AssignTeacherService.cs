@@ -20,7 +20,8 @@ public class AssignTeacherService
     }
     public List<Subjects> GetCourses()
     {
-        try {
+        try
+        {
             var ds = new List<Subjects>();
             string sql = "SELECT id, name FROM subjects Where status = 1";
             var dt = _db.ExecuteQuery(sql);
@@ -38,8 +39,56 @@ public class AssignTeacherService
             Console.WriteLine("Lỗi không thể lấy dữ liệu môn học: " + ex);
             return new List<Subjects>();
         }
-        
     }
+
+    public bool IsTeacherBusy(int teacherId, string day, int start, int end)
+    {
+        string sql = @"
+        SELECT COUNT(*)
+        FROM assign_class_teachers
+        WHERE teacher_id = @teacherId
+          AND day = @day      
+          AND (
+                (@start BETWEEN start_period AND end_period)
+                OR (@end BETWEEN start_period AND end_period)
+                OR (start_period BETWEEN @start AND @end)
+                OR (end_period BETWEEN @start AND @end)
+              )";
+
+        using var conn = _db.GetConnection();
+        using var cmd = new MySqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@teacherId", teacherId);
+        cmd.Parameters.AddWithValue("@day", day);
+        // cmd.Parameters.AddWithValue("@assign_class_id",assign_class_id);
+        cmd.Parameters.AddWithValue("@start", start);
+        cmd.Parameters.AddWithValue("@end", end);
+
+        return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+    }
+public bool IsConflict(AssignTeacher at)
+{
+    var connection = _db.GetConnection();
+
+    string sql = @"
+        SELECT COUNT(*) FROM assign_class_teachers
+        WHERE teacher_id = @teacher_id
+          AND day = @day
+          AND assign_class_id != @assign_class_id
+          AND (
+                (start_period < @end_period AND end_period > @start_period)
+              )";
+
+    using var cmd = new MySqlCommand(sql, connection);
+    cmd.Parameters.AddWithValue("@teacher_id", at.Teachers_id);
+    cmd.Parameters.AddWithValue("@day", at.Day);
+    cmd.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
+    cmd.Parameters.AddWithValue("@start_period", at.Start);
+    cmd.Parameters.AddWithValue("@end_period", at.End);
+
+    int count = Convert.ToInt32(cmd.ExecuteScalar());
+    return count > 0;
+}
+
     public List<Classes> GetClasses()
     {
         try
@@ -103,8 +152,10 @@ public class AssignTeacherService
     {
         try
         {
+
             string sql = @"INSERT INTO assign_class_teachers (assign_class_id, teacher_id, subject_id, quiz_connt, oral_count, day,start_period,end_period) 
                      VALUES (@assignClassId, @teacherId, @subjectId, @quizCount, @oralCount, @day,@start_period,@end_period)";
+
             var connection = _db.GetConnection();
 
             var command = new MySqlCommand(sql, connection);
@@ -116,6 +167,7 @@ public class AssignTeacherService
             command.Parameters.AddWithValue("@day", courseAssignment.Day);
             command.Parameters.AddWithValue("@start_period", courseAssignment.Start);
             command.Parameters.AddWithValue("@end_period", courseAssignment.End);
+
             return command.ExecuteNonQuery() > 0;
         }
         catch (Exception ex)
@@ -132,12 +184,12 @@ public class AssignTeacherService
         {
             var ds = new List<AssignTeacher>();
             string sql = @"select at.assign_class_id as assignClassId,at.day,at.quiz_connt,oral_count, at.start_period, at.end_period, at.teacher_id as teacherId,c.name as className, c.room as roomName,
-        t.fullname as nameTeacher, s.name as subjectName
-        FROM assign_class_teachers at
-        JOIN assign_classes ac ON ac.id = at.assign_class_id 
-        JOIN classes c ON c.id = ac.class_id
-        JOIN subjects s ON s.id = at.subject_id
-        JOIN teachers t ON t.id = at.teacher_id";
+                            t.fullname as nameTeacher, s.name as subjectName
+                            FROM assign_class_teachers at
+                            JOIN assign_classes ac ON ac.id = at.assign_class_id 
+                            JOIN classes c ON c.id = ac.class_id
+                            JOIN subjects s ON s.id = at.subject_id
+                            JOIN teachers t ON t.id = at.teacher_id";
 
             var dt = _db.ExecuteQuery(sql);
             foreach (DataRow data in dt.Rows)
@@ -176,7 +228,7 @@ public class AssignTeacherService
             var connection = _db.GetConnection();
             string sql = "DELETE FROM assign_class_teachers WHERE assign_class_id = @assign_class_id AND teacher_id = @teacher_id ";
             var command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@assign_class_id ", at.Assign_class_id);
+            command.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
             command.Parameters.AddWithValue("@teacher_id", at.Teachers_id);
 
             return command.ExecuteNonQuery() > 0;
@@ -203,11 +255,12 @@ public class AssignTeacherService
                        JOIN classes c ON c.id = ac.class_id
                        JOIN subjects s ON s.id = at.subject_id
                        JOIN teachers t ON t.id = at.teacher_id
-                       WHERE t.name LIKE @search OR c.name LIKE @search OR s.name LIKE @search";
+                       WHERE t.fullname LIKE @search OR c.name LIKE @search OR s.name LIKE @search";
 
         var connection = _db.GetConnection();
         var command = new MySqlCommand(sql, connection);
-        command.Parameters.AddWithValue("@search", $"%{s}%"); // Sử dụng LIKE cho tìm kiếm
+            command.Parameters.AddWithValue("@search", $"%{s}%");
+         // Sử dụng LIKE cho tìm kiếm
         var reader = command.ExecuteReader();
         while (reader.Read())
         {
@@ -253,8 +306,7 @@ public class AssignTeacherService
             command.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
             command.Parameters.AddWithValue("@teacher_id", at.Teachers_id);
 
-
-            return command.ExecuteNonQuery() > 1;
+            return command.ExecuteNonQuery() > 0;
         }
         catch (Exception ex)
         {
@@ -283,7 +335,7 @@ public class AssignTeacherService
             DateTime day = monday.AddDays(i);
             string thu = day.ToString("dddd", viCulture);  // Thứ
             string ngay = day.ToString("dd/MM/yyyy");      // Ngày
-            daysInWeek.Add($"{thu} - {ngay}");
+            daysInWeek.Add($"{thu}");
         }
 
         return daysInWeek;
