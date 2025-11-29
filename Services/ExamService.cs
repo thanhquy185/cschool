@@ -18,22 +18,23 @@ public class ExamService
     public List<ExamModel> GetExamSchedule()
     {
         string sql = @$"SELECT exam_details.id, subjects.name AS subject, terms.name AS term_name, terms.year AS term_year,
-                        exam_details.start_time, exam_details.end_time,
+                        exam_details.start_time, exam_details.end_time, subjects.id AS subject_id, terms.id AS term_id,
                         GROUP_CONCAT(DISTINCT classes.grade ORDER BY classes.grade SEPARATOR ', ') AS grades
-                        FROM exams
-                        JOIN exam_details ON exams.exam_detail_id = exam_details.id
-                        JOIN rooms ON exams.exam_room = rooms.id
-                        JOIN student_exams ON exams.id = student_exams.exam_id
-                        JOIN students ON student_exams.student_id = students.id
-                        JOIN assign_class_students ON students.id = assign_class_students.student_id
-                        JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
-                        JOIN classes ON assign_classes.class_id = classes.id
-                        JOIN teachers ON exams.supervisor_id = teachers.id
-                        JOIN subjects ON exam_details.subject_id = subjects.id
-                        JOIN terms ON exam_details.term_id = terms.id
+                        FROM exam_details
+                        LEFT JOIN exams ON exams.exam_detail_id = exam_details.id
+                        LEFT JOIN rooms ON exams.exam_room = rooms.id
+                        LEFT JOIN student_exams ON exams.id = student_exams.exam_id
+                        LEFT JOIN students ON student_exams.student_id = students.id
+                        LEFT JOIN assign_class_students ON students.id = assign_class_students.student_id
+                        LEFT JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
+                        LEFT JOIN classes ON assign_classes.class_id = classes.id
+                        LEFT JOIN teachers ON exams.supervisor_id = teachers.id
+                        LEFT JOIN subjects ON exam_details.subject_id = subjects.id
+                        LEFT JOIN terms ON exam_details.term_id = terms.id
+                        WHERE exam_details.status = 1
                         GROUP BY 
                             exam_details.id, subjects.name, terms.name, term_year,
-                            exam_details.start_time, exam_details.end_time
+                            exam_details.start_time, exam_details.end_time, subjects.id, terms.id
                         ORDER BY exam_details.start_time ASC, subjects.name ASC";
         var dt = _db.ExecuteQuery(sql);
         var list = new List<ExamModel>();
@@ -50,6 +51,8 @@ public class ExamService
                 EndTime = row["end_time"].ToString()!,
                 TermName = row["term_name"].ToString()!,
                 TermYear = row["term_year"].ToString()!,
+                SubjectId = (int)row["subject_id"],
+                TermId = (int)row["term_id"],
             });
         }
 
@@ -59,7 +62,7 @@ public class ExamService
     // Lấy chi tiết lịch thi
     public ExamModel? GetExamById(int id)
     {
-        string sql = @$"SELECT exams.id, rooms.name AS exam_room, teachers.fullname, rooms.quantity AS candidate_count, 
+        string sql = @$"SELECT exam_details.id, rooms.name AS exam_room, teachers.fullname, rooms.quantity AS candidate_count, 
                         subjects.name AS subject, terms.name AS term_name, terms.year AS term_year, exam_details.start_time, 
                         exam_details.end_time, classes.grade
                         FROM exams
@@ -73,7 +76,7 @@ public class ExamService
                         JOIN teachers ON exams.supervisor_id = teachers.id
                         JOIN subjects ON exam_details.subject_id = subjects.id
                         JOIN terms ON exam_details.term_id = terms.id
-                        WHERE exams.id = {id}";
+                        WHERE exam_details.id = {id}";
         var dt = _db.ExecuteQuery(sql);
 
         if (dt.Rows.Count == 0)
@@ -155,15 +158,14 @@ public class ExamService
     }
 
     // Đếm số lượng sinh viên của khối chưa được phân phòng
-    public int GetStudentGrade(int grade)
+    public int GetStudentGrade(int grade, int term)
     {
         string sql = @$"SELECT COUNT(students.id) AS StudentGrade
                     FROM students
                     JOIN assign_class_students ON students.id = assign_class_students.student_id
                     JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
                     JOIN classes ON assign_classes.class_id = classes.id
-                    WHERE classes.grade = {grade}
-                    AND students.id NOT IN (SELECT student_id FROM student_exams);";
+                    WHERE classes.grade = {grade} AND assign_classes.term_id = {term}";
         var dt = _db.ExecuteQuery(sql);
 
         int count = 0;
@@ -267,7 +269,7 @@ public class ExamService
                 VALUES (
                     {exam.SubjectId},
                     {exam.TermId},
-                    NULL,
+                    4,
                     '{exam.StartTime}',
                     '{exam.EndTime}'
                 );
@@ -283,8 +285,7 @@ public class ExamService
                                     JOIN assign_class_students ON students.id = assign_class_students.student_id
                                     JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
                                     JOIN classes ON assign_classes.class_id = classes.id
-                                    WHERE classes.grade = {exam.GradeId}
-                                    AND students.id NOT IN (SELECT student_id FROM student_exams);";
+                                    WHERE classes.grade = {exam.GradeId} AND assign_classes.term_id = {exam.TermId}";
             var allStudents = _db.ExecuteQuery(sqlStudents)
                                 .AsEnumerable()
                                 .Select(r => Convert.ToInt32(r["id"]))
@@ -293,7 +294,7 @@ public class ExamService
             if (allStudents.Count == 0)
                 throw new Exception("Không có học sinh nào trong khối này.");
 
-            // Shuffle ngẫu nhiên danh sách học sinh
+            // Random ngẫu nhiên danh sách học sinh
             var rnd = new Random();
             allStudents = allStudents.OrderBy(x => rnd.Next()).ToList();
 
@@ -335,44 +336,225 @@ public class ExamService
         }
     }
 
+    // Lấy danh sách phòng thi của cập nhật lịch thi
+    public List<ExamAssignment> GetRoomById(int id)
+    {
+        string sql = @$"SELECT 
+                            rooms.id AS room_id,
+                            rooms.name AS room_name,
+                            rooms.quantity AS candidate_count,
+                            teachers.id AS teacher_id,
+                            teachers.fullname AS teacher_name,
+                            COUNT(students.id) AS student_count
+                        FROM exams
+                        JOIN exam_details ON exams.exam_detail_id = exam_details.id
+                        JOIN rooms ON exams.exam_room = rooms.id
+                        JOIN teachers ON exams.supervisor_id = teachers.id
+                        JOIN student_exams ON exams.id = student_exams.exam_id
+                        JOIN students ON student_exams.student_id = students.id
+                        WHERE exam_details.id = {id}
+                        GROUP BY rooms.id, rooms.name, rooms.quantity, teachers.id, teachers.fullname
+                        ORDER BY rooms.id ASC";
 
-    // // Cập nhật thông tin lịch thi
-    // public bool UpdateStudent(ExamModel student)
-    // {
-    //     string formattedBirthDay = "NULL";
-    //     if (!string.IsNullOrWhiteSpace(student.BirthDay) && DateTime.TryParse(student.BirthDay, out var birth))
-    //     {
-    //         formattedBirthDay = $"'{birth:yyyy-MM-dd}'";
-    //     }
-    //     string sql = @$"
-    //         UPDATE cschool.students SET 
-    //             fullname = '{student.Fullname}',
-    //             avatar = '{student.Avatar}',
-    //             birthday = {formattedBirthDay},
-    //             gender = '{student.Gender}',
-    //             ethnicity = '{student.Ethnicity}',
-    //             religion = '{student.Religion}',
-    //             phone = '{student.Phone}',
-    //             email = '{student.Email}',
-    //             address = '{student.Address}',
-    //             learn_year = '{student.LearnYear}',
-    //             learn_status = '{student.LearnStatus}'
-    //         WHERE id = {student.Id};";
+        var dt = _db.ExecuteQuery(sql);
 
-    //     int rows = _db.ExecuteNonQuery(sql);
-    //     return rows > 0;
-    // }
+        var list = new List<ExamAssignment>();
 
-    // // Khóa lịch thi
-    // public bool LockStudent(ExamModel student)
-    // {
-    //     string sql = @$"
-    //         UPDATE cschool.students 
-    //         SET status = 0
-    //         WHERE id = {student.Id};";
+        foreach (DataRow row in dt.Rows)
+        {
+            var room = new RoomModel
+            {
+                Id = Convert.ToInt32(row["room_id"]),
+                RoomName = row["room_name"].ToString()!,
+                Quantity = Convert.ToInt32(row["candidate_count"])
+            };
 
-    //     int rows = _db.ExecuteNonQuery(sql);
-    //     return rows > 0;
-    // }
+            var teacher = new TeacherModel
+            {
+                Id = Convert.ToInt32(row["teacher_id"]),
+                TeacherName = row["teacher_name"].ToString()!
+            };
+
+            list.Add(new ExamAssignment
+            {
+                RoomName = room.RoomName,
+                TeacherName = teacher.TeacherName,
+                RoomQuantity = room.Quantity,
+                AssignedStudents = Convert.ToInt32(row["student_count"]),
+                Room = room,
+                Teacher = teacher
+            });
+        }
+
+        return list;
+    }
+
+    // Lấy danh sách phòng thi
+    public List<RoomModel> GetRoomListUpdate(int examDetailId)
+    {
+        string sql = @$"SELECT * FROM rooms WHERE id NOT IN 
+                    (SELECT rooms.id
+                    FROM rooms 
+                    JOIN exams ON rooms.id = exams.exam_room
+                    JOIN exam_details ON exams.exam_detail_id = exam_details.id
+                    WHERE exam_details.id = {examDetailId})";
+        var dt = _db.ExecuteQuery(sql);
+
+        var list = new List<RoomModel>();
+
+        foreach (DataRow row in dt.Rows)
+        {
+            list.Add(new RoomModel
+            {
+                Id = (int)row["id"],
+                RoomName = row["name"].ToString()!,
+                Quantity = (int)row["quantity"],
+            });
+        }
+
+        return list;
+    }
+
+    // Lấy danh sách giáo viên
+    public List<TeacherModel> GetTeacherListUpdate(int examDetailId)
+    {
+        string sql = @$"SELECT * FROM teachers WHERE id NOT IN 
+                    (SELECT teachers.id
+                    FROM teachers 
+                    JOIN exams ON teachers.id = exams.supervisor_id
+                    JOIN exam_details ON exams.exam_detail_id = exam_details.id
+                    WHERE exam_details.id = {examDetailId})";
+        var dt = _db.ExecuteQuery(sql);
+
+        var list = new List<TeacherModel>();
+
+        foreach (DataRow row in dt.Rows)
+        {
+            list.Add(new TeacherModel
+            {
+                Id = (int)row["id"],
+                TeacherName = row["fullname"].ToString()!,
+            });
+        }
+
+        return list;
+    }
+
+    // Cập nhật thông tin lịch thi
+    public bool UpdateExam(ExamUpdateModel exam)
+    {
+        try
+        {
+            // ===============================
+            // 1. UPDATE exam_details
+            // ===============================
+            string sqlDetail = @$"
+                UPDATE exam_details SET
+                    subject_id = {exam.SubjectId},
+                    term_id = {exam.TermId},
+                    start_time = '{exam.StartTime}',
+                    end_time = '{exam.EndTime}'
+                WHERE id = {exam.ExamDetailId};
+            ";
+            _db.ExecuteNonQuery(sqlDetail);
+
+
+            // ===============================
+            // 2. XÓA exam + student_exams CŨ
+            // ===============================
+            string sqlDeleteStudents = @$"
+                DELETE FROM student_exams
+                WHERE exam_id IN (SELECT id FROM exams WHERE exam_detail_id = {exam.ExamDetailId});
+            ";
+
+            string sqlDeleteExams = @$"
+                DELETE FROM exams
+                WHERE exam_detail_id = {exam.ExamDetailId};
+            ";
+
+            _db.ExecuteNonQuery(sqlDeleteStudents);
+            _db.ExecuteNonQuery(sqlDeleteExams);
+
+
+            // ===============================
+            // 3. LẤY LẠI DANH SÁCH HỌC SINH
+            // ===============================
+            string sqlStudents = @$"SELECT students.id
+                                FROM students
+                                JOIN assign_class_students ON students.id = assign_class_students.student_id
+                                JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
+                                JOIN classes ON assign_classes.class_id = classes.id
+                                WHERE classes.grade = {exam.GradeId} AND assign_classes.term_id = {exam.TermId}";
+
+            var allStudents = _db.ExecuteQuery(sqlStudents)
+                                .AsEnumerable()
+                                .Select(r => Convert.ToInt32(r["id"]))
+                                .ToList();
+
+            if (allStudents.Count == 0)
+                throw new Exception("Không có học sinh nào trong khối này.");
+
+            // Random ngẫu nhiên
+            var rnd = new Random();
+            allStudents = allStudents.OrderBy(x => rnd.Next()).ToList();
+
+            // ===============================
+            // 4. TẠO LẠI exams + student_exams
+            // ===============================
+            int currentIndex = 0;
+
+            foreach (var a in exam.Assignments)
+            {
+                // CHECK teacher_id hợp lệ
+                if (a.TeacherId <= 0)
+                    throw new Exception($"TeacherId không hợp lệ: {a.TeacherId}");
+
+                string sqlExam = @$"
+                    INSERT INTO exams (exam_detail_id, exam_room, supervisor_id)
+                    VALUES ({exam.ExamDetailId}, {a.RoomId}, {a.TeacherId});
+                    SELECT LAST_INSERT_ID();
+                ";
+
+                int examId = _db.ExecuteScalar<int>(sqlExam);
+                if (examId <= 0)
+                    throw new Exception("Không lấy được exam_id mới.");
+
+                // Gán học sinh cho phòng thi
+                var assignedStudents = allStudents
+                                        .Skip(currentIndex)
+                                        .Take(a.AssignedStudents)
+                                        .ToList();
+                currentIndex += a.AssignedStudents;
+
+                foreach (var sid in assignedStudents)
+                {
+                    string sqlStudentExam = @$"
+                        INSERT INTO student_exams (exam_id, student_id)
+                        VALUES ({examId}, {sid});
+                    ";
+
+                    _db.ExecuteNonQuery(sqlStudentExam);
+                }
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Lỗi khi cập nhật lịch thi: {ex.Message}");
+            return false;
+        }
+    }
+
+    // Xóa lịch thi
+    public bool DeleteExam(int examDetailId)
+    {
+        string sql = @$"
+            UPDATE exam_details
+            SET status = 0
+            WHERE id = {examDetailId};
+        ";
+        return _db.ExecuteNonQuery(sql) > 0;
+    }
 
 }

@@ -17,7 +17,7 @@ public partial class ExamView : UserControl
         InfoButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Info);
         CreateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Create);
         UpdateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Update);
-        // LockButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Lock);
+        LockButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Lock);
     }
 
     private async Task ShowExamDialog(DialogModeEnum mode)
@@ -56,20 +56,25 @@ public partial class ExamView : UserControl
                     // Lấy thông tin chi tiết lịch thi
                     vm.GetExamByIdCommand.Execute(selectedExam.Id).ToTask();
 
+                    // Lấy danh sách phân công
+                    vm.GetRoomUpdateByIdCommand.Execute(selectedExam.Id).ToTask();
+
                     // Lấy danh sách phòng thi
-                    vm.GetRoomExamByIdCommand.Execute(selectedExam.Id).ToTask();
+                    vm.GetRoomListUpdateCommand.Execute(selectedExam.Id).ToTask();
+
+                    // Lấy danh sách giáo viên
+                    vm.GetTeacherListUpdateCommand.Execute(selectedExam.Id).ToTask();
                 }
                 dialog = new ExamUpdateDialog(vm);
                 break;
 
-            // case DialogModeEnum.Lock:
-            //     // if (vm != null && selectedExam != null)
-            //     // {
-            //     //     var fullExam = AppService.ExamService.GetExamById(selectedExam.Id);
-            //     //     vm.ExamDetails = fullExam ?? selectedExam;
-            //     // }
-            //     // dialog = new ExamLockDialog(vm);
-            //     break;
+            case DialogModeEnum.Lock:
+                if (vm != null && selectedExam != null)
+                {
+                    vm.GetExamByIdCommand.Execute(selectedExam.Id).ToTask();
+                }
+                dialog = new ExamLockDialog(vm);
+                break;
         }
 
 

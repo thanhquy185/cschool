@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -10,7 +11,7 @@ namespace cschool.Views.Student
     public partial class StudentLockDialog : Window
     {
         public StudentViewModel studentViewModel { get; set; }
-        private void CloseButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
             this.Close();
         }
@@ -39,15 +40,18 @@ namespace cschool.Views.Student
             // Thông báo xử lý, nếu thành công thì ẩn dialog
             if (isSuccess)
             {
-                await MessageBoxUtil.ShowSuccess("Khóa thông tin học sinh thành công!", owner: this);
-
-                await studentViewModel.GetStudentsCommand.Execute().ToTask();
-
+                // await studentViewModel.GetStudentsCommand.Execute().ToTask();
+                var existing = studentViewModel.StudentsTemp.FirstOrDefault(s => s.Id == id);
+                if (existing != null)
+                {
+                    studentViewModel.StudentsTemp.Remove(existing);
+                }
+                await MessageBoxUtil.ShowSuccess("Xóa thông tin học sinh thành công!", owner: this);
                 this.Close();
             }
             else
             {
-                await MessageBoxUtil.ShowError("Khóa thông tin học sinh thất bại!", owner: this);
+                await MessageBoxUtil.ShowError("Xóa thông tin học sinh thất bại!", owner: this);
                 this.Close();
             }
         }

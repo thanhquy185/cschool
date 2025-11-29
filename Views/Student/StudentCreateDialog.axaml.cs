@@ -177,8 +177,12 @@ namespace cschool.Views.Student
             // Thông báo xử lý, nếu thành công thì ẩn dialog
             if (isSuccess)
             {
+                // await studentViewModel.GetStudentsCommand.Execute().ToTask();
+                int newId = AppService.StudentService.GetIdLastStudent();
+                var createdStudent = AppService.StudentService.GetStudentById(newId);
+                studentViewModel.StudentsTemp.Add(createdStudent);
+                studentViewModel.AllStudents.Add(createdStudent);
                 await MessageBoxUtil.ShowSuccess("Thêm học sinh thành công!", owner: this);
-                await studentViewModel.GetStudentsCommand.Execute().ToTask();
                 this.Close();
             }
             else

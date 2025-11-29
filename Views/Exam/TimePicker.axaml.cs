@@ -26,11 +26,26 @@ namespace cschool.Views.Exam
 
             HourBox.SelectionChanged += (s, e) => UpdateValue();
             MinuteBox.SelectionChanged += (s, e) => UpdateValue();
+
+            this.AttachedToVisualTree += (_, __) => InitDefaultValue();
         }
 
         private void UpdateValue()
         {
-            Value = $"{HourBox.SelectedItem}:{MinuteBox.SelectedItem}";
+            var hour = HourBox.SelectedItem?.ToString() ?? "00";
+            var minute = MinuteBox.SelectedItem?.ToString() ?? "00";
+            Value = $"{hour}:{minute}";
+        }
+
+        private void InitDefaultValue()
+        {
+            if (string.IsNullOrEmpty(Value))
+                Value = "00:00";  // fallback
+
+            var parts = Value.Split(':');
+
+            HourBox.SelectedItem = parts[0];
+            MinuteBox.SelectedItem = parts[1];
         }
 
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs e)

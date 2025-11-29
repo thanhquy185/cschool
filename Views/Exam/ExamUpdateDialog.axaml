@@ -85,17 +85,13 @@
                     <!-- Khối lớp -->
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Khối lớp" FontSize="15" FontWeight="Bold" Margin="0,0,0,5" Foreground="Black"/>
                     <ComboBox  Grid.Row="1" Grid.Column="0" x:Name="Grade" SelectionChanged="OnGradeChanged" MaxDropDownHeight="300" 
-                                SelectedItem="{Binding ExamDetails.Grade}" Width="200" Margin="0,0,0,10">
-                        <ComboBoxItem>--- Chọn Khối lớp ---</ComboBoxItem>
-                        <ComboBoxItem Tag="10">Khối 10</ComboBoxItem>
-                        <ComboBoxItem Tag="11">Khối 11</ComboBoxItem>
-                        <ComboBoxItem Tag="12">Khối 12</ComboBoxItem>
+                                ItemsSource="{Binding GradeList}" SelectedItem="{Binding ExamDetails.Grade, Mode=TwoWay}" Width="200" Margin="0,0,0,10">
                     </ComboBox>
 
                     <!-- Học kỳ -->
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="Học kỳ" FontSize="15" FontWeight="Bold" Margin="10,10,0,5" Foreground="Black"/>
                     <ComboBox  Grid.Row="1" Grid.Column="1" x:Name="Term" MaxDropDownHeight="300"  Margin="10,0,0,10"
-                                ItemsSource="{Binding StudyTerm}" Width="200">
+                                ItemsSource="{Binding StudyTerm}" SelectedItem="{Binding SelectedTerm}" Width="200">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding TermName}"/>
@@ -106,7 +102,7 @@
                     <!-- Môn học -->
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Môn học" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
                     <ComboBox  Grid.Row="4" Grid.Column="0" x:Name="Subject" MaxDropDownHeight="300"  Margin="0,0,0,10"
-                                ItemsSource="{Binding SubjectList}" SelectedItem="{Binding ExamDetails.Subject}" Width="200">
+                                ItemsSource="{Binding SubjectList}" SelectedItem="{Binding SelectedSubject}" Width="200">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding SubjectName}"/>
@@ -145,7 +141,7 @@
                                     Margin="0,0,0,5"
                                     Foreground="Black" />
                             <ComboBox x:Name="Room"
-                                    ItemsSource="{Binding RoomList}"
+                                    ItemsSource="{Binding RoomListUpdate}"
                                     PlaceholderText="--- Chọn phòng thi ---"
                                     Width="200"
                                     MaxDropDownHeight="300">
@@ -168,7 +164,7 @@
                             <!-- Hàng ngang chứa combobox và nút -->
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <ComboBox x:Name="Teacher"
-                                        ItemsSource="{Binding TeacherList}"
+                                        ItemsSource="{Binding TeacherListUpdate}"
                                         PlaceholderText="--- Chọn giáo viên ---"
                                         Width="200"
                                         MaxDropDownHeight="300">
@@ -246,11 +242,12 @@
                             <DataGridTemplateColumn Header="Số lượng học sinh">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <NumericUpDown 
-                                            Value="{Binding AssignedStudents, UpdateSourceTrigger=PropertyChanged}"
-                                            Minimum="0"
-                                            Maximum="50"
-                                            Width="130"/>
+                                        <TextBox Text="{Binding AssignedStudents, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="80"
+                                            HorizontalContentAlignment="Center"
+                                            MaxLength="2"
+                                            TextInput="TextBox_TextInput"
+                                            LostFocus="TextBox_LostFocus"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

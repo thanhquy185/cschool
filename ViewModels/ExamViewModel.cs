@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Media;
 using ReactiveUI;
 
 namespace cschool.ViewModels;
@@ -20,7 +21,9 @@ public partial class ExamViewModel : ViewModelBase
     public ObservableCollection<RoomExamModel> RoomDetails { get; set; }
     public ObservableCollection<SubjectModel> SubjectList { get; set; }
     public ObservableCollection<RoomModel> RoomList { get; set; }
+    public ObservableCollection<RoomModel> RoomListUpdate { get; set; }
     public ObservableCollection<TeacherModel> TeacherList { get; set; }
+    public ObservableCollection<TeacherModel> TeacherListUpdate { get; set; }
     public ObservableCollection<ExamAssignment> ExamAssignments { get; } = new();
     public ObservableCollection<RoomModel> SelectedRooms { get; } = new();
     public ObservableCollection<TeacherModel> SelectedTeachers { get; } = new();
@@ -40,6 +43,20 @@ public partial class ExamViewModel : ViewModelBase
                 _remainingStudents = value;
                 OnPropertyChanged(nameof(RemainingStudents));
                 RemainingStudentsText = $"Còn lại {_remainingStudents} học sinh chưa được phân vào phòng thi";
+            }
+        }
+    }
+    private int _remainingUpdateStudents;
+    public int RemainingUpdateStudents
+    {
+        get => _remainingUpdateStudents;
+        set
+        {
+            if (_remainingUpdateStudents != value)
+            {
+                _remainingUpdateStudents = value;
+                OnPropertyChanged(nameof(RemainingUpdateStudents));
+                RemainingStudentsText = $"Còn lại {_remainingUpdateStudents} học sinh chưa được phân vào phòng thi";
             }
         }
     }
@@ -66,20 +83,34 @@ public partial class ExamViewModel : ViewModelBase
             {
                 _selectedGrade = value;
                 OnPropertyChanged(nameof(SelectedGrade));
+                RecalculateRemainingStudents();
             }
-            RecalculateRemainingStudents();
+        }
+    }
+    private int? _selectedUpdateTerm;
+    public int? SelectedUpdateTerm
+    {
+        get => _selectedUpdateTerm;
+        set
+        {
+            if (_selectedUpdateTerm != value)
+            {
+                _selectedUpdateTerm = value;
+                OnPropertyChanged(nameof(SelectedUpdateTerm));
+                RecalculateRemainingStudents();
+            }
         }
     }
     public void RecalculateRemainingStudents()
     {
-        if (SelectedGrade is null)
+        if (SelectedGrade is null || SelectedUpdateTerm is null)
         {
             RemainingStudents = 0;
             return;
         }
 
         // Tổng số học sinh theo khối/lớp
-        int total = AppService.ExamService.GetStudentGrade(SelectedGrade.Value);
+        int total = AppService.ExamService.GetStudentGrade(SelectedGrade.Value,SelectedUpdateTerm.Value);
 
         // Tổng số học sinh đã phân công trong ExamAssignments
         int assigned = ExamAssignments.Sum(a => a.AssignedStudents);
@@ -103,9 +134,19 @@ public partial class ExamViewModel : ViewModelBase
     public ReactiveCommand<int, Unit> GetExamByIdCommand { get; }
     public ReactiveCommand<(int details_id, int room_id), Unit> GetStudentExamByIdCommand { get; }
     public ReactiveCommand<int, Unit> GetRoomExamByIdCommand { get; }
+    public ReactiveCommand<int, Unit> GetRoomUpdateByIdCommand { get; }
+    public ReactiveCommand<int, Unit> GetRoomListUpdateCommand { get; }
+    public ReactiveCommand<int, Unit> GetTeacherListUpdateCommand { get; }
     public ReactiveCommand<ExamCreateModel, bool> CreateExamCommand { get; }
-    public ReactiveCommand<ExamModel, bool> UpdateExamCommand { get; }
+    public ReactiveCommand<ExamUpdateModel, bool> UpdateExamCommand { get; }
     public ReactiveCommand<ExamModel, bool> LockExamCommand { get; }
+
+    public List<string> GradeList { get; set; } = new List<string>
+    {
+        "10", "11", "12"
+    };
+    public TermModel? SelectedTerm { get; set; }
+    public SubjectModel? SelectedSubject { get; set; }
 
     public ExamViewModel()
     {
@@ -135,6 +176,10 @@ public partial class ExamViewModel : ViewModelBase
         {
             var exam = AppService.ExamService.GetExamById(id);
             ExamDetails = exam;
+            // Tìm Term theo tên trong list
+            SelectedTerm = StudyTerm.FirstOrDefault(t => t.TermName == $"{exam.TermName} - {exam.TermYear}");
+            // Tìm Subject theo tên
+            SelectedSubject = SubjectList.FirstOrDefault(s => s.SubjectName == exam.Subject);
         });
 
         // Lấy danh sách phòng thi theo lịch
@@ -199,33 +244,58 @@ public partial class ExamViewModel : ViewModelBase
             return false;
         });
 
-        // // Cập nhật thông tin lịch thi
-        // UpdateStudentCommand = ReactiveCommand.CreateFromTask<ExamModel, bool>(async (student) =>
-        // {
-        //     // Nếu người dùng có chọn ảnh mới (AvatarFile không rỗng)
-        //     if (!string.IsNullOrEmpty(student.AvatarFile) && File.Exists(student.AvatarFile))
-        //     {
-        //         string? newAvatarFile = await UploadService.SaveImageAsync(student.AvatarFile, "student", student.Id);
-        //         student.Avatar = newAvatarFile;
-        //     }
-        //     var result = AppService.StudentService.UpdateStudent(student);
-        //     if (result)
-        //     {
-        //         return true;
-        //     }
-        //     return false;
-        // });
+        // Lấy danh sách phân công của cập nhật
+        ExamAssignments = new ObservableCollection<ExamAssignment>();
+        GetRoomUpdateByIdCommand = ReactiveCommand.CreateFromTask<int>(async (id) =>
+        {
+            var rooms_update = AppService.ExamService.GetRoomById(id);
+            ExamAssignments.Clear();
+            foreach (var s in rooms_update)
+                ExamAssignments.Add(s);
+        });
 
-        // // Khóa lịch thi
-        // LockStudentCommand = ReactiveCommand.Create<ExamModel, bool>(student =>
-        // {
-        //     var result = AppService.StudentService.LockStudent(student);
-        //     if (result)
-        //     {
-        //         return true;
-        //     }
-        //     return false;
-        // });
+        // Lấy danh sách phòng thi của cập nhật
+        RoomListUpdate = new ObservableCollection<RoomModel>();
+        GetRoomListUpdateCommand = ReactiveCommand.CreateFromTask<int>(async (id) =>
+        {
+            var roomsUpdate = AppService.ExamService.GetRoomListUpdate(id);
+            RoomListUpdate.Clear();
+            foreach (var roomUpdate in roomsUpdate)
+                RoomListUpdate.Add(roomUpdate);
+        });
+
+        // Lấy danh sách giáo viên của cập nhật
+        TeacherListUpdate = new ObservableCollection<TeacherModel>();
+        GetTeacherListUpdateCommand = ReactiveCommand.CreateFromTask<int>(async (id) =>
+        {
+            var teachersUpdate = AppService.ExamService.GetTeacherListUpdate(id);
+            TeacherListUpdate.Clear();
+            foreach (var teacherUpdate in teachersUpdate)
+                TeacherListUpdate.Add(teacherUpdate);
+        });
+
+
+        // Cập nhật thông tin lịch thi
+        UpdateExamCommand = ReactiveCommand.CreateFromTask<ExamUpdateModel, bool>(async (exam) =>
+        {
+            var result = AppService.ExamService.UpdateExam(exam);
+            if (result)
+            {
+                return true;
+            }
+            return false;
+        });
+
+        // Khóa lịch thi
+        LockExamCommand = ReactiveCommand.Create<ExamModel, bool>(exam =>
+        {
+            var result = AppService.ExamService.DeleteExam(exam.Id);
+            if (result)
+            {
+                return true;
+            }
+            return false;
+        });
     
     }
 

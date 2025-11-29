@@ -1,10 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:cschool.ViewModels;assembly=cschool"
-        x:Class="cschool.Views.Student.StudentLockDialog"
-        x:DataType="vm:StudentViewModel"
-        Title="Xoá thông tin học sinh"
-        Width="400" Height="300"
+        x:Class="cschool.Views.Exam.ExamLockDialog"
+        x:DataType="vm:ExamViewModel"
+        Title="Xoá thông tin lịch thi"
+        Width="450" Height="320"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         SystemDecorations="None"
@@ -28,7 +28,7 @@
 
                     <!-- Tiêu đề -->
                     <TextBlock Grid.Column="1"
-                               Text="Xoá thông tin học sinh"
+                               Text="Xoá thông tin lịch thi"
                                FontSize="18"
                                FontWeight="Bold"
                                Foreground="White"
@@ -55,8 +55,8 @@
                 <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <!-- Icon bên trái -->
                     <Image Source="avares://cschool/Assets/Images/Others/question-icon.png"
-                           Width="120"
-                           Height="120"
+                           Width="140"
+                           Height="140"
                            Margin="0,0,15,0"
                            VerticalAlignment="Top"/>
 
@@ -72,10 +72,16 @@
                                    Foreground="#B22222"
                                    MaxWidth="300">
                             <Run Text="Bạn có chắc chắn muốn xóa"/>
-                            <Run Text="thông tin học sinh"/>
-                            <Run Text="{Binding StudentDetails.Fullname}" FontWeight="Bold"/>
-                            <Run Text="có mã học sinh là"/>
-                            <Run Text="{Binding StudentDetails.Id}" FontWeight="Bold"/>
+                            <Run Text="thông tin lịch thi môn học"/>
+                            <Run Text="{Binding ExamDetails.Subject}" FontWeight="Bold"/>
+                            <Run Text="của khối"/>
+                            <Run Text="{Binding ExamDetails.Grade}" FontWeight="Bold"/>
+                            <Run Text="vào ngày"/>
+                            <Run Text="{Binding ExamDetails.ExamDateDisplay}" FontWeight="Bold"/>
+                            <Run Text="bắt đầu từ"/>
+                            <Run Text="{Binding ExamDetails.StartTimeDisplay}" FontWeight="Bold"/>
+                            <Run Text="và kết thúc lúc"/>
+                            <Run Text="{Binding ExamDetails.EndTimeDisplay}? " FontWeight="Bold"/>
                             <Run Text="? Hành động này sẽ không thể hoàn tác."/>
                         </TextBlock>
                     </Border>

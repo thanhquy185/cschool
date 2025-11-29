@@ -73,13 +73,13 @@ public class StudentService
     {
         string sql = @$"SELECT students.id, students.fullname, students.avatar, students.birthday, students.gender, students.ethnicity,
                     students.religion, students.phone, students.email, students.address, students.learn_year, students.learn_status, 
-                    students.status, classes.name AS class_name, teachers.fullname AS teacher_name
+                    students.status, classes.name AS class_name, teachers.fullname AS teacher_name, terms.year
                     FROM students
-                    JOIN assign_class_students ON students.id = assign_class_students.student_id
-                    JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
-                    JOIN terms ON assign_classes.term_id = terms.id
-                    JOIN classes ON assign_classes.class_id = classes.id
-                    JOIN teachers ON assign_classes.head_teacher_id = teachers.id
+                    LEFT JOIN assign_class_students ON students.id = assign_class_students.student_id
+                    LEFT JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
+                    LEFT JOIN terms ON assign_classes.term_id = terms.id
+                    LEFT JOIN classes ON assign_classes.class_id = classes.id
+                    LEFT JOIN teachers ON assign_classes.head_teacher_id = teachers.id
                     WHERE students.id = {id}";
         var dt = _db.ExecuteQuery(sql);
 
@@ -104,6 +104,7 @@ public class StudentService
             LearnStatus = row["learn_status"].ToString()!,
             Status = (sbyte)row["status"],
             ClassName = row["class_name"].ToString()!,
+            ClassYear = row["year"].ToString()!,
             TeacherName = row["teacher_name"].ToString()!
         };
     }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Avalonia.Input;
 
 namespace cschool.Views.Exam
 {
@@ -38,6 +39,20 @@ namespace cschool.Views.Exam
             else
             {
                 examViewModel.SelectedGrade = null;
+                RemainingStudents.Text = "";
+            }
+        }
+
+        private void OnTermChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (Term?.SelectedItem is TermModel selected)
+            {
+                examViewModel.SelectedUpdateTerm = selected.Id;
+                RemainingStudents.Text = examViewModel.RemainingStudentsText;
+            }
+            else
+            {
+                examViewModel.SelectedUpdateTerm = null;
                 RemainingStudents.Text = "";
             }
         }
@@ -131,29 +146,60 @@ namespace cschool.Views.Exam
             }
         }
 
-        // private async void AssignedStudents_ValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
-        // {
-        //     if (sender is NumericUpDown nud && nud.DataContext is ExamAssignment a)
-        //     {
-        //         int maxAllowed = Math.Min(a.RoomQuantity, examViewModel.RemainingStudents);
+        // Chặn gõ ký tự không phải số
+        private async void TextBox_TextInput(object? sender, TextInputEventArgs e)
+        {
+            // Nếu ký tự không phải số -> chặn
+            if (!e.Text.All(char.IsDigit))
+                await MessageBoxUtil.ShowError("Vui lòng nhập số hợp lệ.", owner: this);
+                e.Handled = true;
+        }
 
-        //         if (a.AssignedStudents > maxAllowed)
-        //         {
-        //             a.AssignedStudents = maxAllowed;
-        //             nud.Value = maxAllowed;
+        // Giới hạn số khi TextBox mất focus
+        private async void TextBox_LostFocus(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox tb || tb.DataContext is not ExamAssignment assignment)
+                return;
 
-        //             await MessageBoxUtil.ShowWarning(
-        //                 $"Số học sinh vượt quá giới hạn! (Tối đa: {maxAllowed})",
-        //                 "Giới hạn vượt mức",
-        //                 this
-        //             );
-        //         }
+            int value = int.TryParse(tb.Text, out int v) ? v : 0;
+            if (value < 0) value = 0;
 
-        //         examViewModel.RecalculateRemainingStudents();
-        //     }
-        // }
+            int maxCapacity = assignment.Room?.Quantity ?? 50;
 
-        // Xác nhận lưu
+            int totalStudents = AppService.ExamService.GetStudentGrade(
+                examViewModel.SelectedGrade ?? 0,
+                examViewModel.SelectedUpdateTerm ?? 0);
+
+            int assignedSum = examViewModel.ExamAssignments?.Sum(a => a.AssignedStudents) ?? 0;
+
+            int assignedWithoutCurrent = assignedSum - assignment.AssignedStudents;
+
+            int remainingBefore = Math.Max(totalStudents - assignedWithoutCurrent, 0);
+
+            int limit = Math.Min(maxCapacity, remainingBefore);
+
+            int corrected = Math.Clamp(value, 0, limit);
+
+            if (value > maxCapacity)
+            {
+                await MessageBoxUtil.ShowWarning(
+                    $"Số học sinh phân công vượt quá sức chứa của phòng (sức chứa: {maxCapacity}).",
+                    owner: this);
+            }
+            else if (value > remainingBefore)
+            {
+                await MessageBoxUtil.ShowWarning(
+                    $"Số học sinh phân công vượt quá số học sinh còn lại (còn: {remainingBefore}).",
+                    owner: this);
+            }
+
+            tb.Text = corrected.ToString();
+
+            assignment.AssignedStudents = corrected;
+            examViewModel.RecalculateRemainingStudents();
+        }
+
+        // Xác nhận lưu lịch thi
         private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
         {
             // Lấy dữ liệu từ các TextBox, ComboBox, DatePicker
@@ -223,6 +269,13 @@ namespace cschool.Views.Exam
                 return;
             }
 
+            // Kiểm tra xem đã phân hết học sinh vào phòng chưa
+            if (examViewModel.RemainingStudents > 0)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng phân công đủ học sinh vào các phòng thi.", owner: this);
+                return;
+            }
+
             // Khởi tạo model
             var examCreate = new ExamCreateModel
             {
@@ -239,6 +292,10 @@ namespace cschool.Views.Exam
                     AssignedStudents = a.AssignedStudents
                 }).ToList()
             };
+
+            // Kiểm tra đã có môn thi trong học kỳ chưa
+            if (await HasSubjectExamInTermAsync(examCreate, examViewModel.Exams, this))
+                return;
 
             // Kiểm tra trùng lịch thi
             if (await HasExamConflictPerGradeAsync(examCreate, examViewModel.Exams, this))
@@ -273,22 +330,18 @@ namespace cschool.Views.Exam
 
                 foreach (var exam in existingExams)
                 {
-                    // 1. Cùng khối
-                    if (Convert.ToInt32(exam.Grade) != newExam.GradeId)
-                        continue;
-
-                    // 2. Gộp ngày + giờ của exam cũ
+                    // Gộp ngày + giờ của exam cũ
                     if (!DateTime.TryParse($"{exam.StartTime}", out var existStart))
                         continue;
 
                     if (!DateTime.TryParse($"{exam.EndTime}", out var existEnd))
                         continue;
 
-                    // 3. Kiểm tra cùng ngày
+                    // Kiểm tra cùng ngày
                     if (existStart.Date != newStart.Date)
                         continue;
 
-                    // 4. Chồng lấn thời gian
+                    // Chồng lấn thời gian
                     bool isSeparated = newEnd <= existStart || newStart >= existEnd;
 
                     if (!isSeparated)
@@ -299,6 +352,7 @@ namespace cschool.Views.Exam
                             + $"vào ngày {existStart:dd/MM/yyyy} "
                             + $"từ {existStart:HH:mm} đến {existEnd:HH:mm}. "
                             + $"Không thể thi 2 môn cùng thời gian!",
+                            "Trùng lịch thi",
                             owner: owner
                         );
                         return true; // Có trùng -> không được thêm
@@ -311,6 +365,45 @@ namespace cschool.Views.Exam
             catch (Exception ex)
             {
                 await MessageBoxUtil.ShowError($"Lỗi kiểm tra trùng lịch thi: {ex.Message}", owner: owner);
+                return true;
+            }
+        }
+
+        // Hàm kiểm tra đã có môn thi trong học kỳ chưa
+        private async Task<bool> HasSubjectExamInTermAsync(ExamCreateModel newExam, IEnumerable<ExamModel> existingExams, Window owner)
+        {
+            try
+            {
+                // Lấy dữ liệu từ exam mới
+                int newSubject = newExam.SubjectId;
+                int newGrade = newExam.GradeId;
+                int newTermId = newExam.TermId;
+
+                // Kiểm tra xem đã có lịch thi cho môn này – khối này – học kỳ này chưa
+                foreach (var exam in existingExams)
+                {
+                    if (exam.SubjectId == newSubject &&
+                        Convert.ToInt32(exam.Grade) == newGrade &&
+                        exam.TermId == newTermId)
+                    {
+                        await MessageBoxUtil.ShowError(
+                            $"Môn {exam.Subject} của khối {exam.Grade} trong {exam.TermName} - {exam.TermYear} "
+                            + $"đã có lịch thi vào ngày {DateTime.Parse(exam.StartTime):dd/MM/yyyy} "
+                            + $"từ {DateTime.Parse(exam.StartTime):HH:mm} đến {DateTime.Parse(exam.EndTime):HH:mm}. "
+                            + $"Không thể tạo thêm lịch thi cho môn này!",
+                            "Đã tồn tại lịch thi",
+                            owner: owner
+                        );
+
+                        return true; // Đã tồn tại → không cho thêm
+                    }
+                }
+
+                return false; // Không tìm thấy → được phép tạo mới
+            }
+            catch (Exception ex)
+            {
+                await MessageBoxUtil.ShowError($"Lỗi kiểm tra môn đã có lịch thi: {ex.Message}", owner: owner);
                 return true;
             }
         }

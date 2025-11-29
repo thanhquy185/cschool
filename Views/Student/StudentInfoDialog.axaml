@@ -143,7 +143,7 @@
 
                         <!-- Năm học -->
                         <TextBlock Grid.Row="12" Grid.Column="0" Text="Năm học" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="13" Grid.Column="0" Text="{Binding StudentDetails.LearnYear}" IsHitTestVisible="False"
+                        <TextBox Grid.Row="13" Grid.Column="0" Text="{Binding StudentDetails.ClassYear}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="00,0,0,10"/>
 
                         <!-- Giáo viên chủ nhiệm -->

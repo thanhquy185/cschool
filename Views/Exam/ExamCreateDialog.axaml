@@ -94,7 +94,7 @@
 
                     <!-- Học kỳ -->
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="Học kỳ" FontSize="15" FontWeight="Bold" Margin="10,10,0,5" Foreground="Black"/>
-                    <ComboBox  Grid.Row="1" Grid.Column="1" x:Name="Term" MaxDropDownHeight="300"  Margin="10,0,0,10"
+                    <ComboBox  Grid.Row="1" Grid.Column="1" x:Name="Term" SelectionChanged="OnTermChanged" MaxDropDownHeight="300"  Margin="10,0,0,10"
                                 ItemsSource="{Binding StudyTerm}" PlaceholderText="--- Chọn học kỳ ---" Width="200">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -246,11 +246,12 @@
                             <DataGridTemplateColumn Header="Số lượng học sinh">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <NumericUpDown 
-                                            Value="{Binding AssignedStudents, UpdateSourceTrigger=PropertyChanged}"
-                                            Minimum="0"
-                                            Maximum="50"
-                                            Width="130"/>
+                                        <TextBox Text="{Binding AssignedStudents, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="80"
+                                            HorizontalContentAlignment="Center"
+                                            MaxLength="2"
+                                            TextInput="TextBox_TextInput"
+                                            LostFocus="TextBox_LostFocus"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

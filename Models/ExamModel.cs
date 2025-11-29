@@ -15,6 +15,8 @@ public class ExamModel
     public string Grade { get; set; }
     public string StartTime { get; set; }
     public string EndTime { get; set; }
+    public int SubjectId { get; set; }
+    public int TermId { get; set; }
     public string ExamDateDisplay
     {
         get
@@ -140,4 +142,16 @@ public class ExamAssignmentCreateModel
     public int RoomId { get; set; }
     public int TeacherId { get; set; }
     public int AssignedStudents { get; set; }
+}
+
+public class ExamUpdateModel
+{
+    public int ExamDetailId { get; set; }
+    public int SubjectId { get; set; }
+    public int TermId { get; set; }
+    public int GradeId { get; set; }
+    public string ExamDate { get; set; }
+    public string StartTime { get; set; }
+    public string EndTime { get; set; }
+    public List<ExamAssignmentCreateModel> Assignments { get; set; }
 }

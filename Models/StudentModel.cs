@@ -18,6 +18,7 @@ public class StudentModel
     public string LearnYear { get; set; }
     public string LearnStatus { get; set; }
     public string ClassName { get; set; }
+    public string ClassYear { get; set; }
     public string TeacherName { get; set; }
     public sbyte Status { get; set; }
     // - Giúp lưu trữ đường dẫn ảnh khi thêm và cập nhật

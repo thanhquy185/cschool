@@ -2,30 +2,60 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using cschool.ViewModels;
 using cschool.Utils;
+using System;
 using System.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Avalonia.Input;
 
 namespace cschool.Views.Exam
 {
     public partial class ExamUpdateDialog : Window
     {
         public ExamViewModel examViewModel { get; set; }
+
         public ExamUpdateDialog(ExamViewModel vm)
         {
             InitializeComponent();
             examViewModel = vm;
             DataContext = vm;
+
+            RecalculateRemainingStudentsUpdate();
         }
 
         private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
             this.Close();
+            examViewModel.ExamAssignments.Clear();
+        }
+
+        public void RecalculateRemainingStudentsUpdate()
+        {
+            var grade = Grade.SelectedItem?.ToString();
+            var term = Term.SelectedItem as TermModel;
+            // Tổng số học sinh theo khối/lớp
+            int total = AppService.ExamService.GetStudentGrade(Convert.ToInt32(grade),term.Id);
+
+            // Tổng số học sinh đã phân công trong ExamAssignments
+            int assigned = examViewModel.ExamAssignments.Sum(a => a.AssignedStudents);
+
+            int remaining = Math.Max(total - assigned, 0);
+
+            // Gán RemainingStudents và cập nhật text hiển thị luôn
+            examViewModel.RemainingStudents = remaining;
+
+            // Nếu bạn dùng property string riêng cho binding TextBlock
+            examViewModel.RemainingStudentsText = $"Còn lại {remaining} học sinh chưa được phân vào phòng thi";
+            RemainingStudents.Text = examViewModel.RemainingStudentsText;
         }
 
         private void OnGradeChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (Grade == null) return; // tránh crash
+            if (Grade == null) return;
 
-            if (Grade.SelectedItem is ComboBoxItem cbi && int.TryParse(cbi.Tag?.ToString(), out int grade))
+            if (Grade.SelectedItem is ComboBoxItem cbi &&
+                int.TryParse(cbi.Tag?.ToString(), out int grade))
             {
                 examViewModel.SelectedGrade = grade;
                 RemainingStudents.Text = examViewModel.RemainingStudentsText;
@@ -37,16 +67,30 @@ namespace cschool.Views.Exam
             }
         }
 
-        // Thêm phân công mới
+        private void OnTermChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (Term?.SelectedItem is TermModel selected)
+            {
+                examViewModel.SelectedUpdateTerm = selected.Id;
+                RemainingStudents.Text = examViewModel.RemainingStudentsText;
+            }
+            else
+            {
+                examViewModel.SelectedUpdateTerm = null;
+                RemainingStudents.Text = "";
+            }
+        }
+
+        // Thêm phân công
         private async void AddAssignment_Click(object? sender, RoutedEventArgs e)
         {
-            // Lấy đối tượng được chọn
             var room = Room.SelectedItem as RoomModel;
             var teacher = Teacher.SelectedItem as TeacherModel;
 
             if (room == null || teacher == null)
             {
-                await MessageBoxUtil.ShowWarning("Vui lòng chọn phòng thi và giáo viên.", "Thiếu thông tin", this);
+                await MessageBoxUtil.ShowWarning("Vui lòng chọn phòng thi và giáo viên.",
+                    "Thiếu thông tin", this);
                 return;
             }
 
@@ -56,7 +100,8 @@ namespace cschool.Views.Exam
 
             if (alreadyExists)
             {
-                await MessageBoxUtil.ShowWarning("Phòng hoặc giáo viên này đã được phân công.", "Trùng lặp", this);
+                await MessageBoxUtil.ShowWarning("Phòng hoặc giáo viên này đã được phân công.",
+                    "Trùng lặp", this);
                 return;
             }
 
@@ -71,9 +116,9 @@ namespace cschool.Views.Exam
                 Teacher = teacher
             };
 
-            newAssignment.PropertyChanged += (_, e) =>
+            newAssignment.PropertyChanged += (_, e2) =>
             {
-                if (e.PropertyName == nameof(ExamAssignment.AssignedStudents))
+                if (e2.PropertyName == nameof(ExamAssignment.AssignedStudents))
                 {
                     examViewModel.RecalculateRemainingStudents();
                     RemainingStudents.Text = examViewModel.RemainingStudentsText;
@@ -82,14 +127,14 @@ namespace cschool.Views.Exam
 
             examViewModel.ExamAssignments.Add(newAssignment);
 
-            // Xóa khỏi danh sách để ẩn khỏi ComboBox
-            var existingRoom = examViewModel.RoomList.FirstOrDefault(r => r.Id == room.Id);
-            if (existingRoom != null)
-                examViewModel.RoomList.Remove(existingRoom);
+            // Loại khỏi combobox
+            examViewModel.RoomList.Remove(
+                examViewModel.RoomList.FirstOrDefault(r => r.Id == room.Id)
+            );
 
-            var existingTeacher = examViewModel.TeacherList.FirstOrDefault(t => t.Id == teacher.Id);
-            if (existingTeacher != null)
-                examViewModel.TeacherList.Remove(existingTeacher);
+            examViewModel.TeacherList.Remove(
+                examViewModel.TeacherList.FirstOrDefault(t => t.Id == teacher.Id)
+            );
 
             // Reset lựa chọn
             Room.SelectedItem = null;
@@ -107,18 +152,15 @@ namespace cschool.Views.Exam
                 bool confirm = await MessageBoxUtil.ShowConfirm(
                     $"Bạn có chắc muốn xóa phòng '{item.RoomName}' được phân cho giáo viên '{item.TeacherName}' không?"
                 );
+                if (!confirm) return;
 
-                if (!confirm)
-                    return;
-
-                // Thêm lại phòng và giáo viên vừa xóa
+                // thêm lại vào combobox:
                 if (item.Room != null && !examViewModel.RoomList.Any(r => r.Id == item.Room.Id))
                     examViewModel.RoomList.Add(item.Room);
 
                 if (item.Teacher != null && !examViewModel.TeacherList.Any(t => t.Id == item.Teacher.Id))
                     examViewModel.TeacherList.Add(item.Teacher);
 
-                // Xóa phân công khỏi danh sách
                 examViewModel.ExamAssignments.Remove(item);
 
                 examViewModel.RecalculateRemainingStudents();
@@ -126,10 +168,223 @@ namespace cschool.Views.Exam
             }
         }
 
+        // Chặn gõ ký tự không phải số
+        private async void TextBox_TextInput(object? sender, TextInputEventArgs e)
+        {
+            // Nếu ký tự không phải số -> chặn
+            if (!e.Text.All(char.IsDigit))
+                await MessageBoxUtil.ShowError("Vui lòng nhập số hợp lệ.", owner: this);
+                e.Handled = true;
+        }
 
+        // Giới hạn số khi TextBox mất focus
+        private async void TextBox_LostFocus(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox tb || tb.DataContext is not ExamAssignment assignment)
+                return;
+
+            int value = int.TryParse(tb.Text, out int v) ? v : 0;
+            if (value < 0) value = 0;
+
+            int maxCapacity = assignment.Room?.Quantity ?? 50;
+
+            int totalStudents = AppService.ExamService.GetStudentGrade(
+                examViewModel.SelectedGrade ?? 0,
+                examViewModel.SelectedUpdateTerm ?? 0);
+
+            int assignedSum = examViewModel.ExamAssignments?.Sum(a => a.AssignedStudents) ?? 0;
+
+            int assignedWithoutCurrent = assignedSum - assignment.AssignedStudents;
+
+            int remainingBefore = Math.Max(totalStudents - assignedWithoutCurrent, 0);
+
+            int limit = Math.Min(maxCapacity, remainingBefore);
+
+            int corrected = Math.Clamp(value, 0, limit);
+
+            if (value > maxCapacity)
+            {
+                await MessageBoxUtil.ShowWarning(
+                    $"Số học sinh phân công vượt quá sức chứa của phòng (sức chứa: {maxCapacity}).",
+                    owner: this);
+            }
+            else if (value > remainingBefore)
+            {
+                await MessageBoxUtil.ShowWarning(
+                    $"Số học sinh phân công vượt quá số học sinh còn lại (còn: {remainingBefore}).",
+                    owner: this);
+            }
+
+            tb.Text = corrected.ToString();
+
+            assignment.AssignedStudents = corrected;
+            examViewModel.RecalculateRemainingStudents();
+        }
+
+        // Xác nhận cập nhật
         private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
         {
+            var id = examViewModel.ExamDetails.Id;
+            if (id == null)
+            {
+                await MessageBoxUtil.ShowError("Không tìm thấy dữ liệu lịch thi!", owner: this);
+                return;
+            }
+
+            var grade = Grade.SelectedItem?.ToString();
+            var subject = Subject.SelectedItem as SubjectModel;
+            var term = Term.SelectedItem as TermModel;
+            var examDate = ExamDate.SelectedDate?.DateTime ?? DateTime.Now;
+            var startTime = StartTime.SelectedTime;
+            var endTime = EndTime.SelectedTime;
+            var assignments = examViewModel.ExamAssignments;
+
+            if (string.IsNullOrWhiteSpace(grade))
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn khối.", owner: this);
+                return;
+            }
+
+            if (subject == null)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn môn học.", owner: this);
+                return;
+            }
+
+            if (term == null)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn học kỳ.", owner: this);
+                return;
+            }
+
+            if (startTime == null || endTime == null)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn thời gian thi.", owner: this);
+                return;
+            }
+
+            if (assignments == null || assignments.Count == 0)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng phân công ít nhất một phòng thi và giáo viên.", owner: this);
+                return;
+            }
+
+            if (endTime <= startTime)
+            {
+                await MessageBoxUtil.ShowError("Giờ kết thúc phải sau giờ bắt đầu!", owner: this);
+                return;
+            }
             
+            if (examViewModel.RemainingStudents > 0)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng phân công đủ học sinh vào các phòng thi.", owner: this);
+                return;
+            }
+
+            string startDT = $"{examDate:yyyy-MM-dd} {startTime:hh\\:mm\\:ss}";
+            string endDT = $"{examDate:yyyy-MM-dd} {endTime:hh\\:mm\\:ss}";
+
+            var update = new ExamUpdateModel
+            {
+                ExamDetailId = id,
+                SubjectId = subject.Id,
+                GradeId = int.Parse(grade),
+                TermId = term.Id,
+                ExamDate = examDate.ToString("yyyy-MM-dd"),
+                StartTime = startDT,
+                EndTime = endDT,
+                Assignments = examViewModel.ExamAssignments.Select(a => new ExamAssignmentCreateModel
+                {
+                    RoomId = a.Room?.Id ?? 0,
+                    TeacherId = a.Teacher?.Id ?? 0,
+                    AssignedStudents = a.AssignedStudents
+                })
+                .ToList()
+            };
+
+            // kiểm tra trùng môn học trong kỳ (không tính chính nó)
+            if (await HasSubjectExamInTermAsync(update, examViewModel.Exams, this, id))
+                return;
+
+            // kiểm tra trùng lịch thi
+            if (await HasExamConflictPerGradeAsync(update, examViewModel.Exams, this, id))
+                return;
+
+            bool success = await examViewModel.UpdateExamCommand.Execute(update).ToTask();
+            if (success)
+            {
+                await MessageBoxUtil.ShowSuccess("Cập nhật lịch thi thành công!", owner: this);
+                await examViewModel.GetExamsCommand.Execute().ToTask();
+                this.Close();
+            }
+            else
+            {
+                await MessageBoxUtil.ShowError("Cập nhật thất bại!", owner: this);
+            }
         }
+
+        // Kiểm tra đã có môn thi chưa (trừ chính nó)
+        private async Task<bool> HasSubjectExamInTermAsync(ExamUpdateModel newExam, IEnumerable<ExamModel> existingExams, Window owner, int currentId)
+        {
+            foreach (var exam in existingExams)
+            {
+                if (exam.Id == currentId)
+                    continue;
+
+                if (exam.SubjectId == newExam.SubjectId &&
+                    Convert.ToInt32(exam.Grade) == newExam.GradeId &&
+                    exam.TermId == newExam.TermId)
+                {
+                    await MessageBoxUtil.ShowError(
+                        $"Môn {exam.Subject} của khối {exam.Grade} trong học kỳ {exam.TermName} "
+                        + $"đã có lịch thi vào {DateTime.Parse(exam.StartTime):dd/MM/yyyy}."
+                        + $"từ {DateTime.Parse(exam.StartTime):HH:mm} đến {DateTime.Parse(exam.EndTime):HH:mm}. "
+                        + $"Không thể tạo thêm lịch thi cho môn này!",
+                        "Đã tồn tại",
+                        owner: owner
+                    );
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Kiểm tra trùng lịch thi khi UPDATE (trừ chính nó)
+        private async Task<bool> HasExamConflictPerGradeAsync(ExamUpdateModel newExam, IEnumerable<ExamModel> existingExams, Window owner, int currentId)
+        {
+            DateTime newStart = DateTime.Parse(newExam.StartTime);
+            DateTime newEnd = DateTime.Parse(newExam.EndTime);
+
+            foreach (var exam in existingExams)
+            {
+                if (exam.Id == currentId)
+                    continue;
+
+                if (!DateTime.TryParse(exam.StartTime, out var existStart))
+                    continue;
+                if (!DateTime.TryParse(exam.EndTime, out var existEnd))
+                    continue;
+
+                if (existStart.Date != newStart.Date)
+                    continue;
+
+                bool separated = newEnd <= existStart || newStart >= existEnd;
+
+                if (!separated)
+                {
+                    await MessageBoxUtil.ShowError(
+                        $"Khối {exam.Grade} đã có lịch thi môn {exam.Subject} "
+                        + $"từ {existStart:HH:mm} đến {existEnd:HH:mm}.",
+                        "Trùng thời gian",
+                        owner: owner
+                    );
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    
     }
 }
