@@ -22,7 +22,7 @@ public partial class HomeClassViewModel : ViewModelBase
 {
     private readonly HomeClassService _service;
 
-     [ObservableProperty] public string nameTeacher = "";
+    [ObservableProperty] public string nameTeacher = "";
     [ObservableProperty] public string nameClass = "";
     [ObservableProperty] public string nameTerm = "";
     [ObservableProperty] public string year = "";
@@ -39,7 +39,7 @@ public partial class HomeClassViewModel : ViewModelBase
     [ObservableProperty]
     private string selectedStudentName = "";
 
-
+    #region load dữ liệu
     [RelayCommand]
     private void LoadData()
     {
@@ -73,6 +73,7 @@ public partial class HomeClassViewModel : ViewModelBase
             Console.WriteLine($"❌ Error loading students: {ex.Message}");
         }
     }
+    #endregion
 
     [RelayCommand]
     public void Search()
@@ -86,10 +87,12 @@ public partial class HomeClassViewModel : ViewModelBase
         });
     }
 
+
     partial void OnSearchNameChanged(string value)
     {
         Search();
     }
+
     [RelayCommand]
     public void ResetSearch()
     {
@@ -135,26 +138,25 @@ private async Task ShowStudentDetail()
 }
 
 
-
+[RelayCommand]
 private void LoadStudentDetailScores(int studentId)
 {
     StudentDetailScores.Clear();
 
-    // Lấy tất cả các loại điểm từ 4 hàm của bạn
+    // Lấy tất cả các loại điểm
     var diemMieng = _service.GetDetailScores1(studentId);
     var diem15p = _service.GetDetailScores2(studentId);
     var diemGK = _service.GetDetailScores3(studentId);
     var diemCK = _service.GetDetailScores4(studentId);
-        if (diemMieng == null || diem15p == null || diemGK == null || diemCK == null)
-        {
-            Console.WriteLine("Không có dữ liệu");
-            return;
-        }
-        Console.WriteLine("Load dữ liệu chi tiết điểm thành công");
-         Console.WriteLine($"  - Điểm miệng: {diemMieng.Count} bản ghi");
-    Console.WriteLine($"  - Điểm 15p: {diem15p.Count} bản ghi");
-    Console.WriteLine($"  - Điểm GK: {diemGK.Count} bản ghi");
-    Console.WriteLine($"  - Điểm CK: {diemCK.Count} bản ghi");
+
+    if (diemMieng == null || diem15p == null || diemGK == null || diemCK == null)
+    {
+        Console.WriteLine("Không có dữ liệu");
+        return;
+    }
+    
+    Console.WriteLine("Load dữ liệu chi tiết điểm thành công");
+
     // Gom điểm theo môn học
     var allSubjects = diemMieng.Select(d => d.NameSubject)
                              .Union(diem15p.Select(d => d.NameSubject))
@@ -162,23 +164,49 @@ private void LoadStudentDetailScores(int studentId)
                              .Union(diemCK.Select(d => d.NameSubject))
                              .Distinct();
 
+
     foreach (var subject in allSubjects)
     {
         var detailScore = new DetailScore
         {
             NameSubject = subject,
-            DiemMieng = diemMieng.FirstOrDefault(d => d.NameSubject == subject)?.DiemMieng ?? 0,
-            Diem15p = diem15p.FirstOrDefault(d => d.NameSubject == subject)?.Diem15p ?? 0,
+            DiemMieng = diemMieng.FirstOrDefault(d => d.NameSubject == subject)?.DiemMieng ?? new List<float>(),
+            Diem15p = diem15p.FirstOrDefault(d => d.NameSubject == subject)?.Diem15p ?? new List<float>(),
             DiemGK = diemGK.FirstOrDefault(d => d.NameSubject == subject)?.DiemGK ?? 0,
             DiemCK = diemCK.FirstOrDefault(d => d.NameSubject == subject)?.DiemCK ?? 0
         };
 
+        detailScore.DiemTrungBinh = CalculateAverageScore(
+            detailScore.DiemMieng, 
+            detailScore.Diem15p, 
+            detailScore.DiemGK, 
+            detailScore.DiemCK);
+
         StudentDetailScores.Add(detailScore);
+        
+        // Debug log
+        Console.WriteLine($"Môn: {subject}");
+        Console.WriteLine($"  - Điểm miệng: {string.Join(", ", detailScore.DiemMieng)}");
+        Console.WriteLine($"  - Điểm 15p: {string.Join(", ", detailScore.Diem15p)}");
+        Console.WriteLine($"  - Điểm GK: {detailScore.DiemGK}");
+        Console.WriteLine($"  - Điểm CK: {detailScore.DiemCK}");
+        Console.WriteLine($"  - Điểm TB: {detailScore.DiemTrungBinh}");
     }
 }
+private float CalculateAverageScore(List<float> diemMieng, List<float> diem15p, float diemGK, float diemCK)
+{
+    // Tính tổng điểm miệng (nếu có nhiều điểm)
+    float tongMieng = diemMieng.Count > 0 ? diemMieng.Sum() : 0;
+    
+    // Tính tổng điểm 15p (nếu có nhiều điểm)
+    float tong15p = diem15p.Count > 0 ? diem15p.Sum() : 0;
+    int soBaiMieng = diemMieng.Count;
+    int soBai15P = diem15p.Count; 
 
+    return (tongMieng * 1 + tong15p * 1 + diemGK * 2 + diemCK * 3) / (5+soBai15P+soBaiMieng);
+}
 
-    [RelayCommand] 
+[RelayCommand] 
 private async Task ExportToExcelAsync()
 {
     try
@@ -300,6 +328,180 @@ private async Task ExportToExcelAsync()
         await MessageBoxUtil.ShowError("❌ Xuất file Excel thất bại.", null);
         Console.WriteLine($"❌ Lỗi khi xuất Excel: {ex.Message}");
     }
+}
+
+[RelayCommand] 
+private async Task ExportStudentDetailToExcel()
+{
+    try
+    {
+        if (SelectedStudent == null)
+        {
+            await MessageBoxUtil.ShowError("Vui lòng chọn học sinh để xuất điểm chi tiết");
+            return;
+        }
+
+        if (StudentDetailScores.Count == 0)
+        {
+            await MessageBoxUtil.ShowError("Không có dữ liệu điểm chi tiết để xuất");
+            return;
+        }
+
+        // Mở hộp thoại lưu file
+        var sfd = new SaveFileDialog
+        {
+            Title = "Chọn nơi lưu file Excel điểm chi tiết",
+            Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            },
+            InitialFileName = $"Diem_Chi_Tiet_{SelectedStudent.StudentName.Replace(" ", "_")}.xlsx"
+        };
+
+        string? path = await sfd.ShowAsync((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+        if (string.IsNullOrWhiteSpace(path)) return;
+
+        using (var workbook = new XLWorkbook())
+        {
+            var ws = workbook.Worksheets.Add("Điểm chi tiết");
+
+            // 🧩 --- Lấy thông tin lớp ---
+            var info = Information.FirstOrDefault();
+            string teacher = info?.NameTeacher ?? "Chưa rõ";
+            string className = info?.NameClass ?? "Chưa rõ";
+            string term = info?.NameTerm ?? "Chưa rõ";
+            string year = info?.Year.ToString() ?? "Chưa rõ";
+
+            // 🧾 --- Thiết kế phần tiêu đề ---
+            ws.Cell(1, 1).Value = "TRƯỜNG THCS ABC";
+            ws.Range("A1:H1").Merge();
+            ws.Cell(1, 1).Style.Font.Bold = true;
+            ws.Cell(1, 1).Style.Font.FontSize = 16;
+            ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            ws.Cell(2, 1).Value = $"BẢNG ĐIỂM CHI TIẾT - {SelectedStudent.StudentName.ToUpper()}";
+            ws.Range("A2:H2").Merge();
+            ws.Cell(2, 1).Style.Font.Bold = true;
+            ws.Cell(2, 1).Style.Font.FontSize = 14;
+            ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            ws.Cell(3, 1).Value = $"Lớp: {className} - Giáo viên: {teacher} - Học kỳ: {term} - Năm học: {year}";
+            ws.Range("A3:H3").Merge();
+            ws.Cell(3, 1).Style.Font.Italic = true;
+            ws.Cell(3, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            // 📊 --- Bảng điểm chi tiết ---
+            int startRow = 5;
+            
+            // Header
+            ws.Cell(startRow, 1).Value = "Môn học";
+            ws.Cell(startRow, 2).Value = "Điểm miệng";
+            ws.Cell(startRow, 3).Value = "Điểm 15 phút";
+            ws.Cell(startRow, 4).Value = "Điểm giữa kỳ";
+            ws.Cell(startRow, 5).Value = "Điểm cuối kỳ";
+            ws.Cell(startRow, 6).Value = "Điểm trung bình";
+            ws.Cell(startRow, 7).Value = "Xếp loại";
+
+            // --- Header style ---
+            var headerRange = ws.Range(startRow, 1, startRow, 7);
+            headerRange.Style.Font.Bold = true;
+            headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+            headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            headerRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+
+            // --- Ghi dữ liệu điểm chi tiết ---
+            int row = startRow + 1;
+            float totalGPA = 0;
+            int subjectCount = 0;
+
+            foreach (var subject in StudentDetailScores)
+            {
+                ws.Cell(row, 1).Value = subject.NameSubject;
+                
+                // Điểm miệng (chuỗi các điểm)
+                ws.Cell(row, 2).Value = subject.DiemMieng.Count > 0 
+                    ? string.Join(", ", subject.DiemMieng) 
+                    : "Chưa có điểm";
+                
+                // Điểm 15 phút (chuỗi các điểm)
+                ws.Cell(row, 3).Value = subject.Diem15p.Count > 0 
+                    ? string.Join(", ", subject.Diem15p) 
+                    : "Chưa có điểm";
+                
+                ws.Cell(row, 4).Value = subject.DiemGK > 0 ? subject.DiemGK : "Chưa có điểm";
+                ws.Cell(row, 5).Value = subject.DiemCK > 0 ? subject.DiemCK : "Chưa có điểm";
+                ws.Cell(row, 6).Value = Math.Round(subject.DiemTrungBinh, 2);
+                
+                // Xếp loại môn học
+                string xepLoai = GetAcademicRanking(subject.DiemTrungBinh);
+                ws.Cell(row, 7).Value = xepLoai;
+
+                // Tính tổng GPA
+                totalGPA += subject.DiemTrungBinh;
+                subjectCount++;
+
+                // Viền từng dòng
+                var dataRange = ws.Range(row, 1, row, 7);
+                dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+
+                row++;
+            }
+
+            // --- Dòng tổng kết ---
+            if (subjectCount > 0)
+            {
+                float averageGPA = totalGPA / subjectCount;
+                string overallRanking = GetAcademicRanking(averageGPA);
+
+                ws.Cell(row, 1).Value = "TỔNG KẾT";
+                ws.Cell(row, 6).Value = Math.Round(averageGPA, 2);
+                ws.Cell(row, 7).Value = overallRanking;
+
+                // Style cho dòng tổng kết
+                var totalRange = ws.Range(row, 1, row, 7);
+                totalRange.Style.Font.Bold = true;
+                totalRange.Style.Fill.BackgroundColor = XLColor.LightYellow;
+                totalRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                totalRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            }
+
+          
+            // --- Căn chỉnh cột ---
+            ws.Columns().AdjustToContents();
+            ws.Column(1).Width = 20; // Môn học
+            ws.Column(2).Width = 15; // Điểm miệng
+            ws.Column(3).Width = 15; // Điểm 15p
+            ws.Column(4).Width = 15; // Điểm GK
+            ws.Column(5).Width = 15; // Điểm CK
+
+            // Căn giữa các cột điểm
+            for (int col = 2; col <= 7; col++)
+            {
+                ws.Column(col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+
+            workbook.SaveAs(path);
+        }
+
+        await MessageBoxUtil.ShowSuccess($"✅ Xuất điểm chi tiết của {SelectedStudent.StudentName} thành công!", null);
+        Console.WriteLine($"✅ Xuất điểm chi tiết thành công cho học sinh: {SelectedStudent.StudentName}");
+    }
+    catch (Exception ex)
+    {
+        await MessageBoxUtil.ShowError($"❌ Xuất file Excel thất bại: {ex.Message}", null);
+        Console.WriteLine($"❌ Lỗi khi xuất Excel điểm chi tiết: {ex.Message}");
+    }
+}
+
+// Phương thức xác định xếp loại học lực
+private string GetAcademicRanking(float score)
+{
+    if (score >= 8.0f) return "Giỏi";
+    if (score >= 6.5f) return "Khá";
+    if (score >= 5.0f) return "Trung bình";
+    return "Yếu";
 }
 
     public HomeClassViewModel(HomeClassService service)

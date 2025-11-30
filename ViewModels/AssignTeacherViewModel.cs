@@ -13,6 +13,7 @@ using cschool.Views.DialogAssignTeacher;
 using Avalonia.Controls.ApplicationLifetimes;
 using cschool.Utils;
 using ClassModel = cschool.Models.Classes;
+using System.ComponentModel;
 namespace cschool.ViewModels;
 
 public partial class AssignTeacherViewModel : ViewModelBase
@@ -21,10 +22,13 @@ public partial class AssignTeacherViewModel : ViewModelBase
 
     public ObservableCollection<AssignTeacher> AssignTeachers { get; } = new();
     public ObservableCollection<Teachers> Teachers { get; } = new();
+    public ObservableCollection<Teachers> Teachers1 { get; } = new();
     public ObservableCollection<Subjects> Subjects { get; } = new();
     public ObservableCollection<ClassModel> Classes { get; } = new();
     public ObservableCollection<string> DaysOfWeek { get; } = new();
     
+    [ObservableProperty]
+    private string _loadingStatus = "Chọn môn học để hiển thị giáo viên";
 
     [ObservableProperty]
     private AssignTeacher? _selectedAssignTeacher;
@@ -63,7 +67,59 @@ public partial class AssignTeacherViewModel : ViewModelBase
 
     private AssignTeacher? _editingItem;
     
-   
+      // SỬA: Thêm property để theo dõi việc đang tải giáo viên
+    [ObservableProperty]
+    private bool _isLoadingTeachers = false;
+
+    // SỬA: Xử lý khi chọn môn học thay đổi
+     partial void OnSelectedSubjectChanged(Subjects? value)
+    {
+        if (value != null)
+        {
+            LoadTeachersBySubject(value.Id);
+        }
+        else
+        {
+            // Nếu không chọn môn học, clear danh sách giáo viên
+            Teachers.Clear();
+            LoadingStatus = "Chọn môn học để hiển thị giáo viên";
+        }
+    }
+      private async void LoadTeachersBySubject(int subjectId)
+    {
+        try
+        {
+            IsLoadingTeachers = true;
+            LoadingStatus = "Đang tải danh sách giáo viên...";
+            
+            // Clear danh sách giáo viên hiện tại
+            Teachers.Clear();
+            
+            // Lấy danh sách giáo viên theo môn học
+            var teachersBySubject = await Task.Run(() => _service.GetTeachers(subjectId));
+            
+            // Thêm giáo viên vào danh sách
+            foreach (var teacher in teachersBySubject)
+            {
+                Teachers.Add(teacher);
+            }
+            
+            LoadingStatus = teachersBySubject.Count > 0 
+                ? $"Đã tải {teachersBySubject.Count} giáo viên" 
+                : "Không có giáo viên nào cho môn học này";
+            
+            Console.WriteLine($"✅ Đã tải {Teachers.Count} giáo viên cho môn học ID: {subjectId}");
+        }
+        catch (Exception ex)
+        {
+            LoadingStatus = "Lỗi khi tải danh sách giáo viên";
+            Console.WriteLine($"❌ Lỗi khi tải giáo viên theo môn học: {ex.Message}");
+        }
+        finally
+        {
+            IsLoadingTeachers = false;
+        }
+    }
     // SỬA: Sử dụng RelayCommand của CommunityToolkit
     [RelayCommand]
     public void LoadData()
@@ -71,30 +127,31 @@ public partial class AssignTeacherViewModel : ViewModelBase
         try
         {
             var assignTeachers = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
-            var teachers = _service.GetTeachers() ?? new List<Teachers>();
             var subjects = _service.GetCourses() ?? new List<Subjects>();
+            var teacher1 = _service.GetTeachers()?? new BindingList<Teachers>();
             var classes = _service.GetClasses() ?? new List<ClassModel>();
             var days = _service.GetDaysOfWeek(DateTime.Now) ?? new List<string>();
 
-                AssignTeachers.Clear();
-                Teachers.Clear();
+                AssignTeachers.Clear();        
                 Subjects.Clear();
                 Classes.Clear();
                 DaysOfWeek.Clear();
+                Teachers.Clear();
+                Teachers1.Clear();
 
                 foreach (var a in assignTeachers)
                     AssignTeachers.Add(a);
-
-                foreach (var t in teachers)
-                    Teachers.Add(t);
 
                 foreach (var s in subjects)
                     Subjects.Add(s);
 
                 foreach (var c in classes)
                     Classes.Add(c);
+                
+                foreach(var t in teacher1)
+                    Teachers1.Add(t);
 
-            foreach (var d in days)
+                foreach (var d in days)
                 DaysOfWeek.Add(d);   
 
                 Console.WriteLine("📘 Data loaded successfully.");    
@@ -126,7 +183,7 @@ partial void OnSearchTextChanged(string value)
                 SelectedClass.Assign_class_Id,
                 SelectedTeacher.Id,
                 SelectedSubject.Id,
-                SelectedSubject.Name,
+                SelectedSubject.Name_Subject,
                 SelectedClass.Name,
                 SelectedTeacher.Name,
                 SelectedClass.Room,
@@ -143,11 +200,22 @@ partial void OnSearchTextChanged(string value)
                 await MessageBoxUtil.ShowError("Giáo viên đã có lịch dạy vào khung giờ này!", owner: owner);
                 return;
             }
+            if (_service.IsClassBusy(assign.Assign_class_id, assign.Day, assign.Start, assign.End))
+            {
+                await MessageBoxUtil.ShowError("Lớp học đã có lịch học vào khung giờ này!", owner: owner);
+                return;
+            }
 
                 if (_service.AddAssignmentTeacher(assign))
                 {
                     await MessageBoxUtil.ShowSuccess("Thêm phân công thành công", owner: owner);
+                    (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
+                    .MainWindow?.OwnedWindows
+                    .OfType<AssignTeacherAddDialog>()
+                    .FirstOrDefault()?
+                    .Close(true);
                     LoadDataCommand.Execute(null);
+
                 }
                 else
                 {
@@ -180,33 +248,32 @@ public async Task SaveEdit()
         }
             try
             {
-           
-                _editingItem.Teachers_id = SelectedTeacher.Id;
                 _editingItem.Subject_id = SelectedSubject.Id;
+                _editingItem.Teachers_id = SelectedTeacher.Id;
                 _editingItem.Assign_class_id = SelectedClass.Assign_class_Id;
                 _editingItem.ClassName = SelectedClass.Name;
                 _editingItem.Day = SelectedDay;
                 _editingItem.Start = Start;
                 _editingItem.End = End;
                 _editingItem.QuizCount = QuizCount;
-                 _editingItem.OralCount = OralCount;
+                _editingItem.OralCount = OralCount;
 
             // Gọi update
-            
                 if (_service.Update(_editingItem))
                 {
                     await MessageBoxUtil.ShowSuccess("Cập nhật thành công",owner: owner);
                     LoadDataCommand.Execute(null);
                     (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
                     .MainWindow?.OwnedWindows
-                    .OfType<AssignTeacherAddDialog>()
+                    .OfType<AssignTeacherEditDialog>()
                     .FirstOrDefault()?
                     .Close(true);
                 }
                 else
                 {
-                    await MessageBoxUtil.ShowError("Cập nhật thất bại",owner:owner);
+                    await MessageBoxUtil.ShowError("Cập nhật thất bại ",owner:owner);
                     Console.WriteLine("Error: Could not update assignment.");
+                    Console.WriteLine($"Giáo viên đc chọn để sửa: ID={SelectedTeacher.Id}, Name={SelectedTeacher.Name}, Address={SelectedTeacher.Address}, Department={SelectedTeacher.Department}");
                 }
             }catch(Exception ex)
             {
@@ -221,19 +288,35 @@ public async Task SaveEdit()
     {
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
         LoadDataCommand.Execute(null);
+        
         // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
         await Task.Delay(100);
 
     _editingItem = a;
-    SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
+    
     SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
+
+    // OnSelectedSubjectChanged(SelectedSubject);
+    SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
+
+      if (SelectedTeacher == null)
+    {
+        var fallbackTeacher = Teachers1.FirstOrDefault(t => t.Id == a.Teachers_id);
+        if (fallbackTeacher != null)
+        {
+            // Thêm giáo viên vào danh sách Teachers nếu cần
+            Teachers.Add(fallbackTeacher);
+            SelectedTeacher = fallbackTeacher;
+        }
+    }
+    
     SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
     SelectedDay = a.Day;
     Start = a.Start;
     End = a.End;
     QuizCount = a.QuizCount;
     OralCount = a.OralCount;
-
+        
     var dialog = new AssignTeacherEditDialog
     {
         DataContext = this
@@ -241,6 +324,8 @@ public async Task SaveEdit()
     await dialog.ShowDialog(
         (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
     );
+
+    
 }
 [RelayCommand]
 private async Task OpenDetailDialog(AssignTeacher a)
@@ -252,7 +337,7 @@ private async Task OpenDetailDialog(AssignTeacher a)
 
     _editingItem = a;
 
-    SelectedTeacher = Teachers.FirstOrDefault(t => t.Id == a.Teachers_id);
+    SelectedTeacher = Teachers1.FirstOrDefault(t => t.Id == a.Teachers_id);
     SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
     SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
     SelectedDay = a.Day;
@@ -260,7 +345,7 @@ private async Task OpenDetailDialog(AssignTeacher a)
     End = a.End;
     QuizCount = a.QuizCount;
     OralCount = a.OralCount;
-
+    
     var dialog = new AssignTeacherDetailDialog
     {
         DataContext = this
@@ -268,6 +353,7 @@ private async Task OpenDetailDialog(AssignTeacher a)
     await dialog.ShowDialog(
         (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
     );
+   
 }
     [RelayCommand]
     public async Task Delete(AssignTeacher a)
@@ -327,7 +413,7 @@ public void Search()
      [RelayCommand]
     public void SearchNameSubject()
     {
-        var results = _service.Search(SelectedSubjectSearch.Name ?? "");
+        var results = _service.Search(SelectedSubjectSearch.Name_Subject ?? "");
         Dispatcher.UIThread.Post(() =>
         {
             AssignTeachers.Clear();

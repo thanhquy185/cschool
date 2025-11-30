@@ -108,10 +108,10 @@ public List<Models.Information> GetInformation (int assignClassId)
                 ConductLevel = g.First().ConductLevel,
                 Academic = g.First().Academic,
                 // Ghép danh sách môn và điểm thành 1 chuỗi
-                SubjectName = string.Join("\n", g.Select(x => $"{x.SubjectName}: {x.GpaSubject}"))
+                SubjectName = string.Join("\n", g.Select(x => $"{x.SubjectName}: {x.GpaSubject}")),
+                GpaSubject = g.First().GpaSubject
             })
             .ToList();
-
         Console.WriteLine($"✅ Đã load {grouped.Count} học sinh");
         foreach (var student in grouped)
         {
@@ -126,68 +126,120 @@ public List<Models.Information> GetInformation (int assignClassId)
         return new List<HomeClass>();
     }
     }
-    public List<DetailScore> GetDetailScores1(int id)
+public List<DetailScore> GetDetailScores1(int id)
+{
+    try
     {
-        try
+        Console.WriteLine($"=== DEBUG GetDetailScores1 ===");
+        Console.WriteLine($"Student ID: {id}");
+        
+        // Dictionary để nhóm điểm theo môn
+        var subjectScores = new Dictionary<string, List<float>>();
+        
+        string sql = @"SELECT s.name as nameSubject, sd.score 
+                      FROM score_details sd
+                      JOIN subjects s ON s.id = sd.subject_id
+                      WHERE sd.exam_type_id=1 AND sd.student_id = @studentId";
+        
+        var connection = _db.GetConnection();
+        var command = new MySqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@studentId", id);
+        var reader = command.ExecuteReader();
+        
+        while (reader.Read())
         {
-                 Console.WriteLine($"=== DEBUG GetDetailScores1 ===");
-                Console.WriteLine($"Student ID: {id}");
-            List<DetailScore> ds = new List<DetailScore>();
-            string sql = @" SELECT s.name as nameSubject, sd.score 
-                            FROM score_details sd
-                            JOIN subjects s ON s.id = sd.subject_id
-                            WHERE sd.exam_type_id=1 AND sd.student_id = @studentId ";
-            var connection = _db.GetConnection();
-            var command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@studentId", id);
-            var reader = command.ExecuteReader();
-            while (reader.Read())
+            string subjectName = reader["nameSubject"].ToString()!;
+            float score = Convert.ToSingle(reader["score"]);
+            
+            if (!subjectScores.ContainsKey(subjectName))
             {
-                ds.Add(new DetailScore
-                {
-                    NameSubject = reader["nameSubject"].ToString()!,
-                    DiemMieng = Convert.ToSingle(reader["score"])
-                });
+                subjectScores[subjectName] = new List<float>();
             }
+            subjectScores[subjectName].Add(score);
+        }
+        reader.Close();
 
-            return ds;
-        } catch (Exception e)
+        // Chuyển đổi dictionary thành List<DetailScore>
+        List<DetailScore> result = new List<DetailScore>();
+        foreach (var subject in subjectScores)
         {
-            Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
-            return new List<DetailScore>();
+            result.Add(new DetailScore
+            {
+                NameSubject = subject.Key,
+                DiemMieng = subject.Value
+            });
         }
 
+        Console.WriteLine($"Đã load {result.Count} môn có điểm miệng");
+        foreach (var item in result)
+        {
+            Console.WriteLine($"  - {item.NameSubject}: {string.Join(", ", item.DiemMieng)}");
+        }
+        
+        return result;
     }
-    public List<DetailScore> GetDetailScores2(int id)
+    catch (Exception e)
     {
-        try
-        {
-            List<DetailScore> ds = new List<DetailScore>();
-            string sql = @"SELECT s.name as nameSubject, sd.score 
-                            FROM score_details sd
-                            JOIN subjects s ON s.id = sd.subject_id
-                            WHERE sd.exam_type_id=2 AND sd.student_id = @studentId ";
-            var connection = _db.GetConnection();
-            var command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@studentId", id);
-            var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                ds.Add(new DetailScore
-                {
-                    NameSubject = reader["nameSubject"].ToString()!,
-                    Diem15p = Convert.ToSingle(reader["score"])
-                });
-            }
+        Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
+        return new List<DetailScore>();
+    }
+}
 
-            return ds;
-        } catch (Exception e)
+public List<DetailScore> GetDetailScores2(int id)
+{
+    try
+    {
+        // Dictionary để nhóm điểm theo môn
+        var subjectScores = new Dictionary<string, List<float>>();
+        
+        string sql = @"SELECT s.name as nameSubject, sd.score 
+                      FROM score_details sd
+                      JOIN subjects s ON s.id = sd.subject_id
+                      WHERE sd.exam_type_id=2 AND sd.student_id = @studentId";
+        
+        var connection = _db.GetConnection();
+        var command = new MySqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@studentId", id);
+        var reader = command.ExecuteReader();
+        
+        while (reader.Read())
         {
-            Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
-            return new List<DetailScore>();
+            string subjectName = reader["nameSubject"].ToString()!;
+            float score = Convert.ToSingle(reader["score"]);
+            
+            if (!subjectScores.ContainsKey(subjectName))
+            {
+                subjectScores[subjectName] = new List<float>();
+            }
+            subjectScores[subjectName].Add(score);
+        }
+        reader.Close();
+
+        // Chuyển đổi dictionary thành List<DetailScore>
+        List<DetailScore> result = new List<DetailScore>();
+        foreach (var subject in subjectScores)
+        {
+            result.Add(new DetailScore
+            {
+                NameSubject = subject.Key,
+                Diem15p = subject.Value
+            });
         }
 
+        Console.WriteLine($"Đã load {result.Count} môn có điểm 15p");
+        foreach (var item in result)
+        {
+            Console.WriteLine($"  - {item.NameSubject}: {string.Join(", ", item.Diem15p)}");
+        }
+        
+        return result;
     }
+    catch (Exception e)
+    {
+        Console.WriteLine("Lỗi không thể lấy chi tiết" + e);
+        return new List<DetailScore>();
+    }
+}
     public List<DetailScore> GetDetailScores3(int id)
     {
          try

@@ -7,6 +7,7 @@ using Microsoft.VisualBasic;
 using MySql.Data.MySqlClient;
 using System.Globalization;
 using System.Formats.Asn1;
+using System.ComponentModel;
 
 namespace cschool.Services;
 
@@ -40,6 +41,40 @@ public class AssignTeacherService
             return new List<Subjects>();
         }
     }
+    public bool IsClassBusy(int assignClassId, string day, int start, int end)
+{
+    try
+    {
+        string sql = @"
+        SELECT COUNT(*)
+        FROM assign_class_teachers
+        WHERE assign_class_id = @assignClassId
+          AND day = @day      
+          AND (
+                (@start BETWEEN start_period AND end_period)
+                OR (@end BETWEEN start_period AND end_period)
+                OR (start_period BETWEEN @start AND @end)
+                OR (end_period BETWEEN @start AND @end)
+              )";
+
+        using var conn = _db.GetConnection();
+        using var cmd = new MySqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
+        cmd.Parameters.AddWithValue("@day", day);
+        cmd.Parameters.AddWithValue("@start", start);
+        cmd.Parameters.AddWithValue("@end", end);
+
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        Console.WriteLine($"DEBUG IsClassBusy - ClassId: {assignClassId}, Day: {day}, Start: {start}, End: {end}, Conflicts: {count}");
+        
+        return count > 0;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Lỗi kiểm tra trùng lịch lớp: {ex.Message}");
+        return false;
+    }
+}
 
     public bool IsTeacherBusy(int teacherId, string day, int start, int end)
     {
@@ -118,14 +153,15 @@ public bool IsConflict(AssignTeacher at)
     }
 
 
-    public List<Teachers> GetTeachers()
+    public BindingList<Teachers> GetTeachers(int id)
     {
         try{
-        var ds = new List<Teachers>();
+        var ds = new BindingList<Teachers>();
         string sql = @" select t.id , t.fullname, d.name as department_name
          FROM teachers t
          JOIN department_details dd ON dd.teacher_id = t.id
-         JOIN departments d ON d.id = dd.department_id ";
+         JOIN departments d ON d.id = dd.department_id 
+         WHERE d.subject_id = "+ id;
 
         var dt = _db.ExecuteQuery(sql);
 
@@ -137,14 +173,42 @@ public bool IsConflict(AssignTeacher at)
                 data["department_name"].ToString()!
 
             ));
-
         }
         return ds;
         }
         catch (Exception ex)
         {
             Console.WriteLine("Lỗi không thể lấy dữ liệu giáo viên: " + ex);
-            return new List<Teachers>();
+            return new BindingList<Teachers>();
+        }
+    }
+    public BindingList<Teachers> GetTeachers()
+    {
+        try{
+        var ds = new BindingList<Teachers>();
+        string sql = @" select t.id , t.fullname, d.name as department_name
+         FROM teachers t
+         JOIN department_details dd ON dd.teacher_id = t.id
+         JOIN departments d ON d.id = dd.department_id 
+         ";
+
+        var dt = _db.ExecuteQuery(sql);
+
+        foreach (DataRow data in dt.Rows)
+        {
+            ds.Add(new Teachers(
+                (int)data["id"],
+                data["fullname"].ToString()!,
+                data["department_name"].ToString()!
+
+            ));
+        }
+        return ds;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Lỗi không thể lấy dữ liệu giáo viên: " + ex);
+            return new BindingList<Teachers>();
         }
     }
 
@@ -184,7 +248,7 @@ public bool IsConflict(AssignTeacher at)
         {
             var ds = new List<AssignTeacher>();
             string sql = @"select at.assign_class_id as assignClassId,at.day,at.quiz_connt,oral_count, at.start_period, at.end_period, at.teacher_id as teacherId,c.name as className, c.room as roomName,
-                            t.fullname as nameTeacher, s.name as subjectName
+                            t.fullname as nameTeacher, s.name as subjectName, s.id as subjectId
                             FROM assign_class_teachers at
                             JOIN assign_classes ac ON ac.id = at.assign_class_id 
                             JOIN classes c ON c.id = ac.class_id
@@ -197,16 +261,17 @@ public bool IsConflict(AssignTeacher at)
                 ds.Add(new AssignTeacher(
                     (int)data["assignClassId"],
                     (int)data["teacherId"],
+                    (int)data["subjectId"],
                     data["subjectName"].ToString()!,
-                    (int)data["quiz_connt"],
-                    (int)data["oral_count"],
                     data["className"].ToString()!,
                     data["nameTeacher"].ToString()!,
                     data["roomName"].ToString()!,
                     data["day"].ToString()!,
                     (int)data["start_period"],
-                    (int)data["end_period"]
-
+                    (int)data["end_period"],
+                    (int)data["quiz_connt"],
+                    (int)data["oral_count"]     
+                    
                 ));
 
             }
@@ -266,16 +331,17 @@ public bool IsConflict(AssignTeacher at)
         {
             ds.Add(new AssignTeacher(
                 (int)reader["assignClassId"],
-                (int)reader["teacherId"],
-                reader["subjectName"].ToString()!,
-                (int)reader["quiz_connt"],
-                (int)reader["oral_count"],
-                reader["className"].ToString()!,
-                reader["teacherName"].ToString()!,
-                reader["roomClass"].ToString()!,
-                reader["day"].ToString()!,
-                (int)reader["start_period"],
-                (int)reader["end_period"]
+                    (int)reader["teacherId"],
+                    (int)reader["subjectId"],
+                    reader["subjectName"].ToString()!,
+                    reader["className"].ToString()!,
+                    reader["teacherName"].ToString()!,
+                    reader["roomClass"].ToString()!,
+                    reader["day"].ToString()!,
+                    (int)reader["start_period"],
+                    (int)reader["end_period"],
+                    (int)reader["quiz_connt"],
+                    (int)reader["oral_count"]
             ));
         }
        
@@ -306,6 +372,7 @@ public bool IsConflict(AssignTeacher at)
             command.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
             command.Parameters.AddWithValue("@teacher_id", at.Teachers_id);
 
+            
             return command.ExecuteNonQuery() > 0;
         }
         catch (Exception ex)

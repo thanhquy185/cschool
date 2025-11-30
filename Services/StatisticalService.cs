@@ -100,7 +100,7 @@ public class StatisticalService
             return ds;
         }catch(Exception e)
         {
-            Console.WriteLine("Không thể lấy các kì học");
+            Console.WriteLine("Không thể lấy các kì học"+ e);
             return new List<Term>();
         }
     }
@@ -138,7 +138,7 @@ public class StatisticalService
         catch (Exception ex)
         {
             throw new Exception("Error fetching statistics: " + ex.Message);
-            return new List<Statistical>();
+            
         }
 
     }
@@ -176,7 +176,7 @@ public class StatisticalService
         catch (Exception ex)
         {
             throw new Exception("Error fetching statistics: " + ex.Message);
-            return new List<Statistical>();
+    
         }
 
     }
@@ -213,7 +213,7 @@ public class StatisticalService
         catch (Exception ex)
         {
             throw new Exception("Error fetching detailed statistics: " + ex.Message);
-            return new List<Statistical>();
+
         }
     }
     
@@ -255,7 +255,7 @@ public class StatisticalService
         catch (Exception ex)
         {
             throw new Exception("Error fetching statistics: " + ex.Message);
-            return new List<Statistical>();
+          
         }
 
     }

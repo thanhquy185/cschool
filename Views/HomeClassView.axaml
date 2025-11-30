@@ -69,7 +69,7 @@
 </Border>
 
        <!-- Hiện Thị thông tin lớp - ĐÃ CHỈNH SỬA VỊ TRÍ VÀ MARGIN -->
-      <Border Grid.Row = "2" Classes="DashboardCard" Background="#2196F3" Margin="6,15,6,15">
+      <Border Grid.Row = "2" Classes="DashboardCard" Background="#79baefff" Margin="6,15,6,15">
             <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
                 <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
                     <Image Source="{DynamicResource TeacherIcon}" Width="30" Height="30" Stretch="Uniform"/>
@@ -112,15 +112,15 @@
                         Width="1.0*"
                         Binding="{Binding StudentName }"
                         Header="Học sinh" />
-                    <DataGridTextColumn
+                    <!-- <DataGridTextColumn
                         Width="1.0*"
                         Binding="{Binding SubjectName}"
-                        Header="Điểm các môn học" />
+                        Header="Điểm các môn học" /> -->
                     
                     <DataGridTextColumn
                         Width="1.0*"
                         Binding="{Binding GpaTotal}"
-                        Header="GPA tổng" />
+                        Header="Điểm trung bình" />
                     <DataGridTextColumn
                         Width="1.5*"
                         Binding="{Binding ConductLevel}"

@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:cschool.ViewModels"
+        xmlns:converters="clr-namespace:cschool.Utils"
         xmlns:model="using:cschool.Models"
         x:DataType="vm:AssignTeacherViewModel"       
         x:Class="cschool.Views.DialogAssignTeacher.AssignTeacherAddDialog"
@@ -32,18 +33,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             />
-
-                    <!-- Nút đóng ở bên phải -->
-                    <!-- <Button Grid.Column="2"
-                            Content="✕"
-                            Background="Transparent"
-                            Foreground="White"
-                            FontSize="16"
-                            BorderThickness="0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            x:Name="CloseButton"
-                            Click="OnCancelButtonClick"/> -->
                 </Grid>
             </Border>
 
@@ -53,30 +42,66 @@
                       RowDefinitions="Auto,Auto,Auto,Auto,Auto"
                       ColumnSpacing="20" 
                       RowSpacing="15">
-
                     <!-- Hàng 1: Giáo viên & Môn học -->
-                    <StackPanel Grid.Row="0" Grid.Column="0">
-                        <TextBlock Text="Giáo viên:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
-                        <ComboBox ItemsSource="{Binding Teachers}" 
-                                SelectedItem="{Binding SelectedTeacher}" 
-                                DisplayMemberBinding="{Binding Name}" 
-                                PlaceholderText="Chọn giáo viên"
-                                Height="35"
-                                Width = "270"
-                                FontSize="14"/>
-                    </StackPanel>
 
-                    <StackPanel Grid.Row="0" Grid.Column="1">
+                      <!-- <StackPanel Grid.Row="0" Grid.Column="0">
                         <TextBlock Text="Môn học:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
                         <ComboBox ItemsSource="{Binding Subjects}" 
                                 SelectedItem="{Binding SelectedSubject}" 
-                                DisplayMemberBinding="{Binding Name}" 
-                                PlaceholderText="Chọn môn học"
+                                DisplayMemberBinding="{Binding Name_Subject}" 
+                                
                                 Height="35"
                                 Width = "270"
                                 FontSize="14"/>
-                    </StackPanel>
+                    </StackPanel> -->
 
+                    <!-- <StackPanel Grid.Row="0" Grid.Column="1">
+                        <TextBlock Text="Giáo viên:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
+                        <ComboBox ItemsSource="{Binding Teachers}" 
+                                    SelectedItem="{Binding SelectedTeacher}" 
+                                    DisplayMemberBinding="{Binding Name}"     
+                                    Height="35"
+                                    Width="270"
+                                    FontSize="14"
+                                    IsEnabled="{Binding IsLoadingTeachers, Converter={x:Static converters:InverseBoolConverter.Instance}}"/>
+                        
+                        
+                        <TextBlock Text="{Binding LoadingStatus}"
+                                FontSize="11"
+                                Foreground="Gray"
+                                Margin="0,5,0,0"/>
+                    </StackPanel> -->
+
+                    <!-- Hàng 1: Giáo viên & Môn học -->
+                     <StackPanel Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="Môn học:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
+                    <ComboBox ItemsSource="{Binding Subjects}" 
+                            SelectedItem="{Binding SelectedSubject}" 
+                            DisplayMemberBinding="{Binding Name_Subject}" 
+                            PlaceholderText="Chọn môn học"
+                            Height="35"
+                            Width="270"
+                            FontSize="14"/>
+                </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="1">
+                        <TextBlock Text="Giáo viên:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
+                        <ComboBox ItemsSource="{Binding Teachers}" 
+                                    SelectedItem="{Binding SelectedTeacher}" 
+                                    DisplayMemberBinding="{Binding Name}" 
+                                    PlaceholderText="Chọn giáo viên"
+                                    Height="35"
+                                    Width="270"
+                                    FontSize="14"
+                                    IsEnabled="{Binding IsLoadingTeachers, Converter={x:Static converters:InverseBoolConverter.Instance}}"/>
+                        
+                        <!-- Hiển thị trạng thái loading đơn giản -->
+                        <TextBlock Text="{Binding LoadingStatus}"
+                                FontSize="11"
+                                Foreground="Gray"
+                                Margin="0,5,0,0"/>
+                    </StackPanel>
+         
                     <!-- Hàng 2: Lớp học & Ngày học -->
                     <StackPanel Grid.Row="1" Grid.Column="0">
                         <TextBlock Text="Lớp học:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
@@ -106,7 +131,7 @@
                                 Text="{Binding Start}" 
                                 Watermark="Bắt đầu"
                                 FontSize="14"
-                                Padding="10,0"
+                                
                                />
                     </StackPanel>
 
@@ -116,7 +141,7 @@
                                 Text="{Binding End}" 
                                 Watermark="Kết thúc"
                                 FontSize="14"
-                                Padding="10,0"
+                                
                                 />
                     </StackPanel>
 
