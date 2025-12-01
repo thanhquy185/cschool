@@ -144,22 +144,22 @@ namespace cschool.Views.Teacher
             }
             
 
-            // // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
-            // var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
-            //                     studentViewModel.Students.Any(s => s.Phone == phone);
-            // if (duplicatePhone)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
-            //     return;
-            // }
+            // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
+            var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
+                                _teacherViewModel.Teachers.Any(s => s.Id != id && s.Phone == phone);
+            if (duplicatePhone)
+            {
+                await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
+                return;
+            }
 
-            // var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
-            //                     studentViewModel.Students.Any(s => s.Email == email);
-            // if (duplicateEmail)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
-            //     return;
-            // }
+            var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
+                                _teacherViewModel.Teachers.Any(s => s.Id != id && s.Email == email);
+            if (duplicateEmail)
+            {
+                await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
+                return;
+            }
 
 
             // Gửi dữ liệu tới backend hoặc lưu vào model

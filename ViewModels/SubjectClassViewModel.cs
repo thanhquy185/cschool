@@ -141,7 +141,6 @@ public partial class SubjectClassViewModel : ViewModelBase
     {
         if (SelectedSubjectClass == null)
         {
-            Console.WriteLine("No subject class selected.");
             await MessageBoxUtil.ShowError("Vui lòng chọn lớp môn học để thực hiện thao tác!");
             return;
         }
@@ -171,13 +170,11 @@ public partial class SubjectClassViewModel : ViewModelBase
             bool success = AppService.SubjectClassService.ImportStudentScoresFromExcel(SelectedSubjectClass, filePath);
             if (success)
             {
-                Console.WriteLine("Imported scores successfully.");
                 await MessageBoxUtil.ShowSuccess("Nhập điểm từ file Excel thành công!");
                 LoadStudentScores(SelectedSubjectClass);
             }
             else
             {
-                Console.WriteLine("Failed to import scores.");
                 await MessageBoxUtil.ShowError("Nhập điểm từ file Excel thất bại!");
             }
         }

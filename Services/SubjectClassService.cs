@@ -520,10 +520,8 @@ public class SubjectClassService
                     }
                 }
 
-                // Auto-fit columns
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
-                // Save the file
                 package.SaveAs(new FileInfo(excelFilePath));
             }
         }

@@ -127,12 +127,8 @@
 
                         <!-- Giới tính -->
                         <TextBlock Grid.Row="3" Grid.Column="1" Text="Giới tính" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
-                        <ComboBox Grid.Row="4" Grid.Column="1" x:Name="Gender" 
-                                  MaxDropDownHeight="300" SelectedIndex="0" Margin="20,0,0,10">
-                            <ComboBoxItem>--- Chọn Giới tính ---</ComboBoxItem>
-                            <ComboBoxItem>Nam</ComboBoxItem>
-                            <ComboBoxItem>Nữ</ComboBoxItem>
-                            <ComboBoxItem>Khác</ComboBoxItem>
+                        <ComboBox Grid.Row="4" Grid.Column="1" x:Name="Gender" ItemsSource="{Binding GenderOptions}" SelectedItem="{Binding SelectedGender, Mode=TwoWay}" 
+                                MaxDropDownHeight="300" Margin="20,0,0,10" PlaceholderText="--- Chọn Giới tính ---">
                         </ComboBox>
 
                         <!-- Bộ môn -->
