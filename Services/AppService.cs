@@ -16,6 +16,5 @@ public static class AppService
     public static string QuestionIconPath { get; } = $"{AppPath}/Assets/Images/Others/question-icon.png";
     public static AssignTeacherService? AssignTeacherService { get; set; }
     public static TeacherService? TeacherService { get; set; }
-    public static DepartmentService? DepartmentService { get; set; }
-    public static TermService? TermService { get; set; }
+    public static SubjectClassService? SubjectClassService { get; set; }
 }

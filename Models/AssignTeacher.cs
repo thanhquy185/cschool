@@ -34,12 +34,12 @@ public class AssignTeacher
         End = end;
 
     }
-        public AssignTeacher(int assign_class_id, int teacher_id, string courseName,int quiz_connt,int oral_count, string className, string teacher, string room, string day, int start, int end)
+        public AssignTeacher(int assign_class_id, int teacher_id, string courseName,int quiz_count,int oral_count, string className, string teacher, string room, string day, int start, int end)
     {
         Assign_class_id = assign_class_id;
         Teachers_id = teacher_id;
         CourseName = courseName;
-        QuizCount = quiz_connt;
+        QuizCount = quiz_count;
         OralCount = oral_count;
         ClassName = className;
         Teachers = teacher;

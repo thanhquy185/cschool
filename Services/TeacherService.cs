@@ -21,18 +21,18 @@ public class TeacherService
         try
         {
             List<TeacherModel> ds = new List<TeacherModel>();
-            string sql = @" SELECT t.id, t.avatar, t.fullname, t.birthday, t.gender, t.address, t.phone, t.email, 
+            string sql = @" SELECT DISTINCT t.id, t.avatar, t.fullname, t.birthday, t.gender, t.address, t.phone, t.email, 
                             COALESCE(dd.department_id, 0) AS department_id, 
                             COALESCE(d.name, 'Chưa có bộ môn') AS department_name, 
-                            t.status, 
-                            COALESCE(ac.class_id, 0) AS class_id, 
-                            COALESCE(c.name, 'Chưa có lớp') AS class_name
+                            t.status
+                            -- COALESCE(ac.class_id, 0) AS class_id, 
+                            -- COALESCE(c.name, 'Chưa có lớp') AS class_name
                             FROM teachers t
                             LEFT JOIN department_details dd ON dd.teacher_id = t.id
                             LEFT JOIN departments d ON d.id = dd.department_id
-                            LEFT JOIN assign_class_teachers act ON act.teacher_id = t.id
-                            LEFT JOIN assign_classes ac ON ac.id = act.assign_class_id
-                            LEFT JOIN classes c ON c.id = ac.class_id
+                            -- LEFT JOIN assign_class_teachers act ON act.teacher_id = t.id
+                            -- LEFT JOIN assign_classes ac ON ac.id = act.assign_class_id
+                            -- LEFT JOIN classes c ON c.id = ac.class_id
                             WHERE t.status = 1";
 
             var result = _db.ExecuteQuery(sql);
@@ -44,14 +44,15 @@ public class TeacherService
                     Name = data["fullname"].ToString()!,
                     Gender = data["gender"].ToString()!,
                     Birthday = Convert.ToDateTime(data["birthday"]).ToString("dd/MM/yyyy")!,
-                    ClassId = Convert.ToInt32(data["class_id"]),
-                    ClassName = data["class_name"].ToString()!,
+                    // ClassId = Convert.ToInt32(data["class_id"]),
+                    // ClassName = data["class_name"].ToString()!,
                     Email = data["email"].ToString()!,
                     Phone = data["phone"].ToString()!,
                     Address = data["address"].ToString()!,
                     DepartmentId = Convert.ToInt32(data["department_id"]),
                     DepartmentName = data["department_name"].ToString()!,
                 });
+                Console.WriteLine($" Teacher Loaded: ID={data["id"]}, Name={data["fullname"]}");
 
             }
             return ds;
@@ -64,6 +65,71 @@ public class TeacherService
 
     }
 
+    public List<DepartmentModel> GetDepartments()
+    {
+        try
+        {
+            var departments = new List<DepartmentModel>();
+            string query = @"SELECT id, subject_id, name, description, status 
+                            FROM departments
+                            WHERE status = 1";
+
+            var results = _db.ExecuteQuery(query);
+
+            foreach (DataRow data in results.Rows)
+            {
+                var dept = new DepartmentModel(
+                    Convert.ToInt32(data["id"]),
+                    Convert.ToInt32(data["subject_id"]),
+                    data["name"].ToString()!,
+                    data["description"].ToString()!,
+                    Convert.ToInt32(data["status"])
+                );
+                departments.Add(dept);
+            }
+
+            return departments;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Lỗi lấy danh sách bộ môn: {ex.Message}");
+            return new List<DepartmentModel>();
+        }
+    }
+
+    // Return latest term as Tuple<id, name> or null if none
+    public Term? GetLatestTerm()
+    {
+        try
+        {
+            string query = @"SELECT id, name, start_date, end_date, year
+                             FROM terms     
+                             WHERE status = 1 ORDER BY start_date DESC LIMIT 1";
+
+            var results = _db.ExecuteQuery(query);
+
+            if (results.Rows.Count > 0)
+            {
+                DataRow data = results.Rows[0];
+                // return Tuple.Create(Convert.ToInt32(data["id"]), data["name"].ToString()!);
+                return new Term
+                {
+                    Id = (int)data["id"],
+                    Name = data["name"].ToString()!,
+                    Year = (int)data["year"],
+                    Start = Convert.ToDateTime(data["start_date"]),
+                    End = Convert.ToDateTime(data["end_date"]),
+                };
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($" Lỗi lấy học kỳ gần nhất: {ex.Message}");
+            return null;
+        }
+    }
     public int GetIDLastTeacher()
     {
         // Console.WriteLine(123);

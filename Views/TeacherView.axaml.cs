@@ -48,15 +48,15 @@ public partial class TeacherView : UserControl
             case DialogModeEnum.Info:
                 if (vm != null && selectedTeacher != null)
                 {
-                    var lastTerm = AppService.TermService.GetLatestTerm();
-                    int termId = lastTerm.Id;
+                    var lastTerm = AppService.TeacherService.GetLatestTerm();
+                    int termId = lastTerm?.Id ?? 0;
                     var fullTeacher = AppService.TeacherService.GetTeacherById(selectedTeacher.Id, termId);
-                    fullTeacher.TermId = termId;
-                    fullTeacher.TermName = lastTerm.Name;
+                    Console.WriteLine("term: {0}", lastTerm);
+                    fullTeacher.TermName = lastTerm?.DisplayTextTermYear ?? "";
 
                     vm.TeacherDetails = fullTeacher ?? selectedTeacher;
+                    dialog = new TeacherInfoDialog(vm);
                 }
-                dialog = new TeacherInfoDialog(vm);
                 break;
 
             case DialogModeEnum.Create:
@@ -68,20 +68,22 @@ public partial class TeacherView : UserControl
             case DialogModeEnum.Update:
                 if (vm != null && selectedTeacher != null)
                 {
-                    var lastTerm = AppService.TermService.GetLatestTerm();
-                    // int termId = lastTerm.Id;
-                    var fullTeacher = AppService.TeacherService.GetTeacherById(
-                        selectedTeacher.Id,
-                        lastTerm?.Id
-                    );
+                    var lastTerm = AppService.TeacherService.GetLatestTerm();
 
+                    if (lastTerm == null)
+                    {
+                        await MessageBoxUtil.ShowError(
+                            "Chưa có học kỳ nào! Vui lòng tạo học kỳ trước."
+                        );
+                        return;
+                    }
 
-                    var teacherToShow = fullTeacher ?? selectedTeacher;
-                    teacherToShow.TermId = lastTerm?.Id ?? 0;
-                    teacherToShow.TermName = lastTerm?.Name ?? "Chưa có học kỳ";
+                    int termId = lastTerm?.Id ?? 0;
+                    var teacherToShow = AppService.TeacherService.GetTeacherById(selectedTeacher.Id, termId);
+                    teacherToShow.TermName = lastTerm?.DisplayTextTermYear ?? "";
                     vm.SetTeacherForEdit(teacherToShow);
 
-                    vm.TeacherDetails = fullTeacher ?? selectedTeacher;
+                    vm.TeacherDetails = teacherToShow ?? selectedTeacher;
                 }
                 dialog = new TeacherUpdateDialog(vm);
                 break;
@@ -92,6 +94,11 @@ public partial class TeacherView : UserControl
                     dialog = new TeacherLockDialog(vm, selectedTeacher);
                 }
                 break;
+        }
+        if (dialog == null)
+        {
+            await MessageBoxUtil.ShowError("Không thể mở dialog. Vui lòng thử lại!");
+            return;
         }
 
 
@@ -201,7 +208,7 @@ public partial class TeacherView : UserControl
                         int departmentId = 0;
                         if (!string.IsNullOrWhiteSpace(departmentName))
                         {
-                            var dept = AppService.DepartmentService.GetDepartments()
+                            var dept = AppService.TeacherService.GetDepartments()
                                 .FirstOrDefault(d => d.Name.Equals(departmentName, StringComparison.OrdinalIgnoreCase));
                             departmentId = dept?.Id ?? 0;
                         }
@@ -376,72 +383,7 @@ public partial class TeacherView : UserControl
         // ApplyFilters();
     }
 
-    // private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
-    // {
-    //     if (sender is TextBox textBox && DataContext is TeacherViewModel vm)
-    //     {
-    //         var searchText = textBox.Text?.Trim() ?? "";
-            
-    //         var allTeachers = AppService.TeacherService?.GetTeachers() ?? new List<TeacherModel>();
-            
-    //         if (string.IsNullOrEmpty(searchText))
-    //         {
-    //             // Hiển thị tất cả giáo viên
-    //             vm.Teachers.Clear();
-    //             foreach (var teacher in allTeachers)
-    //             {
-    //                 vm.Teachers.Add(teacher);
-    //             }
-    //         }
-    //         else
-    //         {
-    //             // Tìm kiếm theo ID hoặc tên
-    //             var filteredTeachers = allTeachers.Where(t =>
-    //                 t.Id.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-    //                 t.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)
-    //             ).ToList();
-                
-    //             vm.Teachers.Clear();
-    //             foreach (var teacher in filteredTeachers)
-    //             {
-    //                 vm.Teachers.Add(teacher);
-    //             }
-    //         }
-    //     }
-    // }
 
-    // private void OnDepartmentFilterChanged(object? sender, SelectionChangedEventArgs e)
-    // {
-    //     if (sender is ComboBox comboBox && DataContext is TeacherViewModel vm)
-    //     {
-    //         var selectedDepartment = comboBox.SelectedItem as DepartmentModel;
-            
-    //         var allTeachers = AppService.TeacherService?.GetTeachers() ?? new List<TeacherModel>();
-            
-    //         if (selectedDepartment == null || selectedDepartment.Name == "---- Chọn Bộ môn ----")
-    //         {
-    //             // Hiển thị tất cả giáo viên
-    //             vm.Teachers.Clear();
-    //             foreach (var teacher in allTeachers)
-    //             {
-    //                 vm.Teachers.Add(teacher);
-    //             }
-    //         }
-    //         else
-    //         {
-    //             // Lọc theo bộ môn
-    //             var filteredTeachers = allTeachers.Where(t =>
-    //                 t.DepartmentId == selectedDepartment.Id
-    //             ).ToList();
-                
-    //             vm.Teachers.Clear();
-    //             foreach (var teacher in filteredTeachers)
-    //             {
-    //                 vm.Teachers.Add(teacher);
-    //             }
-    //         }
-    //     }
-    // }
       private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
     {
         ApplyFilters();

@@ -43,17 +43,7 @@ public partial class TeacherViewModel : ViewModelBase
             return list;
         }
     }
-
-    // public List<DepartmentModel> DepartmentOptions
-    // {
-    //     get
-    //     {
-    //         var list = new List<DepartmentModel>();
-    //         list.Add(new DepartmentModel(0, 0, "---- Chọn Bộ môn ----", "", 1));
-    //         list.AddRange(Departments);
-    //         return list;
-    //     }
-    // }
+    
     private TeacherModel? _teacherDetails;
     public TeacherModel? TeacherDetails
     {
@@ -243,10 +233,11 @@ public partial class TeacherViewModel : ViewModelBase
         Departments.Clear();
         try
         {
-            var departments = AppService.DepartmentService.GetDepartments();
+            var departments = AppService.TeacherService.GetDepartments();
             foreach (var department in departments)
             {
-                Departments.Add(department);            }
+                Departments.Add(department);
+            }
         }
         catch (Exception ex)
         {

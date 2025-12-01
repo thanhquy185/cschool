@@ -1,0 +1,91 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:cschool.ViewModels"
+        x:DataType="vm:SubjectClassViewModel"
+        x:Class="cschool.Views.SubjectClass.SubjectClassDetailDialog"
+        Title="Chi tiết điểm học sinh"
+        Width="1200"
+        Height="620"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- Header - MÀU XANH LÁ CÂY -->
+            <Border Background="#4CAF50" Padding="16,12" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1"
+                            Text="Chi tiết điểm"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="OnCloseButtonClick"/>
+                </Grid>
+            </Border>
+
+            <!-- Nội dung bảng điểm -->
+            <Border Grid.Row="1" Classes="TableDataWarper">
+                <!-- <DataGrid
+                    x:Name="ScoreDetailDataGrid"
+                    Classes="TableData"
+                    ItemsSource="{Binding StudentScores}"
+                    IsReadOnly="True"
+                    AutoGenerateColumns="False"
+                   > -->
+                <DataGrid
+                    x:Name="ScoreDetailDataGrid"
+                    Classes="TableData"
+                    ItemsSource="{Binding StudentScores}"
+                    IsReadOnly="True"
+                    AutoGenerateColumns="False"
+                    >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="1.5*"
+                            Binding="{Binding FullName}"
+                            Header="Họ tên" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding OralScoresDisplay}"
+                            Header="Điểm miệng" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding QuizzesDisplay}"
+                            Header="Điểm 15 phút" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding MidtermScore, StringFormat='{}{0:N2}'}"
+                            Header="Điểm giữa kỳ" />
+                        <DataGridTextColumn
+                            Width="1.0*"
+                            Binding="{Binding FinalScore, StringFormat='{}{0:N2}'}"
+                            Header="Điểm cuối kỳ" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

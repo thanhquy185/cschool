@@ -1,0 +1,134 @@
+<UserControl
+    x:Class="cschool.Views.SubjectClassView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:cschool.ViewModels"
+    xmlns:model="using:cschool.Models"
+    x:DataType="vm:SubjectClassViewModel"
+    xmlns:conv="using:cschool.Utils"
+    x:Name="Root">
+
+    <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,Auto,*">
+        
+        <!-- Header -->
+        <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+            <StackPanel Classes="MainLayoutHeaderInfo">
+                <TextBlock Classes="Title" Text="Quản lý lớp môn học" />
+                <TextBlock Classes="SubTitle" Text="Quản lý lớp môn học" />
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons" >
+                <Button Classes="CrudButton Info" x:Name="InfoButton">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel >
+                            <Image Source="{DynamicResource InfoIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+
+                <Button x:Name="CreateButton" Classes="CrudButton Create">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource CreateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                
+                <Button x:Name="ImportExcelButton" Classes="CrudButton Create">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                        <Image Source="{DynamicResource ImportExcelIcon}"/>
+                        <TextBlock Text="Nhập Excel" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        </StackPanel>
+                    </Border>
+                </Button>
+
+                <Button x:Name="ExportExcelButton" Classes="CrudButton Update"  >
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource ExportExcelIcon}"/>
+                            <TextBlock Text="Xuất Excel" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        </StackPanel>
+                    </Border>
+                </Button>
+
+            </StackPanel>
+        </Grid>
+
+     <Border Grid.Row="1" Classes="FilterDataWarper">
+    <Grid Classes="FilterData" RowDefinitions="*,Auto">
+        <StackPanel Classes="FilterDataInputs">
+            <!-- Ô tìm kiếm -->
+            <Grid Classes="FilterDataFindInput">
+                <!-- TextBox có chừa chỗ trống bên trái -->
+                <TextBox x:Name="SearchBox"
+                         Text="{Binding SearchText, Mode=TwoWay}"
+                         Watermark="Nhập tên lớp học, môn học"
+                         Padding="35,0,10,0"
+                         Height="40"
+                         VerticalAlignment="Center"/>
+                <!-- Icon tìm kiếm nằm trong TextBox bên trái -->    
+                    <Image Source="{DynamicResource SearchIcon}" Width="18" Height="18"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- Nút reset bên phải -->
+        <Button x:Name="ResetSearchButton"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Classes="FilterDataResetButton"
+                ToolTip.Tip="Đặt lại tìm kiếm"
+                Click="OnResetSearch">
+            <Image Source="{DynamicResource ResetIcon}" Width="18" Height="18"/>
+        </Button>
+    </Grid>
+</Border>
+
+      <Border Grid.Row="3" Classes="TableDataWarper" Margin="0,5,0,0"> 
+            <DataGrid
+                x:Name="SubjectClassDataGrid"
+                Classes="TableData"
+                ItemsSource="{Binding SubjectClasses}"
+                IsReadOnly="True"
+                AutoGenerateColumns="False"
+                SelectedItem="{Binding SelectedSubjectClass, Mode=TwoWay}"
+               >
+                <DataGrid.Columns>
+                    
+                    <DataGridTextColumn
+                        Width="1.0*"
+                        Binding="{Binding SubjectName}"
+                        Header="Môn học" />
+                    
+                    <DataGridTextColumn
+                        Width="1.0*"
+                        Binding="{Binding ClassName}"
+                        Header="Lớp học" />
+
+                    <DataGridTextColumn
+                        Width="1.0*"
+                        Binding="{Binding OralCount}"        
+                        Header="Số điểm miệng" />
+
+                    <DataGridTextColumn
+                        Width="1.0*"
+                        Binding="{Binding QuizCount}"        
+                        Header="Số điểm 15 phút" />
+
+                    <DataGridTextColumn
+                        Width="1.5*"
+                        Binding="{Binding TermName}"
+                        Header="Kỳ học" />
+                    <!-- <DataGridTextColumn
+                        Width="1.0*"
+                        
+                        Header="Năm học" /> -->
+                        
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+     
+    </Grid>
+</UserControl>

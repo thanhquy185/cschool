@@ -16,7 +16,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(TeacherButtonActive))]
     [NotifyPropertyChangedFor(nameof(UserButtonActive))]
     [NotifyPropertyChangedFor(nameof(AssignTeacherButtonActive))]
-    [NotifyPropertyChangedFor(nameof(ScoreButtonActive))]
+    [NotifyPropertyChangedFor(nameof(SubjectClassButtonActive))]
     [NotifyPropertyChangedFor(nameof(StatisticalButtonActive))]
     [NotifyPropertyChangedFor(nameof(HomeClassButtonActive))]
     private ViewModelBase _currentPage;
@@ -26,7 +26,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly TeacherViewModel _teacherViewModel;
     private readonly UserViewModel _userViewModel;
     private readonly AssignTeacherViewModel _assignTeacherViewModel;
-    private readonly ScoreViewModel _scoreViewModel;
+    private readonly SubjectClassViewModel _subjectClassViewModel;
     private readonly StatisticalViewModel _statisticalViewModel;
     private readonly HomeClassViewModel _homeClassViewModel;
 
@@ -46,9 +46,9 @@ public partial class MainWindowViewModel : ViewModelBase
 public Bitmap AssignTeacherButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/subject-icon.png")));
     public string AssignTeacherButtonLabel => "Phân công giáo viên";
-    public Bitmap ScoreButtonImage { get; }
+    public Bitmap SubjectClassButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/scoreboard.png")));
-    public string ScoreButtonLabel => "Lớp môn học";
+    public string SubjectClassButtonLabel => "Lớp môn học";
       public Bitmap StatisticalButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/analytics.png")));
     public string StatisticalButtonLabel => "Thống kê ";
@@ -62,7 +62,7 @@ public Bitmap AssignTeacherButtonImage { get; }
     public bool TeacherButtonActive => CurrentPage == _teacherViewModel;
     public bool UserButtonActive => CurrentPage == _userViewModel;
     public bool AssignTeacherButtonActive => CurrentPage == _assignTeacherViewModel;
-    public bool ScoreButtonActive => CurrentPage == _scoreViewModel;
+    public bool SubjectClassButtonActive => CurrentPage == _subjectClassViewModel;
     public bool StatisticalButtonActive => CurrentPage == _statisticalViewModel;
     public bool HomeClassButtonActive => CurrentPage == _homeClassViewModel;
 
@@ -75,7 +75,7 @@ public Bitmap AssignTeacherButtonImage { get; }
         _teacherViewModel = new TeacherViewModel();
         _userViewModel = new UserViewModel();
         _assignTeacherViewModel = new AssignTeacherViewModel(new AssignTeacherService(AppService.DBService));
-        _scoreViewModel = new ScoreViewModel();
+        _subjectClassViewModel = new SubjectClassViewModel();
         _statisticalViewModel = new StatisticalViewModel(new StatisticalService(AppService.DBService));
         _homeClassViewModel = new HomeClassViewModel(new HomeClassService(AppService.DBService));
         // Trang mặc định hiển thị
@@ -95,7 +95,7 @@ public Bitmap AssignTeacherButtonImage { get; }
     [RelayCommand]
     public void GoToAssignTeacherView() => CurrentPage = _assignTeacherViewModel;
     [RelayCommand]
-    public void GoToScoreView() => CurrentPage = _scoreViewModel;
+    public void GoToSubjectClassView() => CurrentPage = _subjectClassViewModel;
     [RelayCommand]
     public void GoToStatisticalView() => CurrentPage = _statisticalViewModel;
     [RelayCommand]

@@ -29,8 +29,7 @@ public partial class App : Application
             AppService.UserService = new UserService(AppService.DBService);
             AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
             AppService.TeacherService = new TeacherService(AppService.DBService);
-            AppService.DepartmentService = new DepartmentService(AppService.DBService);
-            AppService.TermService = new TermService(AppService.DBService);
+            AppService.SubjectClassService = new SubjectClassService(AppService.DBService);
             AppService.statisticalService = new StatisticalService(AppService.DBService);
             AppService.homeClassService = new HomeClassService(AppService.DBService);
             Console.WriteLine("Creating MainWindow...");

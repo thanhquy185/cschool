@@ -70,7 +70,7 @@ public partial class HomeClassViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error loading students: {ex.Message}");
+            Console.WriteLine($" Error loading students: {ex.Message}");
         }
     }
 
@@ -243,7 +243,7 @@ private async Task ExportToExcelAsync()
             infoRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
             infoRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
 
-            // 📋 --- Bảng danh sách học sinh ---
+            //  --- Bảng danh sách học sinh ---
             int startRow = 8;
             ws.Cell(startRow, 1).Value = "STT";
             ws.Cell(startRow, 2).Value = "Họ và tên";

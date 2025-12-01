@@ -1,0 +1,87 @@
+<!-- SubjectClassAddScoresDialog.axaml (Similar to Detail but editable, with Save button) -->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:cschool.ViewModels"
+        x:DataType="vm:SubjectClassViewModel"
+        x:Class="cschool.Views.SubjectClass.SubjectClassCreateDialog"
+        Title="Nhập điểm"
+        Width="1200"
+        Height="620"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- Header -->
+            <Border Background="#4CAF50" Padding="16,12" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1"
+                            Text="Nhập điểm"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="OnCloseButtonClick"/>
+                </Grid>
+            </Border>
+
+            <!-- Nội dung bảng điểm editable -->
+            <Border Grid.Row="1" Classes="TableDataWarper">
+                <DataGrid
+                    x:Name="ScoreCreateDataGrid"
+                    Classes="TableData"
+                    ItemsSource="{Binding StudentScores}"
+                    IsReadOnly="False"
+                    AutoGenerateColumns="False"
+                   >
+                    <!-- Columns sẽ được generate động trong code-behind -->
+                </DataGrid>
+            </Border>
+
+            <!-- Nút lưu  -->
+            <Border Grid.Row="2"
+                    Padding="0,15,0,20"
+                    CornerRadius="0,0,8,8"
+                    Background="White">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                    <Button Content="Xác nhận"
+                        Width="1100"
+                        Height="40"
+                        FontSize="18"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="OnSaveButtonClick" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
