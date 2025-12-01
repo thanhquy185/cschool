@@ -6,9 +6,16 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using cschool.Models;
-using Avalonia.Threading;
-
+using ClosedXML.Excel;
 using ReactiveUI;
+using Avalonia.Interactivity;
+using Avalonia.Controls;
+using cschool.Utils;
+using System.Reactive.Threading.Tasks;
+using Avalonia;
+using Avalonia.Platform.Storage;
+
+
 
 namespace cschool.ViewModels;
 
@@ -16,11 +23,13 @@ public partial class TeacherViewModel : ViewModelBase
 {
     public ObservableCollection<TeacherModel> Teachers { get; }
     public ObservableCollection<DepartmentModel> Departments { get; }
-    public ReactiveCommand<(int, int?), TeacherModel?> GetTeacherByIdCommand { get; }
+    public ReactiveCommand<Unit, TeacherModel?> GetTeacherByIdCommand { get; }
     public ReactiveCommand<Unit, ObservableCollection<TeacherModel>> GetTeachersCommand { get; }
     public ReactiveCommand<TeacherModel, bool> CreateTeacherCommand { get; }
     public ReactiveCommand<TeacherModel, bool> UpdateTeacherCommand { get; }
     public ReactiveCommand<int, bool> LockTeacherCommand { get; }
+    public ReactiveCommand<Unit, Unit> ImportFromExcelCommand { get; }
+    public ReactiveCommand<Unit, Unit> ExportToExcelCommand { get; }
 
     public List<KeyValuePair<int, string>> StatusOptions { get; } = new()
     {
@@ -63,11 +72,24 @@ public partial class TeacherViewModel : ViewModelBase
                 {
                     TeacherDetails.DepartmentId = value.Id;
                     TeacherDetails.DepartmentName = value.Name;
-                    // Console.WriteLine($"✅ Department changed: {value.Name} (ID={value.Id})");
                 }
             }
         }
     }
+
+    private DepartmentModel? _selectedDepartmentFilter;
+    public DepartmentModel? SelectedDepartmentFilter
+    {
+        get => _selectedDepartmentFilter;
+        set
+        {
+            if (SetProperty(ref _selectedDepartmentFilter, value))
+            {
+                ApplyFilter();
+            }
+        }
+    }
+
     private KeyValuePair<int, string>? _selectedStatus;
     public KeyValuePair<int, string>? SelectedStatus
     {
@@ -102,9 +124,24 @@ public partial class TeacherViewModel : ViewModelBase
     public TeacherModel? SelectedTeacher
     {
         get => _selectedTeacher;
-        set => SetProperty(ref _selectedTeacher, value);
+        set { 
+            SetProperty(ref _selectedTeacher, value);
+            Console.WriteLine($"SelectedTeacher changed: {value?.Id}");
+        }
+
     }
-    public string SearchText  { get; set; } = "";
+    private string _searchText = string.Empty;
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+            {
+                ApplyFilter();
+            }
+        }
+    }
 
 
     public TeacherViewModel()
@@ -128,10 +165,10 @@ public partial class TeacherViewModel : ViewModelBase
         });
 
         // Lấy giáo viên theo ID
-        GetTeacherByIdCommand = ReactiveCommand.CreateFromTask<(int id, int? termId), TeacherModel?>(async parameters =>
+        GetTeacherByIdCommand = ReactiveCommand.CreateFromTask<Unit, TeacherModel?>(async _ =>
         {
-            var (id, termId) = parameters; // giải tuple ra
-            return AppService.TeacherService.GetTeacherById(id, termId);
+            var teacher = AppService.TeacherService.GetTeacherById(SelectedTeacher.Id);
+            return teacher;
         });
 
 
@@ -178,7 +215,6 @@ public partial class TeacherViewModel : ViewModelBase
             }
         });
 
-        // LockTeacherCommand - Khóa giáo viên (set status = 0)
         LockTeacherCommand = ReactiveCommand.CreateFromTask<int, bool>(async (teacherId) =>
         {
             try
@@ -195,23 +231,20 @@ public partial class TeacherViewModel : ViewModelBase
                 return false;
             }
         });
+
+        ImportFromExcelCommand = ReactiveCommand.CreateFromTask<Unit, Unit>(async param =>
+        {
+            await ImportFromExcel();
+            return Unit.Default;
+        }, outputScheduler: RxApp.MainThreadScheduler);
+
+        ExportToExcelCommand = ReactiveCommand.CreateFromTask<Unit, Unit>(async _ =>
+        {
+            await ExportToExcel();
+            return Unit.Default;
+        }, outputScheduler: RxApp.MainThreadScheduler);   
     }
-    private bool FilterTeachers(object item)
-    {
-        if (item is not TeacherModel t) return false;
 
-        string search = SearchText?.Trim().ToLower() ?? "";
-        string dept = SelectedDepartment?.Name ?? "";
-
-        bool matchSearch = string.IsNullOrEmpty(search)
-            || t.Name.ToLower().Contains(search)
-            || t.Id.ToString().Contains(search);
-
-        bool matchDepartment = string.IsNullOrEmpty(dept)
-            || t.DepartmentName.Equals(dept, StringComparison.OrdinalIgnoreCase);
-
-        return matchSearch && matchDepartment;
-    }
     public void LoadData()
     {
 
@@ -244,6 +277,115 @@ public partial class TeacherViewModel : ViewModelBase
             Console.WriteLine($"LoadDepartments Error: {ex.Message}");
         }
     }
+    
+    private async Task ImportFromExcel()
+    {
+        // File picker using Avalonia StorageProvider
+        var mainWindow = (Application.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        if (mainWindow == null) return;
+        var topLevel = TopLevel.GetTopLevel(mainWindow);
+        if (topLevel == null) return;
+
+        var fileOptions = new FilePickerOpenOptions
+        {
+            Title = "Chọn file Excel để import giáo viên",
+            AllowMultiple = false,
+            FileTypeFilter = new List<FilePickerFileType>
+            {
+                new FilePickerFileType("Excel Files") { Patterns = new[] { "*.xlsx", "*.xls" } }
+            }
+        };
+
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(fileOptions);
+        if (files.Count == 0) return;
+
+        var filePath = files[0].Path.LocalPath; // Get the local file path
+
+        try
+        {
+            bool success = AppService.TeacherService.ImportTeachersFromExcel(filePath);
+            if (success)
+            {
+                await MessageBoxUtil.ShowSuccess("Nhập giáo viên từ file Excel thành công!");
+                // Reload data after import
+                LoadData();
+            }
+            else
+            {
+                await MessageBoxUtil.ShowError("Nhập giáo viên từ file Excel thất bại!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during import: {ex.Message}");
+        }
+    }
+
+    private async Task ExportToExcel()
+    {
+        if (Teachers.Count == 0)
+        {
+            await MessageBoxUtil.ShowError("Không có giáo viên để xuất!");
+            return; // Or show a message dialog
+        }
+
+        // File saver using Avalonia StorageProvider
+        var mainWindow = (Application.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        if (mainWindow == null) return;
+        var topLevel = TopLevel.GetTopLevel(mainWindow);
+        if (topLevel == null) return;
+
+        var fileOptions = new FilePickerSaveOptions
+        {
+            Title = "Chọn nơi lưu file Excel xuất danh sách giáo viên",
+            SuggestedFileName = "Teachers.xlsx",
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                new FilePickerFileType("Excel Files") { Patterns = new[] { "*.xlsx" } }
+            }
+        };
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(fileOptions);
+        if (file == null) return;
+
+        var filePath = file.Path.LocalPath; // Get the local file path
+
+        try
+        {
+            AppService.TeacherService.ExportTeachersToExcel(Teachers.ToList(), filePath);
+            Console.WriteLine("Exported teachers successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during export: {ex.Message}");
+        }
+    }
+    private void ApplyFilter()
+    {
+        var departmentName = SelectedDepartmentFilter?.Name ?? "";
+
+        var allTeachers = AppService.TeacherService.GetTeachers();
+
+        var filteredTeachers = allTeachers.Where(t =>
+        {
+            bool matchesSearch = string.IsNullOrEmpty(SearchText) ||
+                                t.Id.ToString().Contains(SearchText) ||
+                                t.Name.ToLower().Contains(SearchText);
+
+            bool matchesDepartment = string.IsNullOrEmpty(departmentName) ||
+                                    departmentName == "---- Chọn Bộ môn ----" ||
+                                    t.DepartmentName.Equals(departmentName, StringComparison.OrdinalIgnoreCase);
+
+            return matchesSearch && matchesDepartment;
+        }).ToList();
+
+        // Update UI
+        Teachers.Clear();
+        foreach (var teacher in filteredTeachers)
+        {
+            Teachers.Add(teacher);
+        }
+    }
 
 
     public void SetTeacherForEdit(TeacherModel teacher)
@@ -260,6 +402,5 @@ public partial class TeacherViewModel : ViewModelBase
         SelectedGender = null;
         SelectedDepartment = null;
     }
-    
-
 }
+

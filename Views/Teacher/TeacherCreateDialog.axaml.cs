@@ -18,7 +18,6 @@ namespace cschool.Views.Teacher
     {
         private TeacherViewModel? _teacherViewModel;
         private string? _selectedAvatarPath;
-        private List<DepartmentModel> _departments = new List<DepartmentModel>();
 
         public TeacherCreateDialog(TeacherViewModel vm)
         {
@@ -183,17 +182,13 @@ namespace cschool.Views.Teacher
             };
 
             // - Xử lý
-            if (_teacherViewModel?.CreateTeacherCommand == null) return;
             bool isSuccess = await _teacherViewModel.CreateTeacherCommand.Execute(teacher).ToTask();
 
             // Thông báo xử lý, nếu thành công thì ẩn dialog
             if (isSuccess)
             {
                 await MessageBoxUtil.ShowSuccess("Thêm giáo viên thành công!", owner: this);
-                if (_teacherViewModel?.GetTeachersCommand != null)
-                {
-                    await _teacherViewModel.GetTeachersCommand.Execute().ToTask();
-                }
+                await _teacherViewModel.GetTeachersCommand.Execute().ToTask();
                 this.Close();
             }
             else

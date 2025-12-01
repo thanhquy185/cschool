@@ -45,7 +45,7 @@ public partial class SubjectClassViewModel : ViewModelBase
 
     public ReactiveCommand<int, ObservableCollection<SubjectClassModel>> GetSubjectClassesByTeacherIdCommand { get; }
     public ReactiveCommand<Unit, bool> SaveStudentScoresCommand { get; }
-    public ReactiveCommand<object?, Unit> ImportFromExcelCommand { get; }
+    public ReactiveCommand<Unit, Unit> ImportFromExcelCommand { get; }
     public ReactiveCommand<Unit, Unit> ExportToExcelCommand { get ; }
 
     public SubjectClassViewModel()
@@ -86,7 +86,7 @@ public partial class SubjectClassViewModel : ViewModelBase
             }
         });
 
-        ImportFromExcelCommand = ReactiveCommand.CreateFromTask<object?, Unit>(async param =>
+        ImportFromExcelCommand = ReactiveCommand.CreateFromTask<Unit, Unit>(async _ =>
         {
             await ImportFromExcel();
             return Unit.Default;
@@ -186,7 +186,7 @@ public partial class SubjectClassViewModel : ViewModelBase
 
     private async Task ExportToExcel()
 {
-    if (SelectedSubjectClass == null || StudentScores.Count == 0)
+    if (SelectedSubjectClass == null)
     {
         await MessageBoxUtil.ShowError("Vui lòng chọn lớp môn học để thực hiện thao tác!");
         return; 

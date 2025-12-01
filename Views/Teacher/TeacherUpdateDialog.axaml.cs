@@ -29,7 +29,6 @@ namespace cschool.Views.Teacher
             InitializeComponent();
             _teacherViewModel = vm;
             DataContext = vm;
-
         }
 
         private async void ChooseImage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -78,11 +77,8 @@ namespace cschool.Views.Teacher
         
         private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("🔍 ConfirmButton_Click started");
-
             if (_teacherViewModel == null || _teacherViewModel.TeacherDetails == null)
             {
-                Console.WriteLine("ViewModel or TeacherDetails is null");
                 await MessageBoxUtil.ShowError("Lỗi: Dữ liệu không tồn tại!", owner: this);
                 return;
             }

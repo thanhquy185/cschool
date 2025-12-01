@@ -87,7 +87,7 @@
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập ID / Họ tên giáo viên" x:Name="SearchBox" TextChanged="OnSearchTextChanged"/>
+            <TextBox Watermark="Nhập ID / Họ tên giáo viên" x:Name="SearchBox" Text="{Binding SearchText, Mode=TwoWay}"/>
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
           <ComboBox
@@ -96,9 +96,9 @@
             MaxDropDownHeight="200"
             SelectedIndex="0"
             PlaceholderText="---- Chọn Bộ môn ----"
-            SelectionChanged="OnDepartmentFilterChanged"
             ItemsSource="{Binding DepartmentOptions}"
             DisplayMemberBinding="{Binding Name}"
+            SelectedItem="{Binding SelectedDepartmentFilter}"
             >
 
           </ComboBox>
@@ -114,7 +114,11 @@
     </Border>
     <!--  Table  -->
     <Border Grid.Row="2" Classes="TableDataWarper">
-      <DataGrid x:Name="TeachersDataGrid" Classes="TableData" ItemsSource="{Binding Teachers}" AutoGenerateColumns="False">
+      <DataGrid x:Name="TeachersDataGrid" 
+                Classes="TableData" 
+                ItemsSource="{Binding Teachers}" 
+                AutoGenerateColumns="False"
+                SelectedItem="{Binding SelectedTeacher, Mode=TwoWay}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="*"

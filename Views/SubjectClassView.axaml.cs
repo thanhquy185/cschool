@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using cschool.Models;
 using cschool.Utils;
 using System;
+using System.Reactive.Threading.Tasks;
 
 
 namespace cschool.Views;
@@ -32,7 +33,7 @@ public partial class SubjectClassView : UserControl
             var vm = DataContext as SubjectClassViewModel;
             if (vm != null)
             {
-                vm.ImportFromExcelCommand.Execute().Subscribe();
+                vm.ImportFromExcelCommand.Execute().ToTask();
             }
         };
         exportExcelButton.Click += (_, _) =>
@@ -40,7 +41,7 @@ public partial class SubjectClassView : UserControl
             var vm = DataContext as SubjectClassViewModel;
             if (vm != null)
             {
-                vm.ExportToExcelCommand.Execute().Subscribe();
+                vm.ExportToExcelCommand.Execute().ToTask();
             }
         };
     }
@@ -51,8 +52,8 @@ public partial class SubjectClassView : UserControl
 
         var dataGrid = this.FindControl<DataGrid>("SubjectClassDataGrid");
         var selectedSubjectClass = dataGrid?.SelectedItem as SubjectClassModel;
-        Console.WriteLine($"Selected SubjectClass: {selectedSubjectClass?.Assign_class_id}, subjectID: {selectedSubjectClass?.SubjectId}");
-         if (selectedSubjectClass == null)
+
+        if (selectedSubjectClass == null)
         {
             await MessageBoxUtil.ShowError("Vui lòng chọn lớp môn học để thực hiện thao tác!");
             return;
