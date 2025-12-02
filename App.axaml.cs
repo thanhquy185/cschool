@@ -24,10 +24,13 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
-            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=;SslMode=None;";
+            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=;AllowPublicKeyRetrieval=True;SslMode=None";
             AppService.DBService = new DBService(connectionString);
             AppService.UserService = new UserService(AppService.DBService);
             AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
+            AppService.TeacherService = new TeacherService(AppService.DBService);
+            AppService.DepartmentService = new DepartmentService(AppService.DBService);
+            AppService.TermService = new TermService(AppService.DBService);
             AppService.statisticalService = new StatisticalService(AppService.DBService);
             AppService.homeClassService = new HomeClassService(AppService.DBService);
             Console.WriteLine("Creating MainWindow...");

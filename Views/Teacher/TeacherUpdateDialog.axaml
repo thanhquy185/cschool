@@ -1,0 +1,213 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:cschool.ViewModels;assembly=cschool"
+        x:Class="cschool.Views.Teacher.TeacherUpdateDialog"
+        xmlns:models="clr-namespace:cschool.Models;assembly=cschool"
+        x:DataType="vm:TeacherViewModel"
+        Title="Cập nhật thông tin giáo viên"
+        Width="1200"
+        Height="620"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- 🔹 Header -->
+            <Border Background="#FBC02D" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <!-- Cột trái rỗng để cân -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tiêu đề ở giữa -->
+                    <TextBlock Grid.Column="1"
+                            Text="Cập nhật thông tin giáo viên"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            />
+
+                    <!-- Nút đóng ở bên phải -->
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="CloseButton_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- 🔹 Nội dung -->
+            <ScrollViewer Grid.Row="1" Padding="20">
+                <Grid ColumnDefinitions="1.2*,2.8*" RowDefinitions="Auto">
+                    <!-- 🖼️ Ảnh đại diện -->
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <TextBlock Text="Ảnh đại diện"
+                                   FontSize="15"
+                                   Margin="0,0,0,10" Foreground="Black"/>
+                        
+                        <Border Width="300" Height="300"
+                                Padding="40"
+                                CornerRadius="4"
+                                HorizontalAlignment="Center">
+                            <Image Source="{Binding TeacherDetails.AvatarImage}"
+                                   Stretch="UniformToFill"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   x:Name="AvatarImage"/>
+                        </Border>
+
+                        <Button Content="Chọn ảnh"
+                                Width="300"
+                                Margin="0,20,0,10"
+                                Background="#E0E0E0"
+                                Foreground="#555"
+                                BorderThickness="0"
+                                Padding="10,5"
+                                FontSize="18"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                CornerRadius="4"
+                                Click="ChooseImage_Click"/>
+                    </StackPanel>
+
+                    <!-- 🧾 Thông tin học sinh -->
+                    <Grid Grid.Column="1" Margin="30,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Mã giáo viên -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã giáo viên" FontSize="15" Margin="0,0,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="1" Grid.Column="0" x:Name="Id" Text="{Binding TeacherDetails.Id}" HorizontalContentAlignment="Center" IsHitTestVisible="False"
+                                 Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"/>
+
+                        <!-- Tình trạng dạy -->
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Tình trạng" FontSize="15" Margin="20,0,0,5" Foreground="Black"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="StatusComboBox" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus, Mode=TwoWay}" 
+                                MaxDropDownHeight="300" Margin="20,0,0,10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                        </ComboBox>
+                       
+
+                        <!-- Tên giáo viên -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Họ tên giáo viên" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="4" Grid.Column="0" x:Name="Fullname" Text="{Binding TeacherDetails.Name}" Margin="0,0,0,10"/>
+
+                        <!-- Giới tính -->
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Giới tính" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
+                        <ComboBox Grid.Row="4" Grid.Column="1" x:Name="Gender" ItemsSource="{Binding GenderOptions}" SelectedItem="{Binding SelectedGender, Mode=TwoWay}" 
+                                MaxDropDownHeight="300" Margin="20,0,0,10">
+                        </ComboBox>
+                        
+
+                        <!-- Ngày sinh -->
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Ngày sinh" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <DatePicker Grid.Row="7" Grid.Column="0" x:Name="BirthDay" SelectedDate="{Binding TeacherDetails.BirthdayDate}" Margin="0,0,0,10" BorderThickness="1" CornerRadius="4"/>
+
+                        <!-- Bộ môn -->
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="Bộ môn" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
+                        <ComboBox Grid.Row="7" Grid.Column="1" 
+                                x:Name="Departments" 
+                                ItemsSource="{Binding Departments}"
+                                SelectedItem="{Binding SelectedDepartment, Mode=TwoWay}"
+                                MaxDropDownHeight="300" 
+                                DisplayMemberBinding="{Binding Name}"
+                                Margin="20,0,0,10">
+                        </ComboBox>
+
+                        <!-- Lớp chủ nhiệm -->
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Lớp chủ nhiệm" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="10" Grid.Column="0" Text="{Binding TeacherDetails.ClassName}" IsHitTestVisible="False"
+                                 Background="#E5E5E5" Foreground="#555" Margin="00,0,0,10"/> 
+                        
+
+                        <!-- Kì học -->
+                        <TextBlock Grid.Row="9" Grid.Column="1" Text="Kì học" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding TeacherDetails.TermName}" IsHitTestVisible="False"
+                                 Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
+
+
+                        <!-- Số điện thoại -->
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Số điện thoại" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="13" Grid.Column="0" x:Name="Phone" Text="{Binding TeacherDetails.Phone}" Margin="0,0,0,10"/>
+
+                        <!-- Email -->
+                        <TextBlock Grid.Row="12" Grid.Column="1" Text="Email" FontSize="15" Margin="20,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="13" Grid.Column="1" x:Name="Email" Text="{Binding TeacherDetails.Email}" Margin="20,0,0,10"/>
+
+                        <!-- Địa chỉ -->
+                        <TextBlock Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" x:Name="Address"
+                                 Text="{Binding TeacherDetails.Address}" Margin="0,0,0,100"/>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- 🔹 Nút xác nhận -->
+            <Border Grid.Row="2"
+                    Padding="0,0,0,20"
+                    CornerRadius="0,0,8,8"
+                    Background="White">
+                <Button Content="Xác nhận"
+                        Width="1100"
+                        Height="40"
+                        FontSize="18"
+                        Background="#FBC02D"
+                        Foreground="White"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="ConfirmButton_Click" />
+            </Border>
+        </Grid>
+    </Border>
+</Window>

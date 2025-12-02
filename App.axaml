@@ -70,6 +70,8 @@
         <!--    -->
         <Bitmap x:Key="SearchIcon">avares://cschool/Assets/Images/Others/search-icon.png</Bitmap>
         <Bitmap x:Key="ResetIcon">avares://cschool/Assets/Images/Others/reset-icon.png</Bitmap>
+        <Bitmap x:Key="ExportExcelIcon">avares://cschool/Assets/Images/Others/export-icon.png</Bitmap>
+        <Bitmap x:Key="ImportExcelIcon">avares://cschool/Assets/Images/Others/import-icon.png</Bitmap>
 
         <!--  Values  -->
         <!-- <sys:Integer x:Key="DialogLabelFontSize">15</sys:Integer> -->

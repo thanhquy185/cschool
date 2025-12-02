@@ -21,8 +21,8 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private readonly AssignTeacherService _service;
 
     public ObservableCollection<AssignTeacher> AssignTeachers { get; } = new();
-    public ObservableCollection<Teachers> Teachers { get; } = new();
-    public ObservableCollection<Teachers> Teachers1 { get; } = new();
+    public ObservableCollection<TeacherModel> Teachers { get; } = new();
+    public ObservableCollection<TeacherModel> Teachers1 { get; } = new();
     public ObservableCollection<Subjects> Subjects { get; } = new();
     public ObservableCollection<ClassModel> Classes { get; } = new();
     public ObservableCollection<string> DaysOfWeek { get; } = new();
@@ -34,7 +34,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private AssignTeacher? _selectedAssignTeacher;
 
     [ObservableProperty]
-    private Teachers? _selectedTeacher;
+    private TeacherModel? _selectedTeacher;
 
     [ObservableProperty]
     private Subjects? _selectedSubject;
@@ -127,8 +127,9 @@ public partial class AssignTeacherViewModel : ViewModelBase
         try
         {
             var assignTeachers = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
+           
             var subjects = _service.GetCourses() ?? new List<Subjects>();
-            var teacher1 = _service.GetTeachers()?? new BindingList<Teachers>();
+            var teacher1 = _service.GetTeachers()?? new BindingList<TeacherModel>();
             var classes = _service.GetClasses() ?? new List<ClassModel>();
             var days = _service.GetDaysOfWeek(DateTime.Now) ?? new List<string>();
 
@@ -273,7 +274,7 @@ public async Task SaveEdit()
                 {
                     await MessageBoxUtil.ShowError("Cập nhật thất bại ",owner:owner);
                     Console.WriteLine("Error: Could not update assignment.");
-                    Console.WriteLine($"Giáo viên đc chọn để sửa: ID={SelectedTeacher.Id}, Name={SelectedTeacher.Name}, Address={SelectedTeacher.Address}, Department={SelectedTeacher.Department}");
+                    Console.WriteLine($"Giáo viên đc chọn để sửa: ID={SelectedTeacher.Id}, Name={SelectedTeacher.Name}, Address={SelectedTeacher.Address}, Department={SelectedTeacher.DepartmentName}");
                 }
             }catch(Exception ex)
             {
@@ -385,6 +386,17 @@ public void Search()
 {
     try
     {
+        // _editingItem = a;
+        // SelectedTeacher = TeacherModels.FirstOrDefault(t => t.Id == a.Teachers_id);
+        // SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
+        // SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
+        // SelectedDay = a.Day;
+        // Start = a.Start;
+        // End = a.End;
+        // QuizCount = a.QuizCount;
+        // OralCount = a.OralCount;
+        // IsFormVisible = true;
+    
         var keyword = _searchText?.Trim() ?? "";
         IEnumerable<AssignTeacher> results;
 

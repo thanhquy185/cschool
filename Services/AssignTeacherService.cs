@@ -153,10 +153,10 @@ public bool IsConflict(AssignTeacher at)
     }
 
 
-    public BindingList<Teachers> GetTeachers(int id)
+    public BindingList<TeacherModel> GetTeachers(int id)
     {
         try{
-        var ds = new BindingList<Teachers>();
+        var ds = new BindingList<TeacherModel>();
         string sql = @" select t.id , t.fullname, d.name as department_name
          FROM teachers t
          JOIN department_details dd ON dd.teacher_id = t.id
@@ -167,25 +167,27 @@ public bool IsConflict(AssignTeacher at)
 
         foreach (DataRow data in dt.Rows)
         {
-            ds.Add(new Teachers(
-                (int)data["id"],
-                data["fullname"].ToString()!,
-                data["department_name"].ToString()!
+            ds.Add(new TeacherModel{
+                Id = (int)data["id"],
+                Name = data["fullname"].ToString()!,
+                DepartmentName = data["department_name"].ToString()!
 
-            ));
+        });
+
         }
         return ds;
         }
         catch (Exception ex)
         {
             Console.WriteLine("Lỗi không thể lấy dữ liệu giáo viên: " + ex);
-            return new BindingList<Teachers>();
+            return new BindingList<TeacherModel>();
         }
     }
-    public BindingList<Teachers> GetTeachers()
+
+    public BindingList<TeacherModel> GetTeachers()
     {
         try{
-        var ds = new BindingList<Teachers>();
+        var ds = new BindingList<TeacherModel>();
         string sql = @" select t.id , t.fullname, d.name as department_name
          FROM teachers t
          JOIN department_details dd ON dd.teacher_id = t.id
@@ -196,21 +198,23 @@ public bool IsConflict(AssignTeacher at)
 
         foreach (DataRow data in dt.Rows)
         {
-            ds.Add(new Teachers(
-                (int)data["id"],
-                data["fullname"].ToString()!,
-                data["department_name"].ToString()!
+            ds.Add(new TeacherModel{
+                Id = (int)data["id"],
+                Name = data["fullname"].ToString()!,
+                DepartmentName = data["department_name"].ToString()!
 
-            ));
+        });
+
         }
         return ds;
         }
         catch (Exception ex)
         {
             Console.WriteLine("Lỗi không thể lấy dữ liệu giáo viên: " + ex);
-            return new BindingList<Teachers>();
+            return new BindingList<TeacherModel>();
         }
     }
+
 
     public bool AddAssignmentTeacher(AssignTeacher courseAssignment)
     {
@@ -221,7 +225,7 @@ public bool IsConflict(AssignTeacher at)
                      VALUES (@assignClassId, @teacherId, @subjectId, @quizCount, @oralCount, @day,@start_period,@end_period)";
 
             var connection = _db.GetConnection();
-
+        
             var command = new MySqlCommand(sql, connection);
             command.Parameters.AddWithValue("@assignClassId", courseAssignment.Assign_class_id); // assuming className is the assign_class_id
             command.Parameters.AddWithValue("@teacherId", courseAssignment.Teachers_id);
