@@ -68,33 +68,36 @@
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập ngày thi" x:Name="SearchBox"/>
+            <TextBox Watermark="Nhập tên môn học" x:Name="SearchBox" TextChanged="OnSearchTextChanged"/>
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
           <ComboBox
             x:Name="StatusFilterBox"
             Classes="FilterDataFindSelect"
-            MaxDropDownHeight="200"
-            SelectedIndex="0">
-            <ComboBoxItem>Chọn Trạng thái</ComboBoxItem>
-            <ComboBoxItem>Option 1</ComboBoxItem>
-            <ComboBoxItem>Option 2</ComboBoxItem>
-            <!-- <ComboBoxItem>Bảo lưu</ComboBoxItem>
-            <ComboBoxItem>Nghỉ học</ComboBoxItem> -->
+            MaxDropDownHeight="300"
+            ItemsSource="{Binding StudyTerm}" 
+            PlaceholderText="Chọn học kỳ"
+            SelectionChanged="OnStatusFilterChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding TermName}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
           </ComboBox>
         </StackPanel>
         <Button
           x:Name="ResetFilterButton"
           HorizontalAlignment="Right"
           VerticalAlignment="Center"
-          Classes="FilterDataResetButton">
+          Classes="FilterDataResetButton"
+          Click="OnResetFilterClicked">
           <Image Source="{DynamicResource ResetIcon}" />
         </Button>
       </Grid>
     </Border>
     <!--  Table  -->
     <Border Grid.Row="2" Classes="TableDataWarper">
-      <DataGrid x:Name="ExamDataGrid" Classes="TableData" ItemsSource="{Binding Exams}">
+      <DataGrid x:Name="ExamDataGrid" Classes="TableData" ItemsSource="{Binding ExamsTemp}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="*"

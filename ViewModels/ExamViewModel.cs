@@ -15,6 +15,7 @@ public partial class ExamViewModel : ViewModelBase
 {
     // Danh sách lịch thi
     public ObservableCollection<ExamModel> Exams { get; }
+    public ObservableCollection<ExamModel> ExamsTemp { get; }
     public ExamModel? ExamDetails { get; set; }
     public ObservableCollection<StudentExamModel> StudentDetails { get; set; }
     public ObservableCollection<TermModel> StudyTerm { get; set; }
@@ -148,10 +149,38 @@ public partial class ExamViewModel : ViewModelBase
     public TermModel? SelectedTerm { get; set; }
     public SubjectModel? SelectedSubject { get; set; }
 
+    // Hàm lọc dữ liệu dựa trên Exams
+    public void ApplyFilter()
+    {
+        if (Exams == null || Exams.Count == 0)
+            return;
+
+        var filtered = Exams.Where(s =>
+        {
+            bool matchKeyword =
+                string.IsNullOrWhiteSpace(FilterKeyword) ||
+                s.Subject.Contains(FilterKeyword, StringComparison.OrdinalIgnoreCase) ||
+                s.Id.ToString().Contains(FilterKeyword);
+
+            bool matchStatus =
+                string.IsNullOrWhiteSpace(FilterStatus) ||
+                FilterStatus == "Chọn học kỳ" ||
+                $"{s.TermName} - {s.TermYear}".Equals(FilterStatus, StringComparison.OrdinalIgnoreCase);
+
+            return matchKeyword && matchStatus;
+        }).ToList();
+
+        // Cập nhật ExamsTemp hiển thị
+        ExamsTemp.Clear();
+        foreach (var s in filtered)
+            ExamsTemp.Add(s);
+    }
+
     public ExamViewModel()
     {
         // Load danh sách ban đầu
         Exams = new ObservableCollection<ExamModel>();
+        ExamsTemp = new ObservableCollection<ExamModel>();
         StudentDetails = new ObservableCollection<StudentExamModel>();
         RoomDetails = new ObservableCollection<RoomExamModel>();
         
@@ -159,6 +188,7 @@ public partial class ExamViewModel : ViewModelBase
         foreach (var exam in exams)
         {
             Exams.Add(exam);
+            ExamsTemp.Add(exam);
         }
 
         // Lấy danh sách lịch thi
@@ -168,7 +198,11 @@ public partial class ExamViewModel : ViewModelBase
             Exams.Clear();
             foreach (var exam in exams)
                 Exams.Add(exam);
-            return Exams;
+
+            ExamsTemp.Clear();
+            foreach (var e in Exams)
+                ExamsTemp.Add(e);
+            return ExamsTemp;
         });
 
         // Lấy lịch thi theo ID
