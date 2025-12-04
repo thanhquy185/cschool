@@ -18,6 +18,15 @@
             </StackPanel>
             
             <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons" >
+            <Button Classes="CrudButton Create"
+                    Command="{Binding AddConductCommand}"     >
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource CreateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Nhập HK" />
+                        </StackPanel>
+                    </Border>
+                </Button>
                 <Button Classes="CrudButton Info"
                 Command="{Binding ShowStudentDetailCommand}">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">

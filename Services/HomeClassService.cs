@@ -72,14 +72,14 @@ public List<Models.Information> GetInformation (int assignClassId)
                 FROM students st
                 JOIN subject_term_avg sta ON sta.student_id = st.id
                 JOIN subjects s ON s.id = sta.subject_id
-                JOIN term_gpa tg ON tg.student_id = st.id
+                JOIN term_gpa tg ON tg.student_id = st.id AND tg.assign_class_id = @assignClassId1
                 WHERE sta.assign_class_id = @assignClassId
                 ORDER BY st.fullname, s.name";
 
             var connection = _db.GetConnection();
             var cmd = new MySqlCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@assignClassId1", assignClassId);
             cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
-
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
@@ -365,6 +365,62 @@ public List<DetailScore> GetDetailScores2(int id)
             Console.WriteLine("❌ Lỗi không thể lấy dữ liệu: " + ex.Message);
             return new List<HomeClass>();
         }
+}
+
+    public bool Update(int studentId, string ConductLevel)
+{
+    try
+    {
+        string academic = "Trung bình";
+        float gpaTotal = 0;
+
+        using (var conn = _db.GetConnection())
+        {
+        
+
+            // --- 1. Lấy GPA ---
+            string sql1 = "SELECT gpa FROM term_gpa WHERE student_id = @studentId1";
+            using (var cmd = new MySqlCommand(sql1, conn))
+            {
+                cmd.Parameters.AddWithValue("@studentId1", studentId);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        gpaTotal = Convert.ToSingle(reader["gpa"]);
+                    }
+                } // reader đóng ở đây
+            }
+
+            // --- 2. Tính academic ---
+            if (ConductLevel == "Giỏi" && gpaTotal >= 8)
+            {
+                academic = "Giỏi";
+            }
+            else if ((ConductLevel == "Giỏi" || ConductLevel == "Khá") &&
+                     ((gpaTotal < 8 && gpaTotal >= 6.5) || (gpaTotal < 6.5 && gpaTotal >= 5)) || (ConductLevel == "Khá" && gpaTotal >= 8 ))
+            {
+                academic = "Khá";
+            }
+
+            // --- 3. UPDATE term_gpa ---
+            string sql = "UPDATE term_gpa SET conduct_level = @conductLevel, academic = @academic WHERE student_id = @studentId";
+            using (var cmd2 = new MySqlCommand(sql, conn))
+            {
+                cmd2.Parameters.AddWithValue("@conductLevel", ConductLevel);
+                cmd2.Parameters.AddWithValue("@academic", academic);
+                cmd2.Parameters.AddWithValue("@studentId", studentId);
+
+                return cmd2.ExecuteNonQuery() > 0;
+            }
+        }
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Không thể cập nhật hành kiểm: " + e.Message);
+        return false;
+    }
 }
 
 }

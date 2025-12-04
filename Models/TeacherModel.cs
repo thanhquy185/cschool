@@ -21,7 +21,6 @@ public class TeacherModel
     public int DepartmentId { get; set; } = 0;
     public string DepartmentName { get; set; } = "";
     public int Status { get; set; } = 1;
-    public int TermId { get; set; } = 0;
     public string TermName { get; set; } = "";
     public string StatusText => Status == 1 ? "Hoạt động" : "Ẩn";
   

@@ -14,12 +14,12 @@ public partial class TeacherLockDialog : Window
     private TeacherModel? _teacher;
     private TeacherViewModel? _teacherViewModel;
 
-    public TeacherLockDialog(TeacherViewModel? vm, TeacherModel teacher)
+    public TeacherLockDialog(TeacherViewModel? vm)
     {
         InitializeComponent();
-        _teacher = teacher;
         _teacherViewModel = vm;
-        DataContext = teacher;
+        _teacher = vm?.SelectedTeacher;
+        DataContext = _teacher;
     }
 
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
@@ -31,17 +31,11 @@ public partial class TeacherLockDialog : Window
     {
         try
         {
-            if (_teacher == null || _teacherViewModel == null)
-            {
-                await MessageBoxUtil.ShowError("Không có giáo viên được chọn!", owner: this);
-                return;
-            }
-
-            var result = await _teacherViewModel.LockTeacherCommand.Execute(_teacher.Id);
+            var result = await _teacherViewModel.LockTeacherCommand.Execute(_teacherViewModel.SelectedTeacher.Id);
 
             if (result)
             {
-                await MessageBoxUtil.ShowSuccess($"Đã khóa giáo viên {_teacher.Name} thành công!", owner: this);
+                await MessageBoxUtil.ShowSuccess($"Đã khóa giáo viên {_teacherViewModel.SelectedTeacher.Name} thành công!", owner: this);
                 await _teacherViewModel.GetTeachersCommand.Execute();
                 this.Close();
             }

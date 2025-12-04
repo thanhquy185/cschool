@@ -29,7 +29,6 @@ namespace cschool.Views.Teacher
             InitializeComponent();
             _teacherViewModel = vm;
             DataContext = vm;
-
         }
 
         private async void ChooseImage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -78,11 +77,8 @@ namespace cschool.Views.Teacher
         
         private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("🔍 ConfirmButton_Click started");
-
             if (_teacherViewModel == null || _teacherViewModel.TeacherDetails == null)
             {
-                Console.WriteLine("ViewModel or TeacherDetails is null");
                 await MessageBoxUtil.ShowError("Lỗi: Dữ liệu không tồn tại!", owner: this);
                 return;
             }
@@ -144,22 +140,22 @@ namespace cschool.Views.Teacher
             }
             
 
-            // // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
-            // var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
-            //                     studentViewModel.Students.Any(s => s.Phone == phone);
-            // if (duplicatePhone)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
-            //     return;
-            // }
+            // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
+            var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
+                                _teacherViewModel.Teachers.Any(s => s.Id != id && s.Phone == phone);
+            if (duplicatePhone)
+            {
+                await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
+                return;
+            }
 
-            // var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
-            //                     studentViewModel.Students.Any(s => s.Email == email);
-            // if (duplicateEmail)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
-            //     return;
-            // }
+            var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
+                                _teacherViewModel.Teachers.Any(s => s.Id != id && s.Email == email);
+            if (duplicateEmail)
+            {
+                await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
+                return;
+            }
 
 
             // Gửi dữ liệu tới backend hoặc lưu vào model

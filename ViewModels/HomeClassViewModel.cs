@@ -27,6 +27,9 @@ public partial class HomeClassViewModel : ViewModelBase
     [ObservableProperty] public string nameTerm = "";
     [ObservableProperty] public string year = "";
     [ObservableProperty] public String? _searchName ;
+    [ObservableProperty]
+    private string? _selectedConductLevel;
+    private Window? _conductDialogWindow;
     public ObservableCollection<HomeClass> Students { get; } = new();
     public ObservableCollection<Information> Information { get; } = new();
     [ObservableProperty]
@@ -46,8 +49,8 @@ public partial class HomeClassViewModel : ViewModelBase
         try
         {
 
-            var students = _service.GetStudents(12);
-            var information = _service.GetInformation(12);
+            var students = _service.GetStudents(13);
+            var information = _service.GetInformation(13);
             Students.Clear();
             Information.Clear();
             foreach (var a in students)
@@ -70,7 +73,7 @@ public partial class HomeClassViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error loading students: {ex.Message}");
+            Console.WriteLine($" Error loading students: {ex.Message}");
         }
     }
     #endregion
@@ -78,7 +81,7 @@ public partial class HomeClassViewModel : ViewModelBase
     [RelayCommand]
     public void Search()
     {
-        var results = _service.Search(12, SearchName ?? "");
+        var results = _service.Search(13, SearchName ?? "");
         Dispatcher.UIThread.Post(() =>
         {
             Students.Clear();
@@ -271,7 +274,7 @@ private async Task ExportToExcelAsync()
             infoRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
             infoRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
 
-            // 📋 --- Bảng danh sách học sinh ---
+            //  --- Bảng danh sách học sinh ---
             int startRow = 8;
             ws.Cell(startRow, 1).Value = "STT";
             ws.Cell(startRow, 2).Value = "Họ và tên";
@@ -502,6 +505,103 @@ private string GetAcademicRanking(float score)
     if (score >= 6.5f) return "Khá";
     if (score >= 5.0f) return "Trung bình";
     return "Yếu";
+}
+[RelayCommand]
+private async Task AddConduct()
+{
+    if (SelectedStudent == null)
+    {
+        await MessageBoxUtil.ShowError("Vui lòng chọn 1 học sinh để cập nhật hạnh kiểm");
+        return;
+    }
+
+    try
+    {
+        // Khởi tạo giá trị mặc định
+        SelectedConductLevel = SelectedStudent.ConductLevel ?? "Trung bình";
+        
+        // Tạo và hiển thị Window
+        var window = new HomeClassAddDialog
+        {
+            DataContext = this,
+           
+        };
+
+        // Đăng ký sự kiện đóng window
+        window.Closed += (s, e) =>
+        {
+            // Reset dữ liệu khi window đóng
+            SelectedConductLevel = null;
+        };
+
+        // Hiển thị window
+        await window.ShowDialog((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+        
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Lỗi khi mở dialog hạnh kiểm: {ex.Message}");
+        await MessageBoxUtil.ShowError($"Lỗi khi mở dialog: {ex.Message}");
+    }
+}
+
+[ObservableProperty]
+private ObservableCollection<string> _conductOptions = new()
+{
+    "Giỏi",
+    "Khá", 
+    "Trung bình"
+};
+[RelayCommand]
+private async Task SaveConduct()
+{
+    try
+    {
+        if (SelectedStudent == null || string.IsNullOrEmpty(SelectedConductLevel))
+        {
+            await MessageBoxUtil.ShowError("Vui lòng chọn học sinh và hạnh kiểm");
+            return;
+        }
+
+        // Gọi service để cập nhật hạnh kiểm
+        bool isSuccess = _service.Update(SelectedStudent.StudentId, SelectedConductLevel);
+
+        if (isSuccess)
+        {
+            await MessageBoxUtil.ShowSuccess($"Cập nhật hạnh kiểm thành công: {SelectedConductLevel}", null);
+            
+            // Đóng dialog
+            if (_conductDialogWindow != null)
+            {
+                _conductDialogWindow.Close();
+                _conductDialogWindow = null;
+            }
+            
+            // Refresh dữ liệu
+            LoadDataCommand.Execute(null);
+            
+        }
+        else
+        {
+            await MessageBoxUtil.ShowError("Cập nhật hạnh kiểm thất bại");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Lỗi khi lưu hạnh kiểm: {ex.Message}");
+        await MessageBoxUtil.ShowError($"Lỗi khi lưu: {ex.Message}");
+    }
+}
+
+[RelayCommand]
+private void CancelConduct()
+{
+    if (_conductDialogWindow != null)
+    {
+        _conductDialogWindow.Close();
+        _conductDialogWindow = null;
+        SelectedConductLevel = null;
+    }
 }
 
     public HomeClassViewModel(HomeClassService service)

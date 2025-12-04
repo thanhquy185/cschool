@@ -79,16 +79,16 @@ public class StatisticalService
             }
         }
 
-    public List<Term> GetTerms()
+    public List<TermModel> GetTerms()
     {
         try
         {
-            List<Term> ds = new List<Term>();
+            List<TermModel> ds = new List<TermModel>();
             string sql = "SELECT * FROM terms WHERE status = 1 ";
             var dt = _dbService.ExecuteQuery(sql);
             foreach(DataRow data in dt.Rows)
             {
-                ds.Add(new Term
+                ds.Add(new TermModel
                 {
                     Id = (int)data["id"],
                     Name = data["name"].ToString()!,
@@ -101,7 +101,7 @@ public class StatisticalService
         }catch(Exception e)
         {
             Console.WriteLine("Không thể lấy các kì học"+ e);
-            return new List<Term>();
+            return new List<TermModel>();
         }
     }
 

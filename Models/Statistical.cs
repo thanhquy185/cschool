@@ -11,6 +11,7 @@ public class Statistical
     public float Gpa { get; set; }
     public string ConductLevel { get; set; } = "";
     public string Academic{ get; set; } = "";
+    public int OrderNumber{get; set;}
     public Statistical(int assign_class_id, string class_name, int student_id, string studentName, float gpa, string conductLevel, string academic)
     {
         this.Assign_class_id = assign_class_id;

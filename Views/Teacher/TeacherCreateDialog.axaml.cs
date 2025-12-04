@@ -18,7 +18,6 @@ namespace cschool.Views.Teacher
     {
         private TeacherViewModel? _teacherViewModel;
         private string? _selectedAvatarPath;
-        private List<DepartmentModel> _departments = new List<DepartmentModel>();
 
         public TeacherCreateDialog(TeacherViewModel vm)
         {
@@ -153,21 +152,21 @@ namespace cschool.Views.Teacher
             }
 
             // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
-            // var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
-            //                     teacherViewModel.allTeachers.Any(s => s.Phone == phone);
-            // if (duplicatePhone)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
-            //     return;
-            // }
+            var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
+                                _teacherViewModel.Teachers.Any(s => s.Phone == phone);
+            if (duplicatePhone)
+            {
+                await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
+                return;
+            }
 
-            // var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
-            //                     teacherViewModel.allTeachers.Any(s => s.Email == email);
-            // if (duplicateEmail)
-            // {
-            //     await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
-            //     return;
-            // }
+            var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
+                                _teacherViewModel.Teachers.Any(s => s.Email == email);
+            if (duplicateEmail)
+            {
+                await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
+                return;
+            }
 
             // Gửi dữ liệu tới backend hoặc lưu vào model
             var teacher = new TeacherModel
@@ -183,17 +182,13 @@ namespace cschool.Views.Teacher
             };
 
             // - Xử lý
-            if (_teacherViewModel?.CreateTeacherCommand == null) return;
             bool isSuccess = await _teacherViewModel.CreateTeacherCommand.Execute(teacher).ToTask();
 
             // Thông báo xử lý, nếu thành công thì ẩn dialog
             if (isSuccess)
             {
                 await MessageBoxUtil.ShowSuccess("Thêm giáo viên thành công!", owner: this);
-                if (_teacherViewModel?.GetTeachersCommand != null)
-                {
-                    await _teacherViewModel.GetTeachersCommand.Execute().ToTask();
-                }
+                await _teacherViewModel.GetTeachersCommand.Execute().ToTask();
                 this.Close();
             }
             else

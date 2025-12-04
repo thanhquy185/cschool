@@ -221,7 +221,7 @@ public bool IsConflict(AssignTeacher at)
         try
         {
 
-            string sql = @"INSERT INTO assign_class_teachers (assign_class_id, teacher_id, subject_id, quiz_connt, oral_count, day,start_period,end_period) 
+            string sql = @"INSERT INTO assign_class_teachers (assign_class_id, teacher_id, subject_id, quiz_count, oral_count, day,start_period,end_period) 
                      VALUES (@assignClassId, @teacherId, @subjectId, @quizCount, @oralCount, @day,@start_period,@end_period)";
 
             var connection = _db.GetConnection();
@@ -251,7 +251,7 @@ public bool IsConflict(AssignTeacher at)
         try
         {
             var ds = new List<AssignTeacher>();
-            string sql = @"select at.assign_class_id as assignClassId,at.day,at.quiz_connt,oral_count, at.start_period, at.end_period, at.teacher_id as teacherId,c.name as className, c.room as roomName,
+            string sql = @"select at.assign_class_id as assignClassId,at.day,at.quiz_count,oral_count, at.start_period, at.end_period, at.teacher_id as teacherId,c.name as className, c.room as roomName,
                             t.fullname as nameTeacher, s.name as subjectName, s.id as subjectId
                             FROM assign_class_teachers at
                             JOIN assign_classes ac ON ac.id = at.assign_class_id 
@@ -273,7 +273,7 @@ public bool IsConflict(AssignTeacher at)
                     data["day"].ToString()!,
                     (int)data["start_period"],
                     (int)data["end_period"],
-                    (int)data["quiz_connt"],
+                    (int)data["quiz_count"],
                     (int)data["oral_count"]     
                     
                 ));
@@ -317,7 +317,7 @@ public bool IsConflict(AssignTeacher at)
         var ds = new List<AssignTeacher>();
         // SỬA LẠI QUERY
         string sql = @"SELECT at.assign_class_id as assignClassId, at.day, at.start_period, at.end_period, 
-                              at.teacher_id as teacherId,at.quiz_connt,oral_count, c.name as className, c.room as roomClass,
+                              at.teacher_id as teacherId,at.quiz_count,oral_count, c.name as className, c.room as roomClass,
                               t.fullname as teacherName, s.name as subjectName, s.id as subjectId
                        FROM assign_class_teachers at
                        JOIN assign_classes ac ON ac.id = at.assign_class_id
@@ -344,7 +344,7 @@ public bool IsConflict(AssignTeacher at)
                     reader["day"].ToString()!,
                     (int)reader["start_period"],
                     (int)reader["end_period"],
-                    (int)reader["quiz_connt"],
+                    (int)reader["quiz_count"],
                     (int)reader["oral_count"]
             ));
         }
@@ -363,12 +363,12 @@ public bool IsConflict(AssignTeacher at)
         {
             var connection = _db.GetConnection();
             string sql = @"UPDATE assign_class_teachers SET 
-                            subject_id = @subject_id, quiz_connt = @quiz_connt,
+                            subject_id = @subject_id, quiz_count = @quiz_count,
                             oral_count = @oral_count, day = @day, start_period = @start_period, end_period = @end_period
                             WHERE assign_class_id = @assign_class_id AND teacher_id = @teacher_id ";
             var command = new MySqlCommand(sql, connection);
             command.Parameters.AddWithValue("@subject_id", at.Subject_id);
-            command.Parameters.AddWithValue("@quiz_connt", at.QuizCount);
+            command.Parameters.AddWithValue("@quiz_count", at.QuizCount);
             command.Parameters.AddWithValue("@oral_count", at.OralCount);
             command.Parameters.AddWithValue("@day", at.Day);
             command.Parameters.AddWithValue("@start_period", at.Start);

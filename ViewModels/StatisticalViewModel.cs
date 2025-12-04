@@ -27,7 +27,7 @@ public partial class StatisticalViewModel : ViewModelBase
     
     [ObservableProperty]
     // biến lưu tất cả các kì học
-    private ObservableCollection<Term> terms = new(); 
+    private ObservableCollection<TermModel> terms = new(); 
 
     [ObservableProperty]
     private ObservableCollection<ISeries> conductSeries = new();
@@ -35,12 +35,13 @@ public partial class StatisticalViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<ISeries> gpaSeries = new();
 
+
     // Labels (optional) to show totals on UI if you want
     [ObservableProperty]
     private string academicSummary = "";
 
     [ObservableProperty]
-    private Term? selectedTerm;
+    private TermModel? selectedTerm;
 
     [ObservableProperty]
     private string conductSummary = "";
@@ -145,7 +146,7 @@ public partial class StatisticalViewModel : ViewModelBase
     }
     
     // Tự động lọc khi SelectedTerm thay đổi
-       partial void OnSelectedTermChanged(Term? value)
+       partial void OnSelectedTermChanged(TermModel? value)
     {
         
         SearchByTerm();
@@ -180,15 +181,15 @@ public partial class StatisticalViewModel : ViewModelBase
             int totalGpa = gpaGood + gpaFair + gpaSat;
 
             // Categories canonical order
-            string[] canonical = new[] { "Good", "Fair", "Satisfactory" };
+            string[] canonical = new[] { "Giỏi", "Khá", "Trung bình","Yếu" };
 
             var academicCounts = canonical.ToDictionary(k => k, k => academicGroups.ContainsKey(k) ? academicGroups[k] : 0);
             var conductCounts = canonical.ToDictionary(k => k, k => conductGroups.ContainsKey(k) ? conductGroups[k] : 0);
             var gpaCounts = new Dictionary<string, int>
             {
-                ["Good"] = gpaGood,
-                ["Fair"] = gpaFair,
-                ["Satisfactory"] = gpaSat
+                ["Giỏi"] = gpaGood,
+                ["Khá"] = gpaFair,
+                ["Trung bình"] = gpaSat
             };
 
             // Build series using helper
@@ -309,9 +310,9 @@ public partial class StatisticalViewModel : ViewModelBase
         // filter raw stats by GPA classification according to same rules
         IEnumerable<Statistical> list = filteredStats.Where(s =>
         {
-            if (category.Equals("Good", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 8f;
-            if (category.Equals("Fair", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 6.5f && s.Gpa < 8f;
-            if (category.Equals("Satisfactory", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 5f && s.Gpa < 6.5f;
+            if (category.Equals("Giỏi", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 8f;
+            if (category.Equals("Khá", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 6.5f && s.Gpa < 8f;
+            if (category.Equals("Trung bình", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 5f && s.Gpa < 6.5f;
             return false;
         });
 

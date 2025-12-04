@@ -54,7 +54,7 @@ public partial class AssignTeacherView : UserControl
             }
             else
             {
-                await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để sửa", null);
+                await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để xem chi tiết", null);
                 return;
             }
             
