@@ -210,6 +210,7 @@ namespace cschool.Views.Exam
             var endTime = EndTime.SelectedTime;
             var term = Term.SelectedItem as TermModel;
             var assignments = examViewModel.ExamAssignments;
+            var assignstudents = examViewModel.ExamAssignments.Select(a => a.AssignedStudents).ToList();
             // Gộp ngày + giờ thành datetime string
             var startDateTime = $"{examDate:yyyy-MM-dd} {startTime:hh\\:mm\\:ss}";
             var endDateTime = $"{examDate:yyyy-MM-dd} {endTime:hh\\:mm\\:ss}";

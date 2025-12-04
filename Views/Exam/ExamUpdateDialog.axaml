@@ -291,7 +291,7 @@
                     CornerRadius="0,0,8,8"
                     Background="White">
                 <Button Content="Xác nhận"
-                        Width="1100"
+                        Width="800"
                         Height="40"
                         FontSize="18"
                         Background="#FBC02D"

@@ -32,32 +32,38 @@ namespace cschool.Views.Exam
 
         public void RecalculateRemainingStudentsUpdate()
         {
-            var grade = Grade.SelectedItem?.ToString();
-            var term = Term.SelectedItem as TermModel;
-            // Tổng số học sinh theo khối/lớp
-            int total = AppService.ExamService.GetStudentGrade(Convert.ToInt32(grade),term.Id);
+            // Kiểm tra grade
+            if (examViewModel.SelectedGrade == null)
+                return;
 
-            // Tổng số học sinh đã phân công trong ExamAssignments
+            // Kiểm tra term
+            var term = Term.SelectedItem as TermModel;
+            if (term == null)
+                return;
+
+            int grade = examViewModel.SelectedGrade.Value;
+
+            // Lấy tổng số học sinh trong khối
+            int total = AppService.ExamService.GetStudentGrade(grade, term.Id);
+
+            // Tổng số học sinh đã phân công
             int assigned = examViewModel.ExamAssignments.Sum(a => a.AssignedStudents);
 
             int remaining = Math.Max(total - assigned, 0);
 
-            // Gán RemainingStudents và cập nhật text hiển thị luôn
             examViewModel.RemainingStudents = remaining;
-
-            // Nếu bạn dùng property string riêng cho binding TextBlock
             examViewModel.RemainingStudentsText = $"Còn lại {remaining} học sinh chưa được phân vào phòng thi";
+
             RemainingStudents.Text = examViewModel.RemainingStudentsText;
         }
 
+
         private void OnGradeChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (Grade == null) return;
-
-            if (Grade.SelectedItem is ComboBoxItem cbi &&
-                int.TryParse(cbi.Tag?.ToString(), out int grade))
+            if (Grade?.SelectedItem is string gradeStr && int.TryParse(gradeStr, out int grade))
             {
                 examViewModel.SelectedGrade = grade;
+                RecalculateRemainingStudentsUpdate();
                 RemainingStudents.Text = examViewModel.RemainingStudentsText;
             }
             else
@@ -69,9 +75,9 @@ namespace cschool.Views.Exam
 
         private void OnTermChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (Term?.SelectedItem is TermModel selected)
+            if (Term?.SelectedItem is TermModel)
             {
-                examViewModel.SelectedUpdateTerm = selected.Id;
+                RecalculateRemainingStudentsUpdate();
                 RemainingStudents.Text = examViewModel.RemainingStudentsText;
             }
             else
@@ -120,7 +126,7 @@ namespace cschool.Views.Exam
             {
                 if (e2.PropertyName == nameof(ExamAssignment.AssignedStudents))
                 {
-                    examViewModel.RecalculateRemainingStudents();
+                    RecalculateRemainingStudentsUpdate();
                     RemainingStudents.Text = examViewModel.RemainingStudentsText;
                 }
             };
@@ -128,19 +134,19 @@ namespace cschool.Views.Exam
             examViewModel.ExamAssignments.Add(newAssignment);
 
             // Loại khỏi combobox
-            examViewModel.RoomList.Remove(
-                examViewModel.RoomList.FirstOrDefault(r => r.Id == room.Id)
+            examViewModel.RoomListUpdate.Remove(
+                examViewModel.RoomListUpdate.FirstOrDefault(r => r.Id == room.Id)
             );
 
-            examViewModel.TeacherList.Remove(
-                examViewModel.TeacherList.FirstOrDefault(t => t.Id == teacher.Id)
+            examViewModel.TeacherListUpdate.Remove(
+                examViewModel.TeacherListUpdate.FirstOrDefault(t => t.Id == teacher.Id)
             );
 
             // Reset lựa chọn
             Room.SelectedItem = null;
             Teacher.SelectedItem = null;
 
-            examViewModel.RecalculateRemainingStudents();
+            RecalculateRemainingStudentsUpdate();
             RemainingStudents.Text = examViewModel.RemainingStudentsText;
         }
 
@@ -155,15 +161,15 @@ namespace cschool.Views.Exam
                 if (!confirm) return;
 
                 // thêm lại vào combobox:
-                if (item.Room != null && !examViewModel.RoomList.Any(r => r.Id == item.Room.Id))
-                    examViewModel.RoomList.Add(item.Room);
+                if (item.Room != null && !examViewModel.RoomListUpdate.Any(r => r.Id == item.Room.Id))
+                    examViewModel.RoomListUpdate.Add(item.Room);
 
-                if (item.Teacher != null && !examViewModel.TeacherList.Any(t => t.Id == item.Teacher.Id))
-                    examViewModel.TeacherList.Add(item.Teacher);
+                if (item.Teacher != null && !examViewModel.TeacherListUpdate.Any(t => t.Id == item.Teacher.Id))
+                    examViewModel.TeacherListUpdate.Add(item.Teacher);
 
                 examViewModel.ExamAssignments.Remove(item);
 
-                examViewModel.RecalculateRemainingStudents();
+                RecalculateRemainingStudentsUpdate();
                 RemainingStudents.Text = examViewModel.RemainingStudentsText;
             }
         }
@@ -180,6 +186,8 @@ namespace cschool.Views.Exam
         // Giới hạn số khi TextBox mất focus
         private async void TextBox_LostFocus(object? sender, RoutedEventArgs e)
         {
+            var grade = Grade.SelectedItem?.ToString();
+            var term = Term.SelectedItem as TermModel;
             if (sender is not TextBox tb || tb.DataContext is not ExamAssignment assignment)
                 return;
 
@@ -188,9 +196,7 @@ namespace cschool.Views.Exam
 
             int maxCapacity = assignment.Room?.Quantity ?? 50;
 
-            int totalStudents = AppService.ExamService.GetStudentGrade(
-                examViewModel.SelectedGrade ?? 0,
-                examViewModel.SelectedUpdateTerm ?? 0);
+            int totalStudents = AppService.ExamService.GetStudentGrade(Convert.ToInt32(grade),term.Id);
 
             int assignedSum = examViewModel.ExamAssignments?.Sum(a => a.AssignedStudents) ?? 0;
 
@@ -218,7 +224,7 @@ namespace cschool.Views.Exam
             tb.Text = corrected.ToString();
 
             assignment.AssignedStudents = corrected;
-            examViewModel.RecalculateRemainingStudents();
+            RecalculateRemainingStudentsUpdate();
         }
 
         // Xác nhận cập nhật
