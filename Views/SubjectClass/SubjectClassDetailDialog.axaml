@@ -18,8 +18,7 @@
     <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
         <Grid RowDefinitions="Auto,*,Auto">
             
-            <!-- Header - MÀU XANH LÁ CÂY -->
-            <Border Background="#4CAF50" Padding="16,12" CornerRadius="8,8,0,0">
+            <Border Background="#4285F4" Padding="16,12" CornerRadius="8,8,0,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />

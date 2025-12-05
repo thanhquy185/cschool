@@ -80,6 +80,7 @@ namespace cschool.Views.Teacher
 
         private async void ConfirmButton_Click(object? sender, RoutedEventArgs e)
         {
+            // Console.WriteLine("Username to check: " + _userViewModel.Users.Count);
             // Lấy dữ liệu từ các TextBox, ComboBox, DatePicker
             var fullName = Fullname.Text?.Trim();
             var gender = _teacherViewModel!.SelectedGender;
@@ -88,6 +89,8 @@ namespace cschool.Views.Teacher
             var email = Email.Text?.Trim();
             var address = Address.Text?.Trim();
             var avatar = AvatarImage.Source;
+            var username = Username.Text?.Trim();
+            var password = Password.Text?.Trim();
             
             // Lấy Department đã chọn
             var selectedDept = _teacherViewModel.SelectedDepartment;
@@ -99,6 +102,17 @@ namespace cschool.Views.Teacher
             var confirm = await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn muốn thêm giáo viên này?");
             if (!confirm)
                 return;
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                await MessageBoxUtil.ShowError("Tên đăng nhập không được để trống!", owner: this);
+                return;
+            }
+            if (!string.IsNullOrWhiteSpace(password) && password.Length < 6)
+            {
+                await MessageBoxUtil.ShowError("Mật khẩu phải có ít nhất 6 ký tự!", owner: this);
+                return;
+            }
 
             // Kiểm tra dữ liệu hợp lệ
             if (string.IsNullOrWhiteSpace(fullName))
@@ -120,7 +134,7 @@ namespace cschool.Views.Teacher
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(phone) && Rules.rulePhone(phone))
+            if (!string.IsNullOrWhiteSpace(phone) && (phone.Length != 10 || Rules.rulePhone(phone)))
             {
                 await MessageBoxUtil.ShowError("Số điện thoại không hợp lệ!", owner: this);
                 return;
@@ -140,20 +154,28 @@ namespace cschool.Views.Teacher
             }
 
             // Kiểm tra trùng giáo viên trong danh sách hiện có
-            var exists = _teacherViewModel?.Teachers?.Any(t =>
-                string.Equals(t.Name, fullName, StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(t.Gender, gender, StringComparison.OrdinalIgnoreCase) &&
-                DateTime.TryParse(t.Birthday, out var bDate) && bDate.Date == birthDay.Date);
+            // var exists = _teacherViewModel?.Teachers?.Any(t =>
+            //     string.Equals(t.Name, fullName, StringComparison.OrdinalIgnoreCase) &&
+            //     string.Equals(t.Gender, gender, StringComparison.OrdinalIgnoreCase) &&
+            //     DateTime.TryParse(t.Birthday, out var bDate) && bDate.Date == birthDay.Date);
 
-            if (exists == true)
-            {
-                await MessageBoxUtil.ShowWarning("Giáo viên này đã tồn tại trong danh sách!", owner: this);
-                return;
-            }
+            // if (exists == true)
+            // {
+            //     await MessageBoxUtil.ShowWarning("Giáo viên này đã tồn tại trong danh sách!", owner: this);
+            //     return;
+            // }
 
             // Ngoài ra, có thể kiểm tra trùng theo SĐT hoặc Email (nếu có)
+            var duplicateUsername = !string.IsNullOrWhiteSpace(username) &&
+                                _teacherViewModel.Users.Any(s => s.Username == username);
+            if (duplicateUsername)
+            {
+                await MessageBoxUtil.ShowWarning("Tên đăng nhập này đã tồn tại!", owner: this);
+                return;
+            }
+            
             var duplicatePhone = !string.IsNullOrWhiteSpace(phone) &&
-                                _teacherViewModel.Teachers.Any(s => s.Phone == phone);
+                                _teacherViewModel.Users.Any(s => s.Phone == phone);
             if (duplicatePhone)
             {
                 await MessageBoxUtil.ShowWarning("Số điện thoại này đã được sử dụng!", owner: this);
@@ -161,7 +183,7 @@ namespace cschool.Views.Teacher
             }
 
             var duplicateEmail = !string.IsNullOrWhiteSpace(email) &&
-                                _teacherViewModel.Teachers.Any(s => s.Email == email);
+                                _teacherViewModel.Users.Any(s => s.Email == email);
             if (duplicateEmail)
             {
                 await MessageBoxUtil.ShowWarning("Email này đã được sử dụng!", owner: this);
@@ -179,6 +201,8 @@ namespace cschool.Views.Teacher
                 Phone = phone ?? "",
                 Email = email ?? "",
                 Address = address ?? "",
+                Username = username ?? "",
+                Password = password ?? ""
             };
 
             // - Xử lý

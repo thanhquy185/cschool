@@ -24,12 +24,13 @@ public class TeacherService
         {
             List<TeacherModel> ds = new List<TeacherModel>();
             string sql = @" SELECT DISTINCT t.id, t.avatar, t.fullname, t.birthday, t.gender, t.address, t.phone, t.email, 
-                            COALESCE(dd.department_id, 0) AS department_id, 
+                            COALESCE(dd.department_id, 0) AS department_id, u.username, u.password, u.id AS user_id,
                             COALESCE(d.name, 'Chưa có bộ môn') AS department_name, 
                             t.status
                             FROM teachers t
                             LEFT JOIN department_details dd ON dd.teacher_id = t.id
                             LEFT JOIN departments d ON d.id = dd.department_id
+                            JOIN users u ON u.id = t.user_id
                             WHERE t.status = 1";
 
             var result = _db.ExecuteQuery(sql);
@@ -46,6 +47,9 @@ public class TeacherService
                     Address = data["address"].ToString()!,
                     DepartmentId = Convert.ToInt32(data["department_id"]),
                     DepartmentName = data["department_name"].ToString()!,
+                    Username = data["username"].ToString()!,
+                    Password = data["password"].ToString()!,
+                    UserId = Convert.ToInt32(data["user_id"]),
                 });
                 Console.WriteLine($" Teacher Loaded: ID={data["id"]}, Name={data["fullname"]}");
 
@@ -92,7 +96,6 @@ public class TeacherService
         }
     }
 
-    // Return latest term as Tuple<id, name> or null if none
     public Term? GetLatestTerm()
     {
         try
@@ -139,8 +142,8 @@ public class TeacherService
         try
         {
             var connection = _db.GetConnection();
-            string sql = @"INSERT INTO teachers (avatar, fullname, birthday, gender, address, phone, email) 
-                       VALUES (@avatar, @fullname, @birthday, @gender, @address, @phone, @email);
+            string sql = @"INSERT INTO teachers (avatar, fullname, birthday, gender, address, phone, email, user_id) 
+                       VALUES (@avatar, @fullname, @birthday, @gender, @address, @phone, @email, @user_id);
                        ";
             
             MySqlCommand command = new MySqlCommand(sql, connection);
@@ -151,6 +154,7 @@ public class TeacherService
             command.Parameters.AddWithValue("@address", t.Address);
             command.Parameters.AddWithValue("@phone", t.Phone);
             command.Parameters.AddWithValue("@email", t.Email);
+            command.Parameters.AddWithValue("@user_id", t.UserId);
             // command.Parameters.AddWithValue("@status", t.Status);
             int rowsAffected = command.ExecuteNonQuery();
             if (rowsAffected == 0) return false;
