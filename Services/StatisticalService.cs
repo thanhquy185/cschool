@@ -121,15 +121,15 @@ public class StatisticalService
             var dt = _dbService.ExecuteQuery(query);
             foreach (DataRow row in dt.Rows)
             {
-                Statistical stat = new Statistical(
-                    Convert.ToInt32(row["assign_class_id"]),
-                    row["className"].ToString() ?? "",
-                    Convert.ToInt32(row["student_id"]),
-                    row["studentName"].ToString() ?? "",
-                    Convert.ToSingle(row["gpa"]),
-                    row["conduct_level"].ToString() ?? "",
-                    row["academic"].ToString() ?? ""
-                );
+                Statistical stat = new Statistical{
+                    Assign_class_id = Convert.ToInt32(row["assign_class_id"]),
+                    Class_name = row["className"].ToString() ?? "",
+                    Student_id = Convert.ToInt32(row["student_id"]),
+                    StudentName = row["studentName"].ToString() ?? "",
+                    Gpa = Convert.ToSingle(row["gpa"]),
+                    ConductLevel = row["conduct_level"].ToString() ?? "",
+                    Academic = row["academic"].ToString() ?? ""
+                };
 
                 statistics.Add(stat);
             }
@@ -158,15 +158,15 @@ public class StatisticalService
             var dt = _dbService.ExecuteQuery(query);
             foreach (DataRow row in dt.Rows)
             {
-                Statistical stat = new Statistical(
-                    Convert.ToInt32(row["assign_class_id"]),
-                    row["className"].ToString() ?? "",
-                    Convert.ToInt32(row["student_id"]),
-                    row["studentName"].ToString() ?? "",
-                    Convert.ToSingle(row["gpa"]),
-                    row["conduct_level"].ToString() ?? "",
-                    row["academic"].ToString() ?? ""
-                );
+                Statistical stat = new Statistical{
+                    Assign_class_id = Convert.ToInt32(row["assign_class_id"]),
+                    Class_name = row["className"].ToString() ?? "",
+                    Student_id = Convert.ToInt32(row["student_id"]),
+                    StudentName = row["studentName"].ToString() ?? "",
+                    Gpa = Convert.ToSingle(row["gpa"]),
+                    ConductLevel = row["conduct_level"].ToString() ?? "",
+                    Academic = row["academic"].ToString() ?? ""
+                };
                 stat.Term_id = (int)row["term_id"];
 
                 statistics.Add(stat);
@@ -182,7 +182,7 @@ public class StatisticalService
     }
 
 
-    public List<Statistical> DetailStatistic(string rank)
+    public List<Statistical> DetailStatistic(string rank,int termId)
     {
         try
         {
@@ -194,16 +194,18 @@ public class StatisticalService
                             JOIN students s ON t.student_id = s.id
                             JOIN assign_classes ac ON t.assign_class_id = ac.id
                             JOIN classes c ON ac.class_id = c.id 
-                            WHERE t.academic = '" + rank + "';";
+                            WHERE t.academic = '" + rank + "' AND ac.term_id = " + termId;
             var dt = _dbService.ExecuteQuery(query);
             foreach (DataRow row in dt.Rows)
             {
-                Statistical stat = new Statistical(
-                    Convert.ToInt32(row["student_id"]),
-                    row["studentName"].ToString() ?? "",
-                    Convert.ToSingle(row["gpa"]),
-                    row["conduct_level"].ToString() ?? ""
-                );
+                Statistical stat = new Statistical{
+                    Student_id = Convert.ToInt32(row["student_id"]),
+                    StudentName = row["studentName"].ToString() ?? "",
+                    Class_name = row["className"].ToString() ?? "",
+                    Gpa = Convert.ToSingle(row["gpa"]),
+                    ConductLevel = row["conduct_level"].ToString() ?? "",
+                   
+                };
 
                 statistics.Add(stat);
             }
@@ -239,16 +241,16 @@ public class StatisticalService
 
             while(reader.Read())
             {
-                statistics.Add(new Statistical(
-                    (int)reader["assign_class_id"],
-                    reader["className"].ToString()!,
-                    (int)reader["student_id"],
-                    reader["studentName"].ToString()!,
-                    (float)reader["gpa"],
-                    reader["conduct_level"].ToString()!,
-                    reader["academic"].ToString()!
+                statistics.Add(new Statistical{
+                    Assign_class_id = (int)reader["assign_class_id"],
+                    Class_name = reader["className"].ToString()!,
+                    Student_id = (int)reader["student_id"],
+                    StudentName = reader["studentName"].ToString()!,
+                    Gpa = (float)reader["gpa"],
+                    ConductLevel = reader["conduct_level"].ToString()!,
+                    Academic = reader["academic"].ToString()!
 
-                ));
+            });
             }
             return statistics;
         }

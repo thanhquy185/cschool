@@ -29,7 +29,7 @@ public partial class HomeClassViewModel : ViewModelBase
     [ObservableProperty] public String? _searchName ;
     [ObservableProperty]
     private string? _selectedConductLevel;
-    private Window? _conductDialogWindow;
+    // private Window? _conductDialogWindow;
     public ObservableCollection<HomeClass> Students { get; } = new();
     public ObservableCollection<Information> Information { get; } = new();
     [ObservableProperty]
@@ -570,15 +570,13 @@ private async Task SaveConduct()
         {
             await MessageBoxUtil.ShowSuccess($"Cập nhật hạnh kiểm thành công: {SelectedConductLevel}", null);
             
-            // Đóng dialog
-            if (_conductDialogWindow != null)
-            {
-                _conductDialogWindow.Close();
-                _conductDialogWindow = null;
-            }
-            
             // Refresh dữ liệu
             LoadDataCommand.Execute(null);
+              (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
+                    .MainWindow?.OwnedWindows
+                    .OfType<HomeClassAddDialog>()
+                    .FirstOrDefault()?
+                    .Close(true);
             
         }
         else
@@ -596,12 +594,11 @@ private async Task SaveConduct()
 [RelayCommand]
 private void CancelConduct()
 {
-    if (_conductDialogWindow != null)
-    {
-        _conductDialogWindow.Close();
-        _conductDialogWindow = null;
-        SelectedConductLevel = null;
-    }
+    (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
+        .MainWindow?.OwnedWindows
+        .OfType<HomeClassAddDialog>()
+        .FirstOrDefault()?
+        .Close(false);
 }
 
     public HomeClassViewModel(HomeClassService service)

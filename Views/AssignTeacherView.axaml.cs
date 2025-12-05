@@ -88,6 +88,4 @@ public partial class AssignTeacherView : UserControl
         var vm = DataContext as AssignTeacherViewModel;
         vm?.SearchNameSubjectCommand.Execute(null);
     }
-
-
 }

@@ -22,7 +22,8 @@
         </StackPanel>
 
         <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-          <Button Classes="CrudButton Info">
+          <Button Classes="CrudButton Info"
+                  Command="{Binding LoadDetailCommand}">
             <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
               <StackPanel>
                 <Image Source="{DynamicResource InfoIcon}" />
