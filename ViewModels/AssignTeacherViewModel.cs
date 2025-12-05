@@ -54,16 +54,16 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private string? _searchText;
 
     [ObservableProperty]
-    private int _quizCount;
+    private string _quizCount;
 
     [ObservableProperty]
-    private int _oralCount;
+    private string _oralCount;
 
     [ObservableProperty]
-    private int _start;
+    private string _start;
 
     [ObservableProperty]
-    private int _end;
+    private string _end;
 
     private AssignTeacher? _editingItem;
     
@@ -173,11 +173,23 @@ partial void OnSearchTextChanged(string value)
     {
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-        if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay))
+        if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay) || Start=="" || End=="")
         {
             await MessageBoxUtil.ShowError("Vui lòng chọn đầy đủ dữ liệu", owner: owner);
             return;
         }
+        if(Rules.IsNumeric(Start)|| Rules.IsNumeric(End))
+        {
+            await MessageBoxUtil.ShowError("vui lòng nhập dữ liệu số", owner: owner);
+            return;
+        }
+        
+        if (int.Parse(Start) >= int.Parse(End))
+        {
+            await MessageBoxUtil.ShowError("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc", owner: owner);
+            return;
+        }
+        
             try
             {
             var assign = new AssignTeacher(
@@ -189,8 +201,8 @@ partial void OnSearchTextChanged(string value)
                 SelectedTeacher.Name,
                 SelectedClass.Room,
                 SelectedDay,
-                Start,
-                End
+                int.Parse(Start),
+                int.Parse(End)
             )
             {
                 QuizCount = 2,
@@ -237,11 +249,28 @@ public async Task SaveEdit()
     {
     var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
          
-            if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay))
+            if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay)|| Start=="" || End=="" || OralCount=="" || QuizCount=="")
             {
                 await MessageBoxUtil.ShowError("Vui lòng chọn đầy đủ dữ liệu", owner: owner);
                 return;
             }
+            if(Rules.IsNumeric(Start ) || Rules.IsNumeric(End))
+            {
+                await MessageBoxUtil.ShowError("Tiết bắt đầu và kết thúc phải là số", owner: owner);
+                return;
+            }
+            if(Rules.IsNumeric(OralCount) || Rules.IsNumeric(QuizCount))
+            {
+                await MessageBoxUtil.ShowError("Số bài kiểm tra phải là số", owner: owner);
+                return;
+            }
+
+            if (Convert.ToInt32(Start) >= Convert.ToInt32(End))
+            {
+                await MessageBoxUtil.ShowError("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc", owner: owner);
+                return;
+            }
+
         if (_service.IsConflict(_editingItem))
         {
             await MessageBoxUtil.ShowError("Giáo viên đã có lịch dạy vào khung giờ này!", owner: owner);
@@ -254,10 +283,10 @@ public async Task SaveEdit()
                 _editingItem.Assign_class_id = SelectedClass.Assign_class_Id;
                 _editingItem.ClassName = SelectedClass.Name;
                 _editingItem.Day = SelectedDay;
-                _editingItem.Start = Start;
-                _editingItem.End = End;
-                _editingItem.QuizCount = QuizCount;
-                _editingItem.OralCount = OralCount;
+                _editingItem.Start = Convert.ToInt32(Start);
+                _editingItem.End = Convert.ToInt32(End);
+                _editingItem.QuizCount = Convert.ToInt32(QuizCount);
+                _editingItem.OralCount = Convert.ToInt32(OralCount);
 
             // Gọi update
                 if (_service.Update(_editingItem))
@@ -313,10 +342,10 @@ public async Task SaveEdit()
     
     SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
     SelectedDay = a.Day;
-    Start = a.Start;
-    End = a.End;
-    QuizCount = a.QuizCount;
-    OralCount = a.OralCount;
+    Start = a.Start.ToString();
+    End = a.End.ToString();
+    QuizCount = a.QuizCount.ToString();
+    OralCount = a.OralCount.ToString();
         
     var dialog = new AssignTeacherEditDialog
     {
@@ -342,10 +371,10 @@ private async Task OpenDetailDialog(AssignTeacher a)
     SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
     SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
     SelectedDay = a.Day;
-    Start = a.Start;
-    End = a.End;
-    QuizCount = a.QuizCount;
-    OralCount = a.OralCount;
+    Start = a.Start.ToString();
+    End = a.End.ToString();
+    QuizCount = a.QuizCount.ToString();
+    OralCount = a.OralCount.ToString();
     
     var dialog = new AssignTeacherDetailDialog
     {
@@ -446,8 +475,8 @@ private async Task OpenAddDialog()
             SelectedSubject = null;
             SelectedClass = null;
             SelectedDay = null;
-            Start = 0;
-            End = 0;
+            Start = "";
+            End = "";
             // QuizCount = 0;
             // OralCount = 0;
         });

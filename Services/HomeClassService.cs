@@ -20,7 +20,7 @@ public class HomeClassService
         _db = db;
     } 
 
-public List<Models.Information> GetInformation (int assignClassId)
+public List<Models.Information> GetInformation (int teacherId,int termId)
     {
         try
         {
@@ -30,10 +30,11 @@ public List<Models.Information> GetInformation (int assignClassId)
                         JOIN teachers t ON t.id = a.head_teacher_id
                         JOIN classes c ON c.id = a.class_id
                         JOIN terms tr ON tr.id = a.term_id
-                        WHERE a.id = @assignClassId";
+                        WHERE a.head_teacher_id = @teacherId AND tr.id = @termId"; ;
             var connection = _db.GetConnection();
             var cmd = new MySqlCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
+            cmd.Parameters.AddWithValue("@teacherId", teacherId);
+            cmd.Parameters.AddWithValue("@termId", termId);
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -53,9 +54,37 @@ public List<Models.Information> GetInformation (int assignClassId)
         }
     }
 
+    public List<TermModel>GetTerm(int teacherId)
+    {
+        try
+        {
+            List<TermModel> ds = new List<TermModel>();
+            string sql = @"SELECT DISTINCT tr.id, tr.name, tr.year
+                        FROM assign_classes ac
+                        JOIN terms tr ON tr.id = ac.term_id
+                        WHERE ac.head_teacher_id = @teacherId";
+            var connection = _db.GetConnection();
+            var cmd = new MySqlCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@teacherId", teacherId);
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                ds.Add(new TermModel
+                {
+                    Id = (int)reader["id"],
+                    Name = reader["name"].ToString()!,
+                    Year = (int)reader["year"]
+                });
+            }
+            return ds;
+        }catch(Exception e)
+        {
+            Console.WriteLine("Lỗi không lấy được học kỳ:" + e);
+            return new List<TermModel>();
+        }
+    }
 
-
-    public List<HomeClass> GetStudents(int assignClassId)
+    public List<HomeClass> GetStudents(int teacherId, int termId)
     {
         try
         {
@@ -72,14 +101,17 @@ public List<Models.Information> GetInformation (int assignClassId)
                 FROM students st
                 JOIN subject_term_avg sta ON sta.student_id = st.id
                 JOIN subjects s ON s.id = sta.subject_id
-                JOIN term_gpa tg ON tg.student_id = st.id AND tg.assign_class_id = @assignClassId1
-                WHERE sta.assign_class_id = @assignClassId
+                JOIN term_gpa tg ON tg.student_id = st.id
+                JOIN assign_classes ac ON ac.id = sta.assign_class_id
+                JOIN terms tr ON tr.id = ac.term_id 
+                WHERE ac.head_teacher_id = @teacherId AND tr.id = @termId
                 ORDER BY st.fullname, s.name";
 
             var connection = _db.GetConnection();
             var cmd = new MySqlCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@assignClassId1", assignClassId);
-            cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
+            
+            cmd.Parameters.AddWithValue("@teacherId", teacherId);
+            cmd.Parameters.AddWithValue("@termId", termId);
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
@@ -302,69 +334,79 @@ public List<DetailScore> GetDetailScores2(int id)
        
 
     }
-  public List<HomeClass> Search(int assignClassId, string name)
+  // Thêm phương thức Search mới vào HomeClassService
+public List<HomeClass> Search(int teacherId, int termId, string name)
+{
+    try
     {
-        try
+        List<HomeClass> rawList = new List<HomeClass>();
+
+        string sql = @"
+            SELECT 
+                st.fullname, 
+                st.id as studentId,
+                s.name AS subject_name,
+                sta.score AS subject_score,
+                tg.gpa,
+                tg.conduct_level,
+                tg.academic
+            FROM students st
+            JOIN subject_term_avg sta ON sta.student_id = st.id
+            JOIN subjects s ON s.id = sta.subject_id
+            JOIN term_gpa tg ON tg.student_id = st.id
+            JOIN assign_classes ac ON ac.id = sta.assign_class_id
+            JOIN terms tr ON tr.id = ac.term_id 
+            WHERE ac.head_teacher_id = @teacherId 
+                AND tr.id = @termId
+                AND st.fullname LIKE @nameStudent
+            ORDER BY st.fullname, s.name";
+
+        var connection = _db.GetConnection();
+        var cmd = new MySqlCommand(sql, connection);
+        cmd.Parameters.AddWithValue("@teacherId", teacherId);
+        cmd.Parameters.AddWithValue("@termId", termId);
+        cmd.Parameters.AddWithValue("@nameStudent", $"%{name}%");
+
+        using (var reader = cmd.ExecuteReader())
         {
-            List<HomeClass> rawList = new List<HomeClass>();
-
-            string sql = @"
-                SELECT 
-                    st.fullname, 
-                    s.name AS subject_name,
-                    sta.score AS subject_score,
-                    tg.gpa,
-                    tg.conduct_level,
-                    tg.academic
-                FROM students st
-                JOIN subject_term_avg sta ON sta.student_id = st.id
-                JOIN subjects s ON s.id = sta.subject_id
-                JOIN term_gpa tg ON tg.student_id = st.id
-                WHERE sta.assign_class_id = @assignClassId AND st.fullname LIKE @nameStudent
-                ORDER BY st.fullname, s.name";
-
-            var connection = _db.GetConnection();
-            var cmd = new MySqlCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
-            cmd.Parameters.AddWithValue("@nameStudent", $"%{name}%");
-
-            using (var reader = cmd.ExecuteReader())
+            while (reader.Read())
             {
-                while (reader.Read())
+                rawList.Add(new HomeClass
                 {
-                    rawList.Add(new HomeClass
-                    {
-                        StudentName = reader["fullname"].ToString()!,
-                        SubjectName = reader["subject_name"].ToString()!,
-                        GpaSubject = Convert.ToSingle(reader["subject_score"]),
-                        GpaTotal = Convert.ToSingle(reader["gpa"]),
-                        ConductLevel = reader["conduct_level"].ToString()!,
-                        Academic = reader["academic"].ToString()!
-                    });
-                }
+                    StudentId = (int)reader["studentId"],
+                    StudentName = reader["fullname"].ToString()!,
+                    SubjectName = reader["subject_name"].ToString()!,
+                    GpaSubject = Convert.ToSingle(reader["subject_score"]),
+                    GpaTotal = Convert.ToSingle(reader["gpa"]),
+                    ConductLevel = reader["conduct_level"].ToString()!,
+                    Academic = reader["academic"].ToString()!
+                });
             }
-
-            // 🧩 Gom nhóm theo học sinh
-            var grouped = rawList
-                .GroupBy(x => x.StudentName)
-                .Select(g => new HomeClass
-                {
-                    StudentName = g.Key,
-                    GpaTotal = g.First().GpaTotal,
-                    ConductLevel = g.First().ConductLevel,
-                    Academic = g.First().Academic,
-                    // Ghép danh sách môn và điểm thành 1 chuỗi
-                    SubjectName = string.Join("\n", g.Select(x => $"{x.SubjectName}: {x.GpaSubject}"))
-                })
-                .ToList();
-
-            return grouped;
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine("❌ Lỗi không thể lấy dữ liệu: " + ex.Message);
-            return new List<HomeClass>();
-        }
+
+        // Gom nhóm theo học sinh
+        var grouped = rawList
+            .GroupBy(x => new { x.StudentId, x.StudentName })
+            .Select(g => new HomeClass
+            {
+                StudentId = g.Key.StudentId,
+                StudentName = g.Key.StudentName,
+                GpaTotal = g.First().GpaTotal,
+                ConductLevel = g.First().ConductLevel,
+                Academic = g.First().Academic,
+                SubjectName = string.Join("\n", g.Select(x => $"{x.SubjectName}: {x.GpaSubject}")),
+                GpaSubject = g.First().GpaSubject
+            })
+            .ToList();
+
+        Console.WriteLine($"✅ Tìm thấy {grouped.Count} học sinh phù hợp");
+        return grouped;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("❌ Lỗi tìm kiếm: " + ex.Message);
+        return new List<HomeClass>();
+    }
 }
 
     public bool Update(int studentId, string ConductLevel)

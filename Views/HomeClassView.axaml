@@ -64,6 +64,14 @@
                 <!-- Icon tìm kiếm nằm trong TextBox bên trái -->    
                     <Image Source="{DynamicResource SearchIcon}" Width="18" Height="18"/>
             </Grid>
+            <ComboBox ItemsSource="{Binding Terms}" 
+                              SelectedItem="{Binding SelectedTerm, Mode=TwoWay}" 
+                              DisplayMemberBinding="{ Binding DisplayTextTermYear}"
+                              PlaceholderText="Chọn học kì"
+                              Width = "300"
+                              Height = "40"
+    
+                              />
         </StackPanel>
 
         <!-- Nút reset bên phải -->

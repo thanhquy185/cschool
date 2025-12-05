@@ -22,4 +22,10 @@ class Rules
     {
         return !string.IsNullOrWhiteSpace(content) && !Regex.IsMatch(content, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
     }
+  
+
+   public static bool IsNumeric(string input)
+{
+    return !int.TryParse(input, out _);
+}
 }

@@ -18,321 +18,375 @@ using cschool.Views.DialogHomeClass;
 using cschool.Views;
 
 namespace cschool.ViewModels;
+
 public partial class HomeClassViewModel : ViewModelBase
 {
     private readonly HomeClassService _service;
+    private const int CURRENT_TEACHER_ID = 3; // ID giáo viên cố định
 
-    [ObservableProperty] public string nameTeacher = "";
-    [ObservableProperty] public string nameClass = "";
-    [ObservableProperty] public string nameTerm = "";
-    [ObservableProperty] public string year = "";
-    [ObservableProperty] public String? _searchName ;
+    [ObservableProperty]
+    private string _nameTeacher = "";
+    
+    [ObservableProperty]
+    private string _nameClass = "";
+    
+    [ObservableProperty]
+    private string _nameTerm = "";
+    
+    [ObservableProperty]
+    private string _year = "";
+    
+    [ObservableProperty]
+    private string? _searchName;
+    
     [ObservableProperty]
     private string? _selectedConductLevel;
-    // private Window? _conductDialogWindow;
+    
+    [ObservableProperty]
+    private HomeClass? _selectedStudent;
+    
+    [ObservableProperty]
+    private TermModel? _selectedTerm;
+    
+    [ObservableProperty]
+    private string _selectedStudentName = "";
+
     public ObservableCollection<HomeClass> Students { get; } = new();
     public ObservableCollection<Information> Information { get; } = new();
+    public ObservableCollection<TermModel> Terms { get; } = new();
+    public ObservableCollection<DetailScore> StudentDetailScores { get; } = new();
+    
     [ObservableProperty]
-    private ObservableCollection<DetailScore> studentDetailScores = new();
+    private ObservableCollection<string> _conductOptions = new()
+    {
+        "Giỏi",
+        "Khá", 
+        "Trung bình"
+    };
 
-    [ObservableProperty]
-    private HomeClass? selectedStudent;
+    #region Constructor và Load dữ liệu ban đầu
+    public HomeClassViewModel(HomeClassService service)
+    {
+        _service = service;
+        
+        // Load danh sách học kỳ của giáo viên ID = 3
+        LoadTermsCommand.Execute(null);
+        
+        Console.WriteLine($"Khởi tạo HomeClassViewModel với Teacher ID: {CURRENT_TEACHER_ID}");
+    }
 
-
-    [ObservableProperty]
-    private string selectedStudentName = "";
-
-    #region load dữ liệu
     [RelayCommand]
-    private void LoadData()
+    private void LoadTerms()
     {
         try
         {
-
-            var students = _service.GetStudents(13);
-            var information = _service.GetInformation(13);
-            Students.Clear();
-            Information.Clear();
-            foreach (var a in students)
+            Terms.Clear();
+            var terms = _service.GetTerm(CURRENT_TEACHER_ID);
+            
+            foreach (var term in terms)
             {
-                Students.Add(a);
+                Terms.Add(term);
             }
-            foreach (var i in information)
+            
+            Console.WriteLine($"Đã load {Terms.Count} học kỳ cho giáo viên ID: {CURRENT_TEACHER_ID}");
+            
+            // Tự động chọn học kỳ đầu tiên nếu có
+            if (Terms.Count > 0)
             {
-                Information.Add(i);
+                SelectedTerm = Terms[0];
             }
-            var info = information.FirstOrDefault();
-            if (info != null)
-            {
-                NameTeacher = info.NameTeacher;
-                NameClass = info.NameClass;
-                NameTerm = info.NameTerm;
-                Year = info.Year.ToString();
-            }
-            Console.WriteLine("Load dữ liệu thành công");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($" Error loading students: {ex.Message}");
+            Console.WriteLine($"Lỗi khi load học kỳ: {ex.Message}");
         }
     }
     #endregion
 
+    #region Load dữ liệu khi chọn học kỳ
+    [RelayCommand]
+    private void LoadDataByTerm()
+    {
+        if (SelectedTerm == null)
+        {
+            Console.WriteLine("Vui lòng chọn học kỳ");
+            return;
+        }
+
+        try
+        {
+            // Load thông tin lớp và danh sách học sinh
+            var students = _service.GetStudents(CURRENT_TEACHER_ID, SelectedTerm.Id);
+            var information = _service.GetInformation(CURRENT_TEACHER_ID, SelectedTerm.Id);
+            
+            // Clear dữ liệu cũ
+            Students.Clear();
+            Information.Clear();
+            
+            // Thêm dữ liệu mới
+            foreach (var student in students)
+            {
+                Students.Add(student);
+            }
+            
+            foreach (var info in information)
+            {
+                Information.Add(info);
+            }
+            
+            // Cập nhật thông tin hiển thị
+            var firstInfo = information.FirstOrDefault();
+            if (firstInfo != null)
+            {
+                NameTeacher = firstInfo.NameTeacher;
+                NameClass = firstInfo.NameClass;
+                NameTerm = firstInfo.NameTerm;
+                Year = firstInfo.Year.ToString();
+            }
+            else
+            {
+                // Reset thông tin nếu không có dữ liệu
+                NameTeacher = "Chưa có thông tin";
+                NameClass = "Chưa có thông tin";
+                NameTerm = SelectedTerm.Name;
+                Year = SelectedTerm.Year.ToString();
+            }
+            
+            Console.WriteLine($"Đã load {Students.Count} học sinh cho học kỳ {SelectedTerm.Id}  {SelectedTerm.Name} năm {SelectedTerm.Year}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Lỗi khi load dữ liệu: {ex.Message}");
+        }
+    }
+
+    // Sự kiện khi SelectedTerm thay đổi
+    partial void OnSelectedTermChanged(TermModel? value)
+    {
+        if (value != null)
+        {
+            Console.WriteLine($"Đã chọn học kỳ: {value.Name} - Năm: {value.Year}");
+            LoadDataByTermCommand.Execute(null);
+        }
+    }
+    #endregion
+
+    #region Tìm kiếm học sinh
     [RelayCommand]
     public void Search()
     {
-        var results = _service.Search(13, SearchName ?? "");
+        if (SelectedTerm == null)
+        {
+            MessageBoxUtil.ShowError("Vui lòng chọn học kỳ trước khi tìm kiếm");
+            return;
+        }
+
+        // Sửa lại phương thức Search trong service để nhận teacherId và year
+        var results = _service.Search(CURRENT_TEACHER_ID, SelectedTerm.Id, SearchName ?? "");
         Dispatcher.UIThread.Post(() =>
         {
             Students.Clear();
-            foreach (var a in results)
-                Students.Add(a);
+            foreach (var student in results)
+                Students.Add(student);
+            
+            Console.WriteLine($"Tìm kiếm được {results.Count} học sinh");
         });
     }
 
-
-    partial void OnSearchNameChanged(string value)
+    partial void OnSearchNameChanged(string? value)
     {
-        Search();
+        if (SelectedTerm != null)
+        {
+            Search();
+        }
     }
 
     [RelayCommand]
     public void ResetSearch()
     {
         SearchName = string.Empty;
-        LoadDataCommand.Execute(null); // 🔁 Hiển thị lại toàn bộ danh sách
+        LoadDataByTermCommand.Execute(null);
     }
-[RelayCommand]
-private async Task ShowStudentDetail()
-{
-    if (SelectedStudent == null)
-        {
-            await MessageBoxUtil.ShowError("Vui lòng chọn 1 đối tượng để xem");
-            return;
-        } 
-    try
+    #endregion
+
+    #region Xem chi tiết học sinh
+    [RelayCommand]
+    private async Task ShowStudentDetail()
     {
-        SelectedStudentName = SelectedStudent.StudentName;
-        LoadStudentDetailScores(SelectedStudent.StudentId);
-        Console.WriteLine($"=== DEBUG BEFORE DIALOG ===");
-        Console.WriteLine($"SelectedStudentName: {SelectedStudentName}");
-        Console.WriteLine($"StudentDetailScores Count: {StudentDetailScores.Count}");
-        foreach (var score in StudentDetailScores)
+        if (SelectedStudent == null)
         {
-            Console.WriteLine($"  - {score.NameSubject}: Miệng={score.DiemMieng}, 15p={score.Diem15p}, GK={score.DiemGK}, CK={score.DiemCK}");
-        }
-        
-        // Tạo và hiển thị dialog riêng
-        var dialog = new HomeClassDetailDialog
-        {
-            DataContext = this // Sử dụng cùng ViewModel
-        };
-        
-        await dialog.ShowDialog((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
-        
-        // Clear data sau khi đóng dialog
-        // StudentDetailScores.Clear();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Lỗi khi tải chi tiết điểm: {ex.Message}");
-        await MessageBoxUtil.ShowError($"Lỗi khi tải chi tiết điểm: {ex.Message}", null);
-    }
-}
-
-
-[RelayCommand]
-private void LoadStudentDetailScores(int studentId)
-{
-    StudentDetailScores.Clear();
-
-    // Lấy tất cả các loại điểm
-    var diemMieng = _service.GetDetailScores1(studentId);
-    var diem15p = _service.GetDetailScores2(studentId);
-    var diemGK = _service.GetDetailScores3(studentId);
-    var diemCK = _service.GetDetailScores4(studentId);
-
-    if (diemMieng == null || diem15p == null || diemGK == null || diemCK == null)
-    {
-        Console.WriteLine("Không có dữ liệu");
-        return;
-    }
-    
-    Console.WriteLine("Load dữ liệu chi tiết điểm thành công");
-
-    // Gom điểm theo môn học
-    var allSubjects = diemMieng.Select(d => d.NameSubject)
-                             .Union(diem15p.Select(d => d.NameSubject))
-                             .Union(diemGK.Select(d => d.NameSubject))
-                             .Union(diemCK.Select(d => d.NameSubject))
-                             .Distinct();
-
-
-    foreach (var subject in allSubjects)
-    {
-        var detailScore = new DetailScore
-        {
-            NameSubject = subject,
-            DiemMieng = diemMieng.FirstOrDefault(d => d.NameSubject == subject)?.DiemMieng ?? new List<float>(),
-            Diem15p = diem15p.FirstOrDefault(d => d.NameSubject == subject)?.Diem15p ?? new List<float>(),
-            DiemGK = diemGK.FirstOrDefault(d => d.NameSubject == subject)?.DiemGK ?? 0,
-            DiemCK = diemCK.FirstOrDefault(d => d.NameSubject == subject)?.DiemCK ?? 0
-        };
-
-        detailScore.DiemTrungBinh = CalculateAverageScore(
-            detailScore.DiemMieng, 
-            detailScore.Diem15p, 
-            detailScore.DiemGK, 
-            detailScore.DiemCK);
-
-        StudentDetailScores.Add(detailScore);
-        
-        // Debug log
-        Console.WriteLine($"Môn: {subject}");
-        Console.WriteLine($"  - Điểm miệng: {string.Join(", ", detailScore.DiemMieng)}");
-        Console.WriteLine($"  - Điểm 15p: {string.Join(", ", detailScore.Diem15p)}");
-        Console.WriteLine($"  - Điểm GK: {detailScore.DiemGK}");
-        Console.WriteLine($"  - Điểm CK: {detailScore.DiemCK}");
-        Console.WriteLine($"  - Điểm TB: {detailScore.DiemTrungBinh}");
-    }
-}
-private float CalculateAverageScore(List<float> diemMieng, List<float> diem15p, float diemGK, float diemCK)
-{
-    // Tính tổng điểm miệng (nếu có nhiều điểm)
-    float tongMieng = diemMieng.Count > 0 ? diemMieng.Sum() : 0;
-    
-    // Tính tổng điểm 15p (nếu có nhiều điểm)
-    float tong15p = diem15p.Count > 0 ? diem15p.Sum() : 0;
-    int soBaiMieng = diemMieng.Count;
-    int soBai15P = diem15p.Count; 
-
-    return (tongMieng * 1 + tong15p * 1 + diemGK * 2 + diemCK * 3) / (5+soBai15P+soBaiMieng);
-}
-
-[RelayCommand] 
-private async Task ExportToExcelAsync()
-{
-    try
-    {
-        if (Students.Count == 0)
-        {
-            await MessageBoxUtil.ShowError("Không có dữ liệu để xuất");
-            Console.WriteLine("⚠️ Không có dữ liệu để xuất.");
+            await MessageBoxUtil.ShowError("Vui lòng chọn học sinh để xem chi tiết");
             return;
         }
 
-        // Mở hộp thoại lưu file
-        var sfd = new SaveFileDialog
+        try
         {
-            Title = "Chọn nơi lưu file Excel",
-            Filters = new List<FileDialogFilter>
+            SelectedStudentName = SelectedStudent.StudentName;
+            LoadStudentDetailScores(SelectedStudent.StudentId);
+            
+            // Debug log
+            Console.WriteLine($"=== DEBUG SHOW STUDENT DETAIL ===");
+            Console.WriteLine($"Student: {SelectedStudentName}");
+            Console.WriteLine($"Scores Count: {StudentDetailScores.Count}");
+            
+            // Tạo và hiển thị dialog
+            var dialog = new HomeClassDetailDialog
             {
-                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
-            },
-            InitialFileName = "DanhSachHocSinh.xlsx"
-        };
-
-        string? path = await sfd.ShowAsync((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
-        if (string.IsNullOrWhiteSpace(path)) return;
-
-        using (var workbook = new XLWorkbook())
+                DataContext = this
+            };
+            
+            await dialog.ShowDialog((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+        }
+        catch (Exception ex)
         {
-            var ws = workbook.Worksheets.Add("Danh sách học sinh");
+            Console.WriteLine($"Lỗi khi tải chi tiết điểm: {ex.Message}");
+            await MessageBoxUtil.ShowError($"Lỗi khi tải chi tiết điểm: {ex.Message}");
+        }
+    }
 
-            // 🧩 --- Lấy thông tin lớp ---
-            var info = Information.FirstOrDefault();
-            string teacher = info?.NameTeacher ?? "Chưa rõ";
-            string className = info?.NameClass ?? "Chưa rõ";
-            string term = info?.NameTerm ?? "Chưa rõ";
-            string year = info?.Year.ToString() ?? "Chưa rõ";
+    [RelayCommand]
+    private void LoadStudentDetailScores(int studentId)
+    {
+        StudentDetailScores.Clear();
 
-            // 🧾 --- Thiết kế phần tiêu đề ---
-            ws.Cell(1, 1).Value = "TRƯỜNG THCS ABC";
-            ws.Range("A1:E1").Merge();
-            ws.Cell(1, 1).Style.Font.Bold = true;
-            ws.Cell(1, 1).Style.Font.FontSize = 16;
-            ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        // Lấy tất cả các loại điểm
+        var diemMieng = _service.GetDetailScores1(studentId);
+        var diem15p = _service.GetDetailScores2(studentId);
+        var diemGK = _service.GetDetailScores3(studentId);
+        var diemCK = _service.GetDetailScores4(studentId);
 
-            ws.Cell(2, 1).Value = $"DANH SÁCH HỌC SINH - LỚP {className}";
-            ws.Range("A2:E2").Merge();
-            ws.Cell(2, 1).Style.Font.Bold = true;
-            ws.Cell(2, 1).Style.Font.FontSize = 14;
-            ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        if (diemMieng == null || diem15p == null || diemGK == null || diemCK == null)
+        {
+            Console.WriteLine("Không có dữ liệu điểm chi tiết");
+            return;
+        }
+        
+        // Gom điểm theo môn học
+        var allSubjects = diemMieng.Select(d => d.NameSubject)
+                                 .Union(diem15p.Select(d => d.NameSubject))
+                                 .Union(diemGK.Select(d => d.NameSubject))
+                                 .Union(diemCK.Select(d => d.NameSubject))
+                                 .Distinct();
 
-            // 🌸 --- Thông tin lớp học ---
-            ws.Cell(4, 1).Value = "Giáo viên chủ nhiệm:";
-            ws.Cell(4, 2).Value = teacher;
-
-            ws.Cell(5, 1).Value = "Kỳ học:";
-            ws.Cell(5, 2).Value = term;
-
-            ws.Cell(6, 1).Value = "Năm học:";
-            ws.Cell(6, 2).Value = year;
-
-            // --- Kẻ khung cho phần thông tin ---
-            var infoRange = ws.Range("A4:B6");
-            infoRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-            infoRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-
-            //  --- Bảng danh sách học sinh ---
-            int startRow = 8;
-            ws.Cell(startRow, 1).Value = "STT";
-            ws.Cell(startRow, 2).Value = "Họ và tên";
-            ws.Cell(startRow, 3).Value = "Điểm các môn học";
-            ws.Cell(startRow, 4).Value = "GPA tổng";
-            ws.Cell(startRow, 5).Value = "Hạnh kiểm";
-            ws.Cell(startRow, 6).Value = "Xếp loại";
-
-            // --- Header style ---
-            var headerRange = ws.Range(startRow, 1, startRow, 6);
-            headerRange.Style.Font.Bold = true;
-            headerRange.Style.Fill.BackgroundColor = XLColor.LightGreen;
-            headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-            headerRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-
-            // --- Ghi dữ liệu ---
-            int row = startRow + 1;
-            int stt = 1;
-            foreach (var st in Students)
+        foreach (var subject in allSubjects)
+        {
+            var detailScore = new DetailScore
             {
-                ws.Cell(row, 1).Value = stt++;
-                ws.Cell(row, 2).Value = st.StudentName;
-                ws.Cell(row, 3).Value = st.SubjectName;
-                ws.Cell(row, 4).Value = st.GpaTotal;
-                ws.Cell(row, 5).Value = st.ConductLevel;
-                ws.Cell(row, 6).Value = st.Academic;
+                NameSubject = subject,
+                DiemMieng = diemMieng.FirstOrDefault(d => d.NameSubject == subject)?.DiemMieng ?? new List<float>(),
+                Diem15p = diem15p.FirstOrDefault(d => d.NameSubject == subject)?.Diem15p ?? new List<float>(),
+                DiemGK = diemGK.FirstOrDefault(d => d.NameSubject == subject)?.DiemGK ?? 0,
+                DiemCK = diemCK.FirstOrDefault(d => d.NameSubject == subject)?.DiemCK ?? 0
+            };
 
-                // Viền từng dòng
-                var dataRange = ws.Range(row, 1, row, 6);
-                dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            detailScore.DiemTrungBinh = CalculateAverageScore(
+                detailScore.DiemMieng, 
+                detailScore.Diem15p, 
+                detailScore.DiemGK, 
+                detailScore.DiemCK);
 
-                row++;
+            StudentDetailScores.Add(detailScore);
+        }
+        
+        Console.WriteLine($"Đã load {StudentDetailScores.Count} môn học có điểm");
+    }
+
+    private float CalculateAverageScore(List<float> diemMieng, List<float> diem15p, float diemGK, float diemCK)
+    {
+        float tongMieng = diemMieng.Count > 0 ? diemMieng.Sum() : 0;
+        float tong15p = diem15p.Count > 0 ? diem15p.Sum() : 0;
+        int soBaiMieng = diemMieng.Count;
+        int soBai15P = diem15p.Count; 
+
+        return (tongMieng * 1 + tong15p * 1 + diemGK * 2 + diemCK * 3) / (5 + soBai15P + soBaiMieng);
+    }
+    #endregion
+
+    #region Xuất Excel
+    [RelayCommand] 
+    private async Task ExportToExcelAsync()
+    {
+        try
+        {
+            if (Students.Count == 0)
+            {
+                await MessageBoxUtil.ShowError("Không có dữ liệu để xuất");
+                return;
             }
 
-            // --- Căn chỉnh cột ---
-            ws.Columns().AdjustToContents();
-            ws.Column(3).Width = 40; // cột "Điểm các môn học" rộng hơn
+            // Mở hộp thoại lưu file
+            var sfd = new SaveFileDialog
+            {
+                Title = "Chọn nơi lưu file Excel",
+                Filters = new List<FileDialogFilter>
+                {
+                    new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+                },
+                InitialFileName = $"DanhSachHocSinh_Lop{NameClass}_{SelectedTerm?.Name}.xlsx"
+            };
 
-            // --- Chữ ký cuối trang ---
-            ws.Cell(row + 2, 5).Value = "Giáo viên chủ nhiệm";
-            ws.Cell(row + 2, 5).Style.Font.Bold = true;
-            ws.Cell(row + 2, 5).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            string? path = await sfd.ShowAsync((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+            if (string.IsNullOrWhiteSpace(path)) return;
 
-            workbook.SaveAs(path);
+            using (var workbook = new XLWorkbook())
+            {
+                var ws = workbook.Worksheets.Add("Danh sách học sinh");
+
+                // Tiêu đề
+                ws.Cell(1, 1).Value = "TRƯỜNG THCS ABC";
+                ws.Range("A1:E1").Merge();
+                ws.Cell(1, 1).Style.Font.Bold = true;
+                ws.Cell(1, 1).Style.Font.FontSize = 16;
+                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                ws.Cell(2, 1).Value = $"DANH SÁCH HỌC SINH - LỚP {NameClass}";
+                ws.Range("A2:E2").Merge();
+                ws.Cell(2, 1).Style.Font.Bold = true;
+                ws.Cell(2, 1).Style.Font.FontSize = 14;
+                ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                // Thông tin lớp
+                ws.Cell(4, 1).Value = "Giáo viên chủ nhiệm:";
+                ws.Cell(4, 2).Value = NameTeacher;
+                ws.Cell(5, 1).Value = "Kỳ học:";
+                ws.Cell(5, 2).Value = $"{NameTerm} - Năm {Year}";
+
+                // Header bảng
+                int startRow = 7;
+                ws.Cell(startRow, 1).Value = "STT";
+                ws.Cell(startRow, 2).Value = "Họ và tên";
+                ws.Cell(startRow, 3).Value = "Điểm các môn học";
+                ws.Cell(startRow, 4).Value = "GPA tổng";
+                ws.Cell(startRow, 5).Value = "Hạnh kiểm";
+                ws.Cell(startRow, 6).Value = "Xếp loại";
+
+                // Ghi dữ liệu
+                int row = startRow + 1;
+                int stt = 1;
+                foreach (var st in Students)
+                {
+                    ws.Cell(row, 1).Value = stt++;
+                    ws.Cell(row, 2).Value = st.StudentName;
+                    ws.Cell(row, 3).Value = st.SubjectName;
+                    ws.Cell(row, 4).Value = st.GpaTotal;
+                    ws.Cell(row, 5).Value = st.ConductLevel;
+                    ws.Cell(row, 6).Value = st.Academic;
+                    row++;
+                }
+
+                // Căn chỉnh
+                ws.Columns().AdjustToContents();
+                workbook.SaveAs(path);
+            }
+
+            await MessageBoxUtil.ShowSuccess("✅ Xuất file Excel thành công!");
         }
-
-        await MessageBoxUtil.ShowSuccess("✅ Xuất file Excel thành công!", null);
-        Console.WriteLine("✅ Xuất file Excel thành công");
+        catch (Exception ex)
+        {
+            await MessageBoxUtil.ShowError($"❌ Xuất file Excel thất bại: {ex.Message}");
+        }
     }
-    catch (Exception ex)
-    {
-        await MessageBoxUtil.ShowError("❌ Xuất file Excel thất bại.", null);
-        Console.WriteLine($"❌ Lỗi khi xuất Excel: {ex.Message}");
-    }
-}
-
+    #endregion
 [RelayCommand] 
 private async Task ExportStudentDetailToExcel()
 {
@@ -497,8 +551,6 @@ private async Task ExportStudentDetailToExcel()
         Console.WriteLine($"❌ Lỗi khi xuất Excel điểm chi tiết: {ex.Message}");
     }
 }
-
-// Phương thức xác định xếp loại học lực
 private string GetAcademicRanking(float score)
 {
     if (score >= 8.0f) return "Giỏi";
@@ -506,104 +558,81 @@ private string GetAcademicRanking(float score)
     if (score >= 5.0f) return "Trung bình";
     return "Yếu";
 }
-[RelayCommand]
-private async Task AddConduct()
-{
-    if (SelectedStudent == null)
+    #region Quản lý hạnh kiểm
+    [RelayCommand]
+    private async Task AddConduct()
     {
-        await MessageBoxUtil.ShowError("Vui lòng chọn 1 học sinh để cập nhật hạnh kiểm");
-        return;
-    }
-
-    try
-    {
-        // Khởi tạo giá trị mặc định
-        SelectedConductLevel = SelectedStudent.ConductLevel ?? "Trung bình";
-        
-        // Tạo và hiển thị Window
-        var window = new HomeClassAddDialog
+        if (SelectedStudent == null)
         {
-            DataContext = this,
-           
-        };
-
-        // Đăng ký sự kiện đóng window
-        window.Closed += (s, e) =>
-        {
-            // Reset dữ liệu khi window đóng
-            SelectedConductLevel = null;
-        };
-
-        // Hiển thị window
-        await window.ShowDialog((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
-        
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Lỗi khi mở dialog hạnh kiểm: {ex.Message}");
-        await MessageBoxUtil.ShowError($"Lỗi khi mở dialog: {ex.Message}");
-    }
-}
-
-[ObservableProperty]
-private ObservableCollection<string> _conductOptions = new()
-{
-    "Giỏi",
-    "Khá", 
-    "Trung bình"
-};
-[RelayCommand]
-private async Task SaveConduct()
-{
-    try
-    {
-        if (SelectedStudent == null || string.IsNullOrEmpty(SelectedConductLevel))
-        {
-            await MessageBoxUtil.ShowError("Vui lòng chọn học sinh và hạnh kiểm");
+            await MessageBoxUtil.ShowError("Vui lòng chọn học sinh để cập nhật hạnh kiểm");
             return;
         }
 
-        // Gọi service để cập nhật hạnh kiểm
-        bool isSuccess = _service.Update(SelectedStudent.StudentId, SelectedConductLevel);
-
-        if (isSuccess)
+        try
         {
-            await MessageBoxUtil.ShowSuccess($"Cập nhật hạnh kiểm thành công: {SelectedConductLevel}", null);
+            SelectedConductLevel = SelectedStudent.ConductLevel ?? "Trung bình";
             
-            // Refresh dữ liệu
-            LoadDataCommand.Execute(null);
-              (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
+            var window = new HomeClassAddDialog
+            {
+                DataContext = this,
+            };
+
+            await window.ShowDialog((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Lỗi khi mở dialog hạnh kiểm: {ex.Message}");
+            await MessageBoxUtil.ShowError($"Lỗi khi mở dialog: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task SaveConduct()
+    {
+        try
+        {
+            if (SelectedStudent == null || string.IsNullOrEmpty(SelectedConductLevel))
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn học sinh và hạnh kiểm");
+                return;
+            }
+
+            bool isSuccess = _service.Update(SelectedStudent.StudentId, SelectedConductLevel);
+
+            if (isSuccess)
+            {
+                await MessageBoxUtil.ShowSuccess($"Cập nhật hạnh kiểm thành công: {SelectedConductLevel}");
+                
+                // Refresh dữ liệu
+                LoadDataByTermCommand.Execute(null);
+                
+                // Đóng dialog
+                (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
                     .MainWindow?.OwnedWindows
                     .OfType<HomeClassAddDialog>()
                     .FirstOrDefault()?
                     .Close(true);
-            
+            }
+            else
+            {
+                await MessageBoxUtil.ShowError("Cập nhật hạnh kiểm thất bại");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            await MessageBoxUtil.ShowError("Cập nhật hạnh kiểm thất bại");
+            Console.WriteLine($"Lỗi khi lưu hạnh kiểm: {ex.Message}");
+            await MessageBoxUtil.ShowError($"Lỗi khi lưu: {ex.Message}");
         }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Lỗi khi lưu hạnh kiểm: {ex.Message}");
-        await MessageBoxUtil.ShowError($"Lỗi khi lưu: {ex.Message}");
-    }
-}
 
-[RelayCommand]
-private void CancelConduct()
-{
-    (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
-        .MainWindow?.OwnedWindows
-        .OfType<HomeClassAddDialog>()
-        .FirstOrDefault()?
-        .Close(false);
-}
-
-    public HomeClassViewModel(HomeClassService service)
+    [RelayCommand]
+    private void CancelConduct()
     {
-        _service = service;
-        LoadDataCommand.Execute(null);
+        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
+            .MainWindow?.OwnedWindows
+            .OfType<HomeClassAddDialog>()
+            .FirstOrDefault()?
+            .Close(false);
     }
+    #endregion
 }
