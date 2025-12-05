@@ -96,7 +96,8 @@ public class TeacherService
         }
     }
 
-    public Term? GetLatestTerm()
+    // Return latest term as Tuple<id, name> or null if none
+    public TermModel? GetLatestTerm()
     {
         try
         {
@@ -110,7 +111,7 @@ public class TeacherService
             {
                 DataRow data = results.Rows[0];
                 // return Tuple.Create(Convert.ToInt32(data["id"]), data["name"].ToString()!);
-                return new Term
+                return new TermModel
                 {
                     Id = (int)data["id"],
                     Name = data["name"].ToString()!,

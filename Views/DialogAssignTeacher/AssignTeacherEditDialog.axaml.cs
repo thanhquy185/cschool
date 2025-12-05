@@ -18,7 +18,7 @@ namespace cschool.Views.DialogAssignTeacher
             {
                 
                 vm.SaveEditCommand.Execute(null);
-                Close(true);
+               
             }
         }
         private void OnCancelButtonClick(object? sender, RoutedEventArgs e)

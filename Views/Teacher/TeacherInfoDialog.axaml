@@ -103,7 +103,7 @@
 
                         <!-- Mã giáo viên -->
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã giáo viên" FontSize="15" Margin="0,0,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="1" Grid.Column="0" HorizontalContentAlignment="Center" IsHitTestVisible="False"
+                        <TextBox Grid.Row="1" Grid.Column="0"  IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"
                                  x:Name="Id" Text="{Binding TeacherDetails.Id}"/>
 

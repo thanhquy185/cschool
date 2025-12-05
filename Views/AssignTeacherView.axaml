@@ -75,7 +75,7 @@
                     </Grid>
                      <ComboBox ItemsSource="{Binding Subjects}" 
                               SelectedItem="{Binding SelectedSubjectSearch, Mode=TwoWay}" 
-                              DisplayMemberBinding="{Binding Name}"
+                              DisplayMemberBinding="{Binding Name_Subject}"
                               PlaceholderText="Chọn môn học"
                               Width = "150"
                               Height = "40"
@@ -130,14 +130,14 @@
                         Width="1.0*"
                         Binding="{Binding End}"
                         Header="Tiết kết thúc" />
-                    <DataGridTextColumn
+                    <!-- <DataGridTextColumn
                         Width="1.5*"
                         Binding="{Binding QuizCount}"
                         Header="Số bài kiểm tra" /> 
                     <DataGridTextColumn
                         Width="1.5*"
                         Binding="{Binding OralCount}"
-                        Header="Số bài miệng" />
+                        Header="Số bài miệng" /> -->
                     
                     <!-- <DataGridTemplateColumn Header="Thao tác" Width="120">
                         <DataGridTemplateColumn.CellTemplate>

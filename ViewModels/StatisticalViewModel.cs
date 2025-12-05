@@ -14,6 +14,13 @@ using cschool.Services;
 using cschool.Models;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Avalonia.Threading;
+using Avalonia;
+using static System.Net.Mime.MediaTypeNames;
+using Application = Avalonia.Application;
+using Avalonia.Controls.ApplicationLifetimes;
+using cschool.Views.Statistical;
+using ReactiveUI;
+
 
 namespace cschool.ViewModels;
 
@@ -27,7 +34,10 @@ public partial class StatisticalViewModel : ViewModelBase
     
     [ObservableProperty]
     // biến lưu tất cả các kì học
-    private ObservableCollection<Term> terms = new(); 
+    private ObservableCollection<TermModel> terms = new(); 
+
+    [ObservableProperty]
+    private string totalStudentsInDetail = "0";
 
     [ObservableProperty]
     private ObservableCollection<ISeries> conductSeries = new();
@@ -35,12 +45,21 @@ public partial class StatisticalViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<ISeries> gpaSeries = new();
 
-    // Labels (optional) to show totals on UI if you want
+
+    [ObservableProperty]
+    private ObservableCollection<Statistical> excellentStudents = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Statistical> goodStudents = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Statistical> averageStudents = new();
+
     [ObservableProperty]
     private string academicSummary = "";
 
     [ObservableProperty]
-    private Term? selectedTerm;
+    private TermModel? selectedTerm;
 
     [ObservableProperty]
     private string conductSummary = "";
@@ -145,7 +164,7 @@ public partial class StatisticalViewModel : ViewModelBase
     }
     
     // Tự động lọc khi SelectedTerm thay đổi
-       partial void OnSelectedTermChanged(Term? value)
+       partial void OnSelectedTermChanged(TermModel? value)
     {
         
         SearchByTerm();
@@ -166,29 +185,26 @@ public partial class StatisticalViewModel : ViewModelBase
                 .GroupBy(s => (s.ConductLevel ?? "").Trim())
                 .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
 
-            // GPA classification according to rules:
-            // Good: gpa >= 8
-            // Fair: gpa >= 6.5 && < 8
-            // Satisfactory: gpa >= 5 && < 6.5
+   
             int gpaGood = stats.Count(s => s.Gpa >= 8f);
             int gpaFair = stats.Count(s => s.Gpa >= 6.5f && s.Gpa < 8f);
             int gpaSat = stats.Count(s => s.Gpa >= 5f && s.Gpa < 6.5f);
 
-            // Totals
+            
             int totalAcademic = academicGroups.Values.Sum();
             int totalConduct = conductGroups.Values.Sum();
             int totalGpa = gpaGood + gpaFair + gpaSat;
 
             // Categories canonical order
-            string[] canonical = new[] { "Good", "Fair", "Satisfactory" };
+            string[] canonical = new[] { "Giỏi", "Khá", "Trung bình" };
 
             var academicCounts = canonical.ToDictionary(k => k, k => academicGroups.ContainsKey(k) ? academicGroups[k] : 0);
             var conductCounts = canonical.ToDictionary(k => k, k => conductGroups.ContainsKey(k) ? conductGroups[k] : 0);
             var gpaCounts = new Dictionary<string, int>
             {
-                ["Good"] = gpaGood,
-                ["Fair"] = gpaFair,
-                ["Satisfactory"] = gpaSat
+                ["Giỏi"] = gpaGood,
+                ["Khá"] = gpaFair,
+                ["Trung bình"] = gpaSat
             };
 
             // Build series using helper
@@ -309,9 +325,9 @@ public partial class StatisticalViewModel : ViewModelBase
         // filter raw stats by GPA classification according to same rules
         IEnumerable<Statistical> list = filteredStats.Where(s =>
         {
-            if (category.Equals("Good", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 8f;
-            if (category.Equals("Fair", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 6.5f && s.Gpa < 8f;
-            if (category.Equals("Satisfactory", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 5f && s.Gpa < 6.5f;
+            if (category.Equals("Giỏi", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 8f;
+            if (category.Equals("Khá", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 6.5f && s.Gpa < 8f;
+            if (category.Equals("Trung bình", StringComparison.OrdinalIgnoreCase)) return s.Gpa >= 5f && s.Gpa < 6.5f;
             return false;
         });
 
@@ -321,4 +337,113 @@ public partial class StatisticalViewModel : ViewModelBase
             SelectedGroupHeader = $"GPA: {category} — {SelectedStudents.Count} học sinh";
         });
     }
+
+
+    [RelayCommand]
+public async Task LoadDetail()
+{
+    try
+    {
+        // Lấy termId đang được chọn
+        int termId = SelectedTerm?.Id ?? 0;
+        
+        // Load dữ liệu cho cả 3 loại
+        await Task.Run(() =>
+        {
+            // Học sinh Giỏi
+            var excellent = _statService.DetailStatistic("Giỏi", termId);
+            ExcellentStudents = new ObservableCollection<Statistical>(
+                excellent.Select((s,index) => new Statistical
+                {   OrderNumber = index + 1,
+                    Student_id = s.Student_id,
+                    StudentName = s.StudentName,
+                    Class_name = s.Class_name ?? "",
+                    Gpa = s.Gpa,
+                    ConductLevel = s.ConductLevel,
+                })
+            );
+            
+            // Học sinh Khá
+            var good = _statService.DetailStatistic("Khá", termId);
+            GoodStudents = new ObservableCollection<Statistical>(
+             good.Select((s , index) => new Statistical
+                {
+                    OrderNumber = index + 1,
+                    Student_id = s.Student_id,
+                    StudentName = s.StudentName,
+                    Class_name = s.Class_name ?? "",
+                    Gpa = s.Gpa,
+                    ConductLevel = s.ConductLevel,
+                })
+            );
+            
+            // Học sinh Trung bình
+            var average = _statService.DetailStatistic("Trung bình", termId);
+            AverageStudents = new ObservableCollection<Statistical>(
+                average.Select((s,index) => new Statistical
+                {
+                    OrderNumber = index + 1,
+                    Student_id = s.Student_id,
+                    StudentName = s.StudentName,
+                    Class_name = s.Class_name ?? "",
+                    Gpa = s.Gpa,
+                    ConductLevel = s.ConductLevel,
+                })
+            );
+            TotalStudentsInDetail = (ExcellentStudents.Count + 
+                                   GoodStudents.Count + 
+                                   AverageStudents.Count).ToString();
+        });
+        
+        // Mở dialog
+       await OpenDetailDialog();
+
+    }
+    catch (Exception ex)
+    {
+        // Xử lý lỗi - bạn có thể dùng dialog thông báo lỗi
+        Console.WriteLine($"Error loading detail: {ex.Message}");
+    }
+}
+[RelayCommand]
+private async Task OpenDetailDialog()
+{
+    try
+    {
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var dialog = new StatisticalDetailDialog
+            {
+                DataContext = this
+            };
+                      
+            // Hiển thị dialog
+            await dialog.ShowDialog(desktop.MainWindow);
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error opening dialog: {ex.Message}");
+    }
+}
+
+
+
+[RelayCommand]
+public void CloseDetailDialog()
+{
+    // Tìm và đóng dialog
+    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        foreach (var window in desktop.Windows)
+        {
+            if (window is StatisticalDetailDialog dialog && 
+                dialog.DataContext == this)
+            {
+                dialog.Close();
+                break;
+            }
+        }
+    }
+}
 }

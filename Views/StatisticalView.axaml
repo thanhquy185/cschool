@@ -22,19 +22,12 @@
         </StackPanel>
 
         <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-          <Button Classes="CrudButton Info">
+          <Button Classes="CrudButton Info"
+                  Command="{Binding LoadDetailCommand}">
             <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
               <StackPanel>
                 <Image Source="{DynamicResource InfoIcon}" />
                 <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
-              </StackPanel>
-            </Border>
-          </Button>
-          <Button Classes="CrudButton Create">
-            <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-              <StackPanel>
-                <Image Source="{DynamicResource ExcelIcon}" />
-                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất excel" />
               </StackPanel>
             </Border>
           </Button>
@@ -109,7 +102,7 @@
         </Border>
 
         <!-- Tổng số môn học -->
-        <Border Grid.Column="3" Classes="DashboardCard" Background="#f84141ff">
+        <Border Grid.Column="3" Classes="DashboardCard" Background="#FFd5f136">
             <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                 <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
                     <Image Source="{DynamicResource SubjectIcon}" Width="30" Height="30" Stretch="Uniform"/>
@@ -132,20 +125,22 @@
 
       <Grid Grid.Row="1" ColumnDefinitions="*,*,*" RowDefinitions="Auto">
         <StackPanel Grid.Column="0" Margin="6">
-          <TextBlock Text="Academic (Giỏi/Trung bình/Khá)" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          <TextBlock Text="Danh hiệu (Giỏi/Trung bình/Khá)" FontWeight="SemiBold" Margin="0,0,0,6"/>
           <lvc:PieChart Series="{Binding AcademicSeries}" LegendPosition="Right" Height="250" />
           <TextBlock Text="{Binding AcademicSummary}" Margin="0,6,0,0"/>
         </StackPanel>
 
         <StackPanel Grid.Column="1" Margin="6">
-          <TextBlock Text="Conduct Level (Tốt/Khá/Trung bình)" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          <TextBlock Text="Hạnh kiểm (Tốt/Khá/Trung bình)" FontWeight="SemiBold" Margin="0,0,0,6"/>
           <lvc:PieChart Series="{Binding ConductSeries}" LegendPosition="Right" Height="250" />
           <TextBlock Text="{Binding ConductSummary}" Margin="0,6,0,0"/>
         </StackPanel>
 
         <StackPanel Grid.Column="2" Margin="6">
-          <TextBlock Text="GPA classification (Good >=8, Fair >=6.5, Sat >=5)" FontWeight="SemiBold" Margin="0,0,0,6" TextWrapping="Wrap"/>
-          <lvc:PieChart Series="{Binding GpaSeries}" LegendPosition="Right" Height="250"/>
+          <TextBlock Text="Học lực (Giỏi >=8, Khá >=6.5, trung bình >=5)" FontWeight="SemiBold" Margin="0,0,0,6" TextWrapping="Wrap"/>
+          <lvc:PieChart Series="{Binding GpaSeries}" LegendPosition="Right" Height="250"
+          
+          />
           <TextBlock Text="{Binding GpaSummary}" Margin="0,6,0,0"/>
         </StackPanel>
       </Grid>

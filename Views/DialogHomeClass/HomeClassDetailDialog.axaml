@@ -22,6 +22,16 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
+                    <!-- Nút Export Excel bên trái -->
+                    <!-- <Button Classes="CrudButton Create" 
+                    Command="{Binding ExportStudentDetailToExcelCommand}">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel >
+                            <Image Source="{DynamicResource ExcelIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất excel" />
+                        </StackPanel>
+                    </Border>
+                </Button> -->
                     <TextBlock Grid.Column="1"
                             Text="{Binding SelectedStudentName, StringFormat='CHI TIẾT ĐIỂM - {0}'}"
                             FontSize="16"
@@ -43,25 +53,29 @@
                    >
                     <DataGrid.Columns>
                         <DataGridTextColumn
-                            Width="1.5*"
+                            Width="1.0*"
                             Binding="{Binding NameSubject}"
                             Header="Môn học" />
                         <DataGridTextColumn
                             Width="1.0*"
-                            Binding="{Binding DiemMieng, StringFormat='{}{0:N1}'}"
+                            Binding="{Binding DiemMiengDisplay, StringFormat='{}{0:N1}'}"
                             Header="Điểm miệng" />
                         <DataGridTextColumn
                             Width="1.0*"
-                            Binding="{Binding Diem15p, StringFormat='{}{0:N1}'}"
+                            Binding="{Binding Diem15pDisplay, StringFormat='{}{0:N1}'}"
                             Header="Điểm 15 phút" />
                         <DataGridTextColumn
                             Width="1.0*"
                             Binding="{Binding DiemGK, StringFormat='{}{0:N1}'}"
-                            Header="Điểm giữa kỳ" />
+                            Header="Điểm GK" />
                         <DataGridTextColumn
                             Width="1.0*"
                             Binding="{Binding DiemCK, StringFormat='{}{0:N1}'}"
-                            Header="Điểm cuối kỳ" />
+                            Header="Điểm CK" />
+                            <DataGridTextColumn
+                            Width="1.5*"
+                            Binding="{Binding DiemTrungBinh, StringFormat='{}{0:N1}'}"
+                            Header="Điểm Trung bình" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
@@ -71,13 +85,23 @@
                     Padding="0,15,0,20"
                     CornerRadius="0,0,8,8"
                     Background="White">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                    <Button Content="📊 Xuất Excel" 
+                            Background="#28a745" 
+                            Foreground="White" 
+                            Width="120"
+                            Height="36"
+                            FontSize="12"
+                            BorderThickness="0"
+                            CornerRadius="4"
+                            Command="{Binding ExportStudentDetailToExcelCommand}"/>
+                    
                     <Button Content="❌ Đóng" 
                             Background="#6c757d" 
                             Foreground="White" 
                             Width="120"
                             Height="36"
-                            FontSize="14"
+                            FontSize="12"
                             BorderThickness="0"
                             CornerRadius="4"
                             Click="OnCloseButtonClick"/>

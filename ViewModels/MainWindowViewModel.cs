@@ -48,7 +48,7 @@ public Bitmap AssignTeacherButtonImage { get; }
     public string AssignTeacherButtonLabel => "Phân công giáo viên";
     public Bitmap SubjectClassButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/scoreboard.png")));
-    public string SubjectClassButtonLabel => "Lớp môn học";
+    public string SubjectClassButtonLabel => "Nhập điểm lớp môn học";
       public Bitmap StatisticalButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://cschool/Assets/Images/Others/analytics.png")));
     public string StatisticalButtonLabel => "Thống kê ";

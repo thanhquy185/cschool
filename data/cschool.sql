@@ -797,7 +797,7 @@ CREATE TABLE `teachers` (
 --
 
 INSERT INTO teachers
-(id, fullname, avatar, birthday, gender, address, phone, email, status, user_id)
+(`id`, `fullname`, `avatar`, `birthday`, `gender`, `address`, `phone`, `email`, `status`, `user_id`)
 VALUES
 (1, 'Nguyễn Văn Hùng', NULL, '1980-03-15', 'Nam', '123 Lê Lợi, TP.HCM', '0901234567', 'nvhung@example.com', 1, 5),
 (2, 'Trần Thị Mai', NULL, '1982-07-22', 'Nữ', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttmai@example.com', 1, 6),
@@ -848,8 +848,8 @@ CREATE TABLE `term_gpa` (
   `assign_class_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
   `gpa` decimal(10,2) DEFAULT NULL,
-  `conduct_level` enum('Good','Fair','Satisfactory','Unsatisfactory') DEFAULT NULL,
-  `academic` enum('Good','Fair','Satisfactory','Unsatisfactory') DEFAULT NULL
+  `conduct_level` enum('Giỏi','Khá','Trung bình','Yếu') DEFAULT NULL,
+  `academic` enum('Giỏi','Khá','Trung bình','Yếu') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -857,12 +857,12 @@ CREATE TABLE `term_gpa` (
 --
 
 INSERT INTO term_gpa (assign_class_id, student_id, gpa, conduct_level, academic) VALUES
-(12, 2, 8.41, 'Good', 'Good'),
-(12, 3, 8.16, 'Good', 'Good'),
-(12, 4, 8.25, 'Good', 'Good'),
-(12, 5, 8.26, 'Good', 'Good'),
-(12, 6, 8.49, 'Good', 'Good'),
-(12, 7, 7.43, 'Fair', 'Fair');
+(12, 2, 8.41, 'Giỏi', 'Giỏi'),
+(12, 3, 8.16, 'Giỏi', 'Giỏi'),
+(12, 4, 8.25, 'Giỏi', 'Giỏi'),
+(12, 5, 8.26, 'Giỏi', 'Giỏi'),
+(12, 6, 8.49, 'Giỏi', 'Giỏi'),
+(12, 7, 7.43, 'Khá', 'Khá');
 
 -- --------------------------------------------------------
 
@@ -1597,11 +1597,11 @@ BEGIN
         current_conduct,
         CASE
             WHEN current_conduct IS NULL THEN NULL
-            WHEN gpa_val < 5 OR current_conduct = 'Unsatisfactory' THEN 'Unsatisfactory' 
-            WHEN gpa_val >= 8 AND current_conduct = 'Good' THEN 'Good' 
-            WHEN gpa_val >= 8 AND current_conduct = 'Fair' THEN 'Fair' 
-            WHEN gpa_val >= 6.5 AND current_conduct IN ('Fair', 'Good') THEN 'Fair' 
-            ELSE 'Satisfactory'
+            WHEN gpa_val < 5 OR current_conduct = 'Yếu' THEN 'Yếu' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Giỏi' THEN 'Giỏi' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Khá' THEN 'Khá' 
+            WHEN gpa_val >= 6.5 AND current_conduct IN ('Khá', 'Giỏi') THEN 'Khá' 
+            ELSE 'Trung bình'
         END
     );
 END //
@@ -1637,11 +1637,11 @@ BEGIN
         current_conduct,
         CASE
             WHEN current_conduct IS NULL THEN NULL
-            WHEN gpa_val < 5 OR current_conduct = 'Unsatisfactory' THEN 'Unsatisfactory' 
-            WHEN gpa_val >= 8 AND current_conduct = 'Good' THEN 'Good' 
-            WHEN gpa_val >= 8 AND current_conduct = 'Fair' THEN 'Fair' 
-            WHEN gpa_val >= 6.5 AND current_conduct IN ('Fair', 'Good') THEN 'Fair' 
-            ELSE 'Satisfactory'
+            WHEN gpa_val < 5 OR current_conduct = 'Yếu' THEN 'Yếu' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Giỏi' THEN 'Giỏi' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Khá' THEN 'Khá' 
+            WHEN gpa_val >= 6.5 AND current_conduct IN ('Khá', 'Giỏi') THEN 'Khá' 
+            ELSE 'Trung bình'
         END
     );
 END //
@@ -1678,11 +1678,11 @@ BEGIN
             current_conduct,
             CASE
                 WHEN current_conduct IS NULL THEN NULL
-                WHEN gpa_val < 5 OR current_conduct = 'Unsatisfactory' THEN 'Unsatisfactory' 
-                WHEN gpa_val >= 8 AND current_conduct = 'Good' THEN 'Good' 
-                WHEN gpa_val >= 8 AND current_conduct = 'Fair' THEN 'Fair' 
-                WHEN gpa_val >= 6.5 AND current_conduct IN ('Fair', 'Good') THEN 'Fair' 
-                ELSE 'Satisfactory'
+                WHEN gpa_val < 5 OR current_conduct = 'Yếu' THEN 'Yếu' 
+				WHEN gpa_val >= 8 AND current_conduct = 'Giỏi' THEN 'Giỏi' 
+				WHEN gpa_val >= 8 AND current_conduct = 'Khá' THEN 'Khá' 
+				WHEN gpa_val >= 6.5 AND current_conduct IN ('Khá', 'Giỏi') THEN 'Khá' 
+				ELSE 'Trung bình'
             END
         );
     ELSE
