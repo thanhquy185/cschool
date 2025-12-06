@@ -413,7 +413,7 @@ public List<HomeClass> Search(int teacherId, int termId, string name)
 {
     try
     {
-        string academic = "Trung bình";
+        string academic = "Yếu";
         float gpaTotal = 0;
 
         using (var conn = _db.GetConnection())
@@ -432,7 +432,7 @@ public List<HomeClass> Search(int teacherId, int termId, string name)
                     {
                         gpaTotal = Convert.ToSingle(reader["gpa"]);
                     }
-                } // reader đóng ở đây
+                } 
             }
 
             // --- 2. Tính academic ---
@@ -441,10 +441,16 @@ public List<HomeClass> Search(int teacherId, int termId, string name)
                 academic = "Giỏi";
             }
             else if ((ConductLevel == "Giỏi" || ConductLevel == "Khá") &&
-                     ((gpaTotal < 8 && gpaTotal >= 6.5) || (gpaTotal < 6.5 && gpaTotal >= 5)) || (ConductLevel == "Khá" && gpaTotal >= 8 ))
+                 ((gpaTotal < 8 && gpaTotal >= 6.5) || (gpaTotal < 6.5 && gpaTotal >= 5)) || (ConductLevel == "Khá" && gpaTotal >= 8 ) && (ConductLevel=="Trung bình" && gpaTotal >=6.5) )
             {
                 academic = "Khá";
+            }else if ((ConductLevel == "Trung bình" && gpaTotal >= 5 && gpaTotal<6.5) ||
+                     (ConductLevel == "Khá" && gpaTotal < 5) ||
+                     (ConductLevel == "Giỏi" && gpaTotal < 5))
+            {
+                academic = "Trung bình";
             }
+
 
             // --- 3. UPDATE term_gpa ---
             string sql = "UPDATE term_gpa SET conduct_level = @conductLevel, academic = @academic WHERE student_id = @studentId";

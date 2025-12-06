@@ -61,7 +61,8 @@ public partial class HomeClassViewModel : ViewModelBase
     {
         "Giỏi",
         "Khá", 
-        "Trung bình"
+        "Trung bình",
+        "Yếu"
     };
 
     #region Constructor và Load dữ liệu ban đầu

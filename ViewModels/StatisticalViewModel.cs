@@ -196,7 +196,7 @@ public partial class StatisticalViewModel : ViewModelBase
             int totalGpa = gpaGood + gpaFair + gpaSat;
 
             // Categories canonical order
-            string[] canonical = new[] { "Giỏi", "Khá", "Trung bình" };
+            string[] canonical = new[] { "Giỏi", "Khá", "Trung bình","Yếu" };
 
             var academicCounts = canonical.ToDictionary(k => k, k => academicGroups.ContainsKey(k) ? academicGroups[k] : 0);
             var conductCounts = canonical.ToDictionary(k => k, k => conductGroups.ContainsKey(k) ? conductGroups[k] : 0);
