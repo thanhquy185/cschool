@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using cschool.Models;
+using System.Threading.Tasks;
+using System.Linq;
+
 
 namespace cschool.Services;
 
@@ -12,169 +16,270 @@ public class TuitionService
     {
         _db = db;
     }
-
-    public List<StudentModel> GetStudents()
+ 
+    public List<FeeClassMonthModel> GetFeeClassMonths(int classFeeTemplateId)
     {
-        var dt = _db.ExecuteQuery("SELECT * FROM cschool.students WHERE status = 1");
-        var list = new List<StudentModel>();
+        List<FeeClassMonthModel> list = new List<FeeClassMonthModel>();
 
-        foreach (DataRow row in dt.Rows)
+        // try
+        // {
+        //     string sql = $@"
+        //         SELECT id, class_fee_template_id, month_id, amount
+        //         FROM class_fee_months
+        //         WHERE class_fee_template_id = {classFeeTemplateId}
+        //         ORDER BY month_id";
+
+        //     var result = _db.ExecuteQuery(sql);
+
+        //     foreach (DataRow row in result.Rows)
+        //     {
+        //         list.Add(new FeeClassMonthModel
+        //         {
+        //             Id = Convert.ToInt32(row["id"]),
+        //             ClassFeeTemplateId = Convert.ToInt32(row["class_fee_template_id"]),
+        //             MonthId = Convert.ToInt32(row["month_id"]),
+        //             Amount = Convert.ToInt32(row["amount"])
+        //         });
+        //     }
+        // }
+        // catch (Exception ex)
+        // {
+        //     Console.WriteLine("Error GetFeeClassMonths: " + ex.Message);
+        // }
+
+        return list;
+    }
+
+        public int GetClassFeeTemplateId(int assignClassId, int feeTemplateId)
+    {
+        try
         {
-            list.Add(new StudentModel
+            string sql = $@"
+                SELECT id
+                FROM class_fee_months
+                WHERE assign_class_id = {assignClassId}
+                AND fee_template_id = {feeTemplateId}
+                AND is_active = 1
+                LIMIT 1";
+
+            object? result = _db.ExecuteScalar(sql);
+
+            return result == null ? 0 : Convert.ToInt32(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error GetClassFeeTemplateId: " + ex.Message);
+            return 0;
+        }
+    }
+
+
+    public List<MonthFeeItem> GetAllMonths()
+    {
+        List<MonthFeeItem> list = new List<MonthFeeItem>();
+
+        try
+        {
+            string sql = "SELECT id, name FROM months ORDER BY id";
+            var result = _db.ExecuteQuery(sql);
+
+            foreach (DataRow row in result.Rows)
             {
-                Id = (int)row["id"],
-                Fullname = row["fullname"].ToString()!,
-                Avatar = row["avatar"].ToString()!,
-                BirthDay = row["birthday"].ToString()!,
-                Gender = row["gender"].ToString()!,
-                Ethnicity = row["ethnicity"].ToString()!,
-                Religion = row["religion"].ToString()!,
-                Phone = row["phone"].ToString()!,
-                Email = row["email"].ToString()!,
-                Address = row["address"].ToString()!,
-                LearnYear = row["learn_year"].ToString()!,
-                LearnStatus = row["learn_status"].ToString()!,
-                Status = (sbyte)row["status"]
-            });
+                list.Add(new MonthFeeItem
+                {
+                    MonthId = Convert.ToInt32(row["id"]),
+                    MonthName = row["name"].ToString() ?? ""
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error GetAllMonths: " + ex.Message);
         }
 
         return list;
     }
 
-    public List<StudentModel> GetAllStudents()
-    {
-        var dt = _db.ExecuteQuery("SELECT * FROM cschool.students");
-        var list = new List<StudentModel>();
 
-        foreach (DataRow row in dt.Rows)
+
+
+    // Lấy danh sách lớp + học phí tháng
+    public List<FeeTemplateModel> GetFeeTemplates()
+    {
+        List<FeeTemplateModel> list = new List<FeeTemplateModel>();
+        try
         {
-            list.Add(new StudentModel
+            string sql = @"SELECT id, name, fee_type, amount, created_at, updated_at 
+                        FROM fee_templates 
+                        WHERE is_active = 1";
+
+            var result = _db.ExecuteQuery(sql); // _db là DBService
+
+            foreach (DataRow row in result.Rows)
             {
-                Id = (int)row["id"],
-                Fullname = row["fullname"].ToString()!,
-                Avatar = row["avatar"].ToString()!,
-                BirthDay = row["birthday"].ToString()!,
-                Gender = row["gender"].ToString()!,
-                Ethnicity = row["ethnicity"].ToString()!,
-                Religion = row["religion"].ToString()!,
-                Phone = row["phone"].ToString()!,
-                Email = row["email"].ToString()!,
-                Address = row["address"].ToString()!,
-                LearnYear = row["learn_year"].ToString()!,
-                LearnStatus = row["learn_status"].ToString()!,
-                Status = (sbyte)row["status"]
-            });
+                list.Add(new FeeTemplateModel
+                {
+                    Id = Convert.ToInt32(row["id"]),
+                    Name = row["name"].ToString() ?? "",
+                    Type = row["fee_type"].ToString() ?? "",
+                    Amount = Convert.ToInt32(row["amount"]),
+                    CreatedAt = Convert.ToDateTime(row["created_at"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                    UpdatedAt = Convert.ToDateTime(row["updated_at"]).ToString("yyyy-MM-dd HH:mm:ss")
+                });
+            }
+
+            return list;
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in GetFeeTemplates: {ex.Message}");
+            return new List<FeeTemplateModel>();
+        }
+    }
+
+    public void SaveFeeTemplates(List<FeeTemplateModel> feeTemplates, List<FeeTemplateModel> deletedFees)
+    {
+        try
+        {
+            // Xử lý soft delete
+            foreach (var fee in deletedFees)
+            {
+                string softDeleteSql = $"UPDATE fee_templates SET is_active = 0, updated_at = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}' WHERE id = {fee.Id}";
+                _db.ExecuteNonQuery(softDeleteSql);
+            }
+            deletedFees.Clear();
+
+            // Thêm hoặc cập nhật
+            foreach (var fee in feeTemplates)
+            {
+                if (fee.Id == 0)
+                {
+                    string insertSql = $@"
+                        INSERT INTO fee_templates (name, fee_type, amount, is_active, created_at, updated_at)
+                        VALUES ('{fee.Name}', '{fee.Type}', {fee.Amount}, 1, '{fee.CreatedAt}', '{fee.UpdatedAt}')";
+                    _db.ExecuteNonQuery(insertSql);
+                }
+                else
+                {
+                    string updateSql = $@"
+                        UPDATE fee_templates
+                        SET name = '{fee.Name}',
+                            fee_type = '{fee.Type}',
+                            amount = {fee.Amount},
+                            updated_at = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}'
+                        WHERE id = {fee.Id}";
+                    _db.ExecuteNonQuery(updateSql);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in SaveFeeTemplates: {ex.Message}");
+        }
+    }
+
+
+
+    public List<FeeClassMonthModel> getClassFeeMonth()
+    { 
+        // Lấy của tất cả các tháng
+        List <FeeClassMonthModel> list = new List<FeeClassMonthModel>();
+
 
         return list;
+        
     }
 
-    public StudentModel? GetStudentById(int id)
-    {
-        string sql = @$"SELECT students.id, students.fullname, students.avatar, students.birthday, students.gender, students.ethnicity,
-                    students.religion, students.phone, students.email, students.address, students.learn_year, students.learn_status, 
-                    students.status, classes.name AS class_name, teachers.fullname AS teacher_name
-                    FROM students
-                    JOIN assign_class_students ON students.id = assign_class_students.student_id
-                    JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
-                    JOIN terms ON assign_classes.term_id = terms.id
-                    JOIN classes ON assign_classes.class_id = classes.id
-                    JOIN teachers ON assign_classes.head_teacher_id = teachers.id
-                    WHERE students.id = {id}";
-        var dt = _db.ExecuteQuery(sql);
 
-        if (dt.Rows.Count == 0)
-            return null;
-
-        var row = dt.Rows[0];
-
-        return new StudentModel
+ public bool SaveFeeClassMonths(List<FeeClassMonthModel> feeClassMonths)
         {
-            Id = (int)row["id"],
-            Fullname = row["fullname"].ToString()!,
-            Avatar = row["avatar"].ToString()!,
-            BirthDay = row["birthday"].ToString()!,
-            Gender = row["gender"].ToString()!,
-            Ethnicity = row["ethnicity"].ToString()!,
-            Religion = row["religion"].ToString()!,
-            Phone = row["phone"].ToString()!,
-            Email = row["email"].ToString()!,
-            Address = row["address"].ToString()!,
-            LearnYear = row["learn_year"].ToString()!,
-            LearnStatus = row["learn_status"].ToString()!,
-            Status = (sbyte)row["status"],
-            ClassName = row["class_name"].ToString()!,
-            TeacherName = row["teacher_name"].ToString()!
-        };
-    }
+            if (feeClassMonths == null || feeClassMonths.Count == 0)
+                return false;
 
-    public int GetIdLastStudent()
-    {
-        // Console.WriteLine(123);
-        var dt = _db.ExecuteQuery("SELECT id FROM cschool.students ORDER BY id DESC LIMIT 1");
-        if (dt.Rows.Count > 0)
-            return System.Convert.ToInt32(dt.Rows[0]["id"]);
-        return 0;
-    }
+            try
+            {
+                // --- LƯU class_fee_months ---
+                foreach (var item in feeClassMonths)
+                {
+                    string sql = $@"
+                        INSERT INTO class_fee_months
+                            (assign_class_id, fee_template_id, month_id, term, amount, start_date, end_date, created_at, updated_at)
+                        VALUES
+                            ({item.AssignClassId}, {item.FeeTemplateId}, {item.MonthId}, {item.Term}, {item.Amount},
+                             '{item.StartDate}', '{item.EndDate}', '{item.CreatedAt}', '{item.UpdatedAt}');";
 
-    // Thêm học sinh mới
-    public bool CreateStudent(StudentModel student)
-    {
-        string formattedBirthDay = "NULL";
-        if (!string.IsNullOrWhiteSpace(student.BirthDay) && DateTime.TryParse(student.BirthDay, out var birth))
-        {
-            formattedBirthDay = $"'{birth:yyyy-MM-dd}'";
+                    _db.ExecuteNonQuery(sql);
+                }
+
+                // --- LẤY ASSIGN_CLASS_ID của các assign class khác nhau ---
+                var assignClassIds = feeClassMonths
+                    .Select(f => f.AssignClassId)
+                    .Distinct()
+                    .ToList();
+
+                // --- TẠO tuition_monthly cho học sinh cho mỗi assign class ---
+                foreach (var acId in assignClassIds)
+                    GenerateTuitionMonthly(acId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Lỗi khi lưu FeeClassMonths: {ex.Message}");
+                return false;
+            }
         }
-        string sql = @$"
-            INSERT INTO cschool.students 
-            (fullname, avatar, birthday, gender, ethnicity, religion, address, phone, email, learn_year, learn_status)
-            VALUES 
-            ('{student.Fullname}', '{student.Avatar}', {formattedBirthDay}, 
-                '{student.Gender}', '{student.Ethnicity}', '{student.Religion}', 
-                '{student.Address}', '{student.Phone}', '{student.Email}', 
-                '{student.LearnYear}', '{student.LearnStatus}');";
 
-        int rows = _db.ExecuteNonQuery(sql);
-        return rows > 0;
-    }
-
-    // Cập nhật thông tin học sinh
-    public bool UpdateStudent(StudentModel student)
-    {
-        string formattedBirthDay = "NULL";
-        if (!string.IsNullOrWhiteSpace(student.BirthDay) && DateTime.TryParse(student.BirthDay, out var birth))
+        private void GenerateTuitionMonthly(int assignClassId)
         {
-            formattedBirthDay = $"'{birth:yyyy-MM-dd}'";
+            try
+            {
+                // 1. Lấy tổng tiền theo tháng (sử dụng ExecuteQuery -> DataTable)
+                string sqlSum = $@"
+                    SELECT month_id, SUM(amount) AS total_amount
+                    FROM class_fee_months
+                    WHERE assign_class_id = {assignClassId}
+                    GROUP BY month_id;";
+
+                DataTable monthFeesTable = _db.ExecuteQuery(sqlSum);
+
+                // 2. Lấy học sinh thuộc assign_class_id
+                string sqlStudents = $@"
+                    SELECT student_id 
+                    FROM assign_class_students
+                    WHERE assign_class_id = {assignClassId};";
+
+                DataTable studentsTable = _db.ExecuteQuery(sqlStudents);
+
+                // 3. Tạo tuition_monthly
+                foreach (DataRow stuRow in studentsTable.Rows)
+                {
+                    int studentId = Convert.ToInt32(stuRow["student_id"]);
+
+                    foreach (DataRow mfRow in monthFeesTable.Rows)
+                    {
+                        int monthId = Convert.ToInt32(mfRow["month_id"]);
+                        // total_amount có thể trả về int/decimal tùy database => dùng Convert.ToDecimal
+                        decimal total = Convert.ToDecimal(mfRow["total_amount"]);
+
+                        string insertSql = $@"
+                            INSERT INTO tuition_monthly
+                                (student_id, assign_class_id, month_id, total_amount, is_paid, created_at, updated_at)
+                            VALUES
+                                ({studentId}, {assignClassId}, {monthId}, {total}, 0, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}');";
+
+                        _db.ExecuteNonQuery(insertSql);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Lỗi GenerateTuitionMonthly: {ex.Message}");
+            }
         }
-        string sql = @$"
-            UPDATE cschool.students SET 
-                fullname = '{student.Fullname}',
-                avatar = '{student.Avatar}',
-                birthday = {formattedBirthDay},
-                gender = '{student.Gender}',
-                ethnicity = '{student.Ethnicity}',
-                religion = '{student.Religion}',
-                phone = '{student.Phone}',
-                email = '{student.Email}',
-                address = '{student.Address}',
-                learn_year = '{student.LearnYear}',
-                learn_status = '{student.LearnStatus}'
-            WHERE id = {student.Id};";
 
-        int rows = _db.ExecuteNonQuery(sql);
-        return rows > 0;
-    }
+   
 
-    // Khóa học sinh
-    public bool LockStudent(StudentModel student)
-    {
-        string sql = @$"
-            UPDATE cschool.students 
-            SET status = 0
-            WHERE id = {student.Id};";
 
-        int rows = _db.ExecuteNonQuery(sql);
-        return rows > 0;
-    }
-
+  
 }

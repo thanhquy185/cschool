@@ -105,7 +105,7 @@ public class StudentService
             Status = (sbyte)row["status"],
             ClassName = row["class_name"].ToString()!,
             ClassYear = row["year"].ToString()!,
-            TeacherName = row["teacher_name"].ToString()!
+            Name = row["teacher_name"].ToString()!
         };
     }
 

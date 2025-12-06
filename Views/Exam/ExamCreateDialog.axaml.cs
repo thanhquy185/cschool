@@ -8,6 +8,7 @@ using System.Reactive.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Input;
+using cschool.Models;
 
 namespace cschool.Views.Exam
 {
@@ -72,7 +73,7 @@ namespace cschool.Views.Exam
 
             // Kiểm tra trùng (nếu cùng phòng hoặc cùng giáo viên đã được chọn)
             bool alreadyExists = examViewModel.ExamAssignments
-                .Any(a => a.RoomName == room.RoomName || a.TeacherName == teacher.TeacherName);
+                .Any(a => a.RoomName == room.RoomName || a.Name == teacher.Name);
 
             if (alreadyExists)
             {
@@ -84,7 +85,7 @@ namespace cschool.Views.Exam
             var newAssignment = new ExamAssignment
             {
                 RoomName = room.RoomName,
-                TeacherName = teacher.TeacherName,
+                Name = teacher.Name,
                 RoomQuantity = room.Quantity,
                 AssignedStudents = 0,
                 Room = room,
@@ -125,7 +126,7 @@ namespace cschool.Views.Exam
             if ((sender as Button)?.DataContext is ExamAssignment item)
             {
                 bool confirm = await MessageBoxUtil.ShowConfirm(
-                    $"Bạn có chắc muốn xóa phòng '{item.RoomName}' được phân cho giáo viên '{item.TeacherName}' không?"
+                    $"Bạn có chắc muốn xóa phòng '{item.RoomName}' được phân cho giáo viên '{item.Name}' không?"
                 );
 
                 if (!confirm)
@@ -210,6 +211,7 @@ namespace cschool.Views.Exam
             var endTime = EndTime.SelectedTime;
             var term = Term.SelectedItem as TermModel;
             var assignments = examViewModel.ExamAssignments;
+            var assignstudents = examViewModel.ExamAssignments.Select(a => a.AssignedStudents).ToList();
             // Gộp ngày + giờ thành datetime string
             var startDateTime = $"{examDate:yyyy-MM-dd} {startTime:hh\\:mm\\:ss}";
             var endDateTime = $"{examDate:yyyy-MM-dd} {endTime:hh\\:mm\\:ss}";

@@ -148,7 +148,7 @@
 
                         <!-- Giáo viên chủ nhiệm -->
                         <TextBlock Grid.Row="12" Grid.Column="1" Text="Giáo viên chủ nhiệm" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding StudentDetails.TeacherName}" IsHitTestVisible="False"
+                        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding StudentDetails.Name}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
                         <!-- Số điện thoại -->

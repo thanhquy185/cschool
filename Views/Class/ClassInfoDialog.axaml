@@ -1,0 +1,122 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:cschool.ViewModels;assembly=cschool"
+        x:Class="cschool.Views.Class.ClassInfoDialog"
+        x:DataType="vm:ClassViewModel"
+        Title="Chi tiết lớp học"
+        Width="900" Height="700"
+        MinWidth="700" MinHeight="600"
+        CanResize="True"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border Background="#FFFFFF"
+            CornerRadius="12"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1"
+            Padding="0">
+
+        <Grid RowDefinitions="Auto,*" Margin="16">
+            <!-- HEADER -->
+            <Border Grid.Row="0" Background="#3C7EDB" Padding="16" CornerRadius="12,12,0,0">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="Chi tiết lớp học"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+                    <Button Grid.Column="1"
+                            Content="X"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            Width="32"
+                            Height="32"
+                            Click="CloseButton_Click"
+                            Cursor="Hand"/>
+                </Grid>
+            </Border>
+
+            <!-- MAIN CONTENT -->
+            <Grid Grid.Row="1" RowDefinitions="Auto,*" RowSpacing="16">
+                
+                <!-- THÔNG TIN LỚP -->
+                <Border Grid.Row="0" Background="#F8F9FA" Padding="12" CornerRadius="8" BorderBrush="#E8E8E8" BorderThickness="1">
+                    <Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="8">
+                        
+                        <!-- Cột trái -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Tên lớp" FontWeight="Bold" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding SelectedClass.Name}" IsEnabled="False" Background="#FFFFFF"/>
+
+                            <TextBlock Text="Khối" FontWeight="Bold" Margin="0,8,0,2"/>
+                            <TextBox Text="{Binding SelectedClass.Grade}" IsEnabled="False" Background="#FFFFFF"/>
+
+                            <TextBlock Text="Năm học" FontWeight="Bold" Margin="0,8,0,2"/>
+                            <TextBox Text="{Binding SelectedClass.Year}" IsEnabled="False" Background="#FFFFFF"/>
+                        </StackPanel>
+
+                        <!-- Cột phải -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Loại lớp" FontWeight="Bold" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding SelectedClass.ClassTypeName}" IsEnabled="False" Background="#FFFFFF"/>
+
+                            <TextBlock Text="GVCN Học kỳ 1" FontWeight="Bold" Margin="0,8,0,2"/>
+                            <TextBox Text="{Binding TeacherHK1.Name}" IsEnabled="False" Background="#FFFFFF"/>
+
+                            <TextBlock Text="GVCN Học kỳ 2" FontWeight="Bold" Margin="0,8,0,2"/>
+                            <TextBox Text="{Binding TeacherHK2.Name}" IsEnabled="False" Background="#FFFFFF"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+                <!-- TAB HỌC SINH HK1/HK2 -->
+                <TabControl Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <!-- HK1 -->
+                    <TabItem Header="Học kỳ 1">
+                        <StackPanel>
+                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK1}" Height="32"/>
+
+                            <DataGrid ItemsSource="{Binding FilteredStudentHK1}" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="32" VerticalAlignment="Stretch">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Mã" Binding="{Binding Id}" Width="80"/>
+                                    <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="200"/>
+                                    <DataGridTextColumn Header="Giới tính" Binding="{Binding Gender}" Width="100"/>
+                                    <DataGridTextColumn Header="Ngày sinh" Binding="{Binding BirthDayDisplay}" Width="120"/>
+                                    <DataGridTextColumn Header="Chức vụ" Binding="{Binding Role}" Width="150"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </TabItem>
+
+                    <!-- HK2 -->
+                    <TabItem Header="Học kỳ 2">
+                        <StackPanel>
+                            <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK2}" Height="32"/>
+
+                            <DataGrid ItemsSource="{Binding FilteredStudentHK2}" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="32" VerticalAlignment="Stretch">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Mã" Binding="{Binding Id}" Width="80"/>
+                                    <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="200"/>
+                                    <DataGridTextColumn Header="Giới tính" Binding="{Binding Gender}" Width="100"/>
+                                    <DataGridTextColumn Header="Ngày sinh" Binding="{Binding BirthDayDisplay}" Width="120"/>
+                                    <DataGridTextColumn Header="Chức vụ" Binding="{Binding Role}" Width="150"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
+
+
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

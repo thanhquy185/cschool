@@ -4,6 +4,8 @@ using cschool.Utils;
 using cschool.Views.Exam;
 using cschool.ViewModels;
 using System.Reactive.Threading.Tasks;
+using Avalonia.Interactivity;
+using cschool.Models;
 
 namespace cschool.Views;
 
@@ -83,6 +85,49 @@ public partial class ExamView : UserControl
             await dialog.ShowDialog(owner);
         else
             dialog.Show();
+    }
+
+    private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (DataContext is ExamViewModel vm)
+        {
+            var textBox = sender as TextBox;
+            vm.FilterKeyword = textBox?.Text ?? "";
+            vm.ApplyFilter();
+        }
+    }
+
+    private void OnStatusFilterChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is ExamViewModel vm)
+        {
+            var combo = sender as ComboBox;
+            var selected = combo?.SelectedItem as TermModel;
+
+            if (selected != null)
+                vm.FilterStatus = selected.TermName.ToString();
+            else
+                vm.FilterStatus = "";
+
+            vm.ApplyFilter();
+        }
+    }
+
+    private void OnResetFilterClicked(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is ExamViewModel vm)
+        {
+            // reset ViewModel
+            vm.FilterKeyword = "";
+            vm.FilterStatus = "";
+            vm.ApplyFilter();
+
+            // reset UI
+            SearchBox.Text = "";
+
+            StatusFilterBox.SelectedIndex = -1; 
+            StatusFilterBox.PlaceholderText = "Chọn học kỳ";
+        }
     }
 
 }

@@ -1,6 +1,6 @@
---
+
 -- Database: `cschool`
---
+
 
 DROP DATABASE IF EXISTS CSchool;
 CREATE DATABASE CSchool;
@@ -834,63 +834,8 @@ INSERT INTO `term_gpa` (`assign_class_id`, `student_id`, `gpa`, `conduct_level`,
 (19, 29, 9.00, 'Good', 'Good'),
 (20, 30, 7.85, 'Fair', 'Good');
 
--- --------------------------------------------------------
 
---
--- Table structure for table `tuitions`
---
 
-CREATE TABLE `tuitions` (
-  `id` int(11) NOT NULL,
-  `assign_class_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `time_create` datetime DEFAULT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `status` tinyint(4) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tuitions`
---
-
-INSERT INTO `tuitions` (`id`, `assign_class_id`, `user_id`, `time_create`, `amount`, `status`) VALUES
-(1, 11, 1, '2025-09-01 08:00:00', 1200000.00, 1),
-(2, 12, 2, '2025-09-01 08:05:00', 1200000.00, 1),
-(3, 13, 1, '2025-09-01 08:10:00', 1200000.00, 1),
-(4, 14, 1, '2025-09-02 09:00:00', 1250000.00, 1),
-(5, 15, 1, '2025-09-02 09:10:00', 1250000.00, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tuition_details`
---
-
-CREATE TABLE `tuition_details` (
-  `tuition_id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `time_create` datetime DEFAULT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `status` enum('Paid','Unpaid') DEFAULT 'Unpaid'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tuition_details`
---
-
-INSERT INTO `tuition_details` (`tuition_id`, `student_id`, `time_create`, `price`, `status`) VALUES
-(1, 1, '2025-09-01 08:00:00', 1200000.00, 'Paid'),
-(1, 2, '2025-09-01 08:05:00', 1200000.00, 'Paid'),
-(2, 3, '2025-09-02 09:00:00', 1250000.00, 'Unpaid'),
-(2, 4, '2025-09-02 09:10:00', 1250000.00, 'Paid'),
-(3, 5, '2025-09-03 10:00:00', 1300000.00, 'Paid'),
-(3, 6, '2025-09-03 10:15:00', 1300000.00, 'Unpaid'),
-(4, 7, '2025-09-04 11:00:00', 1350000.00, 'Paid'),
-(4, 8, '2025-09-04 11:20:00', 1350000.00, 'Paid'),
-(5, 9, '2025-09-05 13:00:00', 1400000.00, 'Unpaid'),
-(5, 10, '2025-09-05 13:15:00', 1400000.00, 'Paid');
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `users`
@@ -947,6 +892,7 @@ INSERT INTO `violations` (`id`, `student_id`, `assign_class_id`, `rule_id`, `dat
 (8, 8, 14, 8, '2025-09-22', 'Mang thuốc lá vào trường.'),
 (9, 9, 15, 9, '2025-09-23', 'Xô xát với bạn cùng lớp sau giờ học.'),
 (10, 10, 15, 10, '2025-09-24', 'Làm hỏng thiết bị máy chiếu của lớp.');
+
 
 --
 -- Indexes for dumped tables
@@ -1118,22 +1064,7 @@ ALTER TABLE `term_gpa`
   ADD PRIMARY KEY (`assign_class_id`,`student_id`),
   ADD KEY `student_id` (`student_id`);
 
---
--- Indexes for table `tuitions`
---
-ALTER TABLE `tuitions`
-  ADD PRIMARY KEY (`id`,`assign_class_id`,`user_id`),
-  ADD KEY `assign_class_id` (`assign_class_id`);
 
---
--- Indexes for table `tuition_details`
---
-ALTER TABLE `tuition_details`
-  ADD PRIMARY KEY (`tuition_id`,`student_id`);
-
---
--- Indexes for table `users`
---
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`,`role_id`),
   ADD UNIQUE KEY `username` (`username`),
@@ -1248,15 +1179,6 @@ ALTER TABLE `teachers`
 ALTER TABLE `terms`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
---
--- AUTO_INCREMENT for table `tuitions`
---
-ALTER TABLE `tuitions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `users`
---
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
@@ -1265,6 +1187,10 @@ ALTER TABLE `users`
 --
 ALTER TABLE `violations`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+
+
+
 
 --
 -- Constraints for dumped tables
@@ -1375,18 +1301,9 @@ ALTER TABLE `term_gpa`
 --
 -- Constraints for table `tuitions`
 --
-ALTER TABLE `tuitions`
-  ADD CONSTRAINT `tuitions_ibfk_1` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`);
 
 --
--- Constraints for table `tuition_details`
---
-ALTER TABLE `tuition_details`
-  ADD CONSTRAINT `tuition_details_ibfk_1` FOREIGN KEY (`tuition_id`) REFERENCES `tuitions` (`id`);
 
---
--- Constraints for table `users`
---
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
 
@@ -1398,3 +1315,162 @@ ALTER TABLE `violations`
   ADD CONSTRAINT `violations_ibfk_2` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`),
   ADD CONSTRAINT `violations_ibfk_3` FOREIGN KEY (`rule_id`) REFERENCES `rules` (`id`);
 COMMIT;
+
+
+
+
+-- 1) Months: danh sách các tháng (dùng chung)
+CREATE TABLE `months` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL COMMENT 'Ví dụ: Tháng 8, Tháng 9, ...',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- 2) Fee templates: định nghĩa loại phí
+CREATE TABLE `fee_templates` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NOT NULL COMMENT 'Tên phí: Học phí, Tiền xe, Bữa ăn, ...',
+  `description` TEXT NULL,
+  `fee_type` ENUM('BASE','EXTRA') NOT NULL DEFAULT 'BASE' COMMENT 'BASE = phí cơ bản, EXTRA = phí phát sinh/khác',
+  `default amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_fee_type` (`fee_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- CREATE TABLE `class_fee_templates` (
+--     `id` int(11) NOT NULL AUTO_INCREMENT,
+--     `assign_class_id` int(11) NOT NULL,      -- Liên kết với assign_classes
+--     `fee_template_id` int(11) NOT NULL,      -- Liên kết với fee_templates
+--     `start_date` date NOT NULL,
+--     `end_date` date NOT NULL,
+--     `is_active` tinyint(1) NOT NULL DEFAULT 1,
+--     PRIMARY KEY (`id`),
+--     KEY `idx_assign_class` (`assign_class_id`),
+--     KEY `idx_fee_template` (`fee_template_id`),
+--     CONSTRAINT `fk_class_fee_assign` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`),
+--     CONSTRAINT `fk_class_fee_template` FOREIGN KEY (`fee_template_id`) REFERENCES `fee_templates` (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `class_fee_months` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+
+  -- Ánh xạ lớp học kỳ
+  `assign_class_id` INT NOT NULL,
+
+  -- Loại phí
+  `fee_template_id` INT NOT NULL,
+
+  -- Tháng
+  `month_id` INT NOT NULL,
+
+  -- Học kỳ
+  `term` TINYINT(1) NOT NULL COMMENT '1 = HK1, 2 = HK2',
+
+  -- Bật/tắt tháng đó
+  `is_selected` TINYINT(1) NOT NULL DEFAULT 1,
+
+  -- Số tiền tháng đó
+  `amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
+
+  -- Thời gian áp dụng chung cho phí (có thể NULL)
+  `start_date` DATE DEFAULT NULL,
+  `end_date` DATE DEFAULT NULL,
+
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`id`),
+
+  KEY `idx_class_fee_months_assign` (`assign_class_id`),
+  KEY `idx_class_fee_months_template` (`fee_template_id`),
+  KEY `idx_class_fee_months_month` (`month_id`),
+
+  CONSTRAINT `fk_cfm_assign_class` FOREIGN KEY (`assign_class_id`)
+       REFERENCES `assign_classes` (`id`) ON DELETE CASCADE,
+
+  CONSTRAINT `fk_cfm_fee_template` FOREIGN KEY (`fee_template_id`)
+       REFERENCES `fee_templates` (`id`) ON DELETE CASCADE,
+
+  CONSTRAINT `fk_cfm_month` FOREIGN KEY (`month_id`)
+       REFERENCES `months` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+=
+
+
+-- 12) TuitionPayment: các lần thanh toán (ghi log)
+CREATE TABLE tuition_monthly (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    student_id INT NOT NULL,
+    assign_class_id INT NOT NULL,
+    month_id INT NOT NULL,
+
+    total_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+
+    is_paid TINYINT(1) NOT NULL DEFAULT 0, -- 0 = chưa đóng, 1 = đã đóng
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_tm_student
+        FOREIGN KEY (student_id) REFERENCES students(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_tm_assign_class
+        FOREIGN KEY (assign_class_id) REFERENCES assign_class_students(assign_class_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_tm_month
+        FOREIGN KEY (month_id) REFERENCES months(id)
+        ON DELETE CASCADE
+);
+
+
+
+INSERT INTO months (id, name) VALUES
+(1, 'Tháng 1'),
+(2, 'Tháng 2'),
+(3, 'Tháng 3'),
+(4, 'Tháng 4'),
+(5, 'Tháng 5'),
+(6, 'Tháng 6'),
+(7, 'Tháng 7'),
+(8, 'Tháng 8'),
+(9, 'Tháng 9'),
+(10, 'Tháng 10'),
+(11, 'Tháng 11'),
+(12, 'Tháng 12');
+
+
+
+SELECT 
+    tm.id,
+    tm.student_id,
+    s.fullname AS name,
+    ac.class_id,
+    c.name AS class_name,
+    c.grade,
+    c.year AS class_year,
+
+    tm.month_id,
+    m.name AS month_name,
+
+    tm.amount,
+    tm.paid_amount,
+    tm.status
+FROM tuition_monthly tm
+JOIN students s ON tm.student_id = s.id
+LEFT JOIN assign_classes ac 
+       ON ac.student_id = tm.student_id
+      AND ac.year = tm.year
+LEFT JOIN classes c ON c.id = ac.class_id
+LEFT JOIN months m ON m.id = tm.month_id
+WHERE tm.year = @year;
+
+

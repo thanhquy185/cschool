@@ -94,6 +94,17 @@
                                 </StackPanel>
                             </Border>
                         </Button>
+                            <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding ClassButtonActive}"
+                            Command="{Binding GoToClassViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding ClassButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding ClassButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding UserButtonActive}"

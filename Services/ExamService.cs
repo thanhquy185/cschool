@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using cschool.Models;
 
 namespace cschool.Services;
 
@@ -49,7 +50,7 @@ public class ExamService
                 ExamDate = row["start_time"].ToString()!,
                 StartTime = row["start_time"].ToString()!,
                 EndTime = row["end_time"].ToString()!,
-                TermName = row["term_name"].ToString()!,
+                Name = row["term_name"].ToString()!,
                 TermYear = row["term_year"].ToString()!,
                 SubjectId = (int)row["subject_id"],
                 TermId = (int)row["term_id"],
@@ -89,7 +90,7 @@ public class ExamService
             Id = (int)row["id"],
             Subject = row["subject"].ToString()!,
             ExamDate = row["start_time"].ToString()!,
-            TermName = row["term_name"].ToString()!,
+            Name = row["term_name"].ToString()!,
             TermYear = row["term_year"].ToString()!,
             StartTime = row["start_time"].ToString()!,
             EndTime = row["end_time"].ToString()!,
@@ -149,7 +150,7 @@ public class ExamService
             {
                 Id = (int)row["id"],
                 RoomName = row["room_name"].ToString()!,
-                TeacherName = row["fullname"].ToString()!,
+                Name = row["fullname"].ToString()!,
                 RoomQuantity = row["candidate_count"].ToString()!,
             });
         }
@@ -251,7 +252,7 @@ public class ExamService
             list.Add(new TeacherModel
             {
                 Id = (int)row["id"],
-                TeacherName = row["fullname"].ToString()!,
+                Name = row["fullname"].ToString()!,
             });
         }
 
@@ -372,13 +373,13 @@ public class ExamService
             var teacher = new TeacherModel
             {
                 Id = Convert.ToInt32(row["teacher_id"]),
-                TeacherName = row["teacher_name"].ToString()!
+                Name = row["teacher_name"].ToString()!
             };
 
             list.Add(new ExamAssignment
             {
                 RoomName = room.RoomName,
-                TeacherName = teacher.TeacherName,
+                Name = teacher.Name,
                 RoomQuantity = room.Quantity,
                 AssignedStudents = Convert.ToInt32(row["student_count"]),
                 Room = room,
@@ -433,7 +434,7 @@ public class ExamService
             list.Add(new TeacherModel
             {
                 Id = (int)row["id"],
-                TeacherName = row["fullname"].ToString()!,
+                Name = row["fullname"].ToString()!,
             });
         }
 

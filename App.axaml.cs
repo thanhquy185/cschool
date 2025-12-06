@@ -26,12 +26,14 @@ public partial class App : Application
         {
             DisableAvaloniaDataAnnotationValidation();
 
-            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=123456;AllowPublicKeyRetrieval=True;SslMode=None;";
+            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=19102005;AllowPublicKeyRetrieval=True;SslMode=None;";
             AppService.DBService = new DBService(connectionString);
             AppService.UserService = new UserService(AppService.DBService);
             AppService.StudentService = new StudentService(AppService.DBService);
             AppService.ExamService = new ExamService(AppService.DBService);
             AppService.TuitionService = new TuitionService(AppService.DBService);
+            AppService.ClassService= new ClassService(AppService.DBService);
+            AppService.TeacherService = new TeacherService(AppService.DBService);
             
             desktop.MainWindow = new MainWindow
             {

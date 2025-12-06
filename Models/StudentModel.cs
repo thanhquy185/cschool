@@ -19,8 +19,9 @@ public class StudentModel
     public string LearnStatus { get; set; }
     public string ClassName { get; set; }
     public string ClassYear { get; set; }
-    public string TeacherName { get; set; }
+    public string Name { get; set; }
     public sbyte Status { get; set; }
+    public string Role { get; set; }
     // - Giúp lưu trữ đường dẫn ảnh khi thêm và cập nhật
     public string AvatarFile { get; set; }
     // - Giúp chuyển đổi thành ảnh kiểu bitmap khi hiển thị trên giao diện

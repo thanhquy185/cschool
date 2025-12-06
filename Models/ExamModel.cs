@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using cschool.Models;
+
 
 public class ExamModel
 {
     public int Id { get; set; }
     public string Room { get; set; }
     public string Subject { get; set; }
-    public string TeacherName { get; set; }
+    public string Name { get; set; }
     public string ExamDate { get; set; }
     public string TermName { get; set; }
     public string TermYear { get; set; }
@@ -58,7 +60,7 @@ public class RoomExamModel
 {
     public int Id { get; set; }
     public string RoomName { get; set; }
-    public string TeacherName { get; set; }
+    public string Name { get; set; }
     public string RoomQuantity { get; set; }
 }
 
@@ -75,22 +77,18 @@ public class RoomModel
     public int Quantity { get; set; }
 }
 
-public class TeacherModel
-{
-    public int Id { get; set; }
-    public string TeacherName { get; set; }
-}
 
-public class TermModel
-{
-    public int Id { get; set; }
-    public string TermName { get; set; }
-}
+
+// public class TermModel
+// {
+//     public int Id { get; set; }
+//     public string TermName { get; set; }
+// }
 
 public class ExamAssignment : INotifyPropertyChanged
 {
     public string RoomName { get; set; }
-    public string TeacherName { get; set; }
+    public string Name { get; set; }
     public int RoomQuantity { get; set; }
     private int _assignedStudents;
     public int AssignedStudents
