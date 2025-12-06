@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using System;
 using System.Linq;
 
-namespace cschool.Views.Exam
+namespace Views.Exam
 {
     public partial class TimePicker : UserControl
     {

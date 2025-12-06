@@ -1,8 +1,7 @@
-using System;
 using System.Data;
 using MySql.Data.MySqlClient;
 
-namespace cschool.Services
+namespace Services
 {
     public class DBService
     {

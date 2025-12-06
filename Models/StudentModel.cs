@@ -1,7 +1,5 @@
-using System;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using System.IO;
 
 public class StudentModel
 {
@@ -49,13 +47,13 @@ public class StudentModel
                 }
 
                 // Nếu không có ảnh → dùng ảnh mặc định
-                var defaultUri = new Uri($"avares://cschool/Assets/Images/Others/no-image.png");
+                var defaultUri = new Uri($"avares://Views/Assets/Images/Others/no-image.png");
                 return new Bitmap(AssetLoader.Open(defaultUri));
             }
             catch
             {
                 // Nếu xảy ra lỗi → fallback sang ảnh mặc định
-                var defaultUri = new Uri($"avares://cschool/Assets/Images/Others/no-image.png");
+                var defaultUri = new Uri($"avares://Views/Assets/Images/Others/no-image.png");
                 return new Bitmap(AssetLoader.Open(defaultUri));
             }
         }

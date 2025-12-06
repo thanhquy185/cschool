@@ -1,5 +1,4 @@
-using System;
-using cschool.Services;
+using Services;
 
 public static class AppService
 {

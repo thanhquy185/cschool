@@ -2,10 +2,10 @@ using System;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using cschool.Utils;
-using cschool.ViewModels;
+using Utils;
+using ViewModels;
 
-namespace cschool.Views.Exam
+namespace Views.Exam
 {
     public partial class ExamLockDialog : Window
     {

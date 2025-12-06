@@ -5,17 +5,18 @@ using System.IO;
 using Avalonia.Platform.Storage;
 using Avalonia.Interactivity;
 using System.Reactive.Threading.Tasks;
-using cschool.ViewModels;
-using cschool.Utils;
+using ViewModels;
+using Utils;
 using System.Linq;
+using Avalonia.Input;
 
-namespace cschool.Views.Student
+namespace Views.Student
 {
     public partial class StudentUpdateDialog : Window
     {
         public StudentViewModel studentViewModel { get; set; }
         private string? _selectedAvatarPath;
-        private void CloseButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
             this.Close();
         }
@@ -27,7 +28,7 @@ namespace cschool.Views.Student
             DataContext = vm;
         }
 
-        private async void ChooseImage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void ChooseImage_Click(object? sender, RoutedEventArgs e)
         {
             // Lấy StorageProvider (API mới trong Avalonia 11+)
             var storageProvider = TopLevel.GetTopLevel(this)?.StorageProvider;
@@ -103,15 +104,15 @@ namespace cschool.Views.Student
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(gender))
+            if (gender == "--- Chọn Giới tính ---")
             {
-                await MessageBoxUtil.ShowError("Giới tính không được để trống!", owner: this);
+                await MessageBoxUtil.ShowError("Vui lòng chọn giới tính!", owner: this);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(learnStatus))
+            if (learnStatus == "--- Chọn Tình trạng học ---")
             {
-                await MessageBoxUtil.ShowError("Tình trạng học tập không được để trống!", owner: this);
+                await MessageBoxUtil.ShowError("Vui lòng chọn tình trạng học!", owner: this);
                 return;
             }
 
@@ -190,5 +191,60 @@ namespace cschool.Views.Student
                 this.Close();
             }
         }
+
+        private void FullName_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Ethnicity.Focus();
+                e.Handled = true;
+            }
+        }
+
+        private void Ethnicity_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Religion.Focus();
+                e.Handled = true;
+            }
+        }
+
+        private void Religion_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LearnYear.Focus();
+                e.Handled = true;
+            }
+        }
+
+        private void LearnYear_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Phone.Focus();
+                e.Handled = true;
+            }
+        }
+
+        private void Phone_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Email.Focus();
+                e.Handled = true;
+            }
+        }
+
+        private void Email_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Address.Focus();
+                e.Handled = true;
+            }
+        }
+ 
     }
 }

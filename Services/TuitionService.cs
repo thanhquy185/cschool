@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
 
-namespace cschool.Services;
+namespace Services;
 
 public class TuitionService
 {
@@ -15,7 +13,7 @@ public class TuitionService
 
     public List<StudentModel> GetStudents()
     {
-        var dt = _db.ExecuteQuery("SELECT * FROM cschool.students WHERE status = 1");
+        var dt = _db.ExecuteQuery("SELECT * FROM students WHERE status = 1");
         var list = new List<StudentModel>();
 
         foreach (DataRow row in dt.Rows)
@@ -43,7 +41,7 @@ public class TuitionService
 
     public List<StudentModel> GetAllStudents()
     {
-        var dt = _db.ExecuteQuery("SELECT * FROM cschool.students");
+        var dt = _db.ExecuteQuery("SELECT * FROM students");
         var list = new List<StudentModel>();
 
         foreach (DataRow row in dt.Rows)
@@ -111,7 +109,7 @@ public class TuitionService
     public int GetIdLastStudent()
     {
         // Console.WriteLine(123);
-        var dt = _db.ExecuteQuery("SELECT id FROM cschool.students ORDER BY id DESC LIMIT 1");
+        var dt = _db.ExecuteQuery("SELECT id FROM students ORDER BY id DESC LIMIT 1");
         if (dt.Rows.Count > 0)
             return System.Convert.ToInt32(dt.Rows[0]["id"]);
         return 0;
@@ -126,7 +124,7 @@ public class TuitionService
             formattedBirthDay = $"'{birth:yyyy-MM-dd}'";
         }
         string sql = @$"
-            INSERT INTO cschool.students 
+            INSERT INTO students 
             (fullname, avatar, birthday, gender, ethnicity, religion, address, phone, email, learn_year, learn_status)
             VALUES 
             ('{student.Fullname}', '{student.Avatar}', {formattedBirthDay}, 
@@ -147,7 +145,7 @@ public class TuitionService
             formattedBirthDay = $"'{birth:yyyy-MM-dd}'";
         }
         string sql = @$"
-            UPDATE cschool.students SET 
+            UPDATE students SET 
                 fullname = '{student.Fullname}',
                 avatar = '{student.Avatar}',
                 birthday = {formattedBirthDay},
@@ -169,7 +167,7 @@ public class TuitionService
     public bool LockStudent(StudentModel student)
     {
         string sql = @$"
-            UPDATE cschool.students 
+            UPDATE students 
             SET status = 0
             WHERE id = {student.Id};";
 

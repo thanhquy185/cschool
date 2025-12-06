@@ -1,8 +1,7 @@
 using Avalonia.Controls;
-using System;
-using cschool.ViewModels;
+using ViewModels;
 
-namespace cschool.Views.Student
+namespace Views.Student
 {
     public partial class StudentInfoDialog : Window
     {

@@ -3,10 +3,10 @@ using System.Linq;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using cschool.Utils;
-using cschool.ViewModels;
+using Utils;
+using ViewModels;
 
-namespace cschool.Views.Student
+namespace Views.Student
 {
     public partial class StudentLockDialog : Window
     {

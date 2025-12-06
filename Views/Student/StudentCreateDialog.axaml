@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:cschool.ViewModels;assembly=cschool"
-        x:Class="cschool.Views.Student.StudentCreateDialog"
+        xmlns:vm="clr-namespace:ViewModels;assembly=ViewModels"
+        x:Class="Views.Student.StudentCreateDialog"
         x:DataType="vm:StudentViewModel"
         Title="Thêm học sinh"
         Width="1200"
@@ -65,7 +65,7 @@
                                 Padding="40"
                                 CornerRadius="4"
                                 HorizontalAlignment="Center">
-                            <Image Source="avares://cschool/Assets/Images/Others/no-image.png"
+                            <Image Source="avares://Views/Assets/Images/Others/no-image.png"
                                    Stretch="UniformToFill"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
@@ -132,7 +132,7 @@
 
                         <!-- Tên học sinh -->
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Họ tên học sinh" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="4" Grid.Column="0" x:Name="Fullname" Margin="0,0,0,10"/>
+                        <TextBox Grid.Row="4" Grid.Column="0" x:Name="Fullname" Margin="0,0,0,10" KeyDown="FullName_KeyDown"/>
 
                         <!-- Giới tính -->
                         <TextBlock Grid.Row="3" Grid.Column="1" Text="Giới tính" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
@@ -148,23 +148,23 @@
 
                         <!-- Dân tộc -->
                         <TextBlock Grid.Row="6" Grid.Column="1" Text="Dân tộc" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="7" Grid.Column="1" x:Name="Ethnicity" Margin="20,0,0,10"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" x:Name="Ethnicity" Margin="20,0,0,10" KeyDown="Ethnicity_KeyDown"/>
 
                         <!-- Tôn giáo -->
                         <TextBlock Grid.Row="9" Grid.Column="0" Text="Tôn giáo" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="10" Grid.Column="0" x:Name="Religion" Margin="0,0,0,10"/>
+                        <TextBox Grid.Row="10" Grid.Column="0" x:Name="Religion" Margin="0,0,0,10" KeyDown="Religion_KeyDown"/>
 
                         <!-- Năm học -->
                         <TextBlock Grid.Row="9" Grid.Column="1" Text="Năm học" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="10" Grid.Column="1" x:Name="LearnYear" Margin="20,0,0,10"/>
+                        <TextBox Grid.Row="10" Grid.Column="1" x:Name="LearnYear" Margin="20,0,0,10" KeyDown="LearnYear_KeyDown"/>
 
                         <!-- Số điện thoại -->
                         <TextBlock Grid.Row="12" Grid.Column="0" Text="Số điện thoại" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="13" Grid.Column="0" x:Name="Phone" Margin="0,0,0,10"/>
+                        <TextBox Grid.Row="13" Grid.Column="0" x:Name="Phone" Margin="0,0,0,10" KeyDown="Phone_KeyDown"/>
 
                         <!-- Email -->
                         <TextBlock Grid.Row="12" Grid.Column="1" Text="Email" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="13" Grid.Column="1" x:Name="Email" Margin="20,0,0,10"/>
+                        <TextBox Grid.Row="13" Grid.Column="1" x:Name="Email" Margin="20,0,0,10" KeyDown="Email_KeyDown"/>
 
                         <!-- Địa chỉ -->
                         <TextBlock Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>

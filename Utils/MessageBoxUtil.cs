@@ -1,10 +1,9 @@
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using MessageBox.Avalonia.Enums;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 
-namespace cschool.Utils;
+namespace Utils;
 
 public static class MessageBoxUtil
 {

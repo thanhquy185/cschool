@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using cschool.ViewModels;
-using cschool.Utils;
+using ViewModels;
+using Utils;
 using System;
 using System.Linq;
 using System.Reactive.Threading.Tasks;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Input;
 
-namespace cschool.Views.Exam
+namespace Views.Exam
 {
     public partial class ExamCreateDialog : Window
     {
@@ -410,4 +410,5 @@ namespace cschool.Views.Exam
         }
 
     }
+
 }

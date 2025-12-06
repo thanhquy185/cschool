@@ -2,7 +2,7 @@ using Avalonia.Data.Converters;
 using System;
 using System.Globalization;
 
-namespace cschool.Views.Exam
+namespace Views.Exam
 {
     public class IntToIndexConverter : IValueConverter
     {

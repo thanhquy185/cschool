@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using cschool.Utils;
-using cschool.Views.Exam;
-using cschool.ViewModels;
+using Utils;
+using Views.Exam;
+using ViewModels;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Interactivity;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class ExamView : UserControl
 {

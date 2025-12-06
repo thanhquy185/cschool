@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 
-namespace cschool.Services;
+namespace Services;
 
 public class ExamService
 {

@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
 
-namespace cschool.Services;
+namespace Services;
 
 public class StudentService
 {

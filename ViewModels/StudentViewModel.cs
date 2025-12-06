@@ -1,16 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Reactive;
 using ReactiveUI;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System;
-using cschool.Utils;
+using Utils;
 using ClosedXML.Excel;
 using System.Reactive.Threading.Tasks;
-using System.Threading.Tasks;
 
-namespace cschool.ViewModels
+namespace ViewModels
 {
     public partial class StudentViewModel : ViewModelBase
     {

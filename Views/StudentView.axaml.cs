@@ -1,17 +1,15 @@
 using Avalonia.Controls;
-using cschool.ViewModels;
+using ViewModels;
 using System.Threading.Tasks;
-using System.Linq;
 using System.IO;
-using ClosedXML.Excel;
-using cschool.Utils;
-using cschool.Views.Student;
+using Utils;
+using Views.Student;
 using System.Collections.Generic;
 using System.Reactive.Threading.Tasks;
 using System;
 using Avalonia.Interactivity;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class StudentView : UserControl
 {

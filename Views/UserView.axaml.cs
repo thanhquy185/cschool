@@ -4,10 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using cschool.Utils;
-using cschool.ViewModels;
+using Utils;
+using ViewModels;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class UserView : UserControl
 {

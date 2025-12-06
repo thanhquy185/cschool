@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class TuitionView : UserControl
 {

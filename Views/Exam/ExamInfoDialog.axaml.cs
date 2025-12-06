@@ -2,9 +2,9 @@ using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using cschool.ViewModels;
+using ViewModels;
 
-namespace cschool.Views.Exam
+namespace Views.Exam
 {
     public partial class ExamInfoDialog : Window
     {

@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:cschool.ViewModels;assembly=cschool"
-        x:Class="cschool.Views.Student.StudentLockDialog"
+        xmlns:vm="clr-namespace:ViewModels;assembly=ViewModels"
+        x:Class="Views.Student.StudentLockDialog"
         x:DataType="vm:StudentViewModel"
         Title="Xoá thông tin học sinh"
         Width="400" Height="300"
@@ -54,7 +54,7 @@
                 <!-- Cảnh báo (icon nằm ngoài khung) -->
                 <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <!-- Icon bên trái -->
-                    <Image Source="avares://cschool/Assets/Images/Others/question-icon.png"
+                    <Image Source="avares://Views/Assets/Images/Others/question-icon.png"
                            Width="120"
                            Height="120"
                            Margin="0,0,15,0"

@@ -3,7 +3,7 @@ using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace cschool.ViewModels;
+namespace ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
@@ -21,32 +21,32 @@ public partial class MainWindowViewModel : ViewModelBase
 
     // -- Học sinh
     public Bitmap StudentButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/student-icon.png")));
+        = new Bitmap(AssetLoader.Open(new System.Uri("avares://Views/Assets/Images/Others/student-icon.png")));
     public string StudentButtonLabel { get; } = "Học sinh";
 
     // -- Giáo viên
     public Bitmap TeacherButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/teacher-icon.png")));
+        = new Bitmap(AssetLoader.Open(new System.Uri("avares://Views/Assets/Images/Others/teacher-icon.png")));
     public string TeacherButtonLabel { get; } = "Giáo viên";
 
     // -- Tài khoản
     public Bitmap UserButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/user-icon.png")));
+        = new Bitmap(AssetLoader.Open(new System.Uri("avares://Views/Assets/Images/Others/user-icon.png")));
     public string UserButtonLabel { get; } = "Người dùng";
 
     // -- Lịch thi
     public Bitmap ExamButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/exam-schedule-icon.png")));
+        = new Bitmap(AssetLoader.Open(new System.Uri("avares://Views/Assets/Images/Others/exam-schedule-icon.png")));
     public string ExamButtonLabel { get; } = "Lịch thi";
 
     // -- Học phí
     public Bitmap TuitionButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/tuition-icon.png")));
+        = new Bitmap(AssetLoader.Open(new System.Uri("avares://Views/Assets/Images/Others/tuition-icon.png")));
     public string TuitionButtonLabel { get; } = "Học phí";
 
     // -- Điểm danh
     public Bitmap AttendanceButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new System.Uri("avares://cschool/Assets/Images/Others/attendance-icon.png")));
+        = new Bitmap(AssetLoader.Open(new System.Uri("avares://Views/Assets/Images/Others/attendance-icon.png")));
     public string AttendanceButtonLabel { get; } = "Điểm danh";
 
     // - Các biến models

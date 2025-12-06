@@ -1,12 +1,12 @@
 <Window
-    x:Class="cschool.Views.MainWindow"
+    x:Class="Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="using:cschool.Views"
-    xmlns:vm="using:cschool.ViewModels"
-    Title="cschool"
+    xmlns:view="using:Views"
+    xmlns:vm="using:ViewModels"
+    Title="Views"
     x:DataType="vm:MainWindowViewModel"
     CanResize="False"
     ShowInTaskbar="True"
@@ -40,7 +40,7 @@
                             <Image
                                 Width="50"
                                 Height="50"
-                                Source="avares://cschool/Assets/Images/Others/no-image.png"
+                                Source="avares://Views/Assets/Images/Others/no-image.png"
                                 Stretch="UniformToFill" />
                         </Border>
                         <!--  Name + Role  -->
@@ -154,7 +154,7 @@
                         <Image
                             Width="20"
                             Height="20"
-                            Source="avares://cschool/Assets/Images/Others/logout-icon.png" />
+                            Source="avares://Views/Assets/Images/Others/logout-icon.png" />
                         <TextBlock
                             FontSize="18"
                             FontWeight="Bold"

@@ -1,4 +1,4 @@
-namespace cschool.ViewModels;
+namespace ViewModels;
 
 public partial class TeacherViewModel : ViewModelBase
 {
