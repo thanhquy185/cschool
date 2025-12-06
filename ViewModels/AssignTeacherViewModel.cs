@@ -183,6 +183,11 @@ partial void OnSearchTextChanged(string value)
             await MessageBoxUtil.ShowError("vui lòng nhập dữ liệu số", owner: owner);
             return;
         }
+        if (int.Parse(Start)<=0 || int.Parse(End)<=0)
+        {
+            await MessageBoxUtil.ShowError("Tiết bắt đầu và kết thúc phải là số dương", owner: owner);
+            return;
+        }  
         
         if (int.Parse(Start) >= int.Parse(End))
         {
@@ -262,6 +267,16 @@ public async Task SaveEdit()
             if(Rules.IsNumeric(OralCount) || Rules.IsNumeric(QuizCount))
             {
                 await MessageBoxUtil.ShowError("Số bài kiểm tra phải là số", owner: owner);
+                return;
+            }
+                if (Convert.ToInt32(OralCount) <=0  || Convert.ToInt32(QuizCount)<=0)
+            {
+                await MessageBoxUtil.ShowError("Số bài kiểm tra phải là số dương", owner: owner);
+                return;
+            }
+              if (Convert.ToInt32(Start) <=0  || Convert.ToInt32(End)<=0)
+            {
+                await MessageBoxUtil.ShowError("Tiết bắt đầu và tiết kết thúc phải là số dương", owner: owner);
                 return;
             }
 

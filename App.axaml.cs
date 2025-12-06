@@ -24,7 +24,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
-            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=123456;AllowPublicKeyRetrieval=True;SslMode=None";
+            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=;AllowPublicKeyRetrieval=True;SslMode=None";
             AppService.DBService = new DBService(connectionString);
             AppService.UserService = new UserService(AppService.DBService);
             AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
