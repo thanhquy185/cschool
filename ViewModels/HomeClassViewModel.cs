@@ -22,7 +22,7 @@ namespace cschool.ViewModels;
 public partial class HomeClassViewModel : ViewModelBase
 {
     private readonly HomeClassService _service;
-    private const int CURRENT_TEACHER_ID = 3; // ID giáo viên cố định
+    private const int CURRENT_TEACHER_ID = 2; // ID giáo viên cố định
 
     [ObservableProperty]
     private string _nameTeacher = "";
@@ -255,6 +255,7 @@ public partial class HomeClassViewModel : ViewModelBase
         var diem15p = _service.GetDetailScores2(studentId);
         var diemGK = _service.GetDetailScores3(studentId);
         var diemCK = _service.GetDetailScores4(studentId);
+        var diemTB = _service.GetDetailScoresTB(studentId);
 
         if (diemMieng == null || diem15p == null || diemGK == null || diemCK == null)
         {
@@ -267,6 +268,7 @@ public partial class HomeClassViewModel : ViewModelBase
                                  .Union(diem15p.Select(d => d.NameSubject))
                                  .Union(diemGK.Select(d => d.NameSubject))
                                  .Union(diemCK.Select(d => d.NameSubject))
+                                 .Union(diemTB.Select(d => d.NameSubject))
                                  .Distinct();
 
         foreach (var subject in allSubjects)
@@ -277,14 +279,16 @@ public partial class HomeClassViewModel : ViewModelBase
                 DiemMieng = diemMieng.FirstOrDefault(d => d.NameSubject == subject)?.DiemMieng ?? new List<float>(),
                 Diem15p = diem15p.FirstOrDefault(d => d.NameSubject == subject)?.Diem15p ?? new List<float>(),
                 DiemGK = diemGK.FirstOrDefault(d => d.NameSubject == subject)?.DiemGK ?? 0,
-                DiemCK = diemCK.FirstOrDefault(d => d.NameSubject == subject)?.DiemCK ?? 0
+                DiemCK = diemCK.FirstOrDefault(d => d.NameSubject == subject)?.DiemCK ?? 0,
+                DiemTrungBinh = diemTB.FirstOrDefault(d => d.NameSubject == subject)?.DiemTrungBinh ?? 0
+                
             };
-
-            detailScore.DiemTrungBinh = CalculateAverageScore(
-                detailScore.DiemMieng, 
-                detailScore.Diem15p, 
-                detailScore.DiemGK, 
-                detailScore.DiemCK);
+            // detailScore.DiemTrungBinh = 
+            // detailScore.DiemTrungBinh = CalculateAverageScore(
+            //     detailScore.DiemMieng, 
+            //     detailScore.Diem15p, 
+            //     detailScore.DiemGK, 
+            //     detailScore.DiemCK);
 
             StudentDetailScores.Add(detailScore);
         }
@@ -292,15 +296,30 @@ public partial class HomeClassViewModel : ViewModelBase
         Console.WriteLine($"Đã load {StudentDetailScores.Count} môn học có điểm");
     }
 
-    private float CalculateAverageScore(List<float> diemMieng, List<float> diem15p, float diemGK, float diemCK)
-    {
-        float tongMieng = diemMieng.Count > 0 ? diemMieng.Sum() : 0;
-        float tong15p = diem15p.Count > 0 ? diem15p.Sum() : 0;
-        int soBaiMieng = diemMieng.Count;
-        int soBai15P = diem15p.Count; 
+    // private float CalculateAverageScore(List<float> diemMieng, List<float> diem15p, float diemGK, float diemCK)
+    // {
+    //     float avgMieng = diemMieng.Count > 0 ? diemMieng.Average() : 0;
+    //     float avg15p = diem15p.Count > 0 ? diem15p.Average() : 0;
+    //     if(diemGK ==0 && diemCK==0)
+    //     {
+    //         return (avgMieng * 1 + avg15p * 1) / 2;
+    //     }
+    //     else if(diemCK==0)
+    //     {
+    //         return (avgMieng * 1 + avg15p * 1 + diemGK * 2) / 4;
+    //     }
+    //     else if(diemGK==0)
+    //     {
+    //         return (avgMieng * 1 + avg15p * 1 + diemCK * 3) / 5;
+    //     }else if(avgMieng==0 && avg15p==0)
+    //     {
+    //         return (diemGK * 2 + diemCK * 3) / 5;
+    //     }
 
-        return (tongMieng * 1 + tong15p * 1 + diemGK * 2 + diemCK * 3) / (5 + soBai15P + soBaiMieng);
-    }
+
+        
+    //     return (avgMieng * 1 + avg15p * 1 + diemGK * 2 + diemCK * 3) / 7;
+    // }
     #endregion
 
     #region Xuất Excel

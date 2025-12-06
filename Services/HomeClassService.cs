@@ -334,6 +334,38 @@ public List<DetailScore> GetDetailScores2(int id)
        
 
     }
+public List<DetailScore> GetDetailScoresTB(int id)
+    {
+         try
+        {
+            List<DetailScore> ds = new List<DetailScore>();
+            string sql = @"SELECT s.name as nameSubject, sd.score 
+                            FROM subject_term_avg sd
+                            JOIN subjects s ON s.id = sd.subject_id
+                            WHERE sd.student_id = @studentId ";
+            var connection = _db.GetConnection();
+            var command = new MySqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@studentId", id);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                ds.Add(new DetailScore
+                {
+                    NameSubject = reader["nameSubject"].ToString()!,
+                    DiemTrungBinh = Convert.ToSingle(reader["score"])
+                });
+            }
+
+            return ds;
+        } catch (Exception e)
+        {
+            Console.WriteLine("Lỗi không thể lấy chi tiết điểm trung bình" + e);
+            return new List<DetailScore>();
+        }
+       
+
+    }
+
   // Thêm phương thức Search mới vào HomeClassService
 public List<HomeClass> Search(int teacherId, int termId, string name)
 {
@@ -440,13 +472,14 @@ public List<HomeClass> Search(int teacherId, int termId, string name)
             {
                 academic = "Giỏi";
             }
-            else if ((ConductLevel == "Giỏi" || ConductLevel == "Khá") &&
-                 ((gpaTotal < 8 && gpaTotal >= 6.5) || (gpaTotal < 6.5 && gpaTotal >= 5)) || (ConductLevel == "Khá" && gpaTotal >= 8 ) && (ConductLevel=="Trung bình" && gpaTotal >=6.5) )
+            else if (((ConductLevel == "Giỏi" || ConductLevel == "Khá") && gpaTotal >= 6.5 && gpaTotal < 8) || 
+                     (ConductLevel == "Trung bình" && gpaTotal >=8) ||(ConductLevel == "Khá" && gpaTotal >=8) || (ConductLevel == "Giỏi" && gpaTotal>5 && gpaTotal< 6.5) ) 
+                 
             {
                 academic = "Khá";
             }else if ((ConductLevel == "Trung bình" && gpaTotal >= 5 && gpaTotal<6.5) ||
-                     (ConductLevel == "Khá" && gpaTotal < 5) ||
-                     (ConductLevel == "Giỏi" && gpaTotal < 5))
+                     (ConductLevel == "Khá" && gpaTotal >5 && gpaTotal<6.5) 
+                     )
             {
                 academic = "Trung bình";
             }
