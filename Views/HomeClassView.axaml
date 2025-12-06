@@ -86,14 +86,14 @@
 </Border>
 
        <!-- Hiện Thị thông tin lớp - ĐÃ CHỈNH SỬA VỊ TRÍ VÀ MARGIN -->
-      <Border Grid.Row = "2" Classes="DashboardCard" Background="#5aadf1ff" Margin="6,15,6,15">
+      <Border Grid.Row = "2" Classes="DashboardCard" Background="#317cdfff" Margin="6,15,6,15">
             <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
                 <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
                     <Image Source="{DynamicResource TeacherIcon}" Width="30" Height="30" Stretch="Uniform"/>
                 </Border>
                <StackPanel>
                     <TextBlock Text="Giáo viên chủ nhiệm" FontWeight="Bold" Foreground="#444" FontSize="12"/>
-                    <TextBlock Text="{Binding NameTeacher}" FontSize="14" Foreground="#111" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding NameTeacher}" FontSize="14" Foreground="#444" FontWeight="SemiBold"/>
                 </StackPanel>
 
                 <StackPanel>

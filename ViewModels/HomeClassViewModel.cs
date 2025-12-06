@@ -22,7 +22,7 @@ namespace cschool.ViewModels;
 public partial class HomeClassViewModel : ViewModelBase
 {
     private readonly HomeClassService _service;
-    private const int CURRENT_TEACHER_ID = 3; // ID giáo viên cố định
+    private const int CURRENT_TEACHER_ID = 2; // ID giáo viên cố định
 
     [ObservableProperty]
     private string _nameTeacher = "";

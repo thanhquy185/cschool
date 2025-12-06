@@ -76,7 +76,7 @@
               <StackPanel>
                   <Image Source="{DynamicResource LockIcon}" />
                   <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                            Text="Xóa" />
+                            Text="Khóa" />
               </StackPanel>
           </Border>
         </Button>
