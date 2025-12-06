@@ -1,10 +1,7 @@
 using cschool.Models;
-using cschool.Utils;
-using DocumentFormat.OpenXml.EMMA;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using OfficeOpenXml;
 using System.IO;
@@ -335,7 +332,31 @@ public class SubjectClassService
         }
     }
 
-    public bool ImportStudentScoresFromExcel(SubjectClassModel subjectClass, string excelFilePath)
+    public bool UpdateScoreColumns(SubjectClassModel subjectClass)
+    {
+        try
+        {
+            var conn = _db.GetConnection();
+            string updateQuery = @"UPDATE assign_class_teachers 
+                                   SET oral_count=@OralCount, quiz_count=@QuizCount
+                                   WHERE assign_class_id=@AssignClassId 
+                                   AND subject_id=@SubjectId;";
+            var cmd = new MySqlCommand(updateQuery, conn);
+            cmd.Parameters.AddWithValue("@OralCount", subjectClass.OralCount);
+            cmd.Parameters.AddWithValue("@QuizCount", subjectClass.QuizCount);
+            cmd.Parameters.AddWithValue("@AssignClassId", subjectClass.Assign_class_id);
+            cmd.Parameters.AddWithValue("@SubjectId", subjectClass.SubjectId);
+
+            int rowsAffected = cmd.ExecuteNonQuery();
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error updating score columns: " + ex.Message);
+        }
+    }
+
+    public (bool success, string message) ImportStudentScoresFromExcel(SubjectClassModel subjectClass, string excelFilePath)
     {
         try
         {
@@ -343,6 +364,77 @@ public class SubjectClassService
             int subjectId = subjectClass.SubjectId;
             int assignClassId = subjectClass.Assign_class_id;
 
+        // 1️⃣ Lấy danh sách studentId hợp lệ
+        var validStudentIds = new HashSet<int>();
+        string studentQuery = @"SELECT student_id 
+                                FROM assign_class_students 
+                                WHERE assign_class_id = @AssignClassId";
+
+        using (var cmd = new MySqlCommand(studentQuery, conn))
+        {
+            cmd.Parameters.AddWithValue("@AssignClassId", assignClassId);
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    validStudentIds.Add(reader.GetInt32("student_id"));
+                }
+            }
+        }
+
+        // 2️⃣ Đọc Excel và validate trước
+        ExcelPackage.License.SetNonCommercialOrganization("cschool");
+
+        using (var package = new ExcelPackage(new FileInfo(excelFilePath)))
+        {
+            var ws = package.Workbook.Worksheets[0];
+            int rowCount = ws.Dimension.Rows;
+
+            int oralStart = 3;
+            int quizStart = oralStart + subjectClass.OralCount;
+            int midCol = quizStart + subjectClass.QuizCount;
+            int finalCol = midCol + 1;
+
+            for (int row = 2; row <= rowCount; row++)
+            {
+                int studentId = Convert.ToInt32(ws.Cells[row, 1].Value);
+
+                if (!validStudentIds.Contains(studentId))
+                {
+                    return (false, "StudentId không hợp lệ");
+                }
+
+                for (int i = 0; i < subjectClass.OralCount; i++)
+                {
+                    var v = ws.Cells[row, oralStart + i].Value;
+                    if (v != null && !double.TryParse(v.ToString(), out _))
+                    {
+                        return (false, "Điểm nhập không hợp lệ");
+                    }
+                }
+
+                for (int i = 0; i < subjectClass.QuizCount; i++)
+                {
+                    var v = ws.Cells[row, quizStart + i].Value;
+                    if (v != null && !double.TryParse(v.ToString(), out _))
+                    {
+                        return (false, "Điểm nhập không hợp lệ");
+                    }
+                }
+
+                var mid = ws.Cells[row, midCol].Value;
+                if (mid != null && !double.TryParse(mid.ToString(), out _))
+                {
+                    return (false, "Điểm nhập không hợp lệ");
+                }
+
+                var final = ws.Cells[row, finalCol].Value;
+                if (final != null && !double.TryParse(final.ToString(), out _))
+                {
+                    return (false, "Điểm nhập không hợp lệ");
+                }
+            }
+        }
             string deleteQuery = @"DELETE FROM score_details 
                                 WHERE subject_id=@SubjectId 
                                 AND assign_class_id=@AssignClassId;";
@@ -442,7 +534,7 @@ public class SubjectClassService
                 }
             }
 
-            return true;
+            return (true, "");
         }
         catch (Exception ex)
         {

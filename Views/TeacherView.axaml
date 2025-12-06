@@ -125,7 +125,7 @@
             Binding="{Binding Id}"
             Header="ID" />
           <DataGridTextColumn
-            Width="*"
+            Width="1.5*"
             Binding="{Binding Name}"
             Header="Name" />
           <DataGridTextColumn
@@ -136,10 +136,10 @@
             Width="*"
             Binding="{Binding Gender}"
             Header="Gender" />
-          <DataGridTextColumn
+          <!-- <DataGridTextColumn
             Width="*"
             Binding="{Binding Address}"
-            Header="Address" />
+            Header="Address" /> -->
           <DataGridTextColumn
             Width="*"
             Binding="{Binding Phone}"

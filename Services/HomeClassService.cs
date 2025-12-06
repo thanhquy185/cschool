@@ -466,7 +466,7 @@ public List<HomeClass> Search(int teacherId, int termId, string name)
     }
     catch (Exception e)
     {
-        Console.WriteLine("Không thể cập nhật hành kiểm: " + e.Message);
+        Console.WriteLine("Không thể cập nhật hạnh kiểm: " + e.Message);
         return false;
     }
 }

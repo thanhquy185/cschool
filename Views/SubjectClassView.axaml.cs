@@ -25,9 +25,11 @@ public partial class SubjectClassView : UserControl
         var createButton = this.FindControl<Button>("CreateButton");
         var importExcelButton = this.FindControl<Button>("ImportExcelButton");
         var exportExcelButton = this.FindControl<Button>("ExportExcelButton");
+        var updateScoreColumnButton = this.FindControl<Button>("UpdateButton");
 
         infoButton.Click += async (_, _) => await ShowSubjectClassDialog(DialogModeEnum.Info);
         createButton.Click += async (_, _) => await ShowSubjectClassDialog(DialogModeEnum.Create); 
+        updateScoreColumnButton.Click += async (_, _) => await ShowSubjectClassDialog(DialogModeEnum.Update);
         importExcelButton.Click += (_, _) =>
         {
             var vm = DataContext as SubjectClassViewModel;
@@ -75,6 +77,13 @@ public partial class SubjectClassView : UserControl
                     vm.LoadStudentScores(selectedSubjectClass);
                     dialog = new SubjectClassCreateDialog(vm);
                 }   
+                break;
+            case DialogModeEnum.Update:
+                if (vm != null && selectedSubjectClass != null)
+                {
+                    vm.LoadScoreColumns();
+                    dialog = new SubjectClassUpdateScoreColumn(vm);
+                }
                 break;
         }
         if (dialog == null)

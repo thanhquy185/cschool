@@ -23,7 +23,9 @@ public class TeacherModel
     public int Status { get; set; } = 1;
     public string TermName { get; set; } = "";
     public string StatusText => Status == 1 ? "Hoạt động" : "Ẩn";
-  
+    public string Username { get; set; } = "";
+    public string Password { get; set; } = "";
+    public int UserId { get; set; } = 0;
     public Bitmap AvatarImage
     {
         get

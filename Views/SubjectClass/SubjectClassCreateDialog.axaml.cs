@@ -6,6 +6,7 @@ using cschool.ViewModels;
 using cschool.Utils;
 using Avalonia.Data; 
 using System.Reactive.Threading.Tasks;
+using Avalonia.Input;
 
 
 namespace cschool.Views.SubjectClass;
@@ -25,6 +26,12 @@ public partial class SubjectClassCreateDialog : Window
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+        var dg = this.FindControl<DataGrid>("ScoreCreateDataGrid");
+        if (dg != null)
+        {
+            dg.PreparingCellForEdit += OnPreparingCellForEdit;
+            dg.CellEditEnding += OnCellEditEnding;
+        }
     }
 
     private void UpdateScoreColumns()
@@ -81,10 +88,46 @@ public partial class SubjectClassCreateDialog : Window
         });
     }
 
+    
+    private void OnPreparingCellForEdit(object? sender, DataGridPreparingCellForEditEventArgs e)
+    {
+        if (e.EditingElement is TextBox textBox && e.Column.Header.ToString().Contains("Điểm"))
+        {
+            textBox.AddHandler(TextInputEvent, OnTextInput, RoutingStrategies.Tunnel);
+        }
+    }
+
+    private void OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
+    {
+        if (e.EditingElement is TextBox textBox)
+        {
+            textBox.RemoveHandler(TextInputEvent, OnTextInput);
+        }
+    }
+
+    private void OnTextInput(object? sender, TextInputEventArgs e)
+    {
+        if (sender is TextBox textBox)
+        {
+            var newText = textBox.Text ?? "";
+            var caret = textBox.CaretIndex;
+            newText = newText.Insert(caret, e.Text ?? "");
+
+            if (!string.IsNullOrEmpty(newText) && !double.TryParse(newText, out _))
+            {
+                e.Handled = true;
+            }
+        }
+    }
+
     private async void OnSaveButtonClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is SubjectClassViewModel vm)
         {
+            if (!await ValidateScores())
+            {
+                return;
+            }
             var success = await vm.SaveStudentScoresCommand.Execute().ToTask();
             if (success)
             {
@@ -97,6 +140,68 @@ public partial class SubjectClassCreateDialog : Window
             }
         }
     }
+
+     private async System.Threading.Tasks.Task<bool> ValidateScores()
+    {
+        if (DataContext is not SubjectClassViewModel vm || vm.StudentScores == null)
+            return true;
+
+        foreach (var student in vm.StudentScores)
+        {
+            // Kiểm tra OralScores
+            if (student.OralScores != null)
+            {
+                for (int i = 0; i < student.OralScores.Count; i++)
+                {
+                    if (!IsValidScore(student.OralScores[i]))
+                    {
+                        await MessageBoxUtil.ShowError($"Điểm miệng {i + 1} của {student.FullName} không hợp lệ!\nĐiểm phải là số từ 0 đến 10.");
+                        return false;
+                    }
+                }
+            }
+
+            // Kiểm tra Quizzes
+            if (student.Quizzes != null)
+            {
+                for (int i = 0; i < student.Quizzes.Count; i++)
+                {
+                    if (!IsValidScore(student.Quizzes[i]))
+                    {
+                        await MessageBoxUtil.ShowError($"Điểm 15 phút {i + 1} của {student.FullName} không hợp lệ!\nĐiểm phải là số từ 0 đến 10.");
+                        return false;
+                    }
+                }
+            }
+
+            // Kiểm tra MidtermScore
+            if (!IsValidScore(student.MidtermScore))
+            {
+                await MessageBoxUtil.ShowError($"Điểm giữa kỳ của {student.FullName} không hợp lệ!\nĐiểm phải là số từ 0 đến 10.");
+                return false;
+            }
+
+            // Kiểm tra FinalScore
+            if (!IsValidScore(student.FinalScore))
+            {
+                await MessageBoxUtil.ShowError($"Điểm cuối kỳ của {student.FullName} không hợp lệ!\nĐiểm phải là số từ 0 đến 10.");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool IsValidScore(double? score)
+    {
+        // Null là hợp lệ (chưa nhập điểm)
+        if (score == null)
+            return true;
+
+        // Kiểm tra phạm vi 0-10
+        return score >= 0 && score <= 10;
+    }
+
 
     private void OnCloseButtonClick(object? sender, RoutedEventArgs e)
     {

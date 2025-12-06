@@ -32,21 +32,31 @@ public partial class SubjectClassViewModel : ViewModelBase
             }
         }
     }
-    
     private SubjectClassModel? _selectedSubjectClass;
     public SubjectClassModel? SelectedSubjectClass 
     { 
         get => _selectedSubjectClass;
         set => SetProperty(ref _selectedSubjectClass, value);
     }
+    private string _quizCountText = "";
+    public string QuizCountText
+    {
+        get => _quizCountText;
+        set => SetProperty(ref _quizCountText, value);
+    }
 
-
-
+    private string _oralCountText = "";
+    public string OralCountText
+    {
+        get => _oralCountText;
+        set => SetProperty(ref _oralCountText, value);
+    }
 
     public ReactiveCommand<int, ObservableCollection<SubjectClassModel>> GetSubjectClassesByTeacherIdCommand { get; }
     public ReactiveCommand<Unit, bool> SaveStudentScoresCommand { get; }
     public ReactiveCommand<Unit, Unit> ImportFromExcelCommand { get; }
     public ReactiveCommand<Unit, Unit> ExportToExcelCommand { get ; }
+    public ReactiveCommand<Unit, bool> UpdateScoreColumnsCommand { get; }
 
     public SubjectClassViewModel()
     {
@@ -97,6 +107,28 @@ public partial class SubjectClassViewModel : ViewModelBase
             await ExportToExcel();
             return Unit.Default;
         }, outputScheduler: RxApp.MainThreadScheduler);     
+
+        UpdateScoreColumnsCommand = ReactiveCommand.CreateFromTask<Unit, bool>(async _ =>
+        {
+            if (SelectedSubjectClass == null)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn lớp môn học để thực hiện thao tác!");
+                return false;
+            }
+
+            bool success = AppService.SubjectClassService.UpdateScoreColumns(SelectedSubjectClass);
+            if (success)
+            {
+                Console.WriteLine("Score columns updated successfully.");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Failed to update score columns.");
+                return false;
+            }
+        });
+        
     }
 
     public void LoadData(int teacherId)
@@ -137,6 +169,14 @@ public partial class SubjectClassViewModel : ViewModelBase
         }
       
     }
+    public void LoadScoreColumns()
+{
+    if (SelectedSubjectClass != null)
+    {
+        QuizCountText = SelectedSubjectClass.QuizCount.ToString();
+        OralCountText = SelectedSubjectClass.OralCount.ToString();
+    }
+}
     public async Task ImportFromExcel()
     {
         if (SelectedSubjectClass == null)
@@ -163,19 +203,19 @@ public partial class SubjectClassViewModel : ViewModelBase
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(fileOptions);
         if (files.Count == 0) return;
 
-        var filePath = files[0].Path.LocalPath; // Get the local file path
+        var filePath = files[0].Path.LocalPath;
 
         try
         {
-            bool success = AppService.SubjectClassService.ImportStudentScoresFromExcel(SelectedSubjectClass, filePath);
-            if (success)
+            var result = AppService.SubjectClassService.ImportStudentScoresFromExcel(SelectedSubjectClass, filePath);
+            if (result.success)
             {
                 await MessageBoxUtil.ShowSuccess("Nhập điểm từ file Excel thành công!");
                 LoadStudentScores(SelectedSubjectClass);
             }
             else
             {
-                await MessageBoxUtil.ShowError("Nhập điểm từ file Excel thất bại!");
+                await MessageBoxUtil.ShowError(result.message);
             }
         }
         catch (Exception ex)
@@ -184,6 +224,7 @@ public partial class SubjectClassViewModel : ViewModelBase
         }
     }
 
+    
     private async Task ExportToExcel()
 {
     if (SelectedSubjectClass == null)

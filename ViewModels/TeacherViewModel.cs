@@ -23,6 +23,7 @@ public partial class TeacherViewModel : ViewModelBase
 {
     public ObservableCollection<TeacherModel> Teachers { get; }
     public ObservableCollection<DepartmentModel> Departments { get; }
+    public ObservableCollection<UserModel> Users { get; }
     public ReactiveCommand<Unit, TeacherModel?> GetTeacherByIdCommand { get; }
     public ReactiveCommand<Unit, ObservableCollection<TeacherModel>> GetTeachersCommand { get; }
     public ReactiveCommand<TeacherModel, bool> CreateTeacherCommand { get; }
@@ -30,6 +31,7 @@ public partial class TeacherViewModel : ViewModelBase
     public ReactiveCommand<int, bool> LockTeacherCommand { get; }
     public ReactiveCommand<Unit, Unit> ImportFromExcelCommand { get; }
     public ReactiveCommand<Unit, Unit> ExportToExcelCommand { get; }
+    
 
     public List<KeyValuePair<int, string>> StatusOptions { get; } = new()
     {
@@ -148,6 +150,7 @@ public partial class TeacherViewModel : ViewModelBase
     {
         Teachers = new ObservableCollection<TeacherModel>();
         Departments = new ObservableCollection<DepartmentModel>();
+        Users = new ObservableCollection<UserModel>();
 
         LoadData();
         // lấy ds giáo viên
@@ -178,6 +181,20 @@ public partial class TeacherViewModel : ViewModelBase
             {
                 string newAvatarFile = await UploadService.SaveImageAsync(teacher.AvatarFile, "teacher", AppService.TeacherService.GetIDLastTeacher() + 1);
                 teacher.Avatar = newAvatarFile;
+                var user = new UserModel{
+                    Username = teacher.Username,
+                    Password = teacher.Password,
+                    Fullname = teacher.Name,
+                    RoleId = 2, // role_id = 2 cho giáo viên
+                    Status = "Hoạt động",
+                    Avatar = newAvatarFile,
+                    Phone = teacher.Phone,
+                    Email = teacher.Email,
+                    Address = teacher.Address
+                };
+                var userResult = AppService.UserService.CreateUser(user);
+                int userId = AppService.UserService.GetIdLastUser();
+                teacher.UserId = userId;
                 var result = AppService.TeacherService.CreateTeacher(teacher);
                 if (result) return true;
                 return false;
@@ -275,6 +292,20 @@ public partial class TeacherViewModel : ViewModelBase
         catch (Exception ex)
         {
             Console.WriteLine($"LoadDepartments Error: {ex.Message}");
+        }
+
+        Users.Clear();
+        try
+        {
+            var users = AppService.UserService.GetUsers();
+            foreach (var user in users)
+            {
+                Users.Add(user);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"LoadUsers Error: {ex.Message}");
         }
     }
     
