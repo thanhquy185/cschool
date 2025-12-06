@@ -482,23 +482,7 @@ public void Search()
 private async Task OpenAddDialog()
 {
     try
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _editingItem = null;
-            SelectedTeacher = null;
-            SelectedSubject = null;
-            SelectedClass = null;
-            SelectedDay = null;
-            Start = "";
-            End = "";
-            // QuizCount = 0;
-            // OralCount = 0;
-        });
-        
-        // ⏳ Đợi data load xong
-        // await Task.Delay(200);
-        
+    {   
         var dialog = new AssignTeacherAddDialog
         {
             DataContext = this
@@ -532,4 +516,14 @@ public void ResetSearch()
         LoadDataCommand.Execute(null);
     }
     
+    public void ClearForm()
+    {
+        _editingItem = null;
+        SelectedTeacher = null;
+        SelectedSubject = null;
+        SelectedClass = null;
+        SelectedDay = null;
+        Start = "";
+        End = "";
+    }
 }

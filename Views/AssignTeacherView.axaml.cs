@@ -25,6 +25,7 @@ public partial class AssignTeacherView : UserControl
     {
         if (DataContext is AssignTeacherViewModel vm)
         {
+            vm.ClearForm();
             var dialog = new AssignTeacherAddDialog
             {
                 DataContext = vm   // ✅ GÁN VM CHO DIALOG
