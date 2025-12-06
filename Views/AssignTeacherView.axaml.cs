@@ -25,6 +25,7 @@ public partial class AssignTeacherView : UserControl
     {
         if (DataContext is AssignTeacherViewModel vm)
         {
+            vm.ClearForm();
             var dialog = new AssignTeacherAddDialog
             {
                 DataContext = vm   // ✅ GÁN VM CHO DIALOG
@@ -49,7 +50,7 @@ public partial class AssignTeacherView : UserControl
             {
 
 
-                DataContext = vm;
+                // DataContext = vm;
                 await vm.OpenDetailDialogCommand.ExecuteAsync(vm.SelectedAssignTeacher);
             }
             else
@@ -71,7 +72,7 @@ public partial class AssignTeacherView : UserControl
             {
 
 
-                DataContext = vm;
+                // DataContext = vm;
                 await vm.OpenEditDialogCommand.ExecuteAsync(vm.SelectedAssignTeacher);
             }
             else
