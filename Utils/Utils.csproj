@@ -8,4 +8,7 @@
   <ItemGroup>
     <PackageReference Include="MsBox.Avalonia" Version="3.0.0-rc2" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj" />
+  </ItemGroup>
 </Project>

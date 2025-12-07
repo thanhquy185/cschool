@@ -1,0 +1,225 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ViewModels"
+        x:Class="Views.Statistical.StatisticalDetailDialog"
+        x:DataType="vm:StatisticalViewModel"
+        Title="Chi tiết học sinh theo danh hiệu"
+        Width="1000"
+        Height="700"
+        WindowStartupLocation="CenterOwner">
+
+    <Border Background="White">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- Header - MÀU XANH LÁ CÂY GIỐNG HomeClassDetailDialog -->
+            <Border Background="#4CAF50" Padding="16,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1"
+                            Text="CHI TIẾT HỌC SINH THEO DANH HIỆU"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    
+                    <Button Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            Command="{Binding CloseDetailDialogCommand}"
+                            Width="30" Height="30"
+                            Background="Transparent"
+                            BorderThickness="0">
+                        
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Nội dung chính - TabControl -->
+            <Border Grid.Row="1" Classes="TableDataWarper">
+                <TabControl TabStripPlacement="Top">
+                    
+                    <!-- Tab 1: Học sinh Giỏi -->
+                    <TabItem Header="Học sinh Giỏi">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Thông tin tổng hợp -->
+                            <Border Grid.Row="0" 
+                                    Background="#E8F5E9" 
+                                    Margin="0,0,0,10" 
+                                    Padding="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="Tổng số học sinh Giỏi:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding ExcellentStudents.Count}" 
+                                             FontWeight="Bold" Foreground="#2E7D32" FontSize="16"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Bảng danh sách -->
+                            <DataGrid Grid.Row="1"
+                                    Classes="TableData"
+                                    ItemsSource="{Binding ExcellentStudents}" 
+                                     AutoGenerateColumns="False"
+                                     
+                                     HorizontalScrollBarVisibility="Auto"
+                                     
+                                     IsReadOnly="True"
+                                     >
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="STT" Width="*" 
+                                                       Binding="{Binding OrderNumber}"/>
+                                    <DataGridTextColumn Header="Mã HS" Width="*" 
+                                                       Binding="{Binding Student_id}"/>
+                                    <DataGridTextColumn Header="Họ tên" Width="*" 
+                                                       Binding="{Binding StudentName}"/>
+                                    <DataGridTextColumn Header="Lớp" Width="*" 
+                                                       Binding="{Binding Class_name}"/>
+                                    <DataGridTextColumn Header="Điểm TB" Width="*" 
+                                                       Binding="{Binding Gpa, StringFormat='{}{0:0.00}'}"/>
+                                    <DataGridTextColumn Header="Hạnh kiểm" Width="*" 
+                                                       Binding="{Binding ConductLevel}"/>
+                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                    
+                    <!-- Tab 2: Học sinh Khá -->
+                    <TabItem Header="Học sinh Khá">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Thông tin tổng hợp -->
+                            <Border Grid.Row="0" 
+                                    Background="#FFF3E0" 
+                                    Margin="0,0,0,10" 
+                                    Padding="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="Tổng số học sinh Khá:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding GoodStudents.Count}" 
+                                             FontWeight="Bold" Foreground="#EF6C00" FontSize="16"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Bảng danh sách -->
+                            <DataGrid Grid.Row="1"
+                                    Classes="TableData"
+                                    ItemsSource="{Binding GoodStudents}" 
+                                    AutoGenerateColumns="False"
+                                    HorizontalScrollBarVisibility="Auto"
+        
+                                    IsReadOnly="True"  
+                                    >
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="STT" Width="*" 
+                                                       Binding="{Binding OrderNumber}"/>
+                                    <DataGridTextColumn Header="Mã HS" Width="*" 
+                                                       Binding="{Binding Student_id}"/>
+                                    <DataGridTextColumn Header="Họ tên" Width="*" 
+                                                       Binding="{Binding StudentName}"/>
+                                    <DataGridTextColumn Header="Lớp" Width="*" 
+                                                       Binding="{Binding Class_name}"/>
+                                    <DataGridTextColumn Header="Điểm TB" Width="*" 
+                                                       Binding="{Binding Gpa, StringFormat='{}{0:0.00}'}"/>
+                                    <DataGridTextColumn Header="Hạnh kiểm" Width="*" 
+                                                       Binding="{Binding ConductLevel}"/>
+                                   
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                    
+                    <!-- Tab 3: Học sinh Trung bình -->
+                    <TabItem Header="Học sinh Trung bình">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Thông tin tổng hợp -->
+                            <Border Grid.Row="0" 
+                                    Background="#F3E5F5" 
+                                    Margin="0,0,0,10" 
+                                    Padding="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="Tổng số học sinh Trung bình:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding AverageStudents.Count}" 
+                                             FontWeight="Bold" Foreground="#7B1FA2" FontSize="16"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Bảng danh sách -->
+                            <DataGrid Grid.Row="1"
+                                    Classes="TableData"
+                                    ItemsSource="{Binding AverageStudents}" 
+                                     AutoGenerateColumns="False"
+                                    ColumnWidth="SizeToCells"
+                                 
+                                     IsReadOnly="True"
+                                    >
+                                <DataGrid.Columns>
+                                     <DataGridTextColumn Header="STT" Width="*" 
+                                                       Binding="{Binding OrderNumber}"/>
+                                    <DataGridTextColumn Header="Mã HS" Width="*" 
+                                                       Binding="{Binding Student_id}"/>
+                                    <DataGridTextColumn Header="Họ tên" Width="*" 
+                                                       Binding="{Binding StudentName}"/>
+                                    <DataGridTextColumn Header="Lớp" Width="*" 
+                                                       Binding="{Binding Class_name}"/>
+                                    <DataGridTextColumn Header="Điểm TB" Width="*" 
+                                                       Binding="{Binding Gpa, StringFormat='{}{0:0.00}'}"/>
+                                    <DataGridTextColumn Header="Hạnh kiểm" Width="*" 
+                                                       Binding="{Binding ConductLevel}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Border>
+
+            <!-- Footer -->
+            <Border Grid.Row="2"
+                    Padding="0,15,0,20"
+                    Background="White">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+                    <!-- Tổng kết -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBlock Text="Tổng học sinh:" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding TotalStudentsInDetail}" 
+                                 FontWeight="Bold" Foreground="#D32F2F"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Rectangle Width="10" Height="10" Fill="#4CAF50" VerticalAlignment="Center"/>
+                        <TextBlock Text="Giỏi:" Margin="5,0,0,0"/>
+                        <TextBlock Text="{Binding ExcellentStudents.Count}" FontWeight="Bold"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Rectangle Width="10" Height="10" Fill="#FF9800" VerticalAlignment="Center"/>
+                        <TextBlock Text="Khá:" Margin="5,0,0,0"/>
+                        <TextBlock Text="{Binding GoodStudents.Count}" FontWeight="Bold"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Rectangle Width="10" Height="10" Fill="#9C27B0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Trung bình:" Margin="5,0,0,0"/>
+                        <TextBlock Text="{Binding AverageStudents.Count}" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

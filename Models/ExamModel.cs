@@ -73,13 +73,13 @@ public class RoomModel
     public int Quantity { get; set; }
 }
 
-public class TeacherModel
+public class TeacherExamModel
 {
     public int Id { get; set; }
     public string TeacherName { get; set; }
 }
 
-public class TermModel
+public class TermExamModel
 {
     public int Id { get; set; }
     public string TermName { get; set; }
@@ -118,7 +118,7 @@ public class ExamAssignment : INotifyPropertyChanged
     }
     public int MaxAssignable => Math.Min(RoomQuantity, RemainingStudents);
     public RoomModel? Room { get; set; }
-    public TeacherModel? Teacher { get; set; }
+    public TeacherExamModel? Teacher { get; set; }
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -13,16 +13,16 @@ public partial class ExamViewModel : ViewModelBase
     public ObservableCollection<ExamModel> ExamsTemp { get; }
     public ExamModel? ExamDetails { get; set; }
     public ObservableCollection<StudentExamModel> StudentDetails { get; set; }
-    public ObservableCollection<TermModel> StudyTerm { get; set; }
+    public ObservableCollection<TermExamModel> StudyTerm { get; set; }
     public ObservableCollection<RoomExamModel> RoomDetails { get; set; }
     public ObservableCollection<SubjectModel> SubjectList { get; set; }
     public ObservableCollection<RoomModel> RoomList { get; set; }
     public ObservableCollection<RoomModel> RoomListUpdate { get; set; }
-    public ObservableCollection<TeacherModel> TeacherList { get; set; }
-    public ObservableCollection<TeacherModel> TeacherListUpdate { get; set; }
+    public ObservableCollection<TeacherExamModel> TeacherList { get; set; }
+    public ObservableCollection<TeacherExamModel> TeacherListUpdate { get; set; }
     public ObservableCollection<ExamAssignment> ExamAssignments { get; } = new();
     public ObservableCollection<RoomModel> SelectedRooms { get; } = new();
-    public ObservableCollection<TeacherModel> SelectedTeachers { get; } = new();
+    public ObservableCollection<TeacherExamModel> SelectedTeachers { get; } = new();
     public ICommand AddCommand { get; }
     public ICommand DeleteCommand { get; }
     public string FilterKeyword { get; set; } = "";
@@ -141,7 +141,7 @@ public partial class ExamViewModel : ViewModelBase
     {
         "10", "11", "12"
     };
-    public TermModel? SelectedTerm { get; set; }
+    public TermExamModel? SelectedTerm { get; set; }
     public SubjectModel? SelectedSubject { get; set; }
 
     // Hàm lọc dữ liệu dựa trên Exams
@@ -245,7 +245,7 @@ public partial class ExamViewModel : ViewModelBase
             SubjectList.Add(subject);
 
         // Lấy danh sách học kỳ
-        StudyTerm = new ObservableCollection<TermModel>();
+        StudyTerm = new ObservableCollection<TermExamModel>();
         var terms = AppService.ExamService.GetTermList();
         foreach (var term in terms)
             StudyTerm.Add(term);
@@ -257,7 +257,7 @@ public partial class ExamViewModel : ViewModelBase
             RoomList.Add(room);
 
         // Lấy danh sách giáo viên
-        TeacherList = new ObservableCollection<TeacherModel>();
+        TeacherList = new ObservableCollection<TeacherExamModel>();
         var teachers = AppService.ExamService.GetTeacherList();
         foreach (var teacher in teachers)
             TeacherList.Add(teacher);
@@ -294,7 +294,7 @@ public partial class ExamViewModel : ViewModelBase
         });
 
         // Lấy danh sách giáo viên của cập nhật
-        TeacherListUpdate = new ObservableCollection<TeacherModel>();
+        TeacherListUpdate = new ObservableCollection<TeacherExamModel>();
         GetTeacherListUpdateCommand = ReactiveCommand.CreateFromTask<int>(async (id) =>
         {
             var teachersUpdate = AppService.ExamService.GetTeacherListUpdate(id);

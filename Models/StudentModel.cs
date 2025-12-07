@@ -1,5 +1,17 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+public class Student
+{
+    public int Id{ get; set; }
+    public string Fullname { get; set; }
+    public int Age { get; set; }
+    public Student(int id,string Fullname)
+    {
+        this.Id = id;
+        this.Fullname = Fullname;
+        
+    }
+}
 
 public class StudentModel
 {

@@ -63,7 +63,7 @@ public static class MessageBoxUtil
             await box.ShowAsync();
     }
 
-    public static async Task<bool> ShowConfirm(string message, string title = "Xác nhận")
+    public static async Task<bool> ShowConfirm(string message, string title = "Xác nhận", Window? owner = null)
     {
         var box = MessageBoxManager.GetMessageBoxStandard(
             title,
@@ -71,7 +71,10 @@ public static class MessageBoxUtil
             ButtonEnum.YesNo,
             Icon.Question);
 
-        var result = await box.ShowAsync();
+        var result = owner != null 
+            ? await box.ShowWindowDialogAsync(owner)
+            : await box.ShowAsync();
+            
         return result == ButtonResult.Yes;
     }
 }

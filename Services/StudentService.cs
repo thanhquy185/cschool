@@ -102,7 +102,7 @@ public class StudentService
             LearnStatus = row["learn_status"].ToString()!,
             Status = (sbyte)row["status"],
             ClassName = row["class_name"].ToString()!,
-            ClassYear = row["year"].ToString()!,
+            ClassYear = row["learnyear"].ToString()!,
             TeacherName = row["teacher_name"].ToString()!
         };
     }

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Views"
     xmlns:services="clr-namespace:Utils;assembly=Utils"
+    xmlns:conv="clr-namespace:Utils;assembly=Utils"
     RequestedThemeVariant="Default">
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
@@ -25,6 +26,7 @@
         <StyleInclude Source="avares://Views/Assets/Styles/MainLayoutStyle.axaml" />
         <StyleInclude Source="avares://Views/Assets/Styles/MessageBoxStyle.axaml" />
         <StyleInclude Source="avares://Views/Assets/Styles/TableDataStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/Dashboard.axaml" />
     </Application.Styles>
 
     <Application.Resources>
@@ -60,9 +62,15 @@
         <Bitmap x:Key="LockIcon">avares://Views/Assets/Images/Others/lock-icon.png</Bitmap>
         <Bitmap x:Key="BinIcon">avares://Views/Assets/Images/Others/bin-icon.png</Bitmap>
         <Bitmap x:Key="ChangePasswordIcon">avares://Views/Assets/Images/Others/change-password-icon.png</Bitmap>
-        <!--    -->
         <Bitmap x:Key="SearchIcon">avares://Views/Assets/Images/Others/search-icon.png</Bitmap>
         <Bitmap x:Key="ResetIcon">avares://Views/Assets/Images/Others/reset-icon.png</Bitmap>
+
+        <Bitmap x:Key="ExcelIcon">avares://Views/Assets/Images/Others/excel.png</Bitmap>
+        <Bitmap x:Key="DeleteIcon">avares://Views/Assets/Images/Others/delete.png</Bitmap>
+        <Bitmap x:Key="StudentIcon">avares://Views/Assets/Images/Others/student-icon.png</Bitmap>
+        <Bitmap x:Key="TeacherIcon">avares://Views/Assets/Images/Others/teacher-icon.png</Bitmap>
+        <Bitmap x:Key="SubjectIcon">avares://Views/Assets/Images/Others/books.png</Bitmap>
+        <Bitmap x:Key="ClassIcon">avares://Views/Assets/Images/Others/business-persentation.png</Bitmap>
 
         <!--  Values  -->
         <!-- <sys:Integer x:Key="DialogLabelFontSize">15</sys:Integer> -->
@@ -71,5 +79,6 @@
 
         <!--  Converters  -->
         <services:StatusToBrushConverter x:Key="StatusToBrushConverter" />
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter"/>
     </Application.Resources>
 </Application>

@@ -45,7 +45,7 @@ namespace Views.Exam
 
         private void OnTermChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (Term?.SelectedItem is TermModel selected)
+            if (Term?.SelectedItem is TermExamModel selected)
             {
                 examViewModel.SelectedUpdateTerm = selected.Id;
                 RemainingStudents.Text = examViewModel.RemainingStudentsText;
@@ -62,7 +62,7 @@ namespace Views.Exam
         {
             // Lấy đối tượng được chọn
             var room = Room.SelectedItem as RoomModel;
-            var teacher = Teacher.SelectedItem as TeacherModel;
+            var teacher = Teacher.SelectedItem as TeacherExamModel;
 
             if (room == null || teacher == null)
             {
@@ -208,7 +208,7 @@ namespace Views.Exam
             var examDate = ExamDate.SelectedDate?.DateTime ?? DateTime.Now;
             var startTime = StartTime.SelectedTime;
             var endTime = EndTime.SelectedTime;
-            var term = Term.SelectedItem as TermModel;
+            var term = Term.SelectedItem as TermExamModel;
             var assignments = examViewModel.ExamAssignments;
             var assignstudents = examViewModel.ExamAssignments.Select(a => a.AssignedStudents).ToList();
             // Gộp ngày + giờ thành datetime string

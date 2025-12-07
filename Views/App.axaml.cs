@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using ViewModels;
 using System.Linq;
 using Services;
+using System;
 
 namespace Views;
 
@@ -30,6 +31,11 @@ public partial class App : Application
             AppService.StudentService = new StudentService(AppService.DBService);
             AppService.ExamService = new ExamService(AppService.DBService);
             AppService.TuitionService = new TuitionService(AppService.DBService);
+            AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
+            AppService.TeacherService = new TeacherService(AppService.DBService);
+            AppService.SubjectClassService = new SubjectClassService(AppService.DBService);
+            AppService.statisticalService = new StatisticalService(AppService.DBService);
+            AppService.homeClassService = new HomeClassService(AppService.DBService);
             
             desktop.MainWindow = new MainWindow
             {

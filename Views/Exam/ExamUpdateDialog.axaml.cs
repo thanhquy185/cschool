@@ -37,7 +37,7 @@ namespace Views.Exam
                 return;
 
             // Kiểm tra term
-            var term = Term.SelectedItem as TermModel;
+            var term = Term.SelectedItem as TermExamModel;
             if (term == null)
                 return;
 
@@ -75,7 +75,7 @@ namespace Views.Exam
 
         private void OnTermChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (Term?.SelectedItem is TermModel)
+            if (Term?.SelectedItem is TermExamModel)
             {
                 RecalculateRemainingStudentsUpdate();
                 RemainingStudents.Text = examViewModel.RemainingStudentsText;
@@ -91,7 +91,7 @@ namespace Views.Exam
         private async void AddAssignment_Click(object? sender, RoutedEventArgs e)
         {
             var room = Room.SelectedItem as RoomModel;
-            var teacher = Teacher.SelectedItem as TeacherModel;
+            var teacher = Teacher.SelectedItem as TeacherExamModel;
 
             if (room == null || teacher == null)
             {
@@ -187,7 +187,7 @@ namespace Views.Exam
         private async void TextBox_LostFocus(object? sender, RoutedEventArgs e)
         {
             var grade = Grade.SelectedItem?.ToString();
-            var term = Term.SelectedItem as TermModel;
+            var term = Term.SelectedItem as TermExamModel;
             if (sender is not TextBox tb || tb.DataContext is not ExamAssignment assignment)
                 return;
 
@@ -239,7 +239,7 @@ namespace Views.Exam
 
             var grade = Grade.SelectedItem?.ToString();
             var subject = Subject.SelectedItem as SubjectModel;
-            var term = Term.SelectedItem as TermModel;
+            var term = Term.SelectedItem as TermExamModel;
             var examDate = ExamDate.SelectedDate?.DateTime ?? DateTime.Now;
             var startTime = StartTime.SelectedTime;
             var endTime = EndTime.SelectedTime;

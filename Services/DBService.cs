@@ -12,6 +12,13 @@ namespace Services
             _connectionString = connectionString;
         }
 
+        public MySqlConnection GetConnection()
+        {
+            var Connection = new MySqlConnection(_connectionString);
+            Connection.Open();
+            return Connection;
+        }
+
         // Thực thi SELECT
         public DataTable ExecuteQuery(string query)
         {

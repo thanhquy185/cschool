@@ -194,16 +194,16 @@ public class ExamService
     }
 
     // Lấy ds học kỳ
-    public List<TermModel> GetTermList()
+    public List<TermExamModel> GetTermList()
     {
         string sql = @"SELECT id, CONCAT(name,' - ',year) AS study_term FROM terms";
         var dt = _db.ExecuteQuery(sql);
 
-        var list = new List<TermModel>();
+        var list = new List<TermExamModel>();
 
         foreach (DataRow row in dt.Rows)
         {
-            list.Add(new TermModel
+            list.Add(new TermExamModel
             {
                 Id = (int)row["id"],
                 TermName = row["study_term"].ToString()!,
@@ -235,16 +235,16 @@ public class ExamService
     }
 
     // Lấy danh sách giáo viên
-    public List<TeacherModel> GetTeacherList()
+    public List<TeacherExamModel> GetTeacherList()
     {
         string sql = $"SELECT * from cschool.teachers";
         var dt = _db.ExecuteQuery(sql);
 
-        var list = new List<TeacherModel>();
+        var list = new List<TeacherExamModel>();
 
         foreach (DataRow row in dt.Rows)
         {
-            list.Add(new TeacherModel
+            list.Add(new TeacherExamModel
             {
                 Id = (int)row["id"],
                 TeacherName = row["fullname"].ToString()!,
@@ -365,7 +365,7 @@ public class ExamService
                 Quantity = Convert.ToInt32(row["candidate_count"])
             };
 
-            var teacher = new TeacherModel
+            var teacher = new TeacherExamModel
             {
                 Id = Convert.ToInt32(row["teacher_id"]),
                 TeacherName = row["teacher_name"].ToString()!
@@ -412,7 +412,7 @@ public class ExamService
     }
 
     // Lấy danh sách giáo viên
-    public List<TeacherModel> GetTeacherListUpdate(int examDetailId)
+    public List<TeacherExamModel> GetTeacherListUpdate(int examDetailId)
     {
         string sql = @$"SELECT * FROM teachers WHERE id NOT IN 
                     (SELECT teachers.id
@@ -422,11 +422,11 @@ public class ExamService
                     WHERE exam_details.id = {examDetailId})";
         var dt = _db.ExecuteQuery(sql);
 
-        var list = new List<TeacherModel>();
+        var list = new List<TeacherExamModel>();
 
         foreach (DataRow row in dt.Rows)
         {
-            list.Add(new TeacherModel
+            list.Add(new TeacherExamModel
             {
                 Id = (int)row["id"],
                 TeacherName = row["fullname"].ToString()!,

@@ -53,10 +53,18 @@ public class UserService
 
     public int CreateUser(UserModel user)
     {
-        string sql = $"INSERT INTO users (avatar, username, password, role_id, fullname, phone, email, address, status) " +
+        try 
+        {
+            string sql = $"INSERT INTO cschool.users (avatar, username, password, role_id, fullname, phone, email, address, status) " +
                      $"VALUES ('{user.Avatar}', '{user.Username}', '{user.Password}', {user.RoleId}, " +
                      $"'{user.Fullname}', '{user.Phone}', '{user.Email}', '{user.Address}', '{user.Status}')";
-        return _db.ExecuteNonQuery(sql);
+            return _db.ExecuteNonQuery(sql);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error in CreateUser: " + ex.Message);
+            return -1;
+        }
     }
 
     public int UpdateUser(UserModel user)

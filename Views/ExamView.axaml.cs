@@ -101,7 +101,7 @@ public partial class ExamView : UserControl
         if (DataContext is ExamViewModel vm)
         {
             var combo = sender as ComboBox;
-            var selected = combo?.SelectedItem as TermModel;
+            var selected = combo?.SelectedItem as TermExamModel;
 
             if (selected != null)
                 vm.FilterStatus = selected.TermName.ToString();
