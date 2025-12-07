@@ -18,20 +18,27 @@ public class SubjectClassService
         try
         {
             List<SubjectClassModel> subjectClasses = new List<SubjectClassModel>();
-
+            var term = AppService.TeacherService.GetTermByDate(DateTime.Now);
+            if (term == null)
+            {
+                term = AppService.TeacherService.GetLatestTerm();
+            }
             var conn = _db.GetConnection();
-            string query = @"SELECT act.assign_class_id, act.subject_id, ac.class_id, s.name AS subject_name, c.name AS class_name, 
-                                terms.name AS term_name, terms.year, act.oral_count, act.quiz_count
+            string query = @"SELECT act.assign_class_id, act.subject_id, ac.class_id, s.name AS subject_name,
+                                c.name AS class_name, terms.name AS term_name, terms.year, act.oral_count, act.quiz_count
                             FROM teachers t
                             JOIN assign_class_teachers act ON t.id = act.teacher_id
                             JOIN assign_classes ac ON act.assign_class_id = ac.id
                             JOIN subjects s ON act.subject_id = s.id
                             JOIN classes c ON ac.class_id = c.id
                             JOIN terms ON ac.term_id = terms.id
-                            WHERE t.id = @TeacherId;";
+                            WHERE t.id = @TeacherId
+                            AND ac.term_id = @TermId;";
 
+            Console.WriteLine($"Fetching subject classes for TeacherId={teacherId} and TermId={term.Id}");
             MySqlCommand command = new MySqlCommand(query, conn);
             command.Parameters.AddWithValue("@TeacherId", teacherId);
+            command.Parameters.AddWithValue("@TermId", term.Id);
 
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())

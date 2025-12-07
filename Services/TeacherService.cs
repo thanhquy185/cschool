@@ -125,6 +125,44 @@ public class TeacherService
             return null;
         }
     }
+    public TermModel? GetTermByDate(DateTime date)
+    {
+        try
+        {
+            string query = @"SELECT id, name, start_date, end_date, status 
+                            FROM terms
+                            WHERE status = 1
+                            AND @date BETWEEN start_date AND end_date
+                            LIMIT 1";
+
+            using var connection = _db.GetConnection();
+            // connection.Open();
+            Console.WriteLine($"🔍 GetTermByDate: Executing query for date {date:dd/MM/yyyy}");
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@date", date.ToString("yyyy/MM/dd"));
+
+            using var reader = command.ExecuteReader();
+            
+            if (reader.Read())
+            {
+                return new TermModel
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    Start = reader.GetDateTime("start_date"),
+                    End = reader.GetDateTime("end_date"),
+                    Status = reader.GetInt32("status")
+                };
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Lỗi lấy học kỳ theo ngày: {ex.Message}");
+            return null;
+        }
+    }
     public int GetIDLastTeacher()
     {
         // Console.WriteLine(123);
@@ -133,6 +171,8 @@ public class TeacherService
             return System.Convert.ToInt32(dt.Rows[0]["id"]);
         return 0;
     }
+
+    
 
     public bool CreateTeacher(TeacherModel t)
     {
@@ -249,11 +289,9 @@ public class TeacherService
                             FROM teachers t
                             LEFT JOIN department_details dd ON dd.teacher_id = t.id
                             LEFT JOIN departments d ON d.id = dd.department_id
-                            LEFT JOIN assign_class_teachers act ON act.teacher_id = t.id
-                            LEFT JOIN assign_classes ac ON ac.id = act.assign_class_id
+                            LEFT JOIN assign_classes ac ON t.id = ac.head_teacher_id AND ac.term_id = @termId
                             LEFT JOIN classes c ON c.id = ac.class_id
-                            LEFT JOIN terms ter ON ter.id = ac.term_id AND ter.id = @termId
-                            WHERE t.id = @id
+                            WHERE t.id = @id 
                             LIMIT 1";
             var command = new MySqlCommand(sql, connection);
             command.Parameters.AddWithValue("@id", id);
