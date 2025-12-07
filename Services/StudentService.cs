@@ -71,7 +71,7 @@ public class StudentService
     {
         string sql = @$"SELECT students.id, students.fullname, students.avatar, students.birthday, students.gender, students.ethnicity,
                     students.religion, students.phone, students.email, students.address, students.learn_year, students.learn_status, 
-                    students.status, classes.name AS class_name, teachers.fullname AS teacher_name, terms.year
+                    students.status, classes.name AS class_name, teachers.fullname AS teacher_name, terms.learnyear
                     FROM students
                     LEFT JOIN assign_class_students ON students.id = assign_class_students.student_id
                     LEFT JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id

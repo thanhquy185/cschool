@@ -13,7 +13,7 @@ public class ExamService
 
     public List<ExamModel> GetExamSchedule()
     {
-        string sql = @$"SELECT exam_details.id, subjects.name AS subject, terms.name AS term_name, terms.year AS term_year,
+        string sql = @$"SELECT exam_details.id, subjects.name AS subject, terms.name AS term_name, terms.learnyear AS term_year,
                         exam_details.start_time, exam_details.end_time, subjects.id AS subject_id, terms.id AS term_id,
                         GROUP_CONCAT(DISTINCT classes.grade ORDER BY classes.grade SEPARATOR ', ') AS grades
                         FROM exam_details
@@ -59,7 +59,7 @@ public class ExamService
     public ExamModel? GetExamById(int id)
     {
         string sql = @$"SELECT exam_details.id, rooms.name AS exam_room, teachers.fullname, rooms.quantity AS candidate_count, 
-                        subjects.name AS subject, terms.name AS term_name, terms.year AS term_year, exam_details.start_time, 
+                        subjects.name AS subject, terms.name AS term_name, terms.learnyear AS term_year, exam_details.start_time, 
                         exam_details.end_time, classes.grade
                         FROM exams
                         JOIN exam_details ON exams.exam_detail_id = exam_details.id

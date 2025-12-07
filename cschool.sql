@@ -55,13 +55,13 @@ CREATE TABLE `assign_class_students` (
 INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VALUES
 (11, 1, 'Lớp trưởng'),
 (12, 2, 'Lớp phó học tập'),
-(13, 3, 'Lớp phó lao động'),
-(13, 5, 'Thành viên'),
-(13, 6, 'Thành viên'),
-(14, 4, 'Thành viên'),
-(14, 7, 'Thành viên'),
-(15, 9, 'Thành viên'),
+(12, 3, 'Lớp phó lao động'),
+(12, 4, 'Thành viên'),
+(12, 5, 'Thành viên'),
+(12, 6, 'Thành viên'),
+(12, 7, 'Thành viên'),
 (16, 8, 'Thành viên'),
+(15, 9, 'Thành viên'),
 (17, 10, 'Thành viên'),
 
 (18, 11, 'Lớp trưởng'),
@@ -69,24 +69,24 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (20, 13, 'Lớp phó lao động'),
 (11, 14, 'Thành viên'),
 (11, 15, 'Thành viên'),
-(12, 16, 'Thành viên'),
-(12, 17, 'Thành viên'),
+(15, 16, 'Thành viên'),
+(16, 17, 'Thành viên'),
 (13, 18, 'Thành viên'),
 (13, 19, 'Thành viên'),
 (14, 20, 'Thành viên'),
 
-(15, 21, 'Lớp trưởng'),
+(11, 21, 'Lớp trưởng'),
 (16, 22, 'Lớp phó học tập'),
-(17, 23, 'Lớp phó lao động'),
-(18, 24, 'Thành viên'),
-(18, 25, 'Thành viên'),
-(19, 26, 'Thành viên'),
-(19, 27, 'Thành viên'),
-(20, 28, 'Thành viên'),
-(20, 29, 'Thành viên'),
-(11, 30, 'Thành viên'),
+(13, 23, 'Lớp phó lao động'),
+(14, 24, 'Thành viên'),
+(15, 25, 'Thành viên'),
+(16, 26, 'Thành viên'),
+(17, 27, 'Thành viên'),
+(18, 28, 'Thành viên'),
+(19, 29, 'Thành viên'),
+(20, 30, 'Thành viên'),
 
-(12, 31, 'Lớp trưởng'),
+(11, 31, 'Lớp trưởng'),
 (13, 32, 'Lớp phó học tập'),
 (14, 33, 'Lớp phó lao động'),
 (15, 34, 'Thành viên'),
@@ -100,14 +100,13 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (19, 41, 'Lớp trưởng'),
 (20, 42, 'Lớp phó học tập'),
 (11, 43, 'Lớp phó lao động'),
-(12, 44, 'Thành viên'),
-(12, 45, 'Thành viên'),
+(16, 44, 'Thành viên'),
+(17, 45, 'Thành viên'),
 (13, 46, 'Thành viên'),
 (13, 47, 'Thành viên'),
 (14, 48, 'Thành viên'),
 (14, 49, 'Thành viên'),
-(15, 50, 'Thành viên');
-
+(15, 50, 'Thành viên')
 
 -- --------------------------------------------------------
 
@@ -119,9 +118,9 @@ CREATE TABLE `assign_class_teachers` (
   `assign_class_id` int(11) NOT NULL,
   `teacher_id` int(11) NOT NULL,
   `subject_id` int(11) NOT NULL,
-  `quiz_connt` int(11) DEFAULT NULL,
+  `quiz_count` int(11) DEFAULT NULL,
   `oral_count` int(11) DEFAULT NULL,
-  `day` date DEFAULT NULL,
+  `day` varchar(100) NOT NULL,
   `start_period` int(11) DEFAULT NULL,
   `end_period` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -130,17 +129,20 @@ CREATE TABLE `assign_class_teachers` (
 -- Dumping data for table `assign_class_teachers`
 --
 
-INSERT INTO `assign_class_teachers` (`assign_class_id`, `teacher_id`, `subject_id`, `quiz_connt`, `oral_count`, `day`, `start_period`, `end_period`) VALUES
-(11, 1, 1, 2, 1, '2025-10-01', 1, 2),
-(12, 2, 2, 3, 2, '2025-10-02', 3, 4),
-(13, 3, 3, 1, 1, '2025-10-03', 2, 3),
-(14, 4, 4, 2, 2, '2025-10-04', 4, 5),
-(15, 5, 5, 3, 1, '2025-10-05', 1, 2),
-(16, 6, 6, 2, 2, '2025-10-06', 3, 4),
-(17, 7, 7, 1, 1, '2025-10-07', 2, 3),
-(18, 8, 8, 2, 2, '2025-10-08', 4, 5),
-(19, 9, 9, 3, 1, '2025-10-09', 1, 2),
-(20, 10, 10, 2, 2, '2025-10-10', 3, 4);
+INSERT INTO `assign_class_teachers` (`assign_class_id`, `teacher_id`, `subject_id`, `quiz_count`, `oral_count`, `day`, `start_period`, `end_period`) VALUES
+(11, 2, 1, 2, 2, 'Thứ Ba', 2, 5),
+(11, 3, 7, 2, 2, 'Thứ Bảy', 1, 5),
+(11, 1, 9, 1, 1, 'Thứ Hai', 1, 2),
+(12, 1, 1, 2, 2, 'Thứ Hai', 1, 3),  -- Thêm để nhất quán với score_details (Toán học)
+(12, 2, 2, 2, 2, 'Thứ Tư', 2, 4),  -- Thêm để nhất quán với score_details (Ngữ văn)
+(13, 1, 4, 1, 2, 'Thứ Ba', 2, 4),
+(13, 3, 5, 1, 1, 'Thứ Ba', 2, 3),
+(14, 4, 1, 2, 2, 'Thứ Năm', 4, 5),
+(15, 5, 6, 3, 1, 'Thứ Ba', 1, 2),
+(16, 6, 9, 2, 2, 'Thứ Tư', 3, 4),
+(19, 2, 1, 1, 2, 'Thứ Hai', 2, 4),
+(19, 9, 3, 1, 1, 'Thứ Năm', 1, 2),
+(20, 10, 4, 2, 2, 'Thứ Ba', 3, 4);
 
 -- --------------------------------------------------------
 
@@ -554,16 +556,54 @@ CREATE TABLE `score_details` (
 --
 
 INSERT INTO `score_details` (`assign_class_id`, `student_id`, `subject_id`, `exam_type_id`, `attempt`, `score`) VALUES
-(11, 11, 1, 1, 1, 8.50),
-(12, 12, 1, 2, 1, 7.00),
-(12, 13, 2, 3, 1, 6.75),
-(12, 14, 2, 4, 1, 9.00),
-(13, 5, 3, 4, 1, 8.25),
-(13, 6, 3, 4, 1, 7.50),
-(14, 7, 4, 1, 1, 6.00),
-(15, 8, 4, 1, 1, 8.75),
-(16, 9, 5, 3, 1, 9.25),
-(17, 10, 5, 2, 1, 7.80);
+(12, 2, 1, 1, 1, 7.00),
+(12, 2, 1, 2, 1, 6.75),
+(12, 2, 1, 3, 1, 9.00),
+(12, 2, 1, 4, 1, 8.25),
+(12, 2, 2, 1, 1, 9.50),
+(12, 2, 2, 1, 2, 9.00),
+(12, 2, 2, 1, 3, 8.50),
+(12, 2, 2, 1, 4, 8.00),
+(12, 3, 1, 1, 1, 8.50),
+(12, 3, 1, 2, 1, 7.50),
+(12, 3, 1, 3, 1, 7.50),
+(12, 3, 1, 4, 1, 7.00),
+(12, 3, 2, 1, 1, 9.50),
+(12, 3, 2, 2, 1, 8.50),
+(12, 3, 2, 3, 1, 7.50),
+(12, 3, 2, 4, 1, 7.50),
+(12, 4, 1, 1, 1, 8.50),
+(12, 4, 1, 2, 1, 7.50),
+(12, 4, 1, 3, 1, 7.75),
+(12, 4, 1, 4, 1, 7.00),
+(12, 4, 2, 1, 1, 9.75),
+(12, 4, 2, 2, 1, 8.50),
+(12, 4, 2, 3, 1, 7.00),
+(12, 4, 2, 4, 1, 8.50),
+(12, 5, 1, 1, 1, 8.50),
+(12, 5, 1, 2, 1, 10.00),
+(12, 5, 1, 3, 1, 7.50),
+(12, 5, 1, 4, 1, 7.50),
+(12, 5, 2, 1, 1, 9.50),
+(12, 5, 2, 2, 1, 9.50),
+(12, 5, 2, 3, 1, 7.00),
+(12, 5, 2, 4, 1, 7.50),
+(12, 6, 1, 1, 1, 8.50),
+(12, 6, 1, 2, 1, 7.50),
+(12, 6, 1, 3, 1, 9.50),
+(12, 6, 1, 4, 1, 7.00),
+(12, 6, 2, 1, 1, 9.50),
+(12, 6, 2, 2, 1, 8.50),
+(12, 6, 2, 3, 1, 7.50),
+(12, 6, 2, 4, 1, 9.50),
+(12, 7, 1, 1, 1, 10.00),
+(12, 7, 1, 2, 1, 8.50),
+(12, 7, 1, 3, 1, 7.50),
+(12, 7, 1, 4, 1, 6.00),
+(12, 7, 2, 1, 1, 5.50),
+(12, 7, 2, 2, 1, 5.50),
+(12, 7, 2, 3, 1, 7.50),
+(12, 7, 2, 4, 1, 9.50);
 
 -- --------------------------------------------------------
 
@@ -663,10 +703,10 @@ INSERT INTO `student_exams` (`examinee_id`, `student_id`, `exam_id`) VALUES
 (1, 1, 1),
 (2, 2, 1),
 (3, 3, 2),
-(4, 4, 4),
+(4, 4, 3),
 (5, 5, 2),
 (6, 6, 3),
-(7, 7, 4),
+(7, 7, 3),
 (8, 8, 5),
 (9, 9, 4),
 (10, 10, 5),
@@ -675,8 +715,8 @@ INSERT INTO `student_exams` (`examinee_id`, `student_id`, `exam_id`) VALUES
 (13, 13, 1),
 (14, 14, 3),
 (15, 15, 1),
-(16, 16, 2),
-(17, 17, 3),
+(16, 16, 4),
+(17, 17, 5),
 (18, 18, 2),
 (19, 19, 3),
 (20, 20, 4);
@@ -728,16 +768,18 @@ CREATE TABLE `subject_term_avg` (
 --
 
 INSERT INTO `subject_term_avg` (`assign_class_id`, `student_id`, `subject_id`, `score`) VALUES
-(11, 21, 1, 8.00),
-(12, 22, 2, 7.50),
-(13, 23, 3, 6.80),
-(14, 24, 4, 9.10),
-(15, 25, 5, 8.60),
-(16, 26, 6, 7.90),
-(17, 27, 7, 6.70),
-(18, 28, 8, 8.40),
-(19, 29, 9, 9.00),
-(20, 30, 10, 7.85);
+(12, 2, 1, 8.07),
+(12, 2, 2, 8.75),
+(12, 3, 1, 8.14),
+(12, 3, 2, 8.18),
+(12, 4, 1, 7.86),
+(12, 4, 2, 8.64),
+(12, 5, 1, 8.14),
+(12, 5, 2, 8.38),
+(12, 6, 1, 8.36),
+(12, 6, 2, 8.61),
+(12, 7, 1, 7.36),
+(12, 7, 2, 7.50);
 
 -- --------------------------------------------------------
 
@@ -750,29 +792,31 @@ CREATE TABLE `teachers` (
   `fullname` varchar(100) NOT NULL,
   `avatar` varchar(255) DEFAULT NULL,
   `birthday` date DEFAULT NULL,
-  `gender` enum('Nam','Nữ','Other') DEFAULT NULL,
+  `gender` enum('Nam','Nữ') DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
   `phone` varchar(10) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `status` tinyint(4) DEFAULT 1
+  `status` tinyint(4) DEFAULT 1,
+  `user_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `teachers`
 --
 
-INSERT INTO `teachers` (`id`, `fullname`, `avatar`, `birthday`, `gender`, `address`, `phone`, `email`, `status`) VALUES
-(1, 'Nguyễn Văn Hùng', NULL, '1980-03-15', 'Nam', '123 Lê Lợi, TP.HCM', '0901234567', 'nvhung@example.com', 1),
-(2, 'Trần Thị Mai', NULL, '1982-07-22', 'Nữ', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttmai@example.com', 1),
-(3, 'Lê Văn Phúc', NULL, '1979-11-30', 'Nam', '789 Hai Bà Trưng, TP.HCM', '0903456789', 'lvphuc@example.com', 1),
-(4, 'Phạm Thị Hương', NULL, '1985-05-10', 'Nữ', '321 Trần Hưng Đạo, TP.HCM', '0904567890', 'pthuong@example.com', 1),
-(5, 'Hoàng Văn Tâm', NULL, '1981-09-05', 'Nam', '654 Võ Văn Tần, TP.HCM', '0905678901', 'hvtam@example.com', 1),
-(6, 'Đặng Thị Lan', NULL, '1983-01-18', 'Nữ', '987 Nguyễn Thị Minh Khai, TP.HCM', '0906789012', 'dtlan@example.com', 1),
-(7, 'Vũ Văn Quang', NULL, '1978-06-25', 'Nam', '159 Cách Mạng Tháng 8, TP.HCM', '0907890123', 'vvquang@example.com', 1),
-(8, 'Bùi Thị Ngọc', NULL, '1984-10-10', 'Nữ', '753 Điện Biên Phủ, TP.HCM', '0908901234', 'btngoc@example.com', 1),
-(9, 'Ngô Văn Sơn', NULL, '1980-12-01', 'Nam', '852 Nguyễn Đình Chiểu, TP.HCM', '0909012345', 'nvson@example.com', 1),
-(10, 'Dương Thị Thu', NULL, '1986-04-09', 'Nữ', '951 Lý Tự Trọng, TP.HCM', '0910123456', 'dtthu@example.com', 1);
-
+INSERT INTO `teachers`
+(`id`, `fullname`, `avatar`, `birthday`, `gender`, `address`, `phone`, `email`, `status`, `user_id`)
+VALUES
+(1, 'Nguyễn Văn Hùng', NULL, '1980-03-15', 'Nam', '123 Lê Lợi, TP.HCM', '0901234567', 'nvhung@example.com', 1, 5),
+(2, 'Trần Thị Mai', NULL, '1982-07-22', 'Nữ', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttmai@example.com', 1, 6),
+(3, 'Lê Văn Phúc', NULL, '1979-11-30', 'Nam', '789 Hai Bà Trưng, TP.HCM', '0903456789', 'lvphuc@example.com', 1, 7),
+(4, 'Phạm Thị Hương', NULL, '1985-05-10', 'Nữ', '321 Trần Hưng Đạo, TP.HCM', '0904567890', 'pthuong@example.com', 1, 8),
+(5, 'Hoàng Văn Tâm', NULL, '1981-09-05', 'Nam', '654 Võ Văn Tần, TP.HCM', '0905678901', 'hvtam@example.com', 1, 9),
+(6, 'Đặng Thị Lan', NULL, '1983-01-18', 'Nữ', '987 Nguyễn Thị Minh Khai, TP.HCM', '0906789012', 'dtlan@example.com', 1, 10),
+(7, 'Vũ Văn Quang', NULL, '1978-06-25', 'Nam', '159 Cách Mạng Tháng 8, TP.HCM', '0907890123', 'vvquang@example.com', 1, 11),
+(8, 'Bùi Thị Ngọc', NULL, '1984-10-10', 'Nữ', '753 Điện Biên Phủ, TP.HCM', '0908901234', 'btngoc@example.com', 1, 12),
+(9, 'Ngô Văn Sơn', NULL, '1980-12-01', 'Nam', '852 Nguyễn Đình Chiểu, TP.HCM', '0909012345', 'nvson@example.com', 1, 13),
+(10, 'Dương Thị Thu', NULL, '1986-04-09', 'Nữ', '951 Lý Tự Trọng, TP.HCM', '0910123456', 'dtthu@example.com', 1, 14);
 -- --------------------------------------------------------
 
 --
@@ -782,7 +826,8 @@ INSERT INTO `teachers` (`id`, `fullname`, `avatar`, `birthday`, `gender`, `addre
 CREATE TABLE `terms` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `year` varchar(50) DEFAULT NULL,
+  `year` int(11) DEFAULT NULL,
+  `learnyear` varchar(50) DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1
@@ -792,17 +837,17 @@ CREATE TABLE `terms` (
 -- Dumping data for table `terms`
 --
 
-INSERT INTO `terms` (`id`, `name`, `year`, `start_date`, `end_date`, `status`) VALUES
-(1, 'Học kỳ 1', '2021-2022', '2021-09-01', '2022-01-15', 1),
-(2, 'Học kỳ 2', '2021-2022', '2022-02-01', '2022-06-15', 1),
-(3, 'Học kỳ 1', '2022-2023', '2022-09-01', '2023-01-15', 1),
-(4, 'Học kỳ 2', '2022-2023', '2023-02-01', '2023-06-15', 1),
-(5, 'Học kỳ 1', '2023-2024', '2023-09-01', '2024-01-15', 1),
-(6, 'Học kỳ 2', '2023-2024', '2024-02-01', '2024-06-15', 1),
-(7, 'Học kỳ 1', '2024-2025', '2024-09-01', '2025-01-15', 1),
-(8, 'Học kỳ 2', '2024-2025', '2025-02-01', '2025-06-15', 1),
-(9, 'Học kỳ 1', '2025-2026', '2025-09-01', '2026-01-15', 1),
-(10, 'Học kỳ 2', '2025-2026', '2026-02-01', '2026-06-15', 1);
+INSERT INTO `terms` (`id`, `name`, `year`, `learnyear`, `start_date`, `end_date`, `status`) VALUES
+(1, 'Học kỳ 1', 2021, '2021-2022', '2021-09-01', '2022-01-15', 1),
+(2, 'Học kỳ 2', 2021, '2021-2022', '2022-02-01', '2022-06-15', 1),
+(3, 'Học kỳ 1', 2022, '2022-2023', '2022-09-01', '2023-01-15', 1),
+(4, 'Học kỳ 2', 2022, '2022-2023', '2023-02-01', '2023-06-15', 1),
+(5, 'Học kỳ 1', 2023, '2023-2024', '2023-09-01', '2024-01-15', 1),
+(6, 'Học kỳ 2', 2023, '2023-2024', '2024-02-01', '2024-06-15', 1),
+(7, 'Học kỳ 1', 2024, '2024-2025', '2024-09-01', '2025-01-15', 1),
+(8, 'Học kỳ 2', 2024, '2024-2025', '2025-02-01', '2025-06-15', 1),
+(9, 'Học kỳ 1', 2025, '2025-2026', '2025-09-01', '2026-01-15', 1),
+(10, 'Học kỳ 2', 2025, '2025-2026', '2026-02-01', '2026-06-15', 1);
 
 -- --------------------------------------------------------
 
@@ -814,8 +859,8 @@ CREATE TABLE `term_gpa` (
   `assign_class_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
   `gpa` decimal(10,2) DEFAULT NULL,
-  `conduct_level` enum('Good','Fair','Satisfactory','Unsatisfactory') DEFAULT NULL,
-  `academic` enum('Good','Fair','Satisfactory','Unsatisfactory') DEFAULT NULL
+  `conduct_level` enum('Giỏi','Khá','Trung bình','Yếu') DEFAULT NULL,
+  `academic` enum('Giỏi','Khá','Trung bình','Yếu') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -823,16 +868,12 @@ CREATE TABLE `term_gpa` (
 --
 
 INSERT INTO `term_gpa` (`assign_class_id`, `student_id`, `gpa`, `conduct_level`, `academic`) VALUES
-(11, 21, 8.25, 'Good', 'Good'),
-(12, 22, 7.80, 'Fair', 'Good'),
-(13, 23, 6.75, 'Satisfactory', 'Fair'),
-(14, 24, 9.10, 'Good', 'Good'),
-(15, 25, 8.60, 'Good', 'Good'),
-(16, 26, 7.90, 'Fair', 'Fair'),
-(17, 27, 6.70, 'Satisfactory', 'Satisfactory'),
-(18, 28, 8.40, 'Good', 'Good'),
-(19, 29, 9.00, 'Good', 'Good'),
-(20, 30, 7.85, 'Fair', 'Good');
+(12, 2, 8.41, 'Giỏi', 'Giỏi'),
+(12, 3, 8.16, 'Giỏi', 'Giỏi'),
+(12, 4, 8.25, 'Giỏi', 'Giỏi'),
+(12, 5, 8.26, 'Giỏi', 'Giỏi'),
+(12, 6, 8.49, 'Giỏi', 'Giỏi'),
+(12, 7, 7.43, 'Khá', 'Khá');
 
 -- --------------------------------------------------------
 
@@ -906,7 +947,7 @@ CREATE TABLE `users` (
   `phone` varchar(15) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
-  `status` tinyint(4) DEFAULT 1
+  `status` varchar(100) DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -914,8 +955,19 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `role_id`, `username`, `password`, `fullname`, `avatar`, `phone`, `email`, `address`, `status`) VALUES
-(1, 1, 'admin01', '123456', 'Nguyễn Văn Quản Trị', NULL, '0909123456', 'admin@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 1),
-(2, 2, 'gv01', '123456', 'Trần Thị Giáo Viên', NULL, '0909234567', 'giaovien@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 1);
+(1, 1, 'admin01', '123456', 'Nguyễn Văn Quản Trị', NULL, '0909123456', 'admin@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+(2, 2, 'gv01', '123456', 'Trần Thị Giáo Viên', NULL, '0909234567', 'giaovien@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+(4, 1, 'abc', 'abc123', 'Nguyễn Văn A', '', '0967548341', 'abc@gmail.com', '1', 'Hoạt động'),
+(5, 2, 'nvhung', '123456', 'Nguyễn Văn Hùng', NULL, '0901234567', 'nvhung@example.com', '123 Lê Lợi, TP.HCM', 'Hoạt động'),
+(6, 2, 'ttmai', '123456', 'Trần Thị Mai', NULL, '0902345678', 'ttmai@example.com', '456 Nguyễn Huệ, TP.HCM', 'Hoạt động'),
+(7, 2, 'lvphuc', '123456', 'Lê Văn Phúc', NULL, '0903456789', 'lvphuc@example.com', '789 Hai Bà Trưng, TP.HCM', 'Hoạt động'),
+(8, 2, 'pthuong', '123456', 'Phạm Thị Hương', NULL, '0904567890', 'pthuong@example.com', '321 Trần Hưng Đạo, TP.HCM', 'Hoạt động'),
+(9, 2, 'hvtam', '123456', 'Hoàng Văn Tâm', NULL, '0905678901', 'hvtam@example.com', '654 Võ Văn Tần, TP.HCM', 'Hoạt động'),
+(10, 2, 'dtlan', '123456', 'Đặng Thị Lan', NULL, '0906789012', 'dtlan@example.com', '987 Nguyễn Thị Minh Khai, TP.HCM', 'Hoạt động'),
+(11, 2, 'vvquang', '123456', 'Vũ Văn Quang', NULL, '0907890123', 'vvquang@example.com', '159 Cách Mạng Tháng 8, TP.HCM', 'Hoạt động'),
+(12, 2, 'btngoc', '123456', 'Bùi Thị Ngọc', NULL, '0908901234', 'btngoc@example.com', '753 Điện Biên Phủ, TP.HCM', 'Hoạt động'),
+(13, 2, 'nvson', '123456', 'Ngô Văn Sơn', NULL, '0909012345', 'nvson@example.com', '852 Nguyễn Đình Chiểu, TP.HCM', 'Hoạt động'),
+(14, 2, 'dtthu', '123456', 'Dương Thị Thu', NULL, '0910123456', 'dtthu@example.com', '951 Lý Tự Trọng, TP.HCM', 'Hoạt động');
 
 -- --------------------------------------------------------
 
@@ -980,7 +1032,7 @@ ALTER TABLE `assign_class_teachers`
 -- Indexes for table `classes`
 --
 ALTER TABLE `classes`
-  ADD PRIMARY KEY (`id`,`class_type_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `class_type_id` (`class_type_id`);
 
 --
@@ -993,7 +1045,7 @@ ALTER TABLE `class_types`
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
-  ADD PRIMARY KEY (`id`,`subject_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `subject_id` (`subject_id`);
 
 --
@@ -1040,7 +1092,7 @@ ALTER TABLE `functions`
 -- Indexes for table `relations`
 --
 ALTER TABLE `relations`
-  ADD PRIMARY KEY (`id`,`student_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `student_id` (`student_id`);
 
 --
@@ -1103,7 +1155,8 @@ ALTER TABLE `subject_term_avg`
 -- Indexes for table `teachers`
 --
 ALTER TABLE `teachers`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `terms`
@@ -1122,20 +1175,22 @@ ALTER TABLE `term_gpa`
 -- Indexes for table `tuitions`
 --
 ALTER TABLE `tuitions`
-  ADD PRIMARY KEY (`id`,`assign_class_id`,`user_id`),
-  ADD KEY `assign_class_id` (`assign_class_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `assign_class_id` (`assign_class_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `tuition_details`
 --
 ALTER TABLE `tuition_details`
-  ADD PRIMARY KEY (`tuition_id`,`student_id`);
+  ADD PRIMARY KEY (`tuition_id`,`student_id`),
+  ADD KEY `student_id` (`student_id`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`,`role_id`),
+  ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`),
   ADD KEY `role_id` (`role_id`);
 
@@ -1143,7 +1198,7 @@ ALTER TABLE `users`
 -- Indexes for table `violations`
 --
 ALTER TABLE `violations`
-  ADD PRIMARY KEY (`id`,`student_id`,`assign_class_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `student_id` (`student_id`),
   ADD KEY `assign_class_id` (`assign_class_id`),
   ADD KEY `rule_id` (`rule_id`);
@@ -1258,7 +1313,7 @@ ALTER TABLE `tuitions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `violations`
@@ -1376,13 +1431,15 @@ ALTER TABLE `term_gpa`
 -- Constraints for table `tuitions`
 --
 ALTER TABLE `tuitions`
-  ADD CONSTRAINT `tuitions_ibfk_1` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`);
+  ADD CONSTRAINT `tuitions_ibfk_1` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`),
+  ADD CONSTRAINT `tuitions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `tuition_details`
 --
 ALTER TABLE `tuition_details`
-  ADD CONSTRAINT `tuition_details_ibfk_1` FOREIGN KEY (`tuition_id`) REFERENCES `tuitions` (`id`);
+  ADD CONSTRAINT `tuition_details_ibfk_1` FOREIGN KEY (`tuition_id`) REFERENCES `tuitions` (`id`),
+  ADD CONSTRAINT `tuition_details_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`);
 
 --
 -- Constraints for table `users`
@@ -1397,4 +1454,256 @@ ALTER TABLE `violations`
   ADD CONSTRAINT `violations_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`),
   ADD CONSTRAINT `violations_ibfk_2` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`),
   ADD CONSTRAINT `violations_ibfk_3` FOREIGN KEY (`rule_id`) REFERENCES `rules` (`id`);
+
+-- cập nhật trung bình môn
+DELIMITER //
+
+-- ============================================
+-- Trigger 1: Cập nhật subject_term_avg khi INSERT score_details
+-- ============================================
+DROP TRIGGER IF EXISTS calc_subject_avg_after_insert//
+CREATE TRIGGER calc_subject_avg_after_insert
+AFTER INSERT ON score_details 
+FOR EACH ROW
+BEGIN
+    REPLACE INTO subject_term_avg (assign_class_id, student_id, subject_id, score)
+    SELECT
+        assign_class_id,
+        student_id,
+        subject_id,
+        SUM(score *
+            CASE exam_type_id
+                WHEN 1 THEN 1
+                WHEN 2 THEN 1
+                WHEN 3 THEN 2
+                WHEN 4 THEN 3
+            END)
+        /
+        SUM(
+            CASE exam_type_id
+                WHEN 1 THEN 1
+                WHEN 2 THEN 1
+                WHEN 3 THEN 2
+                WHEN 4 THEN 3
+            END) AS avg_score
+    FROM score_details
+    WHERE assign_class_id = NEW.assign_class_id
+    AND student_id = NEW.student_id
+    AND subject_id = NEW.subject_id
+    GROUP BY assign_class_id, student_id, subject_id;
+END //
+
+-- ============================================
+-- Trigger 2: Cập nhật subject_term_avg khi UPDATE score_details
+-- ============================================
+DROP TRIGGER IF EXISTS calc_subject_avg_after_update//
+CREATE TRIGGER calc_subject_avg_after_update
+AFTER UPDATE ON score_details 
+FOR EACH ROW
+BEGIN
+    REPLACE INTO subject_term_avg (assign_class_id, student_id, subject_id, score)
+    SELECT
+        assign_class_id,
+        student_id,
+        subject_id,
+        SUM(score *
+            CASE exam_type_id
+                WHEN 1 THEN 1
+                WHEN 2 THEN 1
+                WHEN 3 THEN 2
+                WHEN 4 THEN 3
+            END)
+        /
+        SUM(
+            CASE exam_type_id
+                WHEN 1 THEN 1
+                WHEN 2 THEN 1
+                WHEN 3 THEN 2
+                WHEN 4 THEN 3
+            END) AS avg_score
+    FROM score_details
+    WHERE assign_class_id = NEW.assign_class_id
+    AND student_id = NEW.student_id
+    AND subject_id = NEW.subject_id
+    GROUP BY assign_class_id, student_id, subject_id;
+END //
+
+-- ============================================
+-- Trigger 3: Cập nhật subject_term_avg khi DELETE score_details
+-- ============================================
+DROP TRIGGER IF EXISTS calc_subject_avg_after_delete//
+CREATE TRIGGER calc_subject_avg_after_delete
+AFTER DELETE ON score_details 
+FOR EACH ROW
+BEGIN
+    DECLARE remaining_count INT;
+    
+    SELECT COUNT(*)
+    INTO remaining_count
+    FROM score_details
+    WHERE assign_class_id = OLD.assign_class_id
+    AND student_id = OLD.student_id
+    AND subject_id = OLD.subject_id;
+    
+    IF remaining_count > 0 THEN
+        REPLACE INTO subject_term_avg (assign_class_id, student_id, subject_id, score)
+        SELECT
+            assign_class_id,
+            student_id,
+            subject_id,
+            SUM(score *
+                CASE exam_type_id
+                    WHEN 1 THEN 1
+                    WHEN 2 THEN 1
+                    WHEN 3 THEN 2
+                    WHEN 4 THEN 3
+                END)
+            /
+            SUM(
+                CASE exam_type_id
+                    WHEN 1 THEN 1
+                    WHEN 2 THEN 1
+                    WHEN 3 THEN 2
+                    WHEN 4 THEN 3
+                END) AS avg_score
+        FROM score_details
+        WHERE assign_class_id = OLD.assign_class_id
+        AND student_id = OLD.student_id
+        AND subject_id = OLD.subject_id
+        GROUP BY assign_class_id, student_id, subject_id;
+    ELSE
+        DELETE FROM subject_term_avg
+        WHERE assign_class_id = OLD.assign_class_id
+        AND student_id = OLD.student_id
+        AND subject_id = OLD.subject_id;
+    END IF;
+END //
+
+-- ============================================
+-- Trigger 4: Cập nhật term_gpa khi INSERT subject_term_avg
+-- ============================================
+DROP TRIGGER IF EXISTS trg_gpa_after_insert//
+CREATE TRIGGER trg_gpa_after_insert
+AFTER INSERT ON subject_term_avg
+FOR EACH ROW
+BEGIN
+    DECLARE gpa_val FLOAT;
+    DECLARE current_conduct VARCHAR(50);
+
+    SELECT AVG(score)
+    INTO gpa_val
+    FROM subject_term_avg
+    WHERE assign_class_id = NEW.assign_class_id
+      AND student_id = NEW.student_id;
+
+    SELECT conduct_level
+    INTO current_conduct
+    FROM term_gpa
+    WHERE assign_class_id = NEW.assign_class_id
+      AND student_id = NEW.student_id;
+
+    REPLACE INTO term_gpa(assign_class_id, student_id, gpa, conduct_level, academic)
+    VALUES(
+        NEW.assign_class_id,
+        NEW.student_id,
+        gpa_val,
+        current_conduct,
+        CASE
+            WHEN current_conduct IS NULL THEN NULL
+            WHEN gpa_val < 5 OR current_conduct = 'Yếu' THEN 'Yếu' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Giỏi' THEN 'Giỏi' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Khá' THEN 'Khá' 
+            WHEN gpa_val >= 6.5 AND current_conduct IN ('Khá', 'Giỏi') THEN 'Khá' 
+            ELSE 'Trung bình'
+        END
+    );
+END //
+
+-- ============================================
+-- Trigger 5: Cập nhật term_gpa khi UPDATE subject_term_avg
+-- ============================================
+DROP TRIGGER IF EXISTS trg_gpa_after_update//
+CREATE TRIGGER trg_gpa_after_update
+AFTER UPDATE ON subject_term_avg
+FOR EACH ROW
+BEGIN
+    DECLARE gpa_val FLOAT;
+    DECLARE current_conduct VARCHAR(50);
+
+    SELECT AVG(score)
+    INTO gpa_val
+    FROM subject_term_avg
+    WHERE assign_class_id = NEW.assign_class_id
+      AND student_id = NEW.student_id;
+
+    SELECT conduct_level
+    INTO current_conduct
+    FROM term_gpa
+    WHERE assign_class_id = NEW.assign_class_id
+      AND student_id = NEW.student_id;
+
+    REPLACE INTO term_gpa(assign_class_id, student_id, gpa, conduct_level, academic)
+    VALUES(
+        NEW.assign_class_id,
+        NEW.student_id,
+        gpa_val,
+        current_conduct,
+        CASE
+            WHEN current_conduct IS NULL THEN NULL
+            WHEN gpa_val < 5 OR current_conduct = 'Yếu' THEN 'Yếu' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Giỏi' THEN 'Giỏi' 
+            WHEN gpa_val >= 8 AND current_conduct = 'Khá' THEN 'Khá' 
+            WHEN gpa_val >= 6.5 AND current_conduct IN ('Khá', 'Giỏi') THEN 'Khá' 
+            ELSE 'Trung bình'
+        END
+    );
+END //
+
+-- ============================================
+-- Trigger 6: Cập nhật term_gpa khi DELETE subject_term_avg
+-- ============================================
+DROP TRIGGER IF EXISTS trg_gpa_after_delete//
+CREATE TRIGGER trg_gpa_after_delete
+AFTER DELETE ON subject_term_avg
+FOR EACH ROW
+BEGIN
+    DECLARE gpa_val FLOAT;
+    DECLARE current_conduct VARCHAR(50);
+
+    SELECT AVG(score)
+    INTO gpa_val
+    FROM subject_term_avg
+    WHERE assign_class_id = OLD.assign_class_id
+      AND student_id = OLD.student_id;
+
+    IF gpa_val IS NOT NULL THEN
+        SELECT conduct_level
+        INTO current_conduct
+        FROM term_gpa
+        WHERE assign_class_id = OLD.assign_class_id
+          AND student_id = OLD.student_id;
+
+        REPLACE INTO term_gpa(assign_class_id, student_id, gpa, conduct_level, academic)
+        VALUES(
+            OLD.assign_class_id,
+            OLD.student_id,
+            gpa_val,
+            current_conduct,
+            CASE
+                WHEN current_conduct IS NULL THEN NULL
+                WHEN gpa_val < 5 OR current_conduct = 'Yếu' THEN 'Yếu' 
+				WHEN gpa_val >= 8 AND current_conduct = 'Giỏi' THEN 'Giỏi' 
+				WHEN gpa_val >= 8 AND current_conduct = 'Khá' THEN 'Khá' 
+				WHEN gpa_val >= 6.5 AND current_conduct IN ('Khá', 'Giỏi') THEN 'Khá' 
+				ELSE 'Trung bình'
+            END
+        );
+    ELSE
+        DELETE FROM term_gpa
+        WHERE assign_class_id = OLD.assign_class_id
+          AND student_id = OLD.student_id;
+    END IF;
+END //
+
+DELIMITER ;
 COMMIT;
