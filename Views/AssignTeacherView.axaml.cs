@@ -50,7 +50,7 @@ public partial class AssignTeacherView : UserControl
             {
 
 
-                DataContext = vm;
+                // DataContext = vm;
                 await vm.OpenDetailDialogCommand.ExecuteAsync(vm.SelectedAssignTeacher);
             }
             else
@@ -72,7 +72,7 @@ public partial class AssignTeacherView : UserControl
             {
 
 
-                DataContext = vm;
+                // DataContext = vm;
                 await vm.OpenEditDialogCommand.ExecuteAsync(vm.SelectedAssignTeacher);
             }
             else

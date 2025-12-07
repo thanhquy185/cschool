@@ -132,7 +132,7 @@ public partial class StatisticalViewModel : ViewModelBase
                 // Tự động chọn kỳ học đầu tiên nếu có
                 if (Terms.Count > 0 && SelectedTerm == null)
                 {
-                    SelectedTerm = Terms[0];
+                    SelectedTerm = Terms[Terms.Count - 1]; // Chọn kỳ học mới nhất
                 }
 
                 UpdateChartData(stats);

@@ -48,7 +48,8 @@ public class AssignTeacherService
         string sql = @"
         SELECT COUNT(*)
         FROM assign_class_teachers
-        WHERE assign_class_id = @assignClassId
+        JOIN assign_classes ac ON ac.id = assign_class_teachers.assign_class_id
+        WHERE assign_class_id = @assignClassId AND ac.term_id = (SELECT  term_id FROM assign_classes WHERE id = @assignClassId1 LIMIT 1)
           AND day = @day      
           AND (
                 (@start BETWEEN start_period AND end_period)
@@ -60,6 +61,7 @@ public class AssignTeacherService
         using var conn = _db.GetConnection();
         using var cmd = new MySqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@assignClassId", assignClassId);
+        cmd.Parameters.AddWithValue("@assignClassId1", assignClassId);
         cmd.Parameters.AddWithValue("@day", day);
         cmd.Parameters.AddWithValue("@start", start);
         cmd.Parameters.AddWithValue("@end", end);
@@ -76,12 +78,13 @@ public class AssignTeacherService
     }
 }
 
-    public bool IsTeacherBusy(int teacherId, string day, int start, int end)
+    public bool IsTeacherBusy(int teacherId, string day, int start, int end,int assign_class_id)
     {
         string sql = @"
         SELECT COUNT(*)
         FROM assign_class_teachers
-        WHERE teacher_id = @teacherId
+        JOIN assign_classes ac ON ac.id = assign_class_teachers.assign_class_id
+        WHERE teacher_id = @teacherId AND ac.term_id = (SELECT  term_id FROM assign_classes WHERE id = @assign_class_id LIMIT 1)
           AND day = @day      
           AND (
                 (@start BETWEEN start_period AND end_period)
@@ -93,6 +96,7 @@ public class AssignTeacherService
         using var conn = _db.GetConnection();
         using var cmd = new MySqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@teacherId", teacherId);
+        cmd.Parameters.AddWithValue("@assign_class_id", assign_class_id);
         cmd.Parameters.AddWithValue("@day", day);
         // cmd.Parameters.AddWithValue("@assign_class_id",assign_class_id);
         cmd.Parameters.AddWithValue("@start", start);
@@ -106,8 +110,10 @@ public bool IsConflict(AssignTeacher at)
 
     string sql = @"
         SELECT COUNT(*) FROM assign_class_teachers
+        JOIN assign_classes ac ON ac.id = assign_class_teachers.assign_class_id
         WHERE teacher_id = @teacher_id
           AND day = @day
+          AND ac.term_id = (SELECT term_id FROM assign_classes WHERE id = @assign_class_id1  LIMIT 1)
           AND assign_class_id != @assign_class_id
           AND (
                 (start_period < @end_period AND end_period > @start_period)
@@ -116,6 +122,7 @@ public bool IsConflict(AssignTeacher at)
     using var cmd = new MySqlCommand(sql, connection);
     cmd.Parameters.AddWithValue("@teacher_id", at.Teachers_id);
     cmd.Parameters.AddWithValue("@day", at.Day);
+    cmd.Parameters.AddWithValue("@assign_class_id1", at.Assign_class_id);
     cmd.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
     cmd.Parameters.AddWithValue("@start_period", at.Start);
     cmd.Parameters.AddWithValue("@end_period", at.End);
@@ -131,8 +138,8 @@ public bool IsConflict(AssignTeacher at)
             var ds = new List<Classes>();
             string sql = @"SELECT c.id as class_id, c.name,c.area,c.room, ac.class_id, ac.id as assign_class_id
                     FROM classes c
-                    JOIN assign_classes ac ON c.id = ac.class_id ";
-
+                    JOIN assign_classes ac ON c.id = ac.class_id
+                    WHERE ac.term_id = (SELECT MAX(term_id) FROM assign_classes)";
             var dt = _db.ExecuteQuery(sql);
             foreach (DataRow data in dt.Rows)
             {
@@ -222,7 +229,7 @@ public bool IsConflict(AssignTeacher at)
         {
 
             string sql = @"INSERT INTO assign_class_teachers (assign_class_id, teacher_id, subject_id, quiz_count, oral_count, day,start_period,end_period) 
-                     VALUES (@assignClassId, @teacherId, @subjectId, @quizCount, @oralCount, @day,@start_period,@end_period)";
+                         VALUES (@assignClassId, @teacherId, @subjectId, @quizCount, @oralCount, @day,@start_period,@end_period)";
 
             var connection = _db.GetConnection();
         
@@ -252,31 +259,33 @@ public bool IsConflict(AssignTeacher at)
         {
             var ds = new List<AssignTeacher>();
             string sql = @"select at.assign_class_id as assignClassId,at.day,at.quiz_count,oral_count, at.start_period, at.end_period, at.teacher_id as teacherId,c.name as className, c.room as roomName,
-                            t.fullname as nameTeacher, s.name as subjectName, s.id as subjectId
+                            t.fullname as nameTeacher, s.name as subjectName, s.id as subjectId, ac.term_id 
                             FROM assign_class_teachers at
                             JOIN assign_classes ac ON ac.id = at.assign_class_id 
                             JOIN classes c ON c.id = ac.class_id
                             JOIN subjects s ON s.id = at.subject_id
-                            JOIN teachers t ON t.id = at.teacher_id";
+                            JOIN teachers t ON t.id = at.teacher_id
+                            WHERE ac.term_id = (SELECT MAX(term_id) FROM assign_classes)
+                            ";
 
             var dt = _db.ExecuteQuery(sql);
             foreach (DataRow data in dt.Rows)
             {
-                ds.Add(new AssignTeacher(
-                    (int)data["assignClassId"],
-                    (int)data["teacherId"],
-                    (int)data["subjectId"],
-                    data["subjectName"].ToString()!,
-                    data["className"].ToString()!,
-                    data["nameTeacher"].ToString()!,
-                    data["roomName"].ToString()!,
-                    data["day"].ToString()!,
-                    (int)data["start_period"],
-                    (int)data["end_period"],
-                    (int)data["quiz_count"],
-                    (int)data["oral_count"]     
-                    
-                ));
+                ds.Add(new AssignTeacher{
+                    Assign_class_id = (int)data["assignClassId"],
+                    Teachers_id =  (int)data["teacherId"],
+                    Subject_id = (int)data["subjectId"],
+                    CourseName =  data["subjectName"].ToString()!,
+                    ClassName = data["className"].ToString()!,
+                    Teachers = data["nameTeacher"].ToString()!,
+                    RoomName = data["roomName"].ToString()!,
+                    Day = data["day"].ToString()!,
+                    Start = (int)data["start_period"],
+                    End = (int)data["end_period"],
+                    QuizCount = (int)data["quiz_count"],
+                    OralCount = (int)data["oral_count"],
+                    term_id = (int)data["term_id"]                     
+            });
 
             }
 
@@ -324,7 +333,7 @@ public bool IsConflict(AssignTeacher at)
                        JOIN classes c ON c.id = ac.class_id
                        JOIN subjects s ON s.id = at.subject_id
                        JOIN teachers t ON t.id = at.teacher_id
-                       WHERE t.fullname LIKE @search OR c.name LIKE @search OR s.name LIKE @search";
+                       WHERE t.fullname LIKE @search OR c.name LIKE @search OR s.name LIKE @search AND ac.term_id = (SELECT MAX(term_id) FROM assign_classes)";
 
         var connection = _db.GetConnection();
         var command = new MySqlCommand(sql, connection);
@@ -333,20 +342,20 @@ public bool IsConflict(AssignTeacher at)
         var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            ds.Add(new AssignTeacher(
-                (int)reader["assignClassId"],
-                    (int)reader["teacherId"],
-                    (int)reader["subjectId"],
-                    reader["subjectName"].ToString()!,
-                    reader["className"].ToString()!,
-                    reader["teacherName"].ToString()!,
-                    reader["roomClass"].ToString()!,
-                    reader["day"].ToString()!,
-                    (int)reader["start_period"],
-                    (int)reader["end_period"],
-                    (int)reader["quiz_count"],
-                    (int)reader["oral_count"]
-            ));
+            ds.Add(new AssignTeacher{
+                   Assign_class_id=  (int)reader["assignClassId"],
+                    Teachers_id = (int)reader["teacherId"],
+                    Subject_id = (int)reader["subjectId"],
+                    CourseName = reader["subjectName"].ToString()!,
+                    ClassName = reader["className"].ToString()!,
+                    Teachers = reader["teacherName"].ToString()!,
+                    RoomName = reader["roomClass"].ToString()!,
+                    Day = reader["day"].ToString()!,
+                    Start = (int)reader["start_period"],
+                    End = (int)reader["end_period"],
+                    QuizCount = (int)reader["quiz_count"],
+                    OralCount = (int)reader["oral_count"]
+        });
         }
        
         return ds;

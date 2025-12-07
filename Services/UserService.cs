@@ -71,16 +71,26 @@ public class UserService
 
     public int UpdateUser(UserModel user)
     {
-        string sql = $"UPDATE cschool.users SET " +
-                     $"avatar = '{user.Avatar}', " +
-                     $"role_id = {user.RoleId}, " +
-                     $"fullname = '{user.Fullname}', " +
-                     $"phone = '{user.Phone}', " +
-                     $"email = '{user.Email}', " +
-                     $"address = '{user.Address}' " +
-                     $"WHERE id = {user.Id}";
+        try
+        {
+            Console.WriteLine("Updating user with ID: " + user.Id + ", user.Fullname: " + user.Fullname + ", user.Email: " + user.Email + ", user.Phone: " + user.Phone + ", user.Address: " + user.Address
+            + ", user.Avatar: " + user.Avatar + ", user.RoleId: " + user.RoleId + ", user.Status: " + user.Status );
+            string sql = $"UPDATE cschool.users SET " +
+                        $"avatar = '{user.Avatar}', " +
+                        $"role_id = {user.RoleId}, " +
+                        $"fullname = '{user.Fullname}', " +
+                        $"phone = '{user.Phone}', " +
+                        $"email = '{user.Email}', " +
+                        $"address = '{user.Address}' " +
+                        $"WHERE id = {user.Id}";
 
-        return _db.ExecuteNonQuery(sql);
+            return _db.ExecuteNonQuery(sql);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error in UpdateUser: " + ex.Message);
+            return -1;
+        }
     }
 
     public int LockUser(UserModel user)

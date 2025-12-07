@@ -43,7 +43,7 @@ CREATE TABLE `assign_classes` (
 
 INSERT INTO `assign_classes` (`id`, `class_id`, `head_teacher_id`, `term_id`, `status`) VALUES
 (11, 1, 1, 1, 1),
-(12, 2, 2, 1, 1),
+(12, 2, 2, 8, 1),
 (13, 3, 3, 6, 1),
 (14, 4, 4, 3, 1),
 (15, 5, 5, 4, 1),

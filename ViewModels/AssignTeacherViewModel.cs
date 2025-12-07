@@ -108,7 +108,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
                 ? $"Đã tải {teachersBySubject.Count} giáo viên" 
                 : "Không có giáo viên nào cho môn học này";
             
-            Console.WriteLine($"✅ Đã tải {Teachers.Count} giáo viên cho môn học ID: {subjectId}");
+
         }
         catch (Exception ex)
         {
@@ -188,6 +188,11 @@ partial void OnSearchTextChanged(string value)
             await MessageBoxUtil.ShowError("Tiết bắt đầu và kết thúc phải là số dương", owner: owner);
             return;
         }  
+        if (int.Parse(End) > 10)
+        {
+            await MessageBoxUtil.ShowError("Tiết kết thúc tối thiểu là 10", owner: owner);
+            return;
+        }
         
         if (int.Parse(Start) >= int.Parse(End))
         {
@@ -197,23 +202,22 @@ partial void OnSearchTextChanged(string value)
         
             try
             {
-            var assign = new AssignTeacher(
-                SelectedClass.Assign_class_Id,
-                SelectedTeacher.Id,
-                SelectedSubject.Id,
-                SelectedSubject.Name_Subject,
-                SelectedClass.Name,
-                SelectedTeacher.Name,
-                SelectedClass.Room,
-                SelectedDay,
-                int.Parse(Start),
-                int.Parse(End)
-            )
-            {
+            var assign = new AssignTeacher{
+                Assign_class_id = SelectedClass.Assign_class_Id,
+                Teachers_id = SelectedTeacher.Id,
+                Subject_id = SelectedSubject.Id,
+                CourseName = SelectedSubject.Name_Subject,
+                ClassName = SelectedClass.Name,
+                Teachers = SelectedTeacher.Name,
+                RoomName = SelectedClass.Room,
+                Day = SelectedDay,
+                Start = int.Parse(Start),
+                End = int.Parse(End),
                 QuizCount = 2,
                 OralCount = 2
             };
-            if (_service.IsTeacherBusy(assign.Teachers_id, assign.Day, assign.Start, assign.End))
+           
+            if (_service.IsTeacherBusy(assign.Teachers_id, assign.Day, assign.Start, assign.End,assign.Assign_class_id))
             {
                 await MessageBoxUtil.ShowError("Giáo viên đã có lịch dạy vào khung giờ này!", owner: owner);
                 return;
@@ -277,6 +281,11 @@ public async Task SaveEdit()
               if (Convert.ToInt32(Start) <=0  || Convert.ToInt32(End)<=0)
             {
                 await MessageBoxUtil.ShowError("Tiết bắt đầu và tiết kết thúc phải là số dương", owner: owner);
+                return;
+            }
+            if (int.Parse(End) > 10)
+            {
+                await MessageBoxUtil.ShowError("Tiết kết thúc tối thiểu là 10", owner: owner);
                 return;
             }
 
@@ -509,21 +518,20 @@ public void ResetSearch()
     SearchText = string.Empty;
     LoadDataCommand.Execute(null); // 🔁 Hiển thị lại toàn bộ danh sách
 }
+    public void ClearForm()
+    {
+         _editingItem = null;
+            SelectedTeacher = null;
+            SelectedSubject = null;
+            SelectedClass = null;
+            SelectedDay = null;
+            Start = "";
+            End = "";
+    }
 
     public AssignTeacherViewModel(AssignTeacherService service)
     {
         _service = service;
         LoadDataCommand.Execute(null);
-    }
-    
-    public void ClearForm()
-    {
-        _editingItem = null;
-        SelectedTeacher = null;
-        SelectedSubject = null;
-        SelectedClass = null;
-        SelectedDay = null;
-        Start = "";
-        End = "";
     }
 }

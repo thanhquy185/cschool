@@ -128,7 +128,7 @@ public partial class TeacherViewModel : ViewModelBase
         get => _selectedTeacher;
         set { 
             SetProperty(ref _selectedTeacher, value);
-            Console.WriteLine($"SelectedTeacher changed: {value?.Id}");
+            // Console.WriteLine($"SelectedTeacher changed: {value?.Id}");
         }
 
     }
@@ -221,9 +221,19 @@ public partial class TeacherViewModel : ViewModelBase
                     string updatedAvatarFile = await UploadService.SaveImageAsync(teacher.AvatarFile, "teacher", teacher.Id);
                     teacher.Avatar = updatedAvatarFile;
                 }
-                
-                var result = AppService.TeacherService?.UpdateTeacher(teacher);
-                return result == true;
+                var user = new UserModel{
+                    Id = SelectedTeacher.UserId,
+                    RoleId = 2,
+                    Fullname = teacher.Name,
+                    Avatar = teacher.Avatar ?? "",
+                    Phone = teacher.Phone,
+                    Email = teacher.Email,
+                    Address = teacher.Address,
+                };
+                var result = AppService.UserService.UpdateUser(user);
+                if (result <= 0) return false;
+                var resultTeacher = AppService.TeacherService?.UpdateTeacher(teacher);
+                return resultTeacher == true;
             }
             catch (Exception ex)
             {
