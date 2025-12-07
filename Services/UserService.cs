@@ -5,7 +5,7 @@ using System.Data;
 namespace cschool.Services;
 
 public class UserService
-{
+{                          
     private readonly DBService _db;
 
     public UserService(DBService db)
@@ -22,7 +22,6 @@ public class UserService
 
     public int GetIdLastUser()
     {
-        // Console.WriteLine(123);
         var dt = _db.ExecuteQuery("SELECT id FROM cschool.users ORDER BY id DESC LIMIT 1");
         if (dt.Rows.Count > 0)
             return System.Convert.ToInt32(dt.Rows[0]["id"]);

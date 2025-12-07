@@ -1,3 +1,4 @@
+using System;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -122,6 +123,7 @@ public partial class UserView : UserControl
                 if (result != null && result.Length > 0)
                 {
                     selectedImagePath = result[0];
+                    Console.WriteLine(selectedImagePath);
                     imagePreview.Source = new Avalonia.Media.Imaging.Bitmap(selectedImagePath);
                 }
             };

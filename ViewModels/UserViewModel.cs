@@ -1,4 +1,3 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using ReactiveUI;
@@ -24,7 +23,10 @@ public partial class UserViewModel : ViewModelBase
     {
         Users = new ObservableCollection<UserModel>();
         var users = AppService.UserService.GetUsers();
-        foreach (var user in users) Users.Add(user);
+        foreach (var user in users)
+        {
+            Users.Add(user);
+        }
 
         UserIsExistsByUsernameCommand = ReactiveCommand.CreateFromTask<string, bool>(async (username) =>
         {
