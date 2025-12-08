@@ -32,19 +32,15 @@ namespace Views.Exam
 
         public void RecalculateRemainingStudentsUpdate()
         {
-            // Kiểm tra grade
-            if (examViewModel.SelectedGrade == null)
-                return;
-
             // Kiểm tra term
             var term = Term.SelectedItem as TermExamModel;
             if (term == null)
                 return;
 
-            int grade = examViewModel.SelectedGrade.Value;
+            var grade = Grade.SelectedItem?.ToString();
 
             // Lấy tổng số học sinh trong khối
-            int total = AppService.ExamService.GetStudentGrade(grade, term.Id);
+            int total = AppService.ExamService.GetStudentGrade(Convert.ToInt32(grade), term.Id);
 
             // Tổng số học sinh đã phân công
             int assigned = examViewModel.ExamAssignments.Sum(a => a.AssignedStudents);
@@ -286,6 +282,11 @@ namespace Views.Exam
                 await MessageBoxUtil.ShowError("Vui lòng phân công đủ học sinh vào các phòng thi.", owner: this);
                 return;
             }
+
+            // Kiểm tra xác nhận
+            var confirm = await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn muốn cập nhật lịch thi này?");
+            if (!confirm)
+                return;
 
             string startDT = $"{examDate:yyyy-MM-dd} {startTime:hh\\:mm\\:ss}";
             string endDT = $"{examDate:yyyy-MM-dd} {endTime:hh\\:mm\\:ss}";

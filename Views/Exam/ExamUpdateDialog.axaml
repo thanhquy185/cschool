@@ -90,7 +90,7 @@
 
                     <!-- Học kỳ -->
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="Học kỳ" FontSize="15" FontWeight="Bold" Margin="10,10,0,5" Foreground="Black"/>
-                    <ComboBox  Grid.Row="1" Grid.Column="1" x:Name="Term" MaxDropDownHeight="300"  Margin="10,0,0,10"
+                    <ComboBox  Grid.Row="1" Grid.Column="1" x:Name="Term" SelectionChanged="OnTermChanged" MaxDropDownHeight="300"  Margin="10,0,0,10"
                                 ItemsSource="{Binding StudyTerm}" SelectedItem="{Binding SelectedTerm}" Width="200">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>

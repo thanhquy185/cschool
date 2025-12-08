@@ -400,7 +400,7 @@ private async Task OpenDetailDialog(AssignTeacher a)
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
         if (a == null)
         {
-            await MessageBoxUtil.ShowError("vui lòng chọn 1 dòng để xóa", owner: owner);
+            await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để xóa", owner: owner);
             return;
         }
         if (await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn muốn xóa phân công này không?"))

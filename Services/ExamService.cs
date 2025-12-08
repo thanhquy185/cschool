@@ -29,7 +29,7 @@ public class ExamService
                         LEFT JOIN terms ON exam_details.term_id = terms.id
                         WHERE exam_details.status = 1
                         GROUP BY 
-                            exam_details.id, subjects.name, terms.name, term_year,
+                            exam_details.id, subjects.name, terms.name, terms.learnyear,
                             exam_details.start_time, exam_details.end_time, subjects.id, terms.id
                         ORDER BY exam_details.start_time ASC, subjects.name ASC";
         var dt = _db.ExecuteQuery(sql);
@@ -196,7 +196,7 @@ public class ExamService
     // Lấy ds học kỳ
     public List<TermExamModel> GetTermList()
     {
-        string sql = @"SELECT id, CONCAT(name,' - ',year) AS study_term FROM terms";
+        string sql = @"SELECT id, CONCAT(name,' - ',learnyear) AS study_term FROM terms";
         var dt = _db.ExecuteQuery(sql);
 
         var list = new List<TermExamModel>();

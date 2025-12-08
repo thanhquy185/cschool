@@ -20,10 +20,7 @@
       <StackPanel Classes="MainLayoutHeaderInfo">
         <TextBlock Classes="Title" Text="Quản lý học phí" />
       </StackPanel>
-
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-          
-          
         <Button x:Name="CreateButton" Classes="CrudButton Create" Padding="20,10"   >
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
@@ -32,8 +29,6 @@
             </StackPanel>
           </Border>
         </Button>
-  
-
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
@@ -42,7 +37,6 @@
             </StackPanel>
           </Border>
         </Button>
-
         <Button x:Name="UpdateButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>

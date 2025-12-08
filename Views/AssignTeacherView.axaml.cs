@@ -72,9 +72,7 @@ public partial class AssignTeacherView : UserControl
                 await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để xem chi tiết", null);
                 return;
             }
-            
         }
-      
     }
 
     private async void Vm_RequestOpenDetailDialog(object? sender, AssignTeacher a)
@@ -143,6 +141,9 @@ public partial class AssignTeacherView : UserControl
             .FirstOrDefault();
 
         dialog?.Close();
+
+        if (DataContext is AssignTeacherViewModel vm)
+            vm.SelectedAssignTeacher = null;
     }
 
     private async void Vm_RequestCloseEditAssignTeacher(object? sender, EventArgs e)
@@ -155,5 +156,8 @@ public partial class AssignTeacherView : UserControl
             .FirstOrDefault();
 
         dialog?.Close();
+
+        if (DataContext is AssignTeacherViewModel vm)
+            vm.SelectedAssignTeacher = null;
     }
 }

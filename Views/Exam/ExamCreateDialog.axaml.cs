@@ -25,6 +25,8 @@ namespace Views.Exam
         {
             this.Close();
             examViewModel.ExamAssignments.Clear();
+            examViewModel.SelectedGrade = null;
+            examViewModel.SelectedUpdateTerm = null;
         }
 
         private void OnGradeChanged(object? sender, SelectionChangedEventArgs e)
@@ -215,11 +217,6 @@ namespace Views.Exam
             var startDateTime = $"{examDate:yyyy-MM-dd} {startTime:hh\\:mm\\:ss}";
             var endDateTime = $"{examDate:yyyy-MM-dd} {endTime:hh\\:mm\\:ss}";
 
-            // Kiểm tra xác nhận
-            var confirm = await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn muốn thêm lịch thi này?");
-            if (!confirm)
-                return;
-
             // Kiểm tra dữ liệu hợp lệ
             if (string.IsNullOrWhiteSpace(grade))
             {
@@ -276,6 +273,11 @@ namespace Views.Exam
                 await MessageBoxUtil.ShowError("Vui lòng phân công đủ học sinh vào các phòng thi.", owner: this);
                 return;
             }
+
+            // Kiểm tra xác nhận
+            var confirm = await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn muốn thêm lịch thi này?");
+            if (!confirm)
+                return;
 
             // Khởi tạo model
             var examCreate = new ExamCreateModel
