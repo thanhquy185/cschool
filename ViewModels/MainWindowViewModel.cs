@@ -127,7 +127,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     // Chuyển đến trang Thông tin giáo viên
     [RelayCommand]
-    public void GoToTeacherView() => this.CurrentPage = this._teacherViewModel;
+    public void GoToTeacherView() => this.CurrentPage = new TeacherViewModel();
 
     // Chuyển đến trang Thông tin người dùng
     [RelayCommand]
@@ -151,7 +151,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     public void GoToAssignTeacherView() => this.CurrentPage = this._assignTeacherViewModel;
     [RelayCommand]
-    public void GoToSubjectClassView() => this.CurrentPage = this._subjectClassViewModel;
+    public void GoToSubjectClassView() => this.CurrentPage = new SubjectClassViewModel();
     [RelayCommand]
     public void GoToStatisticalView() => this.CurrentPage = this._statisticalViewModel;
     [RelayCommand]

@@ -97,7 +97,7 @@ public class TeacherService
     {
         try
         {
-            string query = @"SELECT id, name, start_date, end_date, year
+            string query = @"SELECT id, name, start_date, end_date, year, learnyear
                              FROM terms     
                              WHERE status = 1 ORDER BY start_date DESC LIMIT 1";
 
@@ -114,6 +114,7 @@ public class TeacherService
                     Year = (int)data["year"],
                     Start = Convert.ToDateTime(data["start_date"]),
                     End = Convert.ToDateTime(data["end_date"]),
+                    LearnYear = data["learnyear"].ToString()!
                 };
             }
 
@@ -129,7 +130,7 @@ public class TeacherService
     {
         try
         {
-            string query = @"SELECT id, name, start_date, end_date, status 
+            string query = @"SELECT id, name, year,start_date, end_date, status, learnyear
                             FROM terms
                             WHERE status = 1
                             AND @date BETWEEN start_date AND end_date
@@ -148,10 +149,12 @@ public class TeacherService
                 return new TermModel
                 {
                     Id = reader.GetInt32("id"),
+                    Year = reader.GetInt32("year"),
                     Name = reader.GetString("name"),
                     Start = reader.GetDateTime("start_date"),
                     End = reader.GetDateTime("end_date"),
-                    Status = reader.GetInt32("status")
+                    Status = reader.GetInt32("status"),
+                    LearnYear = reader.GetString("learnyear")
                 };
             }
 
@@ -278,8 +281,12 @@ public class TeacherService
     {
         try
         {
-            var lastTerm = AppService.TeacherService.GetLatestTerm();
-            int termId = lastTerm?.Id ?? 0;
+            var term = AppService.TeacherService.GetTermByDate(DateTime.Now);
+            if (term == null)
+            {
+                term = AppService.TeacherService.GetLatestTerm();
+            }
+            Console.WriteLine($"🔍 GetTeacherById: Looking up term ID={term?.Id ?? 0} for term {term?.DisplayTextTermYear ?? "N/A"}");
             var connection = _db.GetConnection();
             string sql = @$" SELECT t.id, t.avatar, t.fullname, t.birthday, t.gender, t.address, t.phone, t.email, t.status,
                                    COALESCE(dd.department_id, 0) AS department_id, 
@@ -295,7 +302,7 @@ public class TeacherService
                             LIMIT 1";
             var command = new MySqlCommand(sql, connection);
             command.Parameters.AddWithValue("@id", id);
-            command.Parameters.AddWithValue("@termId", termId);
+            command.Parameters.AddWithValue("@termId", term?.Id ?? 0);
 
             var adapter = new MySqlDataAdapter(command);
             var dt = new DataTable();
@@ -317,7 +324,7 @@ public class TeacherService
                 DepartmentName = data["department_name"].ToString()!,
                 ClassId = Convert.ToInt32(data["class_id"]),
                 ClassName = data["class_name"].ToString()!,    
-                TermName = lastTerm?.DisplayTextTermYear ?? ""           
+                TermName = term?.DisplayTextTermYear ?? ""           
             };
         }
         catch (Exception e)

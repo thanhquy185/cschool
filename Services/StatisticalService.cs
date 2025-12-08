@@ -88,6 +88,7 @@ public class StatisticalService
                     Id = (int)data["id"],
                     Name = data["name"].ToString()!,
                     Year = (int)data["year"],
+                    LearnYear = data["learnyear"].ToString()!,
                     Start = Convert.ToDateTime(data["start_date"]),
                     End = Convert.ToDateTime(data["end_date"]),
                 });
