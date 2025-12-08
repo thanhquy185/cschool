@@ -10,5 +10,7 @@ namespace cschool.Models
         public string StartDate { get; set; } = ""; 
         public string EndDate { get; set; } = "";  
         public short Status { get; set; } = 1;      
+
+         public string DisplayName => $"{Year} - {TermName}";
     }
 }

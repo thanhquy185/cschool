@@ -1,6 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
 using cschool.Models;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
 using ReactiveUI;
 using System.Reactive;
 using System.Linq;
@@ -10,39 +13,22 @@ using DocumentFormat.OpenXml.Bibliography;
 using System.Globalization;
 using Avalonia.Controls;
 
-
-
-
 namespace cschool.ViewModels
 {
     public class TuitionViewModel : ViewModelBase
     {
-        private int _selectedTabIndex;
-        public int SelectedTabIndex
-        {
-            get => _selectedTabIndex;
-            set
-            {
-                if (_selectedTabIndex != value)
-                {
-                    _selectedTabIndex = value;
-                    OnPropertyChanged();
-                    OnTabChanged(value);
-                }
-            }
-        }
+        
 
-        private void OnTabChanged(int index)
-        {
-            if (index == 0)
-                Console.WriteLine("Đang mở mức học phí");
-            else if (index == 1)
-                Console.WriteLine("Đang mở quản lý học phí");
-        }
+      
 
         public ObservableCollection<ClassModel> FeeClassList { get; set; } = new ObservableCollection<ClassModel>();
+        public ObservableCollection<ClassModel> FeeClassListView {get;set;} = new ObservableCollection<ClassModel>();
         public ObservableCollection<FeeTemplateModel> FeeTemplateList { get; set; } = new ObservableCollection<FeeTemplateModel>();
         public ObservableCollection<TuitionModel> TuitionList { get; set; } = new ObservableCollection<TuitionModel>();
+        public ObservableCollection<TuitionModel> TuitionListView { get; set; }= new ObservableCollection<TuitionModel>();
+        public ObservableCollection<TuitionModel> TuitionDetail {get;set;}= new ObservableCollection<TuitionModel>();
+       public TuitionModel SelectedStudent { get; set; }
+ 
          public ObservableCollection<FeeTemplateModel> DeletedFees { get; set; } = new();
         public ObservableCollection<FeeTemplateModel> BaseFees  {get;set;} = new ObservableCollection<FeeTemplateModel>();
         public ObservableCollection<FeeTemplateModel> ExtraFees  {get;set;} = new ObservableCollection<FeeTemplateModel>();
@@ -52,78 +38,140 @@ namespace cschool.ViewModels
 
         public ObservableCollection<FeeTemplateModel> BaseFees2  {get;set;} = new ObservableCollection<FeeTemplateModel>();
         public ObservableCollection<FeeTemplateModel> ExtraFees2  {get;set;} = new ObservableCollection<FeeTemplateModel>();
+        private ObservableCollection<FeeClassMonthModel> _allStudentFeeMonthDetail = new ObservableCollection<FeeClassMonthModel>();
         public ObservableCollection<MonthFeeItem> MonthsHK1 { get; set; }
         public ObservableCollection<MonthFeeItem> MonthsHK2 { get; set; }
+
         public ObservableCollection<FeeTemplateModel> selectedFeeTemplate { get; set; }
+
+        private ObservableCollection<FeeTemplateModel> _tuitionDetailFiltered = new();
+        public ObservableCollection<FeeTemplateModel> TuitionDetailFiltered
+        {
+            get => _tuitionDetailFiltered;
+            set => SetProperty(ref _tuitionDetailFiltered, value);
+        }
+  
+
+        public ObservableCollection<TermModel> TermList { get; set; } = new ObservableCollection<TermModel>();
+
+
+
+
+    private TermModel? _selectedTerm;
+    public TermModel? SelectedTerm
+    {
+        get => _selectedTerm;
+        set
+        {
+            if (_selectedTerm != value)
+            {
+                _selectedTerm = value;
+                OnPropertyChanged();
+                LoadMonthsForSelectedTerm();
+            }
+        }
+    }
+
+    // Danh sách tháng theo học kỳ
+    public ObservableCollection<string> MonthList { get; set; } = new ObservableCollection<string>();
+
+    private string? _selectedMonth;
+    public string? SelectedMonth
+    {
+        get => _selectedMonth;
+        set
+        {
+            if (_selectedMonth != value)
+            {
+                _selectedMonth = value;
+                OnPropertyChanged();
+                FilterTuitionDetailByMonth();
+            }
+        }
+    }
+
+    // Chi tiết học phí (DataGrid)
+    public ObservableCollection<FeeClassMonthModel> StudentFeeMonthDetail { get; set; } = new ObservableCollection<FeeClassMonthModel>();
+
+    // Map Term -> List tháng
+    public Dictionary<string, List<int>> TermMonthMap { get; set; } = new Dictionary<string, List<int>>();
+
+    // Load tháng khi chọn học kỳ
+        
+        
+        // Tổng tiền hiển thị
+        private decimal _totalAmount;
+        public decimal TotalAmount
+        {
+            get => _totalAmount;
+            set => SetProperty(ref _totalAmount, value);
+        }
+                
 
         public decimal DefaultFeeHK1 { get; set; }
         public decimal DefaultFeeHK2 { get; set; }
         private TermModel T1Model;
         private TermModel T2Model;
+        
 
 
         // ReactiveCommand cho Save
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveMonthFeeCommand { get; }
-        private string _selectedTerm;
-        public string SelectedTerm { get; set; }
+  
+        public TuitionModel SelectedFeeCollection { get; set; }
         public ReactiveCommand<Unit, Unit> ApplyDefaultHK1Command { get; }
         public ReactiveCommand<Unit, Unit> ApplyDefaultHK2Command { get; }
 
 
+        
+    private ClassModel _selectedClass;
+public ClassModel SelectedClass
+{
+    get => _selectedClass;
+    set
+    {
+        _selectedClass = value;
+        OnPropertyChanged();
 
-        private ClassModel _selectedClass;
-        public ClassModel SelectedClass
+        if (value != null)
         {
-            get => _selectedClass;
-            set
-            {
-                _selectedClass = value;
-                OnPropertyChanged();
-
-                if (value != null)
+            // 1. Load months cho class
+            _ = LoadFeeMonths(value.Id)
+                .ContinueWith(_ =>
                 {
-                    _ = LoadFeeMonths(value.Id);
-                }
-            }
+                    // 2. Sau khi months đã load, load các fee đã chọn từ DB
+                    _ = LoadSelectedFeesForClass(value);
+                });
         }
+    }
+}
 
 
 
         public TuitionViewModel()
         {
             LoadData();
-
-            // Tạo dữ liệu mẫu học sinh
-            TuitionList.Add(new TuitionModel
+// Lấy full list học sinh
+            var listStudent = AppService.TuitionService.GetAllStudents();
+            TuitionList.Clear();
+            foreach (var student in listStudent)
             {
-                StudentName = "Nguyễn Văn An",
-                ClassName = "1A",
-                TotalFee = 1000000 + 300000 + 200000,
-                PaidAmount = 1500000,
-                RemainingAmount = 600000,
-                Status = "Đóng một phần"
-            });
+                TuitionList.Add(student);
+            }
 
-            TuitionList.Add(new TuitionModel
-            {
-                StudentName = "Trần Thị Bích",
-                ClassName = "1B",
-                TotalFee = 1200000 + 300000 + 250000,
-                PaidAmount = 1750000,
-                RemainingAmount = 0,
-                Status = "Đã đóng"
-            });
+            // Lọc cho ListView: mỗi học sinh mỗi năm chỉ 1 record
+            var distinctTuition = TuitionList
+                .GroupBy(t => new { t.StudentId, t.StudentName, t.ClassYear }) // nhóm theo học sinh + năm
+                .Select(g => g.First())  // lấy bản ghi đầu tiên trong nhóm
+                .ToList();
 
-            TuitionList.Add(new TuitionModel
+            // Thêm vào TuitionListView (giả sử là ObservableCollection hoặc List)
+            TuitionListView.Clear();
+            foreach (var tuition in distinctTuition)
             {
-                StudentName = "Lê Văn Cường",
-                ClassName = "2A",
-                TotalFee = 1100000 + 300000 + 220000,
-                PaidAmount = 0,
-                RemainingAmount = 1600000,
-                Status = "Chưa đóng"
-            });
+                TuitionListView.Add(tuition);
+            }
 
             SaveCommand = ReactiveCommand.Create(SaveFeeTemplates);
            SaveMonthFeeCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -142,6 +190,7 @@ namespace cschool.ViewModels
         {
             FeeClassList.Clear();
             FeeTemplateList.Clear();
+            FeeClassListView.Clear();
             BaseFees.Clear();
             BaseFees1.Clear();
             BaseFees2.Clear();
@@ -216,6 +265,16 @@ namespace cschool.ViewModels
             
             }
 
+            var distinctClasses = FeeClassList
+                .GroupBy(c => new { c.Name, c.Year })
+                .Select(g => g.First())
+                .ToList();
+            foreach (var distinctClass in distinctClasses)
+            {
+                FeeClassListView.Add(distinctClass);
+            }
+    
+
 
         
 
@@ -264,7 +323,9 @@ namespace cschool.ViewModels
 
        public async Task LoadFeeMonths(int ClassId)
 {
-    // Lấy ClassModel cho từng học kỳ
+    // Lấy Class    
+    // Model cho từng học kỳ
+    
     ClassModel classHK1 = FeeClassList.FirstOrDefault(c => c.Id == ClassId && c.Term == "Học kỳ 1");
     ClassModel classHK2 = FeeClassList.FirstOrDefault(c => c.Id == ClassId && c.Term == "Học kỳ 2");
 
@@ -392,10 +453,45 @@ private List<FeeClassMonthModel> SaveMonthFeeTemplates()
 
     return feeClassMonths; // <- Trả về ngoài vòng lặp
 }
+public async Task LoadSelectedFeesForClass(ClassModel classModel)
+{
+    if (classModel == null) return;
+
+    // Lấy assign_class_id theo từng học kỳ
+    var classHK1 = FeeClassList.FirstOrDefault(c => c.Id == classModel.Id && c.Term == "Học kỳ 1");
+    var classHK2 = FeeClassList.FirstOrDefault(c => c.Id == classModel.Id && c.Term == "Học kỳ 2");
+
+    int assignHK1 = classHK1?.AssignClassId ?? 0;
+    int assignHK2 = classHK2?.AssignClassId ?? 0;
+
+    // Lấy dữ liệu từ DB
+    var savedFeesHK1 = await Task.Run(() => AppService.TuitionService.GetSavedFeeClassMonths(assignHK1));
+    var savedFeesHK2 = await Task.Run(() => AppService.TuitionService.GetSavedFeeClassMonths(assignHK2));
+
+    // Load tháng HK1
+    foreach (var month in MonthsHK1)
+        month.IsSelected = savedFeesHK1.Any(f => f.MonthId == month.MonthId);
+
+    // Load tháng HK2
+    foreach (var month in MonthsHK2)
+        month.IsSelected = savedFeesHK2.Any(f => f.MonthId == month.MonthId);
+
+    // Load fee HK1
+    foreach (var fee in BaseFees1.Concat(ExtraFees1))
+        fee.IsSelected = savedFeesHK1.Any(f => f.FeeTemplateId == fee.Id);
+
+    // Load fee HK2
+    foreach (var fee in BaseFees2.Concat(ExtraFees2))
+        fee.IsSelected = savedFeesHK2.Any(f => f.FeeTemplateId == fee.Id);
+
+    OnPropertyChanged(nameof(MonthsHK1));
+    OnPropertyChanged(nameof(MonthsHK2));
+}
 
 
 
-            public static List<int> GetMonthsInTerm(string startStr, string endStr)
+
+    public static List<int> GetMonthsInTerm(string startStr, string endStr)
             {
                 if (!DateTime.TryParseExact(startStr, "M/d/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime startDate) ||
                     !DateTime.TryParseExact(endStr, "M/d/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime endDate))
@@ -419,9 +515,186 @@ private List<FeeClassMonthModel> SaveMonthFeeTemplates()
 
                 return months;
             }
+public void LoadStudentTuitionDetail(int studentId)
+{
+    try
+    {
+        // 1️⃣ Khởi tạo các collection nếu chưa
+        TuitionList ??= new ObservableCollection<TuitionModel>();
+        TuitionDetail ??= new ObservableCollection<TuitionModel>();
+        StudentFeeMonthDetail ??= new ObservableCollection<FeeClassMonthModel>();
+        TermList ??= new ObservableCollection<TermModel>();
+        MonthList ??= new ObservableCollection<string>();
+        TermMonthMap ??= new Dictionary<string, List<int>>();
 
+        // 2️⃣ Lấy tất cả học sinh
+        var listStudentTuition = AppService.TuitionService.GetAllStudents();
+        if (listStudentTuition == null)
+        {
+            Console.WriteLine("GetAllStudents() trả về null");
+            return;
+        }
 
+        // 3️⃣ Clear dữ liệu cũ
+        TuitionList.Clear();
+        TuitionDetail.Clear();
+        StudentFeeMonthDetail.Clear();
+        TermList.Clear();
+        MonthList.Clear();
+        TermMonthMap.Clear();
+           _allStudentFeeMonthDetail.Clear();
 
+        // 4️⃣ Thêm học sinh vào TuitionList
+        foreach (var student in listStudentTuition)
+        {
+            if (student != null)
+                TuitionList.Add(student);
+        }
 
+        // 5️⃣ Lọc theo studentId
+        var studentTuition = TuitionList
+            .Where(t => t.StudentId == studentId)
+            .OrderBy(t => t.MonthId)
+            .ToList();
+
+        if (studentTuition.Count == 0)
+        {
+            Console.WriteLine($"Không tìm thấy học sinh với StudentId={studentId}");
+            return;
+        }
+
+        // 6️⃣ Lấy học kỳ, tháng, và dữ liệu fee từng tháng
+        var allTerms = new List<TermModel>();
+
+       var processedAssignClassIds = new HashSet<int>();
+
+foreach (var tuition in studentTuition)
+{
+    var assignClass = AppService.ClassService.GetAssignClassById(tuition.AssignClassId);
+    if (assignClass == null) continue;
+
+    // Nếu AssignClassId này đã xử lý rồi thì bỏ qua
+    if (processedAssignClassIds.Contains(assignClass.Id))
+        continue;
+
+    processedAssignClassIds.Add(assignClass.Id);
+
+    var term = AppService.ClassService.GetTermById(assignClass.TermId);
+    if (term == null) continue;
+
+    // Lưu học kỳ nếu chưa có
+    if (!allTerms.Any(t => t.Id == term.Id))
+        allTerms.Add(term);
+
+    // Lấy tháng của học kỳ
+    DateTime startDate = DateTime.Parse(term.StartDate, CultureInfo.InvariantCulture);
+    DateTime endDate = DateTime.Parse(term.EndDate, CultureInfo.InvariantCulture);
+    var months = GetMonthsInTerm(startDate, endDate); // List<int>
+
+    // Map Term -> List tháng
+    if (!TermMonthMap.ContainsKey(term.DisplayName))
+        TermMonthMap[term.DisplayName] = months;
+
+    // Lấy dữ liệu học phí thực tế từ DB
+    var savedFeeMonths = AppService.TuitionService.GetSavedFeeClassMonths(assignClass.Id);
+    if (savedFeeMonths != null)
+    {
+        foreach (var feeMonth in savedFeeMonths)
+        {
+              _allStudentFeeMonthDetail.Add(feeMonth);
+        }
     }
 }
+
+
+        // 7️⃣ Đổ TermList và chọn học kỳ mặc định
+        foreach (var t in allTerms.OrderBy(t => t.StartDate))
+            TermList.Add(t);
+
+        SelectedTerm = TermList.FirstOrDefault();
+
+        // 8️⃣ Load MonthList theo học kỳ đầu tiên
+        LoadMonthsForSelectedTerm();
+
+        // 9️⃣ Đổ TuitionDetail (tổng hợp học phí)
+        foreach (var tuition in studentTuition)
+        {
+            TuitionDetail.Add(tuition);
+            Console.WriteLine($"[SUMMARY] StudentName: {tuition.StudentName}, Class: {tuition.ClassName}, TotalAmount: {tuition.TotalAmount}");
+        }
+
+        Console.WriteLine("LoadStudentTuitionDetail completed successfully!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("LoadStudentTuitionDetail exception: " + ex.Message);
+    }
+}
+private void LoadMonthsForSelectedTerm()
+    {
+        MonthList.Clear();
+        if (SelectedTerm == null || !TermMonthMap.ContainsKey(SelectedTerm.DisplayName)) return;
+
+        foreach (var m in TermMonthMap[SelectedTerm.DisplayName])
+            MonthList.Add("Tháng " + m);
+    }
+
+    // Filter chi tiết học phí theo tháng
+   public void FilterTuitionDetailByMonth()
+{
+    Console.WriteLine("===== FilterTuitionDetailByMonth START =====");
+    Console.WriteLine($"SelectedMonth = '{SelectedMonth}'");
+
+    if (string.IsNullOrEmpty(SelectedMonth)) 
+    {
+        Console.WriteLine("SelectedMonth is null or empty. Returning...");
+        return;
+    }
+
+    int monthId;
+    if (!int.TryParse(SelectedMonth.Replace("Tháng ", ""), out monthId))
+    {
+        Console.WriteLine($"Cannot parse month from SelectedMonth='{SelectedMonth}'");
+        return;
+    }
+
+    Console.WriteLine($"Parsed monthId = {monthId}");
+
+    Console.WriteLine("Original StudentFeeMonthDetail:");
+    foreach (var f in    _allStudentFeeMonthDetail)
+    {
+        Console.WriteLine($"  AssignClassId={f.AssignClassId}, MonthId={f.MonthId}, Amount={f.Amount}, Start={f.StartDate}, End={f.EndDate}");
+    }
+
+    var filtered =    _allStudentFeeMonthDetail.Where(f => f.MonthId == monthId).ToList();
+
+    Console.WriteLine("Filtered items:");
+    foreach (var f in filtered)
+    {
+        Console.WriteLine($"  AssignClassId={f.AssignClassId}, MonthId={f.MonthId}, Amount={f.Amount}, Start={f.StartDate}, End={f.EndDate}");
+    }
+
+    StudentFeeMonthDetail.Clear();
+    foreach (var f in filtered)
+        StudentFeeMonthDetail.Add(f);
+
+    Console.WriteLine("===== FilterTuitionDetailByMonth END =====");
+}
+
+    // INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+
+
+
+
+      
+    }
+    
+
+    
+
+    
+

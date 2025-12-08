@@ -3,65 +3,86 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:cschool.ViewModels"
-        xmlns:models="using:cschool.Models"
         mc:Ignorable="d" 
-        d:DesignWidth="800" d:DesignHeight="500"
+        d:DesignWidth="900" d:DesignHeight="600"
         x:Class="cschool.Views.Tuition.TuitionCreateDialog"
         x:DataType="vm:TuitionViewModel"
-        Title="Thiết lập học phí">
+        Title="Thiết lập học phí"
+        Padding="15">
 
   <Design.DataContext>
     <vm:TuitionViewModel />
   </Design.DataContext>
 
-  <Grid RowDefinitions="Auto,*,Auto" Margin="10" RowSpacing="10">
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="15">
 
     <!-- Header -->
-    <TextBlock Text="Thiết lập học phí cho lớp" FontSize="18" FontWeight="Bold"/>
+    <TextBlock Text="Thiết lập học phí cho lớp" 
+               FontSize="20" 
+               FontWeight="Bold" 
+               HorizontalAlignment="Center"
+               Margin="0,0,0,10"/>
 
     <!-- Body: DataGrid danh sách phí -->
-<DataGrid Grid.Row="1"
-          x:Name="FeeDataGrid"
-          AutoGenerateColumns="False"
-          Margin="0,0,0,10"
-          ItemsSource="{Binding FeeTemplateList}"
-           IsReadOnly="True" >
+    <DataGrid Grid.Row="1"
+              x:Name="FeeDataGrid"
+              AutoGenerateColumns="False"
+              ItemsSource="{Binding FeeTemplateList}"
+              IsReadOnly="True"
+              CanUserResizeColumns="True"
+              GridLinesVisibility="Horizontal"
+              RowHeight="35"
+              Margin="0,0,0,10"
+              SelectionMode="Single"
+              HeadersVisibility="Column"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+      
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Tên phí" Binding="{Binding Name}" Width="2*" />
+        <DataGridTextColumn Header="Loại phí" Binding="{Binding Type}" Width="*" />
+        <DataGridTextColumn Header="Số tiền" Binding="{Binding Amount, StringFormat='{}{0:N0}'}" Width="*" 
+                           />
 
-    <DataGrid.Columns>
-        <DataGridTextColumn Header="Tên phí" Binding="{Binding Name}" IsReadOnly="False" Width="2*"/>
-        <DataGridTextColumn Header="Loại phí" Binding="{Binding Type}" IsReadOnly="False" Width="*"/>
-        <DataGridTextColumn Header="Số tiền" Binding="{Binding Amount}" IsReadOnly="False" Width="*"/>
-
-        <DataGridTemplateColumn Header="Hành động" Width="150">
-            <DataGridTemplateColumn.CellTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="Sửa" Margin="5,0" Click="EditFee_Click"/>
-                        <Button Content="Xóa" Margin="5,0" Click="DeleteFee_Click"/>
-                    </StackPanel>
-                </DataTemplate>
-            </DataGridTemplateColumn.CellTemplate>
+        <DataGridTemplateColumn Header="Hành động" Width="200">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                <Button Content="Sửa" Width="70" Height="30" Click="EditFee_Click" Classes="Accent"/>
+                <Button Content="Xóa" Width="70" Height="30" Click="DeleteFee_Click" Classes="Destructive"/>
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-    </DataGrid.Columns>
-</DataGrid>
-
+      </DataGrid.Columns>
+    </DataGrid>
 
     <!-- Footer: Thêm phí mới -->
-    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
-      <TextBox x:Name="NewFeeName" Width="150" Watermark="Tên phí"/>
-      <ComboBox x:Name="NewFeeType" Width="100">
-        <ComboBoxItem Content="BASE"/>
-        <ComboBoxItem Content="CUSTOM"/>
-      </ComboBox>
-      <TextBox x:Name="NewFeeAmount" Width="100" Watermark="Số tiền"/>
-      <Button Content="Thêm" Width="80" Click="AddFee_Click"/>
+    <Border Grid.Row="2" Padding="10" Background="#F7F7F7" CornerRadius="8">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="15">
 
-      <!-- Nút Lưu/Đóng -->
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,0,0,0">
-        <Button Content="Lưu" Width="100" Click="Save_Click"/>
-        <Button Content="Đóng" Width="100" Click="Close_Click" Margin="10,0,0,0"/>
+        <!-- Form thêm phí -->
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBox x:Name="NewFeeName" Width="180" Watermark="Tên phí" />
+          <ComboBox x:Name="NewFeeType" Width="120" SelectedIndex="0">
+            <ComboBoxItem Content="BASE"/>
+            <ComboBoxItem Content="CUSTOM"/>
+          </ComboBox>
+          <TextBox x:Name="NewFeeAmount" Width="120" Watermark="Số tiền" />
+          <Button Content="Thêm" Width="90" Click="AddFee_Click" Classes="Primary"/>
+        </StackPanel>
+
+        <!-- Spacer -->
+        <StackPanel Width="20"/>
+
+        <!-- Nút Lưu/Đóng -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+          <Button Content="Lưu" Width="100" Click="Save_Click" Classes="Primary"/>
+          <Button Content="Đóng" Width="100" Click="Close_Click" />
+        </StackPanel>
+
       </StackPanel>
-    </StackPanel>
+    </Border>
 
   </Grid>
 </Window>

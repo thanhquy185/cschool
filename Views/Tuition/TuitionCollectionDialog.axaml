@@ -1,0 +1,70 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:cschool.ViewModels"
+        xmlns:models="using:cschool.Models"
+        mc:Ignorable="d" 
+        d:DesignWidth="800" d:DesignHeight="500"
+        x:Class="cschool.Views.Tuition.TuitionCollectionDialog"
+        x:DataType="vm:TuitionViewModel"
+        Title="Thu học phí"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:TuitionViewModel />
+    </Design.DataContext>
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#0078D4" BorderThickness="2">
+        <Grid RowDefinitions="Auto,*" Margin="0">
+            
+            <!-- Header -->
+            <Border Background="#4285F4" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1"
+                               Text="Thu học phí"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            Click="Close_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Nội dung -->
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Margin="20" Spacing="10">
+
+                    <!-- Thông tin học sinh -->
+                    <Border Background="#F5F5F5" Padding="10" CornerRadius="6" BorderBrush="#DDD" BorderThickness="1">
+                        <StackPanel>
+                            <!-- <TextBlock Text="Lâm Tú Nhi" FontWeight="Bold" FontSize="16"/> -->
+                            <!-- <TextBlock Text="{Binding SelectedTuition.ClassName}" FontSize="14"/>
+                            <TextBlock Text="{Binding SelectedTuition.ClassYear}" FontSize="14"/> -->
+                        </StackPanel>
+                    </Border>
+
+                    Danh sách tháng học phí
+            
+
+              
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>

@@ -33,8 +33,8 @@ INSERT INTO `assign_classes` (`id`, `class_id`, `head_teacher_id`, `term_id`, `s
 (16, 6, 6, 9, 1),
 (17, 7, 7, 9, 1),
 (18, 8, 8, 9, 1),
-(19, 2, 9, 9, 1),
-(20, 1, 10, 9, 1);
+(19, 2, 9, 10, 1),
+(20, 1, 10, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -1333,7 +1333,7 @@ CREATE TABLE `fee_templates` (
   `name` VARCHAR(200) NOT NULL COMMENT 'Tên phí: Học phí, Tiền xe, Bữa ăn, ...',
   `description` TEXT NULL,
   `fee_type` ENUM('BASE','EXTRA') NOT NULL DEFAULT 'BASE' COMMENT 'BASE = phí cơ bản, EXTRA = phí phát sinh/khác',
-  `default amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
+  `amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -1358,25 +1358,21 @@ CREATE TABLE `fee_templates` (
 CREATE TABLE `class_fee_months` (
   `id` INT NOT NULL AUTO_INCREMENT,
 
-  -- Ánh xạ lớp học kỳ
+
   `assign_class_id` INT NOT NULL,
 
-  -- Loại phí
+
   `fee_template_id` INT NOT NULL,
 
-  -- Tháng
   `month_id` INT NOT NULL,
 
-  -- Học kỳ
   `term` TINYINT(1) NOT NULL COMMENT '1 = HK1, 2 = HK2',
 
-  -- Bật/tắt tháng đó
+ 
   `is_selected` TINYINT(1) NOT NULL DEFAULT 1,
 
-  -- Số tiền tháng đó
   `amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
 
-  -- Thời gian áp dụng chung cho phí (có thể NULL)
   `start_date` DATE DEFAULT NULL,
   `end_date` DATE DEFAULT NULL,
 
@@ -1400,7 +1396,7 @@ CREATE TABLE `class_fee_months` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-=
+
 
 
 -- 12) TuitionPayment: các lần thanh toán (ghi log)
@@ -1447,30 +1443,5 @@ INSERT INTO months (id, name) VALUES
 (11, 'Tháng 11'),
 (12, 'Tháng 12');
 
-
-
-SELECT 
-    tm.id,
-    tm.student_id,
-    s.fullname AS name,
-    ac.class_id,
-    c.name AS class_name,
-    c.grade,
-    c.year AS class_year,
-
-    tm.month_id,
-    m.name AS month_name,
-
-    tm.amount,
-    tm.paid_amount,
-    tm.status
-FROM tuition_monthly tm
-JOIN students s ON tm.student_id = s.id
-LEFT JOIN assign_classes ac 
-       ON ac.student_id = tm.student_id
-      AND ac.year = tm.year
-LEFT JOIN classes c ON c.id = ac.class_id
-LEFT JOIN months m ON m.id = tm.month_id
-WHERE tm.year = @year;
 
 

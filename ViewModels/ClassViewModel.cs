@@ -12,6 +12,7 @@ using Avalonia.Threading;
 
 
 
+
 namespace cschool.ViewModels;
 
 public class ClassViewModel : ViewModelBase
@@ -88,6 +89,30 @@ public class ClassViewModel : ViewModelBase
             }
         }
     }
+    private string _searchClassText = "";
+    public string SearchClassText
+    {
+        get => _searchClassText;
+        set
+        {
+            if (SetProperty(ref _searchClassText, value))
+                ApplyClassFilter();
+        }
+    }
+
+    private string _selectedYear = "Chọn năm học";
+    public string SelectedYear
+    {
+        get => _selectedYear;
+        set
+        {
+            if (SetProperty(ref _selectedYear, value))
+                ApplyClassFilter();
+        }
+    }
+
+// List các năm học có trong data
+public ObservableCollection<string> YearList { get; } = new ObservableCollection<string>();
 
 
 
@@ -96,6 +121,9 @@ public class ClassViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> AddStudentsToClassHK2Command { get; }
     public ReactiveCommand<Unit, Unit> RemoveStudentsFromClassHK2Command { get; }
     public ReactiveCommand<Unit, bool> UpdateClassCommand { get; }
+    public ReactiveCommand<int, bool> DeleteClassCommand { get; }
+    public ReactiveCommand<Unit, Unit> ResetFilterCommand { get; }
+
 
 
     private string _year;
@@ -176,16 +204,30 @@ public class ClassViewModel : ViewModelBase
 
 
     public void LoadData()
-    {
+    {  
+       
          SelectedClass = new ClassModel();
         Classes.Clear();
         Classes_list.Clear();
         foreach (var c in AppService.ClassService.GetClasses())
             Classes.Add(c);
+            YearList.Clear();
+YearList.Add("Chọn năm học");
+foreach (var year in Classes.Select(c => c.Year).Distinct())
+    YearList.Add(year);
+
+// Hiển thị tất cả lớp khi chưa filter
+ApplyClassFilter();
 
     Classes_list.Clear();
-foreach (var c in Classes.GroupBy(x => x.Id).Select(g => g.First()))
-    Classes_list.Add(c);
+        foreach (var c in Classes
+            .Where(x => x.Status != 0)
+            .GroupBy(x => x.Id)
+            .Select(g => g.First()))
+        {
+            Classes_list.Add(c);
+        }
+
 
 
         Teachers.Clear();
@@ -204,7 +246,7 @@ foreach (var c in Classes.GroupBy(x => x.Id).Select(g => g.First()))
         // LoadClassData();
 
     
-
+        
         // Load students of class
         GetClassByIdCommand = ReactiveCommand.Create<int>(id =>
         {
@@ -235,7 +277,13 @@ foreach (var c in Classes.GroupBy(x => x.Id).Select(g => g.First()))
                 TeacherHK2 = AppService.ClassService.GetTeacherByClassAndTerm(classId, t2);
         });
 
-        
+                ResetFilterCommand = ReactiveCommand.Create(() =>
+        {
+            SearchClassText = "";
+            SelectedYear = "Chọn năm học";
+        });
+
+  
 
         AddStudentsToClassHK1Command =
             ReactiveCommand.Create(
@@ -365,6 +413,24 @@ private void MoveStudents(
                    x.Id.ToString().Contains(lower)))
             target.Add(s);
     }
+    public void ResetState()
+    {
+        SelectedClass = null;
+        SelectedClassTypeModel = null;
+
+        SelectedTeacherHK1 = null;
+        SelectedTeacherHK2 = null;
+
+        StudentsAvailableHK1.Clear();
+        StudentInClassHK1.Clear();
+
+        StudentsAvailableHK2.Clear();
+        StudentInClassHK2.Clear();
+
+        SearchStudentTextHK1 = string.Empty;
+        SearchStudentTextHK2 = string.Empty;
+    }
+
 
     public void ValidateSchoolYear()
     {
@@ -442,7 +508,32 @@ private void MoveStudents(
 
     foreach (var s in StudentInClassHK2.ToList())
         StudentsAvailableHK2.Remove(s);
+    }
+
+            public (bool success, string message) DeleteClassById(int id)
+    {
+        return AppService.ClassService.DeleteClass(id);
+    }
+
+    
+private void ApplyClassFilter()
+{
+    Classes_list.Clear();
+
+    var filtered = Classes.AsEnumerable();
+
+    // Lọc theo tên lớp
+    if (!string.IsNullOrWhiteSpace(SearchClassText))
+        filtered = filtered.Where(c => c.Name?.ToLower().Contains(SearchClassText.ToLower()) == true);
+
+    // Lọc theo năm học
+    if (!string.IsNullOrWhiteSpace(SelectedYear) && SelectedYear != "Chọn năm học")
+        filtered = filtered.Where(c => c.Year == SelectedYear);
+
+    foreach (var c in filtered)
+        Classes_list.Add(c);
 }
+
 
 
 

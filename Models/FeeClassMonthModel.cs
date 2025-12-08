@@ -7,6 +7,7 @@ namespace cschool.Models
         public int Id { get; set; }                  // Nếu dùng DB tự tăng
         public int AssignClassId { get; set; }       // Mã lớp
         public int FeeTemplateId { get; set; }       // Mã loại phí
+        public string FeeTemplateName { get; set;}
         public int MonthId { get; set; }             // Tháng 1-12
         public int Term { get; set; }                // Học kỳ 1 hoặc 2
         public decimal Amount { get; set; }          // Số tiền áp dụng

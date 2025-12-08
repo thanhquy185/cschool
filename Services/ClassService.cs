@@ -324,44 +324,169 @@ namespace cschool.Services
         }
 
         // Gán học sinh vào lớp theo học kỳ
-        public async Task AssignStudentsToClassAsync(int classId, int termNumber, string year, List<StudentModel> students)
+      public async Task AssignStudentsToClassAsync(int classId, int termNumber, string year, List<StudentModel> students)
 {
-    Console.WriteLine("ClassID: "+ classId);
-    
-    // Lấy term theo năm học + học kỳ
     var term = GetOrCreateTerm(year).FirstOrDefault(t => t.TermName == $"Học kỳ {termNumber}");
     if (term == null)
     {
-        Console.WriteLine($"Không tìm thấy Học kỳ {termNumber} của năm {year}");
+        Console.WriteLine("[AssignStudents] Không tìm thấy học kỳ!");
         return;
     }
 
     var acIdObj = _db.ExecuteScalar($@"
         SELECT id FROM assign_classes
         WHERE class_id={classId} AND term_id={term.Id}
-    ");    
-    Console.WriteLine("Dang gan hoc sinh assignClassId: " + acIdObj);
-    if (acIdObj == null) return;
+    ");
+    if (acIdObj == null)
+    {
+        Console.WriteLine("[AssignStudents] Không tìm thấy assign_class!");
+        return;
+    }
 
     int assignClassId = Convert.ToInt32(acIdObj);
 
-    foreach (var student in students)
+    Console.WriteLine($"\n========== [ASSIGN STUDENTS HK{termNumber}] ==========");
+    Console.WriteLine($"ClassId = {classId}, TermId = {term.Id}, AssignClassId = {assignClassId}");
+
+    // Lấy danh sách học sinh hiện tại trong DB
+    var dt = _db.ExecuteQuery($@"
+        SELECT student_id 
+        FROM assign_class_students
+        WHERE assign_class_id={assignClassId}
+    ");
+
+    var currentStudentIds = dt.Rows.Cast<DataRow>()
+                                  .Select(r => Convert.ToInt32(r["student_id"]))
+                                  .ToList();
+
+    Console.WriteLine("Current students in DB: " + string.Join(", ", currentStudentIds));
+
+    var newStudentIds = students.Select(s => s.Id).ToList();
+    Console.WriteLine("New students in UI: " + string.Join(", ", newStudentIds));
+
+    // Học sinh cần thêm
+    var toAdd = newStudentIds.Except(currentStudentIds).ToList();
+    Console.WriteLine("To Add: " + string.Join(", ", toAdd));
+
+    // Học sinh cần xóa
+    var toRemove = currentStudentIds.Except(newStudentIds).ToList();
+    Console.WriteLine("To Remove: " + string.Join(", ", toRemove));
+
+    // Thêm mới
+    foreach (var id in toAdd)
     {
-        var exists = _db.ExecuteScalar($@"
-            SELECT COUNT(*) FROM assign_class_students
-            WHERE assign_class_id={assignClassId} AND student_id={student.Id}
+        _db.ExecuteNonQuery($@"
+            INSERT INTO assign_class_students (assign_class_id, student_id, role)
+            VALUES ({assignClassId}, {id}, 'Student')
         ");
-        if (Convert.ToInt32(exists) == 0)
-        {
-            _db.ExecuteNonQuery($@"
-                INSERT INTO assign_class_students (assign_class_id, student_id, role)
-                VALUES({assignClassId}, {student.Id}, 'Student')
-            ");
-        }
+        Console.WriteLine($"Added student: {id}");
     }
 
-    Console.WriteLine($"Đã gán {students.Count} học sinh vào lớp {classId}, Học kỳ {termNumber}, năm {year}");
+    // Xóa học sinh bị gỡ
+    foreach (var id in toRemove)
+    {
+        _db.ExecuteNonQuery($@"
+            DELETE FROM assign_class_students
+            WHERE assign_class_id={assignClassId} AND student_id={id}
+        ");
+        Console.WriteLine($"Removed student: {id}");
+    }
+
+    Console.WriteLine($"====== DONE HK{termNumber}: +{toAdd.Count}, -{toRemove.Count} ======\n");
 }
 
+        public (bool success, string message) DeleteClass(int classId)
+{
+    // 1. Kiểm tra lớp có học sinh không
+    var countObj = _db.ExecuteScalar($@"
+        SELECT COUNT(*) 
+        FROM assign_class_students acs
+        JOIN assign_classes ac ON acs.assign_class_id = ac.id
+        WHERE ac.class_id = {classId}
+    ");
+
+    int count = Convert.ToInt32(countObj);
+
+    if (count > 0)
+    {
+        return (false, "Lớp này đã có học sinh, không thể xóa!");
     }
+
+    // 2. Xóa mềm
+    int rows = _db.ExecuteNonQuery($@"
+        UPDATE classes 
+        SET status = 0 
+        WHERE id = {classId}
+    ");
+
+    if (rows > 0)
+        return (true, "Xóa lớp thành công!");
+
+    return (false, "Không thể xóa lớp! Vui lòng thử lại.");
+}
+
+
+        public TermModel? GetTermById(int termId)
+{
+    var dt = _db.ExecuteQuery($@"
+        SELECT * 
+        FROM cschool.terms
+        WHERE id = {termId}
+    ");
+
+    if (dt.Rows.Count == 0)
+        return null; // Không tìm thấy term
+
+    var row = dt.Rows[0];
+    return new TermModel
+    {
+        Id = (int)row["id"],
+        TermName = row["name"].ToString()!,
+        Year = row["year"].ToString()!,
+        StartDate = row["start_date"].ToString()!,
+        EndDate = row["end_date"].ToString()!,
+        Status = Convert.ToInt16(row["status"])
+    };
+}
+// Thêm vào ClassService
+public AssignClassModel? GetAssignClassById(int assignClassId)
+{
+    var dt = _db.ExecuteQuery($@"
+        SELECT 
+            ac.id AS assign_class_id,
+            ac.class_id,
+            ac.term_id,
+            ac.head_teacher_id,
+            c.name AS class_name,
+            c.grade,
+            t.name AS term_name,
+            t.year AS term_year
+        FROM cschool.assign_classes ac
+        JOIN cschool.classes c ON ac.class_id = c.id
+        JOIN cschool.terms t ON ac.term_id = t.id
+        WHERE ac.id = {assignClassId}
+    ");
+
+    if (dt.Rows.Count == 0)
+        return null; // Không tìm thấy
+
+    var row = dt.Rows[0];
+
+    return new AssignClassModel
+    {
+        Id = (int)row["assign_class_id"],
+        ClassId = (int)row["class_id"],
+        TermId = (int)row["term_id"],
+        HeadTeacherId = row["head_teacher_id"] != DBNull.Value ? (int)row["head_teacher_id"] : 0,
+        ClassName = row["class_name"].ToString()!,
+        Grade = row["grade"] != DBNull.Value ? Convert.ToInt32(row["grade"]) : 0,
+        TermName = row["term_name"].ToString()!,
+        Year = row["term_year"].ToString()!
+    };
+}
+
+
+    }
+
+    
 }

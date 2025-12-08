@@ -25,11 +25,11 @@
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
           
           
-        <Button x:Name="CreateButton" Classes="CrudButton Create">
+        <Button x:Name="CreateButton" Classes="CrudButton Create"   Padding="20,10"   >
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
               <Image Source="{DynamicResource CreateIcon}"/>
-              <TextBlock Text="Thiết lập học phí" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <TextBlock Text="Thiết lập" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
             </StackPanel>
           </Border>
         </Button>
@@ -98,15 +98,15 @@
     <!-- BODY: TAB CONTROL -->
 <Border Grid.Row="2" Classes="TableDataWarper">
 
-  <TabControl SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+  <TabControl x:Name="TuitionTabControl">
 
 
     <!-- TAB 1: Mức học phí -->
-    <TabItem Header="Mức học phí">
+    <TabItem Header="Mức học phí" >
       <Border Classes="TableDataWarper">
         <DataGrid x:Name="Tuition_Class"
                   Classes="TableData"
-                  ItemsSource="{Binding FeeClassList}"
+                  ItemsSource="{Binding FeeClassListView}"
                   SelectedItem="{Binding SelectedClass, Mode=TwoWay}"
                   AutoGenerateColumns="False">
 
@@ -129,38 +129,45 @@
     <TabItem Header="Quản lý học phí">
       <Border Classes="TableDataWarper">
         <DataGrid Classes="TableData"
-                  ItemsSource="{Binding TuitionList}"
-                  AutoGenerateColumns="False">
+                  ItemsSource="{Binding TuitionListView}"
+                  AutoGenerateColumns="False"
+                  >
 
           <DataGrid.Columns>
 
             <DataGridTextColumn Width="2*" Header="Học sinh" Binding="{Binding StudentName}" />
             <DataGridTextColumn Width="1.2*" Header="Lớp" Binding="{Binding ClassName}" />
-            <DataGridTextColumn Width="*" Header="Tổng" Binding="{Binding TotalFee}" />
-            <DataGridTextColumn Width="1.2*" Header="Trạng thái" Binding="{Binding Status}" />
+            <DataGridTextColumn Width="*" Header="Năm học" Binding="{Binding ClassYear}" />
+        
 
             <DataGridTemplateColumn Width="120" Header="Thu tiền">
               <DataGridTemplateColumn.CellTemplate>
                 <DataTemplate>
                   <Button Content="Thu"
                           Classes="TableActionButton Create"
+                          Click="CollectionFee_Click"
+                          DataContext="{Binding}"
                       />
                 </DataTemplate>
               </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
 
-            <DataGridTemplateColumn Width="120" Header="Chi tiết">
-              <DataGridTemplateColumn.CellTemplate>
-                <DataTemplate>
-                  <Button Content="Xem"
-                          Classes="TableActionButton Info"
-                       />
-                </DataTemplate>
-              </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="120" Header="Chi tiết">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Button Content="Xem"
+                      Classes="TableActionButton Info"
+                      Click="StudentDetail_Click"
+                      DataContext="{Binding }"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+
 
           </DataGrid.Columns>
         </DataGrid>
+
+
       </Border>
     </TabItem>
 

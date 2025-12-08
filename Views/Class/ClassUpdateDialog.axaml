@@ -50,10 +50,10 @@
                             <TextBox Text="{Binding SelectedClass.Name}" Height="34"/>
 
                             <TextBlock Text="Khối" FontWeight="Bold"/>
-                            <ComboBox ItemsSource="{Binding Grades}" SelectedItem="{Binding SelectedClass.Grade}" Height="34"/>
+                            <ComboBox ItemsSource="{Binding Grades}" SelectedItem="{Binding SelectedClass.Grade}" Height="34" IsEnabled="False"/>
 
                             <TextBlock Text="Năm học" FontWeight="Bold"/>
-                            <TextBox Text="{Binding SelectedClass.Year}" Height="34" LostFocus="SchoolYearTextBox_LostFocus"/>
+                            <TextBox Text="{Binding SelectedClass.Year}" Height="34" LostFocus="SchoolYearTextBox_LostFocus" IsEnabled="False"/>
                         </StackPanel>
 
                         <!-- Cột phải -->
@@ -185,17 +185,18 @@
 
             <!-- FOOTER -->
             <Border Grid.Row="2" Padding="20" Background="White">
-                <Button Content="Cập nhật"
-                        Width="200"
-                        Height="44"
-                        FontSize="16"
-                        Background="#3C7EDB"
-                        Foreground="White"
-                        BorderThickness="0"
-                        CornerRadius="8"
-                        HorizontalAlignment="Center"
-                        Click="Confirm"
-                       />
+               <Button Content="Cập nhật"
+        Width="200"
+        Height="44"
+        FontSize="16"
+        Background="#FBC02D"
+        Foreground="White"
+        BorderThickness="0"
+        CornerRadius="8"
+        HorizontalAlignment="Center"
+        HorizontalContentAlignment="Center"
+        Click="Confirm"/>
+
             </Border>
 
         </Grid>

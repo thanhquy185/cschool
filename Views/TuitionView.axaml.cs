@@ -1,87 +1,159 @@
 using Avalonia.Controls;
 using cschool.ViewModels;
-namespace cschool.Views;
 using cschool.Models;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using System.Threading.Tasks;
 using cschool.Utils;
-using cschool.ViewModels;
 using cschool.Views.Tuition;
 using System.Reactive.Threading.Tasks;
+using System;
 
-public partial class TuitionView : UserControl
+namespace cschool.Views
 {
-    public TuitionView()
+    public partial class TuitionView : UserControl
     {
+        public TuitionView()
+        {
             InitializeComponent();
             DataContext = new TuitionViewModel();
+
             InfoButton.Click += async (_, _) => await ShowTuitionDialog(DialogModeEnum.Info);
             CreateButton.Click += async (_, _) => await ShowTuitionDialog(DialogModeEnum.Create);
             UpdateButton.Click += async (_, _) => await ShowTuitionDialog(DialogModeEnum.Update);
-            // LockButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Lock);
-    }
-    private async Task ShowTuitionDialog(DialogModeEnum mode)
-    {
-        var vm = DataContext as TuitionViewModel;
-        var selectedTuition = Tuition_Class.SelectedItem as ClassModel;
 
-        if (selectedTuition == null && mode != DialogModeEnum.Create)
-        {
-            await MessageBoxUtil.ShowError("Vui lòng chọn lớp để thực hiện thao tác!");
-            return;
+            var tabControl = this.FindControl<TabControl>("TuitionTabControl");
+            if (tabControl != null)
+                tabControl.SelectionChanged += TuitionTabControl_SelectionChanged;
         }
 
-        Window? dialog = null;
-        switch (mode)
+        private async Task ShowTuitionDialog(DialogModeEnum mode)
         {
-            case DialogModeEnum.Info:
-                if (vm != null && selectedTuition != null)
+            var vm = DataContext as TuitionViewModel;
+            ClassModel? selectedClass = null;
+
+            if (mode != DialogModeEnum.Create)
+            {
+                selectedClass = Tuition_Class.SelectedItem as ClassModel;
+                if (selectedClass == null)
                 {
-             
+                    await MessageBoxUtil.ShowError("Vui lòng chọn lớp!");
+                    return;
                 }
-                // dialog = new TuitionInfoDialog(vm);
-                break;
+            }
+            else
+            {
+                // Create mode: chọn lớp mặc định nếu muốn
+                if (Tuition_Class.SelectedItem is ClassModel cls)
+                    selectedClass = cls;
+            }
 
-            case DialogModeEnum.Create:
-                dialog = new TuitionCreateDialog (vm);
-                break;
+            vm.SelectedClass = selectedClass;
 
-            case DialogModeEnum.Update:
-                    dialog = new TuitionUpdateDialog (vm);
+            if (selectedClass != null)
+            {
+                await vm.LoadFeeMonths(selectedClass.Id);
+                await vm.LoadSelectedFeesForClass(selectedClass);
+            }
 
-                // if (vm != null && selectedTuition != null)
-                // {
-                //     // Lấy thông tin chi tiết lịch thi
-                //     vm.GetTuitionByIdCommand.Execute(selectedTuition.Id).ToTask();
+            Window? dialog = null;
+            switch (mode)
+            {
+                case DialogModeEnum.Update:
+                    dialog = new TuitionUpdateDialog(vm);
+                    break;
+                case DialogModeEnum.Create:
+                    dialog = new TuitionCreateDialog(vm);
+                    break;
+                case DialogModeEnum.Info:
+                    dialog = new TuitionInfoDialog(vm);
+                    break;
+            }
 
-                //     // Lấy danh sách phân công
-                //     vm.GetRoomUpdateByIdCommand.Execute(selectedTuition.Id).ToTask();
-
-                //     // Lấy danh sách phòng thi
-                //     vm.GetRoomListUpdateCommand.Execute(selectedTuition.Id).ToTask();
-
-                //     // Lấy danh sách giáo viên
-                //     vm.GetTeacherListUpdateCommand.Execute(selectedTuition.Id).ToTask();
-                // }
-                // dialog = new TuitionUpdateDialog(vm);
-                break;
-
-            case DialogModeEnum.Lock:
-                // if (vm != null && selectedTuition != null)
-                // {
-                //     vm.GetTuitionByIdCommand.Execute(selectedTuition.Id).ToTask();
-                // }
-                // dialog = new TuitionLockDialog(vm);
-                break;
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            if (owner != null && dialog != null)
+                await dialog.ShowDialog(owner);
         }
 
+        private void TuitionTabControl_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (sender is TabControl tabControl)
+            {
+                if (tabControl.SelectedItem is TabItem selectedTab)
+                {
+                    bool isManageTab = selectedTab.Header?.ToString() == "Quản lý học phí";
 
-        var owner = TopLevel.GetTopLevel(this) as Window;
-        if (owner != null)
-            await dialog.ShowDialog(owner);
-        else
-            dialog.Show();
+                    CreateButton.Opacity = isManageTab ? 0 : 1;
+                    CreateButton.IsHitTestVisible = !isManageTab;
+
+                    Console.WriteLine($"Tab changed: {selectedTab.Header}");
+                }
+            }
+        }
+
+        private async void StudentDetail_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is not Button btn) return;
+
+                if (btn.DataContext is not TuitionModel studentRow)
+                {
+                    await MessageBoxUtil.ShowError(
+                        "Không lấy được dữ liệu học sinh.",
+                        owner: TopLevel.GetTopLevel(this) as Window
+                    );
+                    return;
+                }
+
+                var vm = DataContext as TuitionViewModel;
+                if (vm == null) return;
+
+                vm.SelectedStudent = studentRow;
+                vm.LoadStudentTuitionDetail(studentRow.StudentId);
+
+                var dlg = new TuitionInfoDialog(vm);
+                var owner = TopLevel.GetTopLevel(this) as Window;
+                if (owner != null)
+                    await dlg.ShowDialog(owner);
+                else
+                    dlg.Show();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("StudentDetail_Click error: " + ex.Message);
+            }
+        }
+
+        private async void CollectionFee_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is not Button btn) return;
+
+                if (btn.DataContext is not TuitionModel studentRow)
+                {
+                    await MessageBoxUtil.ShowError("Không lấy được dữ liệu học sinh.",
+                                                   owner: TopLevel.GetTopLevel(this) as Window);
+                    return;
+                }
+
+                var vm = DataContext as TuitionViewModel;
+                if (vm == null) return;
+
+                vm.SelectedStudent = studentRow;
+                vm.LoadStudentTuitionDetail(studentRow.StudentId);
+
+                var dlg = new TuitionInfoDialog(vm);
+                var owner = TopLevel.GetTopLevel(this) as Window;
+                if (owner != null)
+                    await dlg.ShowDialog(owner);
+                else
+                    dlg.Show();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("CollectionFee_Click error: " + ex.Message);
+            }
+        }
     }
-
 }

@@ -152,7 +152,7 @@
                                                 Header="Số phòng"
                                                 Width="*" />
                                             <DataGridTextColumn 
-                                                Binding="{Binding TeacherName}"
+                                                Binding="{Binding Name}"
                                                 Header="Giáo viên"
                                                 Width="2*" />
                                             <DataGridTextColumn 

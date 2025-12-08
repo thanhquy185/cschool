@@ -17,38 +17,73 @@ public class TuitionService
         _db = db;
     }
  
-    public List<FeeClassMonthModel> GetFeeClassMonths(int classFeeTemplateId)
+         public List<TuitionModel> GetAllStudents()
     {
-        List<FeeClassMonthModel> list = new List<FeeClassMonthModel>();
+       List<TuitionModel> list = new List<TuitionModel>();
 
-        // try
-        // {
-        //     string sql = $@"
-        //         SELECT id, class_fee_template_id, month_id, amount
-        //         FROM class_fee_months
-        //         WHERE class_fee_template_id = {classFeeTemplateId}
-        //         ORDER BY month_id";
+    try
+    {
+        string sql = @"
+            SELECT 
+                tm.id,
+                tm.student_id,
+                s.fullname AS student_name,
+                
+                tm.assign_class_id,
+                ac.class_id,
+                c.name AS class_name,
+                c.grade,
 
-        //     var result = _db.ExecuteQuery(sql);
+                te.year AS class_year,
 
-        //     foreach (DataRow row in result.Rows)
-        //     {
-        //         list.Add(new FeeClassMonthModel
-        //         {
-        //             Id = Convert.ToInt32(row["id"]),
-        //             ClassFeeTemplateId = Convert.ToInt32(row["class_fee_template_id"]),
-        //             MonthId = Convert.ToInt32(row["month_id"]),
-        //             Amount = Convert.ToInt32(row["amount"])
-        //         });
-        //     }
-        // }
-        // catch (Exception ex)
-        // {
-        //     Console.WriteLine("Error GetFeeClassMonths: " + ex.Message);
-        // }
+                tm.month_id,
+                m.name AS month_name,
 
-        return list;
+                tm.total_amount,
+                tm.is_paid
+
+            FROM tuition_monthly tm
+            JOIN students s ON s.id = tm.student_id
+            LEFT JOIN assign_classes ac ON ac.id = tm.assign_class_id
+            LEFT JOIN terms te ON te.id = ac.term_id
+            LEFT JOIN classes c ON c.id = ac.class_id
+            LEFT JOIN months m ON m.id = tm.month_id
+            ORDER BY ac.class_id, tm.student_id, tm.month_id;
+        ";
+
+        DataTable dt = _db.ExecuteQuery(sql);
+
+        foreach (DataRow row in dt.Rows)
+        {
+            list.Add(new TuitionModel
+            {
+                Id = Convert.ToInt32(row["id"]),
+                StudentId = Convert.ToInt32(row["student_id"]),
+                StudentName = row["student_name"].ToString() ?? "",
+
+                AssignClassId = Convert.ToInt32(row["assign_class_id"]),
+                ClassId = row["class_id"] == DBNull.Value ? 0 : Convert.ToInt32(row["class_id"]),
+                ClassName = row["class_name"].ToString() ?? "",
+                Grade =Convert.ToInt32(row["grade"]),
+
+                ClassYear = row["class_year"].ToString() ?? "",
+
+                MonthId = Convert.ToInt32(row["month_id"]),
+                MonthName = row["month_name"].ToString() ?? "",
+
+                TotalAmount = Convert.ToDecimal(row["total_amount"]),
+                IsPaid = Convert.ToBoolean(row["is_paid"])
+            });
+        }
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Lỗi GetAllTuitionMonthly: {ex.Message}");
+    }
+
+    return list;
+    }
+   
 
         public int GetClassFeeTemplateId(int assignClassId, int feeTemplateId)
     {
@@ -191,7 +226,7 @@ public class TuitionService
     }
 
 
- public bool SaveFeeClassMonths(List<FeeClassMonthModel> feeClassMonths)
+    public bool SaveFeeClassMonths(List<FeeClassMonthModel> feeClassMonths)
         {
             if (feeClassMonths == null || feeClassMonths.Count == 0)
                 return false;
@@ -278,8 +313,72 @@ public class TuitionService
             }
         }
 
-   
+public List<FeeClassMonthModel> GetSavedFeeClassMonths(int assignClassId)
+{
+    Console.WriteLine("===== GetSavedFeeClassMonths START =====");
+    Console.WriteLine($"► assignClassId truyền vào = {assignClassId}");
+
+    var list = new List<FeeClassMonthModel>();
+
+    try
+    {
+        string sql = $@"
+            SELECT cfm.id,
+                   cfm.assign_class_id,
+                   cfm.fee_template_id,
+                   ft.name AS FeeTemplateName,
+                   cfm.month_id,
+                   cfm.term,
+                   cfm.amount,
+                   cfm.start_date,
+                   cfm.end_date,
+                   cfm.created_at,
+                   cfm.updated_at
+            FROM class_fee_months cfm
+            LEFT JOIN fee_templates ft ON cfm.fee_template_id = ft.id
+            WHERE cfm.assign_class_id = {assignClassId}";
+
+        Console.WriteLine("► SQL Query:");
+        Console.WriteLine(sql);
+
+        DataTable dt = _db.ExecuteQuery(sql);
+
+        Console.WriteLine($"► Số dòng lấy được từ DB: {dt.Rows.Count}");
+
+        foreach (DataRow row in dt.Rows)
+        {
+            var model = new FeeClassMonthModel
+            {
+                Id = Convert.ToInt32(row["id"]),
+                AssignClassId = Convert.ToInt32(row["assign_class_id"]),
+                FeeTemplateId = Convert.ToInt32(row["fee_template_id"]),
+                FeeTemplateName = row["FeeTemplateName"].ToString() ?? "",
+                MonthId = Convert.ToInt32(row["month_id"]),
+                Term = Convert.ToInt32(row["term"]),
+                Amount = Convert.ToDecimal(row["amount"]),
+                StartDate = row["start_date"].ToString() ?? "",
+                EndDate = row["end_date"].ToString() ?? "",
+                CreatedAt = row["created_at"].ToString() ?? "",
+                UpdatedAt = row["updated_at"].ToString() ?? ""
+            };
+
+            list.Add(model);
+
+            // 🔥 Log chi tiết từng row
+            Console.WriteLine(
+                $"  • Row: Id={model.Id}, FeeTemplateId={model.FeeTemplateId}, Name={model.FeeTemplateName}, MonthId={model.MonthId}, Term={model.Term}, Amount={model.Amount}, Start={model.StartDate}, End={model.EndDate}"
+            );
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Lỗi GetSavedFeeClassMonths: {ex.Message}");
+    }
+
+    Console.WriteLine("===== GetSavedFeeClassMonths END =====");
+
+    return list;
+}
 
 
-  
 }

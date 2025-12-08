@@ -7,16 +7,24 @@ using System.Linq;
 namespace cschool.Models
 {
     // Model học phí của học sinh
-    public class TuitionModel
+   public class TuitionModel
     {
         public int Id { get; set; }
+        public int StudentId { get; set; }
+        public int AssignClassId { get; set; }
         public string StudentName { get; set; } = "";
         public int ClassId { get; set; }
         public string ClassName { get; set; } = "";
-        public int TotalFee { get; set; }
-        public int PaidAmount { get; set; }
-        public int RemainingAmount { get; set; }
-        public string Status { get; set; } = "";
+        public string ClassYear { get; set; } = "";
+        public int Grade { get; set; }             // giữ int
+        public decimal TotalAmount { get; set; }   // mapping từ total_amount
+        public bool IsPaid { get; set; }           // mapping từ is_paid
+        public int MonthId { get; set; }
+        public string MonthName { get; set; } = "";
+        public string YearMonthDisplay => $"{ClassYear} - {MonthName}";
+        public string PaymentStatus => IsPaid ? "Đã thu" : "Chưa thu";
+
+
     }
 
     public class MonthFeeItem : INotifyPropertyChanged
@@ -63,7 +71,15 @@ namespace cschool.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-
+    public class TuiTionTotal
+    {
+            public int StudentId { get; set; }
+            public string StudentName { get; set; } = "";
+            
+             public string ClassYear { get; set; } = "";
+              public decimal TotalAmount { get; set; }
+   
+    }
     // Model tổng hợp của tháng với property bind cho Avalonia
     //     public class FeeClassMonthModel : INotifyPropertyChanged
     // {

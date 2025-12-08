@@ -47,7 +47,8 @@ public partial class ClassUpdateDialog : Window
                 private void SchoolYearTextBox_LostFocus(object? sender, RoutedEventArgs e)
         {
             if (DataContext is ClassViewModel vm)
-                vm.ValidateSchoolYear();
+               { vm.ResetState();
+                vm.ValidateSchoolYear();}
         }
     
         private void AddStudentsHK1_Click(object? sender, RoutedEventArgs e)
@@ -156,6 +157,8 @@ public partial class ClassUpdateDialog : Window
             await MessageBoxUtil.ShowSuccess("Lưu lớp học thành công!", owner: this);
 
             // Đóng dialog, return true để View cha reload
+                vm.LoadData();
+                
             Close(true);
         }
         else

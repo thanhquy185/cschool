@@ -1,12 +1,10 @@
 using cschool.Models;
 using Avalonia.Controls;
-using Avalonia.Threading;
 using System.Threading.Tasks;
 using cschool.Utils;
 using cschool.ViewModels;
 using cschool.Views.Class;
 using System.Reactive.Threading.Tasks;
-
 
 namespace cschool.Views
 {
@@ -20,14 +18,21 @@ namespace cschool.Views
             InfoButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Info);
             CreateButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Create);
             UpdateButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Update);
-            LockButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Lock);
+            LockButton.Click += async (_, _) => await DeleteClass();
         }
 
+        // ============================
+        //  SHOW DIALOGS (INFO/CREATE/UPDATE)
+        // ============================
         private async Task ShowClassDialog(DialogModeEnum mode)
         {
             var vm = DataContext as ClassViewModel;
             var selectedClass = ClassDataGrid.SelectedItem as ClassModel;
 
+            if (vm == null)
+                return;
+
+            // Không chọn lớp → không Info/Update
             if (selectedClass == null && mode != DialogModeEnum.Create)
             {
                 await MessageBoxUtil.ShowError("Vui lòng chọn lớp để thực hiện thao tác!");
@@ -39,54 +44,30 @@ namespace cschool.Views
             switch (mode)
             {
                 case DialogModeEnum.Info:
-                    if (vm != null && selectedClass != null)
+                    vm.SelectedClass = selectedClass;
+                    dialog = new ClassInfoDialog(vm);
+
+                    dialog.Opened += async (_, _) =>
                     {
-                        vm.SelectedClass = selectedClass;
-
-                      
-                        dialog = new ClassInfoDialog(vm);
-
-                        
-                        dialog.Opened += async (_, _) =>
-                        {
-                            // Load học sinh HK1/HK2
-                            await vm.GetClassByIdCommand.Execute(selectedClass.Id).ToTask();
-                            // Load giáo viên HK1/HK2
-                            await vm.GetTeacherByIdCommand.Execute(selectedClass.Id).ToTask();
-                        };
-                    }
+                        await vm.GetClassByIdCommand.Execute(selectedClass.Id).ToTask();
+                        await vm.GetTeacherByIdCommand.Execute(selectedClass.Id).ToTask();
+                    };
                     break;
 
                 case DialogModeEnum.Create:
-                    dialog = new ClassCreateDialog(vm);
+                    dialog = new ClassCreateDialog(new ClassViewModel());
                     break;
 
                 case DialogModeEnum.Update:
-                    if (vm != null && selectedClass != null)
-                    {
-                         vm.SelectedClass = selectedClass;
-                          dialog = new ClassUpdateDialog(vm);
-                        dialog.Opened += async (_, _) =>
-                        {
-                            // Load học sinh HK1/HK2
-                            await vm.GetClassByIdCommand.Execute(selectedClass.Id).ToTask();
-                            // Load giáo viên HK1/HK2
-                            await vm.GetTeacherByIdCommand.Execute(selectedClass.Id).ToTask();
-                            vm.SelectedClass = selectedClass;
-                            vm.LoadClassData();
-                        };
+                    vm.SelectedClass = selectedClass;
+                    dialog = new ClassUpdateDialog(vm);
 
-                        // Có thể load dữ liệu nếu cần
-                    }
-                   
-                    break;
-
-                case DialogModeEnum.Lock:
-                    if (vm != null && selectedClass != null)
+                    dialog.Opened += async (_, _) =>
                     {
                         await vm.GetClassByIdCommand.Execute(selectedClass.Id).ToTask();
-                    }
-                    // dialog = new ClassLockDialog(vm);
+                        await vm.GetTeacherByIdCommand.Execute(selectedClass.Id).ToTask();
+                        vm.LoadClassData();
+                    };
                     break;
             }
 
@@ -97,6 +78,41 @@ namespace cschool.Views
                     await dialog.ShowDialog(owner);
                 else
                     dialog.Show();
+            }
+        }
+
+        // ============================
+        //  DELETE (XÓA MỀM) — CHUẨN 100%
+        // ============================
+        private async Task DeleteClass()
+        {
+            var vm = DataContext as ClassViewModel;
+            var selected = ClassDataGrid.SelectedItem as ClassModel;
+
+            if (vm == null || selected == null)
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn lớp để xoá!");
+                return;
+            }
+
+            // Confirm
+            var confirm = await MessageBoxUtil.ShowConfirm(
+                $"Bạn có chắc muốn xóa lớp '{selected.Name}' không?"
+            );
+
+            if (!confirm)
+                return;
+
+            // Gọi service trong VM
+            var result = vm.DeleteClassById(selected.Id);
+
+            // Hiện message từ ViewModel
+            await MessageBoxUtil.ShowInfo(result.message);
+
+            // Thành công → reload list
+            if (result.success)
+            {
+                vm.LoadData();
             }
         }
     }
