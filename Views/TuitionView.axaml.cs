@@ -60,6 +60,7 @@ public partial class TuitionView : UserControl
                 dialog = new TuitionUpdateDialog(vm);
                 break;
             case DialogModeEnum.Create:
+                await vm.LoadData();
                 dialog = new TuitionCreateDialog(vm);
                 break;
             case DialogModeEnum.Info:

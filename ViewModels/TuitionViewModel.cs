@@ -167,7 +167,7 @@ namespace ViewModels
 
         }
 
-        public void LoadData()
+        public async Task LoadData()
         {
             FeeClassList.Clear();
             FeeTemplateList.Clear();
@@ -289,7 +289,6 @@ namespace ViewModels
               AppService.TuitionService.SaveFeeTemplates(FeeTemplateList.ToList(), DeletedFees.ToList());
               DeletedFees.Clear();
 
-            // Reload từ DB để set lại read-only
             LoadData();
            
     
