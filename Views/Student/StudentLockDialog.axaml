@@ -1,0 +1,112 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:ViewModels;assembly=ViewModels"
+        x:Class="Views.Student.StudentLockDialog"
+        x:DataType="vm:StudentViewModel"
+        Title="Xoá thông tin học sinh"
+        Width="400" Height="300"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*">
+            
+            <!-- 🔹 Header -->
+            <Border Background="#DC143C" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tiêu đề -->
+                    <TextBlock Grid.Column="1"
+                               Text="Xoá thông tin học sinh"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+
+                    <!-- Nút đóng -->
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="CloseButton_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- 🔹 Nội dung -->
+            <StackPanel Grid.Row="1" Margin="25" Spacing="20" VerticalAlignment="Center">
+
+                <!-- Cảnh báo (icon nằm ngoài khung) -->
+                <Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- Icon bên trái -->
+                    <Image Source="avares://Views/Assets/Images/Others/question-icon.png"
+                           Width="120"
+                           Height="120"
+                           Margin="0,0,15,0"
+                           VerticalAlignment="Top"/>
+
+                    <!-- Khung cảnh báo -->
+                    <Border Grid.Column="1"
+                            Background="#FFF5F5"
+                            BorderBrush="#FFCCCC"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="15">
+                        <TextBlock TextWrapping="Wrap"
+                                   FontSize="15"
+                                   Foreground="#B22222"
+                                   MaxWidth="300">
+                            <Run Text="Bạn có chắc chắn muốn xóa"/>
+                            <Run Text="thông tin học sinh"/>
+                            <Run Text="{Binding StudentDetails.Fullname}" FontWeight="Bold"/>
+                            <Run Text="có mã học sinh là"/>
+                            <Run Text="{Binding StudentDetails.Id}" FontWeight="Bold"/>
+                            <Run Text="? Hành động này sẽ không thể hoàn tác."/>
+                        </TextBlock>
+                    </Border>
+                </Grid>
+
+                <!-- Nút xác nhận -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="20">
+                    <Button Content="Xác nhận"
+                            Width="120"
+                            Height="30"
+                            Background="#DC143C"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            CornerRadius="4"
+                            Click="ConfirmButton_Click"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+                    <Button Content="Hủy"
+                            Width="120"
+                            Height="30"
+                            Background="#4CAF50"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            Click="CloseButton_Click"
+                            CornerRadius="4"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

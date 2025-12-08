@@ -1,0 +1,98 @@
+<UserControl
+    x:Class="Views.LoginView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:ViewModels"
+    x:DataType="vm:LoginViewModel">
+    <Border
+        Width="420"
+        Padding="30"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="White"
+        CornerRadius="12">
+        <StackPanel Spacing="30">
+            <!--  Logo và tên  -->
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Image
+                    Width="60"
+                    Height="60"
+                    Source="avares://Views/Assets/Images/Others/school-logo.png" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Foreground="#1F2937"
+                    Text="CSchool" />
+            </StackPanel>
+            <!-- Thông báo lỗi
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="14"
+                Foreground="Red"
+                Text="{Binding ErrorMessage}"
+                TextWrapping="Wrap" />-->
+            <!--  Tài khoản  -->
+            <StackPanel Margin="0,0,0,10">
+                <TextBlock
+                    Margin="0,0,0,8"
+                    FontSize="16"
+                    Text="Tài khoản" />
+                <TextBox
+                    Height="40"
+                    Padding="10"
+                    Background="#FAFAFA"
+                    BorderBrush="#D1D5DB"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    FontSize="16"
+                    Text="{Binding Username}"
+                    Watermark="Nhập Tên tài khoản" />
+            </StackPanel>
+            <!--  Mật khẩu  -->
+            <StackPanel Margin="0,0,0,10">
+                <TextBlock
+                    Margin="0,0,0,8"
+                    FontSize="16"
+                    Text="Mật khẩu" />
+                <TextBox
+                    Height="40"
+                    Padding="10"
+                    Background="#FAFAFA"
+                    BorderBrush="#D1D5DB"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    FontSize="16"
+                    PasswordChar="*"
+                    Text="{Binding Password}"
+                    Watermark="Nhập Mật khẩu" />
+                <!--  Optional: link quên mật khẩu  -->
+                <TextBlock
+                    Margin="0,4,0,0"
+                    HorizontalAlignment="Right"
+                    Cursor="Hand"
+                    FontSize="14"
+                    Foreground="#3B82F6"
+                    Text="Quên mật khẩu?" />
+            </StackPanel>
+            <!--  Button đăng nhập  -->
+            <Button
+                Height="40"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Background="#3B82F6"
+                Command="{Binding LoginCommand}"
+                Content="Đăng nhập"
+                CornerRadius="6"
+                Cursor="Hand"
+                FontSize="16"
+                FontWeight="SemiBold"
+                Foreground="White" />
+        </StackPanel>
+    </Border>
+</UserControl>

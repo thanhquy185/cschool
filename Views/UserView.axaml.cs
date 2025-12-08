@@ -5,10 +5,11 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using cschool.Utils;
-using cschool.ViewModels;
+using Services;
+using Utils;
+using ViewModels;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class UserView : UserControl
 {
@@ -52,7 +53,6 @@ public partial class UserView : UserControl
         // Tạo Header
         var header = new Grid
         {
-            // ColumnDefinitions = new ColumnDefinitions("*, Auto, *"),
             ColumnDefinitions = mode switch
             {
                 DialogModeEnum.Lock => new ColumnDefinitions("*"),
@@ -89,6 +89,9 @@ public partial class UserView : UserControl
         var formGroupWarper = new Grid { Classes = { "DialogFormGroupWarper" } };
         if (!isLock && !isChangePassword)
         {
+            // ========== Truy vấn dữ liệu nhóm quyền đang "Hoạt động" ==========
+            var roles = AppService.RoleService.GetRolesActive();
+
             // ========== Tạo 5 dòng ==========
             formGroupWarper.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             formGroupWarper.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -195,7 +198,7 @@ public partial class UserView : UserControl
             row1Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             row1Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             row1Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            // ===== Tên người dùng =====
+            // ===== Tên tài khoản =====
             // - Tạo các control
             var usernameStack = new StackPanel { Classes = { "DialogFormGroup" } };
             var usernameLabel = new TextBlock
@@ -204,13 +207,13 @@ public partial class UserView : UserControl
                 Inlines =
                 {
                     isCreate ? new Run { Text = "* ", Foreground = Brushes.Red } : new Run {},
-                    new Run { Text = "Tên người dùng" }
+                    new Run { Text = "Tên tài khoản" }
                 }
             };
             var usernameTextBox = new TextBox
             {
                 Classes = { "DialogFormGroupInput" },
-                Watermark = "Nhập Tên người dùng",
+                Watermark = "Nhập Tên tài khoản",
                 Text = !string.IsNullOrWhiteSpace(selectedUser?.Username) ? selectedUser?.Username : null,
                 IsEnabled = !isInfo && !isUpdate
             };
@@ -269,10 +272,25 @@ public partial class UserView : UserControl
             var roleComboBox = new ComboBox
             {
                 Classes = { "DialogFormGroupComboBox" },
-                Items = { "Chọn Nhóm quyền", "#1 - Quản lý học sinh", "#2 - Quản lý giáo viên" },
-                SelectedIndex = 0,
                 IsEnabled = !isInfo
             };
+            // -- Thêm item mặc định
+            roleComboBox.Items.Add("Chọn Nhóm quyền");
+            // -- Thêm các quyền từ roles
+            foreach (var role in roles)
+            {
+                roleComboBox.Items.Add($"#{role.Id} - {role.Name}");
+            }
+            // -- 
+            if (isCreate)
+            {
+                roleComboBox.SelectedIndex = 0;
+            }
+            else
+            {
+                roleComboBox.SelectedItem = $"#{selectedUser.RoleId} - {selectedUser.RoleName}";
+
+            }
             // - Thêm vào stack
             roleStack.Children.Add(roleLabel);
             roleStack.Children.Add(roleComboBox);
@@ -376,7 +394,8 @@ public partial class UserView : UserControl
             // --- Thêm tất cả vào dòng thứ 5 ---
             Grid.SetRow(row4Grid, 4);
             formGroupWarper.Children.Add(row4Grid);
-            // ----- Thêm tất cả dòng -----
+
+            // ========== Thêm tất cả dòng ==========
             form.Children.Add(formGroupWarper);
 
             // ========== Thêm nút submit ==========
@@ -395,15 +414,15 @@ public partial class UserView : UserControl
                             return;
 
                         }
-                        // - Kiểm tra tên người dùng
+                        // - Kiểm tra tên tài khoản
                         if (isCreate && Rules.ruleRequiredForTextBox(usernameTextBox.Text ?? ""))
                         {
-                            await MessageBoxUtil.ShowError("Tên người dùng không được để trống!", owner: dialog);
+                            await MessageBoxUtil.ShowError("Tên tài khoản không được để trống!", owner: dialog);
                             return;
                         }
                         if (isCreate && await _userViewModel.UserIsExistsByUsernameCommand.Execute(usernameTextBox.Text).ToTask())
                         {
-                            await MessageBoxUtil.ShowError("Tên người dùng đã tồn tại!", owner: dialog);
+                            await MessageBoxUtil.ShowError("Tên tài khoản đã tồn tại!", owner: dialog);
                             return;
                         }
                         // - Kiểm tra mật khẩu
@@ -442,7 +461,7 @@ public partial class UserView : UserControl
                         var user = new UserModel();
                         if (isUpdate) user.Id = int.Parse(idTextBox.Text);
                         if (isCreate || isUpdate) user.AvatarFile = selectedImagePath;
-                        if (isCreate || isUpdate) user.RoleId = 0;
+                        if (isCreate || isUpdate) user.RoleId = int.Parse((roleComboBox.SelectedItem as string).Split(" - ")[0].Replace("#", ""));
                         if (isCreate) user.Username = usernameTextBox.Text;
                         if (isCreate) user.Password = passwordTextBox.Text;
                         if (isCreate || isUpdate) user.Fullname = fullnameTextBox.Text;
@@ -545,6 +564,7 @@ public partial class UserView : UserControl
         {
 
         }
+
         // Tạo Form Warper 
         var formWarper = new Border { Classes = { "DialogFormWarper" }, Child = form };
 

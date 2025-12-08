@@ -1,0 +1,313 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:ViewModels;assembly=ViewModels"
+        xmlns:local="clr-namespace:Views.Exam"
+        x:Class="Views.Exam.ExamCreateDialog"
+        x:DataType="vm:ExamViewModel"
+        Title="Thêm lịch thi"
+        Width="850"
+        Height="600"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- 🔹 Header -->
+            <Border Background="#4CAF50" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <!-- Cột trái rỗng để cân -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tiêu đề ở giữa -->
+                    <TextBlock Grid.Column="1"
+                            Text="Thêm lịch thi"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            />
+
+                    <!-- Nút đóng ở bên phải -->
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="CloseButton_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- 🔹 Nội dung -->
+            <ScrollViewer Grid.Row="1" Padding="0" Margin="20">
+
+                <!-- 🧾 Thông tin lịch thi -->
+                <Grid Margin="10,0,10,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Khối lớp -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Khối lớp" FontSize="15" FontWeight="Bold" Margin="0,0,0,5" Foreground="Black"/>
+                    <ComboBox  Grid.Row="1" Grid.Column="0" x:Name="Grade" SelectionChanged="OnGradeChanged" MaxDropDownHeight="300" 
+                                SelectedIndex="0" Width="200" Margin="0,0,0,10">
+                        <ComboBoxItem>--- Chọn Khối lớp ---</ComboBoxItem>
+                        <ComboBoxItem Tag="10">Khối 10</ComboBoxItem>
+                        <ComboBoxItem Tag="11">Khối 11</ComboBoxItem>
+                        <ComboBoxItem Tag="12">Khối 12</ComboBoxItem>
+                    </ComboBox>
+
+                    <!-- Học kỳ -->
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Học kỳ" FontSize="15" FontWeight="Bold" Margin="10,10,0,5" Foreground="Black"/>
+                    <ComboBox  Grid.Row="1" Grid.Column="1" x:Name="Term" SelectionChanged="OnTermChanged" MaxDropDownHeight="300"  Margin="10,0,0,10"
+                                ItemsSource="{Binding StudyTerm}" PlaceholderText="--- Chọn học kỳ ---" Width="200">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding TermName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <!-- Môn học -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Môn học" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
+                    <ComboBox  Grid.Row="4" Grid.Column="0" x:Name="Subject" MaxDropDownHeight="300"  Margin="0,0,0,10"
+                                ItemsSource="{Binding SubjectList}" PlaceholderText="--- Chọn môn học ---" Width="200">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding SubjectName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <!-- Ngày thi -->
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Ngày thi" FontSize="15" FontWeight="Bold" Margin="10,10,0,5" Foreground="Black"/>
+                    <DatePicker Grid.Row="4" Grid.Column="1" x:Name="ExamDate" Margin="10,0,0,10" BorderThickness="1" CornerRadius="4"/>
+
+                    <!-- Giờ bắt đầu -->
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Giờ bắt đầu" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
+                    <local:TimePicker Grid.Row="7" Grid.Column="0" x:Name="StartTime" Margin="0,0,0,10"/>
+
+                    <!-- Giờ kết thúc -->
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="Giờ kết thúc" FontSize="15" FontWeight="Bold" Margin="10,10,0,5" Foreground="Black"/>
+                    <local:TimePicker Grid.Row="7" Grid.Column="1" x:Name="EndTime" Margin="10,0,0,10"/>
+
+                    <!-- Chọn phòng thi + giáo viên -->
+                    <TextBlock Grid.Row="12" Grid.ColumnSpan="2" x:Name="RemainingStudents"
+                                FontSize="15" FontWeight="Bold" Margin="0,20,0,5" Foreground="Red" HorizontalAlignment="Stretch"/>
+                    <TextBlock Grid.Row="13" Grid.ColumnSpan="2" Text="Phân công phòng thi và giáo viên" FontSize="18" FontWeight="Bold" 
+                                Margin="0,20,0,5" Foreground="Black" HorizontalAlignment="Stretch"/>
+                    <Grid Grid.Row="14" Grid.ColumnSpan="2" Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Phòng thi -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Phòng thi"
+                                    FontSize="15"
+                                    FontWeight="Bold"
+                                    Margin="0,0,0,5"
+                                    Foreground="Black" />
+                            <ComboBox x:Name="Room"
+                                    ItemsSource="{Binding RoomList}"
+                                    PlaceholderText="--- Chọn phòng thi ---"
+                                    Width="200"
+                                    MaxDropDownHeight="300">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding RoomName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Giáo viên phụ trách -->
+                        <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                            <TextBlock Text="Giáo viên phụ trách"
+                                    FontSize="15"
+                                    FontWeight="Bold"
+                                    Margin="0,0,0,5"
+                                    Foreground="Black" />
+
+                            <!-- Hàng ngang chứa combobox và nút -->
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <ComboBox x:Name="Teacher"
+                                        ItemsSource="{Binding TeacherList}"
+                                        PlaceholderText="--- Chọn giáo viên ---"
+                                        Width="200"
+                                        MaxDropDownHeight="300">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding TeacherName}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <Button Content="Thêm"
+                                        Width="70"
+                                        Height="32"
+                                        FontSize="14"
+                                        Margin="20,0,0,0"
+                                        Background="#4CAF50"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        CornerRadius="4"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center" 
+                                        Click="AddAssignment_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <!-- Bảng hiển thị danh sách phòng thi & giáo viên đã chọn -->
+                    <DataGrid x:Name="ExamAssignmentsGrid"
+                            Grid.Row="15"
+                            Grid.ColumnSpan="2"
+                            ItemsSource="{Binding ExamAssignments}"
+                            Margin="0,20,0,60">
+
+                        <!-- 🌿 Style -->
+                        <DataGrid.Styles>
+                            <!-- Header -->
+                            <Style Selector="DataGridColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13"/>
+                            </Style>
+
+                            <!-- Cell -->
+                            <Style Selector="DataGridCell">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="Padding" Value="4"/>
+                                <Setter Property="FontSize" Value="13"/>
+                            </Style>
+
+                            <!-- Row: khoảng cách và chiều cao -->
+                            <Style Selector="DataGridRow">
+                                <Setter Property="Height" Value="36"/>
+                                <Setter Property="Margin" Value="0,2,0,2"/>
+                                <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            </Style>
+                        </DataGrid.Styles>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn 
+                                Header="Phòng thi" 
+                                Binding="{Binding RoomName}" 
+                                Width="*"/>
+                            <DataGridTextColumn 
+                                Header="Giáo viên" 
+                                Binding="{Binding TeacherName}" 
+                                Width="*"/>
+                            <DataGridTextColumn 
+                                Header="Sức chứa" 
+                                Binding="{Binding RoomQuantity}" 
+                                Width="*"/>
+                            <DataGridTemplateColumn Header="Số lượng học sinh">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding AssignedStudents, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="80"
+                                            HorizontalContentAlignment="Center"
+                                            MaxLength="2"
+                                            TextInput="TextBox_TextInput"
+                                            LostFocus="TextBox_LostFocus"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="Thao tác"
+                                                FontWeight="Bold"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.HeaderTemplate>
+                                
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Xóa"
+                                                Click="DeleteAssignment_Click"
+                                                Background="#E53935"
+                                                Foreground="White"
+                                                BorderThickness="0"
+                                                CornerRadius="4"
+                                                Width="50"
+                                                Height="28"
+                                                FontSize="13"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                VerticalContentAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- 🔹 Nút xác nhận -->
+            <Border Grid.Row="2"
+                    Padding="0,0,0,20"
+                    CornerRadius="0,0,8,8"
+                    Background="White">
+                <Button Content="Xác nhận"
+                        Width="800"
+                        Height="40"
+                        FontSize="18"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="ConfirmButton_Click" />
+            </Border>
+        </Grid>
+    </Border>
+</Window>

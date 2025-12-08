@@ -1,0 +1,84 @@
+<Application
+    x:Class="Views.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:Utils;assembly=Utils"
+    xmlns:local="clr-namespace:Views"
+    xmlns:services="clr-namespace:Utils;assembly=Utils"
+    RequestedThemeVariant="Default">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <!--  Fluent Avalonia Style  -->
+        <!--  Avalonia Style  -->
+        <FluentTheme />
+        <!--  Custom Styles  -->
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/ButtonInMenuStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/CrudButtonStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/DialogStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/FilterDataStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/LogoutButtonStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/MainLayoutStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/MessageBoxStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/TableDataStyle.axaml" />
+        <StyleInclude Source="avares://Views/Assets/Styles/Dashboard.axaml" />
+    </Application.Styles>
+
+    <Application.Resources>
+        <!--  Colors  -->
+        <!--    -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#1A73E8" />
+        <SolidColorBrush x:Key="BodyColor" Color="#E4EEFF" />
+        <!--    -->
+        <SolidColorBrush x:Key="RedPrimaryColor" Color="#9f4d4d" />
+        <SolidColorBrush x:Key="RedSecondaryColor" Color="#f44336" />
+        <SolidColorBrush x:Key="BluePrimaryColor" Color="#0048ff" />
+        <SolidColorBrush x:Key="BlueSecondaryColor" Color="#4294ff" />
+        <SolidColorBrush x:Key="GreenPrimaryColor" Color="#4bae4f" />
+        <SolidColorBrush x:Key="GreenSecondaryColor" Color="#3dc55d" />
+        <SolidColorBrush x:Key="YellowPrimaryColor" Color="#bf873e" />
+        <SolidColorBrush x:Key="YellowSecondaryColor" Color="#f5c011" />
+        <SolidColorBrush x:Key="PurplePrimaryColor" Color="#1e0096" />
+        <SolidColorBrush x:Key="PurpleSecondaryColor" Color="#5d3fd3" />
+        <!--    -->
+        <SolidColorBrush x:Key="ButtonInMenuTextColor" Color="#777" />
+        <SolidColorBrush x:Key="ButtonInMenuBgColorOver" Color="#badefb" />
+        <SolidColorBrush x:Key="ButtonInMenuTextsColorOver" Color="#000" />
+
+        <!--  Images / Icons  -->
+        <!--    -->
+        <Bitmap x:Key="NoImage">avares://Views/Assets/Images/Others/no-image.png</Bitmap>
+        <!--    -->
+        <Bitmap x:Key="ImportExcelIcon">avares://Views/Assets/Images/Others/import-icon.png</Bitmap>
+        <Bitmap x:Key="ExportExcelIcon">avares://Views/Assets/Images/Others/export-icon.png</Bitmap>
+        <Bitmap x:Key="InfoIcon">avares://Views/Assets/Images/Others/info-icon.png</Bitmap>
+        <Bitmap x:Key="CreateIcon">avares://Views/Assets/Images/Others/create-icon.png</Bitmap>
+        <Bitmap x:Key="UpdateIcon">avares://Views/Assets/Images/Others/update-icon.png</Bitmap>
+        <Bitmap x:Key="LockIcon">avares://Views/Assets/Images/Others/lock-icon.png</Bitmap>
+        <Bitmap x:Key="BinIcon">avares://Views/Assets/Images/Others/bin-icon.png</Bitmap>
+        <Bitmap x:Key="ChangePasswordIcon">avares://Views/Assets/Images/Others/change-password-icon.png</Bitmap>
+        <Bitmap x:Key="SearchIcon">avares://Views/Assets/Images/Others/search-icon.png</Bitmap>
+        <Bitmap x:Key="ResetIcon">avares://Views/Assets/Images/Others/reset-icon.png</Bitmap>
+
+        <Bitmap x:Key="ExcelIcon">avares://Views/Assets/Images/Others/excel.png</Bitmap>
+        <Bitmap x:Key="DeleteIcon">avares://Views/Assets/Images/Others/delete.png</Bitmap>
+        <Bitmap x:Key="StudentIcon">avares://Views/Assets/Images/Others/student-icon.png</Bitmap>
+        <Bitmap x:Key="TeacherIcon">avares://Views/Assets/Images/Others/teacher-icon.png</Bitmap>
+        <Bitmap x:Key="SubjectIcon">avares://Views/Assets/Images/Others/books.png</Bitmap>
+        <Bitmap x:Key="ClassIcon">avares://Views/Assets/Images/Others/business-persentation.png</Bitmap>
+
+        <!--  Values  -->
+        <!-- <sys:Integer x:Key="DialogLabelFontSize">15</sys:Integer> -->
+        <!-- <sys:Integer x:Key="DialogInputHeight">35</sys:Integer>
+        <sys:Integer x:Key="DialogInputFontSize">14</sys:Integer>-->
+
+        <!--  Converters  -->
+        <services:StatusToBrushConverter x:Key="StatusToBrushConverter" />
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </Application.Resources>
+</Application>

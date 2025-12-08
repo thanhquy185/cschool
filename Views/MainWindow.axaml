@@ -1,14 +1,14 @@
 <Window
-    x:Class="cschool.Views.MainWindow"
+    x:Class="Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="using:cschool.Views"
-    xmlns:vm="using:cschool.ViewModels"
-    Title="cschool"
+    xmlns:view="using:Views"
+    xmlns:vm="using:ViewModels"
+    Title="Views"
     x:DataType="vm:MainWindowViewModel"
-    CanResize="False"
+    CanResize="True"
     ShowInTaskbar="True"
     WindowState="Maximized"
     mc:Ignorable="d">
@@ -22,6 +22,7 @@
         <Grid
             Grid.Column="0"
             Background="#FFF"
+            IsVisible="{Binding IsLoggedIn}"
             RowDefinitions="Auto,*,Auto">
             <!--  User Info  -->
             <Border Padding="8">
@@ -40,7 +41,7 @@
                             <Image
                                 Width="50"
                                 Height="50"
-                                Source="avares://cschool/Assets/Images/Others/no-image.png"
+                                Source="{Binding CurrentUser.AvatarImage}"
                                 Stretch="UniformToFill" />
                         </Border>
                         <!--  Name + Role  -->
@@ -54,12 +55,12 @@
                                 FontSize="20"
                                 FontWeight="Bold"
                                 Foreground="#FFF"
-                                Text="Nguyễn Văn A" />
+                                Text="{Binding CurrentUser.Fullname}" />
                             <TextBlock
                                 Margin="0,2,0,0"
                                 FontSize="16"
                                 Foreground="#dedede"
-                                Text="Quản trị viên" />
+                                Text="{Binding CurrentUser.RoleName}" />
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -74,12 +75,78 @@
                     <StackPanel Spacing="10">
                         <Button
                             Classes="ButtonInMenu"
-                            Classes.active="{Binding StudentButtonActive}"
-                            Command="{Binding GoToStudentViewCommand}">
+                            Classes.active="{Binding StatisticalButtonActive}"
+                            Command="{Binding GoToStatisticalViewCommand}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
-                                    <Image Source="{Binding StudentButtonImage}" />
-                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding StudentButtonLabel}" />
+                                    <Image Source="{Binding StatisticalButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding StatisticalButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding AssignTeacherButtonActive}"
+                            Command="{Binding GoToAssignTeacherViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding AssignTeacherButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding AssignTeacherButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding ExamButtonActive}"
+                            Command="{Binding GoToExamViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding ExamButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding ExamButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding TuitionButtonActive}"
+                            Command="{Binding GoToTuitionViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding TuitionButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding TuitionButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding HomeClassButtonActive}"
+                            Command="{Binding GoToHomeClassViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding HomeClassButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding HomeClassButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding AttendanceButtonActive}"
+                            Command="{Binding GoToAttendanceViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding AttendanceButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding AttendanceButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding SubjectClassButtonActive}"
+                            Command="{Binding GoToSubjectClassViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding SubjectClassButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding SubjectClassButtonLabel}" />
                                 </StackPanel>
                             </Border>
                         </Button>
@@ -91,6 +158,28 @@
                                 <StackPanel>
                                     <Image Source="{Binding TeacherButtonImage}" />
                                     <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding TeacherButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding StudentButtonActive}"
+                            Command="{Binding GoToStudentViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding StudentButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding StudentButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding RoleButtonActive}"
+                            Command="{Binding GoToRoleViewCommand}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding RoleButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding RoleButtonLabel}" />
                                 </StackPanel>
                             </Border>
                         </Button>
@@ -109,7 +198,10 @@
                 </ScrollViewer>
             </Border>
             <!--  Logout Button  -->
-            <Button Grid.Row="2" Classes="LogoutButton">
+            <Button
+                Grid.Row="2"
+                Classes="LogoutButton"
+                Command="{Binding HandleLogoutCommand}">
                 <Border
                     Padding="0,12"
                     Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}"
@@ -121,7 +213,7 @@
                         <Image
                             Width="20"
                             Height="20"
-                            Source="avares://cschool/Assets/Images/Others/logout-icon.png" />
+                            Source="avares://Views/Assets/Images/Others/logout-icon.png" />
                         <TextBlock
                             FontSize="18"
                             FontWeight="Bold"

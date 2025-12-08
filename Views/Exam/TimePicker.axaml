@@ -1,0 +1,9 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Views.Exam.TimePicker">
+    <StackPanel Orientation="Horizontal" Spacing="5">
+        <ComboBox Width="90" x:Name="HourBox"/>
+        <TextBlock Text=":" VerticalAlignment="Center"/>
+        <ComboBox Width="90" x:Name="MinuteBox"/>
+    </StackPanel>
+</UserControl>

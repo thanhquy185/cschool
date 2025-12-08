@@ -1,17 +1,22 @@
 using System.Collections.ObjectModel;
 using System.Reactive;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ReactiveUI;
 
-namespace cschool.ViewModels;
+namespace ViewModels;
 
 public partial class UserViewModel : ViewModelBase
 {
+    // // Người dùng đăng nhập hiện tại
+    // [ObservableProperty]
+    // private UserModel? _currentUser;
     // Tiêu đề trang
     public string TitlePage { get; } = "Thông tin người dùng";
     // Mô tả trang
     public string DescriptionPage { get; } = "Thông tin cơ bản người dùng";
     // Danh sách người dùng
     public ObservableCollection<UserModel> Users { get; }
+
     // Command thêm, cập nhật và khoá người dùng
     public ReactiveCommand<string, bool> UserIsExistsByUsernameCommand { get; }
     public ReactiveCommand<Unit, ObservableCollection<UserModel>> GetUsersCommand { get; }
@@ -51,8 +56,15 @@ public partial class UserViewModel : ViewModelBase
         });
         UpdateUserCommand = ReactiveCommand.CreateFromTask<UserModel, bool>(async (user) =>
         {
-            string newAvatarFile = await UploadService.SaveImageAsync(user.AvatarFile, "user", user.Id);
-            user.Avatar = newAvatarFile;
+            if (user.AvatarFile != null)
+            {
+                string newAvatarFile = await UploadService.SaveImageAsync(user.AvatarFile, "user", user.Id);
+                user.Avatar = newAvatarFile;
+            }
+            else
+            {
+                user.Avatar = AppService.UserService.GetOneUserById(user.Id).Avatar;
+            }
 
             var result = AppService.UserService.UpdateUser(user);
             if (result > 0) return true;

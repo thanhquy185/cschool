@@ -1,0 +1,123 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:ViewModels;assembly=ViewModels"
+        xmlns:model="using:Models"
+        x:DataType="vm:SubjectClassViewModel"       
+        x:Class="Views.SubjectClass.SubjectClassUpdateScoreColumn"
+        Title="Sửa cột điểm"
+        Width="600"
+        Height="400"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- 🔹 Header -->
+            <Border Background="#FBC02D" Padding="16,12" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tiêu đề ở giữa -->
+                    <TextBlock Grid.Column="1"
+                            Text="SỬA CỘT ĐIỂM"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            />
+
+                    <!-- Nút đóng ở bên phải -->
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="16"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            x:Name="CloseButton"
+                            Click="OnCancelButtonClick"/>
+                </Grid>
+            </Border>
+
+            <!-- 🔹 Nội dung -->
+            <ScrollViewer Grid.Row="1" Padding="25" VerticalScrollBarVisibility="Auto">
+                <Grid ColumnDefinitions="*,*" 
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                      ColumnSpacing="20" 
+                      RowSpacing="15">
+
+                    <!-- Hàng 1: Lóp học & Môn học -->
+                    <StackPanel Grid.Row="0" Grid.Column="0">
+                        <TextBlock Text="Lớp học" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
+                        <TextBox Height="35" 
+                                IsReadOnly="True"
+                                Text = "{Binding SelectedSubjectClass.ClassName}"
+                                FontSize="14"
+                                IsEnabled="False"
+                                Background="#F5F5F5"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="1">
+                        <TextBlock Text="Môn học" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
+                        <TextBox Height="35" 
+                                IsReadOnly="True"
+                                Text = "{Binding SelectedSubjectClass.SubjectName}"
+                                FontSize="14"
+                                IsEnabled="False"
+                                Background="#F5F5F5"/>
+                    </StackPanel>
+
+                    <!-- Hàng 2: Bài kiểm tra & Bài miệng -->
+                    <StackPanel Grid.Row="1" Grid.Column="0">
+                        <TextBlock Text="Bài kiểm tra:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
+                        <TextBox x:Name="QuizCount"
+                                Height="35" 
+                                Watermark="Số lượng" 
+                                Text="{Binding QuizCountText}"
+                                FontSize="14"
+                                Background="#F5F5F5"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="1">
+                        <TextBlock Text="Bài miệng:" FontSize="14" Margin="0,0,0,5" Foreground="Black" FontWeight="SemiBold"/>
+                        <TextBox x:Name="OralCount"
+                                Height="35" 
+                                Text="{Binding OralCountText}" 
+                                Watermark="Số lượng" 
+                                FontSize="14"
+                                Background="#F5F5F5"/>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- 🔹 Nút hành động -->
+                <Border Grid.Row="2"
+                    Padding="0,0,0,20"
+                    CornerRadius="0,0,8,8"
+                    Background="White">
+                <Button Content="Xác nhận"
+                        Width="500"
+                        Height="40"
+                        FontSize="18"
+                        Background="#FBC02D"
+                        Foreground="White"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="ConfirmButton_Click" />
+                    
+                </Border>
+        </Grid>
+    </Border>
+</Window>
