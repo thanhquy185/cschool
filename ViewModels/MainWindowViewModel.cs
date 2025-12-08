@@ -16,6 +16,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(ExamButtonActive))]
     [NotifyPropertyChangedFor(nameof(TuitionButtonActive))]
     [NotifyPropertyChangedFor(nameof(AttendanceButtonActive))]
+    [NotifyPropertyChangedFor(nameof(ClassButtonActive))]
     [NotifyPropertyChangedFor(nameof(AssignTeacherButtonActive))]
     [NotifyPropertyChangedFor(nameof(SubjectClassButtonActive))]
     [NotifyPropertyChangedFor(nameof(StatisticalButtonActive))]
@@ -53,6 +54,11 @@ public partial class MainWindowViewModel : ViewModelBase
         = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/attendance-icon.png")));
     public string AttendanceButtonLabel { get; } = "Điểm danh";
 
+    // Lớp học
+    public Bitmap ClassButtonImage { get; }
+        = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/class-icon.png")));
+    public string ClassButtonLabel { get; } = "Lớp học";
+
     // -- Lớp chủ nhiệm
     public Bitmap HomeClassButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/business-persentation.png")));
@@ -80,6 +86,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ExamViewModel _examViewModel = new();
     private readonly TuitionViewModel _tuitionViewModel = new();
     private readonly AttendanceViewModel _attendanceViewModel = new();
+    private readonly ClassViewModel _classViewModel = new();
     private readonly AssignTeacherViewModel _assignTeacherViewModel;
     private readonly SubjectClassViewModel _subjectClassViewModel = new();
     private readonly StatisticalViewModel _statisticalViewModel;
@@ -92,11 +99,11 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool ExamButtonActive => this.CurrentPage == this._examViewModel;
     public bool TuitionButtonActive => this.CurrentPage == this._tuitionViewModel;
     public bool AttendanceButtonActive => this.CurrentPage == this._attendanceViewModel;
+    public bool ClassButtonActive => this.CurrentPage == this._classViewModel;
     public bool AssignTeacherButtonActive => this.CurrentPage == this._assignTeacherViewModel;
     public bool SubjectClassButtonActive => this.CurrentPage == this._subjectClassViewModel;
     public bool StatisticalButtonActive => this.CurrentPage == this._statisticalViewModel;
     public bool HomeClassButtonActive => this.CurrentPage == this._homeClassViewModel;
-
 
     // Constructor
     public MainWindowViewModel()
@@ -137,6 +144,9 @@ public partial class MainWindowViewModel : ViewModelBase
     // Chuyển đến trang Thông tin điểm danh
     [RelayCommand]
     public void GoToAttendanceView() => this.CurrentPage = this._attendanceViewModel;
+
+    [RelayCommand]
+    public void GoToClassView()=> this.CurrentPage = this._classViewModel;
 
     [RelayCommand]
     public void GoToAssignTeacherView() => this.CurrentPage = this._assignTeacherViewModel;

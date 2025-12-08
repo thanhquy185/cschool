@@ -7,6 +7,7 @@ public static class AppService
     public static StudentService StudentService { get; set; }
     public static ExamService ExamService { get; set; }
     public static TuitionService TuitionService { get; set; }
+    public static ClassService ClassService {get;set;}
     public static AssignTeacherService? AssignTeacher { get; set; }
     public static StatisticalService? statisticalService { get; set; }
     public static HomeClassService? homeClassService{ get; set; }
