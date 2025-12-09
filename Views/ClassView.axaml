@@ -26,6 +26,14 @@
 
       <!--  Butttons  -->
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+        <Button x:Name="ExportExcelButton" Classes="CrudButton Update">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="{DynamicResource ExportExcelIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất Excel" />
+            </StackPanel>
+          </Border>
+        </Button>
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>

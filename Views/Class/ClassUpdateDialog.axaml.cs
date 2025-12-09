@@ -148,7 +148,6 @@ public partial class ClassUpdateDialog : Window
             // Thông báo thành công
             await MessageBoxUtil.ShowSuccess("Lưu lớp học thành công!", owner: this);
 
-            // Đóng dialog, return true để View cha reload
                 vm.LoadData();
                 
             Close(true);

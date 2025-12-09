@@ -179,12 +179,12 @@ namespace Views.Class
 
                 if (classId <= 0)
                 {
-                    System.Console.WriteLine("Dính chỗ này nè "+ classId);
+                  
                     return;
                 
                 }
 
-                System.Console.WriteLine("Class id: "+ classId);
+             
                 
 
                 // Gán học sinh HK1
@@ -211,11 +211,10 @@ namespace Views.Class
 
                 await MessageBoxUtil.ShowSuccess("Lưu lớp và gán học sinh thành công!", owner: this);
 
-                // Load lại dữ liệu
+                
                 vm.LoadData();
-                vm.LoadClassData();
-
-                this.Close();
+                Close(true);
+             
             }
            catch (Exception ex)
             {
