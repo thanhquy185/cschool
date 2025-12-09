@@ -50,10 +50,10 @@
                             <TextBox Text="{Binding SelectedClass.Name}" Height="34"/>
 
                             <TextBlock Text="Khối" FontWeight="Bold"/>
-                            <ComboBox ItemsSource="{Binding Grades}" SelectedItem="{Binding SelectedClass.Grade}" Height="34" IsEnabled="False"/>
+                            <ComboBox x:Name="GradesComboBox" ItemsSource="{Binding Grades}" SelectedItem="{Binding SelectedClass.Grade}" Height="34" IsEnabled="False"/>
 
                             <TextBlock Text="Năm học" FontWeight="Bold"/>
-                            <TextBox Text="{Binding SelectedClass.Year}" Height="34" LostFocus="SchoolYearTextBox_LostFocus" IsEnabled="False"/>
+                            <TextBox Text="{Binding SelectedClass.Year}" Height="34"  IsEnabled="False"/>
                         </StackPanel>
 
                         <!-- Cột phải -->
@@ -103,7 +103,7 @@
                                         <DataGrid x:Name="dataGridStudentsAvailableHK1"
                                                   ItemsSource="{Binding StudentsAvailableHK1}"
                                                   AutoGenerateColumns="False"
-                                                  RowHeight="36"
+                                                  RowHeight="36"  MaxHeight="400"
                                                   IsReadOnly="True"
                                                   SelectionMode="Extended"
                                                   SelectionChanged="DataGridStudentsAvailableHK1_SelectionChanged">
@@ -124,7 +124,7 @@
                                 <!-- Học sinh trong lớp -->
                                 <Border Grid.Column="2" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
                                     <StackPanel>
-                                        <DataGrid x:Name="dataGridStudentsInClassHK1" ItemsSource="{Binding StudentInClassHK1}" SelectionChanged="DataGridStudentsInClassHK1_SelectionChanged" AutoGenerateColumns="False" RowHeight="36" IsReadOnly="True">
+                                        <DataGrid x:Name="dataGridStudentsInClassHK1" ItemsSource="{Binding StudentInClassHK1}" SelectionChanged="DataGridStudentsInClassHK1_SelectionChanged" AutoGenerateColumns="False" RowHeight="36"  MaxHeight="400" IsReadOnly="True">
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
                                                 <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
@@ -147,7 +147,7 @@
                                         <DataGrid x:Name="dataGridStudentsAvailableHK2"
                                                   ItemsSource="{Binding StudentsAvailableHK2}"
                                                   AutoGenerateColumns="False"
-                                                  RowHeight="36"
+                                                  RowHeight="36"  MaxHeight="400"
                                                   IsReadOnly="True"
                                                   SelectionMode="Extended"
                                                   SelectionChanged="DataGridStudentsAvailableHK2_SelectionChanged">
@@ -168,7 +168,7 @@
                                 <!-- Học sinh trong lớp -->
                                 <Border Grid.Column="2" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
                                     <StackPanel>
-                                        <DataGrid x:Name="dataGridStudentsInClassHK2" SelectionChanged="DataGridStudentsInClassHK2_SelectionChanged" ItemsSource="{Binding StudentInClassHK2}" AutoGenerateColumns="False" RowHeight="36" IsReadOnly="True">
+                                        <DataGrid x:Name="dataGridStudentsInClassHK2" SelectionChanged="DataGridStudentsInClassHK2_SelectionChanged" ItemsSource="{Binding StudentInClassHK2}" AutoGenerateColumns="False" RowHeight="36"  MaxHeight="400" IsReadOnly="True">
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
                                                 <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>

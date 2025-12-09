@@ -123,12 +123,25 @@ public partial class ClassViewModel : ViewModelBase
 
 
 
-    private string _year;
-    public string Year
+private string _year;
+public string Year
+{
+    get => _year;
+    set
     {
-        get => _year;
-        set => SetProperty(ref _year, value);
+        if (_year != value)
+        {
+            _year = value;
+            OnPropertyChanged(nameof(Year));
+
+            ValidateAndFormatYear();
+        }
     }
+}
+
+
+
+
 
     private string _searchStudentTextHK1 = "";
     public string SearchStudentTextHK1
@@ -426,17 +439,54 @@ public partial class ClassViewModel : ViewModelBase
     }
 
 
-    public void ValidateSchoolYear()
+ private void ValidateAndFormatYear()
+{
+    if (string.IsNullOrWhiteSpace(Year))
+        return;
+
+    // Chỉ cho số và dấu '-'
+    var filtered = new string(Year.Where(c => char.IsDigit(c) || c == '-').ToArray());
+
+    // Nếu có thay đổi (do loại bỏ chữ) → update lại
+    if (filtered != Year)
     {
-        if (string.IsNullOrWhiteSpace(Year))
-            return;
-
-        if (Year.Length == 4 && int.TryParse(Year, out int startYear))
-            Year = $"{startYear}-{startYear + 1}";
-
-        if (SelectedGrade != 0)
-            LoadStudentsWithoutClass();
+        Year = filtered;
+        return;
     }
+
+    // Không cho nhập nhiều hơn 9 ký tự (VD: 2025-2026)
+    if (Year.Length > 9)
+    {
+        Year = Year.Substring(0, 9);
+        return;
+    }
+
+    // Khi đủ 4 số → format thành "YYYY-YYYY+1"
+    if (Year.Length == 4 && int.TryParse(Year, out int startYear))
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            Year = $"{startYear}-{startYear + 1}";
+        });
+        return;
+    }
+
+    // Khi đã đúng format "YYYY-YYYY" → kiểm tra hợp lệ
+    if (Year.Contains('-'))
+    {
+        var parts = Year.Split('-');
+        if (parts.Length == 2 &&
+            parts[0].Length == 4 &&
+            int.TryParse(parts[0], out int y1) &&
+            parts[1].Length == 4 &&
+            int.TryParse(parts[1], out int y2))
+        {
+            // Hợp lệ → load data
+            LoadStudentsWithoutClass();
+        }
+    }
+}
+
 
     public void LoadClassData()
     {

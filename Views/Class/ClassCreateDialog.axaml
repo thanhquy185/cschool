@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ViewModels;assembly=ViewModels"
+        xmlns:utils="clr-namespace:Utils;assembly=Utils"
         x:Class="Views.Class.ClassCreateDialog"
         x:DataType="vm:ClassViewModel"
         Title="Thêm lớp học"
@@ -40,187 +41,171 @@
 
             <!-- MAIN CONTENT -->
             <ScrollViewer Grid.Row="1" Padding="20">
+                <StackPanel Spacing="20">
 
-                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="16">
+                    <!-- THÔNG TIN LỚP HỌC -->
+                    <Grid ColumnDefinitions="1*,1*" ColumnSpacing="32" RowDefinitions="Auto,Auto" RowSpacing="14">
 
-                    <!-- Thông tin lớp học -->
-                    <Grid Row="0" ColumnDefinitions="1*,1*" ColumnSpacing="40" RowSpacing="12">
-                        <!-- Cột trái -->
-                        <StackPanel Grid.Column="0" Spacing="12">
-                            <TextBlock Text="Tên lớp" FontWeight="Bold"/>
-                            <TextBox Text="{Binding SelectedClass.Name}" Height="34"/>
-                            <TextBlock Text="Khối" FontWeight="Bold"/>
-                            <ComboBox ItemsSource="{Binding Grades}" SelectedItem="{Binding SelectedGrade}" Height="34"/>
-                            <TextBlock Text="Năm học" FontWeight="Bold"/>
-                            <TextBox Text="{Binding Year}" Height="34"
-                            LostFocus="SchoolYearTextBox_LostFocus"/>
+                        <!-- CỘT TRÁI -->
+                        <Grid Grid.Column="0" ColumnDefinitions="*" RowDefinitions="Auto,Auto" RowSpacing="14">
+                            <!-- HÀNG 1: Tên lớp + Khối -->
+                            <Grid ColumnDefinitions="2*,1*" ColumnSpacing="12">
+                                <StackPanel>
+                                    <TextBlock Text="Tên lớp" FontWeight="Bold"/>
+                                    <TextBox Text="{Binding SelectedClass.Name}" Height="34"/>
+                                </StackPanel>
 
-                        </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Khối" FontWeight="Bold"/>
+                                    <ComboBox x:Name="GradesComboBox" ItemsSource="{Binding Grades}" SelectedItem="{Binding SelectedGrade}" Height="34" Width="200"/>
+                                </StackPanel>
+                            </Grid>
 
-                        <!-- Cột phải -->
-                    <StackPanel Grid.Column="1" Spacing="12">
-                        <!-- <TextBlock Text="Loại lớp" FontWeight="Bold"/>
-                        <ComboBox ItemsSource="{Binding ClassTypes}"
-                                SelectedItem="{Binding SelectedClassType}"
-                                Height="34">
-                                  <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                         </ComboBox> -->
-                     
-                    <TextBlock Text="Loại lớp" FontWeight="Bold"/>
-                    <ComboBox ItemsSource="{Binding ClassTypes}"
-                            SelectedItem="{Binding SelectedClassTypeModel}"
-                            Height="34">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                            <!-- HÀNG 2: Năm học -->
+                           <StackPanel Grid.Row="1">
+    <TextBlock Text="Năm học" FontWeight="Bold"/>
+    <TextBox x:Name="YearTextBox" 
+             Text="{Binding Year, UpdateSourceTrigger=PropertyChanged} 
+                   Converter={StaticResource YearToForegroundConverter}" 
+             Height="34"/>
+</StackPanel>
 
+                        </Grid>
 
+                        <!-- CỘT PHẢI -->
+                        <Grid Grid.Column="1" ColumnDefinitions="*" RowDefinitions="Auto,Auto" RowSpacing="14">
+                            <!-- HÀNG 1: Loại lớp -->
+                            <StackPanel>
+                                <TextBlock Text="Loại lớp" FontWeight="Bold"/>
+                                <ComboBox ItemsSource="{Binding ClassTypes}" SelectedItem="{Binding SelectedClassTypeModel}" Height="34" Width="200">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
 
+                            <!-- HÀNG 2: GVCN HK1 + HK2 -->
+                            <Grid Grid.Row="1" ColumnDefinitions="1*,1*" ColumnSpacing="12">
+                                <StackPanel>
+                                    <TextBlock Text="GVCN HK1" FontWeight="Bold"/>
+                                    <ComboBox ItemsSource="{Binding Teachers}" SelectedItem="{Binding SelectedTeacherHK1}" Height="34" Width="200">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
 
-                    <TextBlock Text="GVCN HK1" FontWeight="Bold"/>
-                    <ComboBox ItemsSource="{Binding Teachers}"
-                            SelectedItem="{Binding SelectedTeacherHK1}"
-                            Height="34">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-
-                    <TextBlock Text="GVCN HK2" FontWeight="Bold"/>
-                    <ComboBox ItemsSource="{Binding Teachers}"
-                            SelectedItem="{Binding SelectedTeacherHK2}"
-                            Height="34">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-
-                    </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="GVCN HK2" FontWeight="Bold"/>
+                                    <ComboBox ItemsSource="{Binding Teachers}" SelectedItem="{Binding SelectedTeacherHK2}" Height="34" Width="200">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
 
                     </Grid>
 
-                    <!-- TabControl học sinh HK1/HK2 -->
-<TabControl Grid.Row="1">
-    <!-- HK1 -->
-    <TabItem Header="Học kỳ 1">
-        <Grid ColumnDefinitions="3*,Auto,3*" ColumnSpacing="12" VerticalAlignment="Stretch">
+                    <!-- TABCONTROL HỌC SINH -->
+                    <TabControl>
 
-            <!-- Học sinh chưa có lớp -->
-            <Border Grid.Column="0" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
-                <StackPanel>
-                    <TextBox Watermark="Tìm kiếm học sinh..." 
-                             Text="{Binding SearchStudentTextHK1}" 
-                             Height="32" Margin="0,0,0,8"/>
-                    <DataGrid x:Name="dataGridStudentsAvailableHK1"
-                              ItemsSource="{Binding StudentsAvailableHK1}"
-                              AutoGenerateColumns="False"
-                              RowHeight="36"
-                              IsReadOnly="True"
-                              SelectionMode="Extended"
-                              SelectionChanged="DataGridStudentsAvailableHK1_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
-                            <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                        <!-- HỌC KỲ 1 -->
+                        <TabItem Header="Học kỳ 1">
+                            <Grid ColumnDefinitions="3*,Auto,3*" ColumnSpacing="12" VerticalAlignment="Stretch">
+                                <!-- Chưa có lớp -->
+                                <Border Grid.Column="0" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK1}" Height="32" Margin="0,0,0,8"/>
+                                        <DataGrid x:Name="dataGridStudentsAvailableHK1" ItemsSource="{Binding StudentsAvailableHK1}" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="DataGridStudentsAvailableHK1_SelectionChanged">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
+                                                <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Action buttons -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
+                                    <Button Content="Thêm →" Click="AddStudentsHK1_Click" Width="96" Height="36"/>
+                                    <Button Content="← Xóa" Click="RemoveStudentsHK1_Click" Width="96" Height="36"/>
+                                </StackPanel>
+
+                                <!-- Trong lớp -->
+                                <Border Grid.Column="2" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
+                                    <StackPanel>
+                                        <DataGrid x:Name="dataGridStudentsInClassHK1" ItemsSource="{Binding StudentInClassHK1}" SelectionChanged="DataGridStudentsInClassHK1_SelectionChanged" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
+                                                <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </Border>
+
+                            </Grid>
+                        </TabItem>
+
+                        <!-- HỌC KỲ 2 -->
+                        <TabItem Header="Học kỳ 2">
+                            <Grid ColumnDefinitions="3*,Auto,3*" ColumnSpacing="12" VerticalAlignment="Stretch">
+                                <Border Grid.Column="0" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK2}" Height="32" Margin="0,0,0,8"/>
+                                        <DataGrid x:Name="dataGridStudentsAvailableHK2" ItemsSource="{Binding StudentsAvailableHK2}" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="DataGridStudentsAvailableHK2_SelectionChanged">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
+                                                <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
+                                    <Button Content="Thêm →" Click="AddStudentsHK2_Click" Width="96" Height="36"/>
+                                    <Button Content="← Xóa" Click="RemoveStudentsHK2_Click" Width="96" Height="36"/>
+                                </StackPanel>
+
+                                <Border Grid.Column="2" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
+                                    <StackPanel>
+                                        <DataGrid x:Name="dataGridStudentsInClassHK2" ItemsSource="{Binding StudentInClassHK2}" SelectionChanged="DataGridStudentsInClassHK2_SelectionChanged" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
+                                                <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </Border>
+
+                            </Grid>
+                        </TabItem>
+
+                    </TabControl>
+
                 </StackPanel>
-            </Border>
-
-            <!-- Action buttons -->
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
-                <Button Content="Thêm →" Click="AddStudentsHK1_Click" Width="96" Height="36"/>
-                <Button Content="← Xóa" Click="RemoveStudentsHK1_Click" Width="96" Height="36"/>
-            </StackPanel>
-
-            <!-- Học sinh trong lớp -->
-            <Border Grid.Column="2" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
-                <StackPanel>
-                    <DataGrid x:Name="dataGridStudentsInClassHK1" ItemsSource="{Binding StudentInClassHK1}" SelectionChanged="DataGridStudentsInClassHK1_SelectionChanged" AutoGenerateColumns="False" RowHeight="36" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
-                            <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
-        </Grid>
-    </TabItem>
-
-    <!-- HK2 -->
-    <TabItem Header="Học kỳ 2">
-        <Grid ColumnDefinitions="3*,Auto,3*" ColumnSpacing="12" VerticalAlignment="Stretch">
-
-            <!-- Học sinh chưa có lớp -->
-            <Border Grid.Column="0" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
-                <StackPanel>
-                    <TextBox Watermark="Tìm kiếm học sinh..." 
-                             Text="{Binding SearchStudentTextHK2}" 
-                             Height="32" Margin="0,0,0,8"/>
-                    <DataGrid x:Name="dataGridStudentsAvailableHK2"
-                              ItemsSource="{Binding StudentsAvailableHK2}"
-                              AutoGenerateColumns="False"
-                              RowHeight="36"
-                              IsReadOnly="True"
-                              SelectionMode="Extended"
-                              SelectionChanged="DataGridStudentsAvailableHK2_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
-                            <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
-
-            <!-- Action buttons -->
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
-                <Button Content="Thêm →" Click="AddStudentsHK2_Click" Width="96" Height="36"/>
-                <Button Content="← Xóa" Click="RemoveStudentsHK2_Click" Width="96" Height="36"/>
-            </StackPanel>
-
-            <!-- Học sinh trong lớp -->
-            <Border Grid.Column="2" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
-                <StackPanel>
-                    <DataGrid x:Name="dataGridStudentsInClassHK2" SelectionChanged="DataGridStudentsInClassHK2_SelectionChanged" ItemsSource="{Binding StudentInClassHK2}" AutoGenerateColumns="False" RowHeight="36" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
-                            <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-            </Border>
-        </Grid>
-    </TabItem>
-</TabControl>
-
-
-                </Grid>
             </ScrollViewer>
 
-                        <!-- FOOTER -->
-                <Border Grid.Row="2" Padding="20" Background="White">
-                    <Button Content="Xác nhận"
-                            Width="200"
-                            Height="44"
-                            FontSize="16"
-                            Background="#3C7EDB"
-                            Foreground="White"
-                            BorderThickness="0"
-                            CornerRadius="8"
-                            HorizontalAlignment="Center"
-                            Click="ConfirmButton_Click"/>
-                </Border>
-
+            <!-- FOOTER -->
+            <Border Grid.Row="2" Padding="20" Background="White">
+                <Button Content="Xác nhận"
+                        Width="200"
+                        Height="44"
+                        FontSize="16"
+                        Background="#3C7EDB"
+                        Foreground="White"
+                        BorderThickness="0"
+                        CornerRadius="8"
+                        HorizontalAlignment="Center"
+                        Click="ConfirmButton_Click"/>
+            </Border>
 
         </Grid>
     </Border>

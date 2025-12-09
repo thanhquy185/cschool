@@ -220,104 +220,134 @@ namespace Services
         }
 
         // Lấy danh sách học sinh chưa được phân lớp
-        public List<StudentModel> GetUnassignedStudents(string currentYear, int currentGrade)
+     public List<StudentModel> GetUnassignedStudents(string currentYear, int currentGrade)
+{
+    var result = new List<StudentModel>();
+    var parts = currentYear.Split('-');
+    var prevStart = int.Parse(parts[0]) - 1;
+    var prevEnd = int.Parse(parts[1]) - 1;
+    string previousYear = $"{prevStart}-{prevEnd}";
+
+    string sql = $@"
+        SELECT DISTINCT
+            s.id, s.fullname, s.gender, s.birthday, s.learn_status
+        FROM students s
+        LEFT JOIN term_gpa tq ON tq.student_id = s.id
+        LEFT JOIN assign_classes ac ON ac.id = tq.assign_class_id
+        LEFT JOIN classes c ON c.id = ac.class_id
+        LEFT JOIN terms t ON t.id = ac.term_id
+        WHERE 
+            (
+                -- CASE 1: CÓ ĐIỂM NĂM TRƯỚC
+                (
+                    t.learnyear = '{previousYear}'
+                    AND (
+                        -- LÊN LỚP
+                        (tq.academic IN ('Giỏi','Khá','Trung bình') 
+                         AND tq.gpa >= 5.0 
+                         AND c.grade + 1 = {currentGrade})
+
+                        OR
+
+                        -- Ở LẠI LỚP
+                        ((tq.academic = 'Yếu' OR tq.gpa < 5.0)
+                         AND c.grade = {currentGrade})
+                    )
+                )
+
+                OR
+
+                -- CASE 2: HỌC SINH MỚI – không có GPA năm trước
+                NOT EXISTS (
+                    SELECT 1 FROM term_gpa tq2
+                    JOIN assign_classes ac2 ON ac2.id = tq2.assign_class_id
+                    JOIN terms t2 ON t2.id = ac2.term_id
+                    WHERE tq2.student_id = s.id
+                    AND t2.learnyear = '{previousYear}'
+                )
+            )
+        AND s.id NOT IN (
+            SELECT acs.student_id
+            FROM assign_class_students acs
+            JOIN assign_classes ac3 ON ac3.id = acs.assign_class_id
+            JOIN terms t3 ON t3.id = ac3.term_id
+            WHERE t3.learnyear = '{currentYear}'
+        )
+        AND s.learn_status NOT IN ('Nghỉ học', 'Bảo lưu');
+    ";
+
+    var dt = _db.ExecuteQuery(sql);
+    foreach (DataRow row in dt.Rows)
+    {
+        result.Add(new StudentModel
         {
-            var result = new List<StudentModel>();
-            var parts = currentYear.Split('-');
-            var prevStart = int.Parse(parts[0]) - 1;
-            var prevEnd = int.Parse(parts[1]) - 1;
-            string previousYear = $"{prevStart}-{prevEnd}";
+            Id = (int)row["id"],
+            Fullname = row["fullname"].ToString()!,
+            Gender = row["gender"].ToString()!,
+            BirthDay = row["birthday"].ToString()!,
+            LearnStatus = row["learn_status"].ToString()!,
+        });
+    }
 
-            string sql = $@"
-                SELECT 
-                    s.id, s.fullname, s.gender, s.birthday, c.grade AS last_grade, tq.gpa, tq.academic, tq.conduct_level, s.learn_status
-                FROM students s
-                JOIN term_gpa tq ON tq.student_id = s.id
-                JOIN assign_classes ac ON ac.id = tq.assign_class_id
-                JOIN classes c ON c.id = ac.class_id
-                JOIN terms t ON t.id = ac.term_id AND t.learnyear = '{previousYear}'
-                WHERE (
-                    (tq.academic IN ('Good','Fair','Satisfactory') AND tq.gpa >= 5.0 AND c.grade + 1 = {currentGrade})
-                    OR (tq.academic = 'Unsatisfactory' OR tq.gpa < 5.0 AND c.grade = {currentGrade})
-                )
-                AND s.id NOT IN (
-                    SELECT acs.student_id
-                    FROM assign_class_students acs
-                    JOIN assign_classes ac ON ac.id = acs.assign_class_id
-                    JOIN terms t ON t.id = ac.term_id
-                    WHERE t.learnyear = '{currentYear}'
-                )
-                AND s.learn_status NOT IN ('Nghỉ học','Bảo lưu')
-            ";
-
-            var dt = _db.ExecuteQuery(sql);
-            foreach (DataRow row in dt.Rows)
-            {
-                result.Add(new StudentModel
-                {
-                    Id = (int)row["id"],
-                    Fullname = row["fullname"].ToString()!,
-                    Gender = row["gender"].ToString()!,
-                    BirthDay = row["birthday"].ToString()!,
-                    LearnStatus = row["learn_status"].ToString()!,
-                });
-            }
-
-            return result;
-        }
+    return result;
+}
 
         // Lưu lớp mới và gán giáo viên
-        public async Task<int> SaveClassAsync(ClassModel cls, string year)
+       public async Task<int> SaveClassAsync(ClassModel cls, string year)
+{
+    var terms = GetOrCreateTerm(year);
+
+    if (cls.Id == 0)
+    {
+        // Gộp INSERT + SELECT LAST_INSERT_ID()
+        var sql = $@"
+            INSERT INTO classes (name, class_type_id, grade, area, room, status)
+            VALUES('{cls.Name}', {cls.ClassTypeId}, {cls.Grade}, '{cls.Area}', '{cls.Room}', 1);
+            SELECT LAST_INSERT_ID();
+        ";
+
+        // ExecuteScalar sẽ trả về ID vừa insert
+        cls.Id = Convert.ToInt32(_db.ExecuteScalar(sql));
+        Console.WriteLine($"Inserted Class Id: {cls.Id}");
+    }
+    else
+    {
+        _db.ExecuteNonQuery($@"
+            UPDATE classes 
+            SET name='{cls.Name}', class_type_id={cls.ClassTypeId}, grade={cls.Grade}, area='{cls.Area}', room='{cls.Room}'
+            WHERE id={cls.Id}
+        ");
+    }
+
+    foreach (var term in terms)
+    {
+        int teacherId = 0;
+        if (term.TermName == "Học kỳ 1" && cls.TeacherHK1 != null) teacherId = cls.TeacherHK1.Id;
+        if (term.TermName == "Học kỳ 2" && cls.TeacherHK2 != null) teacherId = cls.TeacherHK2.Id;
+
+        var exists = _db.ExecuteScalar($@"
+            SELECT COUNT(*) FROM assign_classes
+            WHERE class_id={cls.Id} AND term_id={term.Id}
+        ");
+        if (Convert.ToInt32(exists) == 0)
         {
-            var terms = GetOrCreateTerm(year);
-
-            if (cls.Id == 0)
-            {
-                _db.ExecuteNonQuery($@"
-                    INSERT INTO classes (name, class_type_id, grade, area, room, status)
-                    VALUES('{cls.Name}', {cls.ClassTypeId}, {cls.Grade}, '{cls.Area}', '{cls.Room}', 1)
-                ");
-                cls.Id = Convert.ToInt32(_db.ExecuteScalar("SELECT LAST_INSERT_ID()"));
-            }
-            else
-            {
-                _db.ExecuteNonQuery($@"
-                    UPDATE classes 
-                    SET name='{cls.Name}', class_type_id={cls.ClassTypeId}, grade={cls.Grade}, area='{cls.Area}', room='{cls.Room}'
-                    WHERE id={cls.Id}
-                ");
-            }
-
-            foreach (var term in terms)
-            {
-                int teacherId = 0;
-                if (term.TermName == "Học kỳ 1" && cls.TeacherHK1 != null) teacherId = cls.TeacherHK1.Id;
-                if (term.TermName == "Học kỳ 2" && cls.TeacherHK2 != null) teacherId = cls.TeacherHK2.Id;
-
-                var exists = _db.ExecuteScalar($@"
-                    SELECT COUNT(*) FROM assign_classes
-                    WHERE class_id={cls.Id} AND term_id={term.Id}
-                ");
-                if (Convert.ToInt32(exists) == 0)
-                {
-                    _db.ExecuteNonQuery($@"
-                        INSERT INTO assign_classes (class_id, term_id, head_teacher_id)
-                        VALUES({cls.Id}, {term.Id}, {teacherId})
-                    ");
-                }
-                else
-                {
-                    _db.ExecuteNonQuery($@"
-                        UPDATE assign_classes
-                        SET head_teacher_id={teacherId}
-                        WHERE class_id={cls.Id} AND term_id={term.Id}
-                    ");
-                }
-            }
-
-            
-            return cls.Id;
+            _db.ExecuteNonQuery($@"
+                INSERT INTO assign_classes (class_id, term_id, head_teacher_id)
+                VALUES({cls.Id}, {term.Id}, {teacherId})
+            ");
         }
+        else
+        {
+            _db.ExecuteNonQuery($@"
+                UPDATE assign_classes
+                SET head_teacher_id={teacherId}
+                WHERE class_id={cls.Id} AND term_id={term.Id}
+            ");
+        }
+    }
+
+    return cls.Id;
+}
 
         // Gán học sinh vào lớp theo học kỳ
         public async Task AssignStudentsToClassAsync(int classId, int termNumber, string year, List<StudentModel> students)

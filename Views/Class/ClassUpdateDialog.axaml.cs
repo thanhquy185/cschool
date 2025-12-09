@@ -36,12 +36,12 @@ public partial class ClassUpdateDialog : Window
         {
             this.Close();
         }
-                private void SchoolYearTextBox_LostFocus(object? sender, RoutedEventArgs e)
-        {
-            if (DataContext is ClassViewModel vm)
-               { vm.ResetState();
-                vm.ValidateSchoolYear();}
-        }
+        //         private void SchoolYearTextBox_LostFocus(object? sender, RoutedEventArgs e)
+        // {
+        //     if (DataContext is ClassViewModel vm)
+        //        { vm.ResetState();
+        //         vm.ValidateSchoolYear();}
+        // }
     
         private void AddStudentsHK1_Click(object? sender, RoutedEventArgs e)
         {
