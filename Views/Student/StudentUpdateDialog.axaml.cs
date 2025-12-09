@@ -85,6 +85,8 @@ namespace Views.Student
             var learnYear = LearnYear.Text?.Trim();
             var phone = Phone.Text?.Trim();
             var email = Email.Text?.Trim();
+            var parentName = ParentName.Text?.Trim();
+            var parentPhone = ParentPhone.Text?.Trim();
             var address = Address.Text?.Trim();
 
 
@@ -101,6 +103,12 @@ namespace Views.Student
             if (string.IsNullOrWhiteSpace(fullName))
             {
                 await MessageBoxUtil.ShowError("Họ và tên không được để trống!", owner: this);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(parentName))
+            {
+                await MessageBoxUtil.ShowError("Họ và tên phụ huynh không được để trống!", owner: this);
                 return;
             }
 
@@ -125,6 +133,12 @@ namespace Views.Student
             if (Rules.rulePhone(phone))
             {
                 await MessageBoxUtil.ShowError("Số điện thoại không hợp lệ!", owner: this);
+                return;
+            }
+
+            if (Rules.rulePhone(parentPhone))
+            {
+                await MessageBoxUtil.ShowError("Số điện thoại phụ huynh không hợp lệ!", owner: this);
                 return;
             }
 
@@ -172,6 +186,8 @@ namespace Views.Student
                 Address = address,
                 LearnYear = learnYear,
                 LearnStatus = learnStatus,
+                ParentName = parentName,
+                ParentPhone = parentPhone,
                 AvatarFile = _selectedAvatarPath,
             };
 
@@ -238,6 +254,24 @@ namespace Views.Student
         }
 
         private void Email_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ParentName.Focus();
+                e.Handled = true;
+            }
+        }
+
+        private void ParentName_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ParentPhone.Focus();
+                e.Handled = true;
+            }
+        }
+
+        private void ParentPhone_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

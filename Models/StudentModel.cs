@@ -30,6 +30,8 @@ public class StudentModel
     public string ClassName { get; set; }
     public string ClassYear { get; set; }
     public string TeacherName { get; set; }
+    public string ParentName { get; set; }
+    public string ParentPhone { get; set; }
     public sbyte Status { get; set; }
     public string Role { get; set; }
     // - Giúp lưu trữ đường dẫn ảnh khi thêm và cập nhật

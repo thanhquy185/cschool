@@ -26,13 +26,13 @@ public partial class LoginViewModel : ViewModelBase
         this.ErrorPassword = "";
         if (Rules.ruleRequiredForTextBox(Username ?? ""))
         {
-            this.ErrorUsername = "Tên tài khoản được để trống !";
+            this.ErrorUsername = "Tên tài khoản không được để trống !";
         }
         if (Rules.ruleRequiredForTextBox(Password ?? ""))
         {
-            this.ErrorPassword = "Mật khẩu được để trống !";
+            this.ErrorPassword = "Mật khẩu không được để trống !";
         }
-        if (ErrorUsername == "Tên tài khoản được để trống !" || ErrorPassword == "Mật khẩu được để trống !") return;
+        if (ErrorUsername == "Tên tài khoản không được để trống !" || ErrorPassword == "Mật khẩu không được để trống !") return;
 
         var user = AppService.UserService.Login(Username, Password);
         if (user != null && user.Status == "Hoạt động")

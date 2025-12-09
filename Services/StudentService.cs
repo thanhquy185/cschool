@@ -29,6 +29,8 @@ public class StudentService
                 Religion = row["religion"].ToString()!,
                 Phone = row["phone"].ToString()!,
                 Email = row["email"].ToString()!,
+                ParentName = row["parent_name"].ToString()!,
+                ParentPhone = row["parent_phone"].ToString()!,
                 Address = row["address"].ToString()!,
                 LearnYear = row["learn_year"].ToString()!,
                 LearnStatus = row["learn_status"].ToString()!,
@@ -57,6 +59,8 @@ public class StudentService
                 Religion = row["religion"].ToString()!,
                 Phone = row["phone"].ToString()!,
                 Email = row["email"].ToString()!,
+                ParentName = row["parent_name"].ToString()!,
+                ParentPhone = row["parent_phone"].ToString()!,
                 Address = row["address"].ToString()!,
                 LearnYear = row["learn_year"].ToString()!,
                 LearnStatus = row["learn_status"].ToString()!,
@@ -71,7 +75,8 @@ public class StudentService
     {
         string sql = @$"SELECT students.id, students.fullname, students.avatar, students.birthday, students.gender, students.ethnicity,
                     students.religion, students.phone, students.email, students.address, students.learn_year, students.learn_status, 
-                    students.status, classes.name AS class_name, teachers.fullname AS teacher_name, terms.learnyear
+                    students.status, classes.name AS class_name, teachers.fullname AS teacher_name, terms.learnyear,
+                    students.parent_name, students.parent_phone
                     FROM students
                     LEFT JOIN assign_class_students ON students.id = assign_class_students.student_id
                     LEFT JOIN assign_classes ON assign_class_students.assign_class_id = assign_classes.id
@@ -103,7 +108,9 @@ public class StudentService
             Status = (sbyte)row["status"],
             ClassName = row["class_name"].ToString()!,
             ClassYear = row["learnyear"].ToString()!,
-            TeacherName = row["teacher_name"].ToString()!
+            TeacherName = row["teacher_name"].ToString()!,
+            ParentName = row["parent_name"].ToString()!,
+            ParentPhone = row["parent_phone"].ToString()!
         };
     }
 
@@ -112,7 +119,7 @@ public class StudentService
         // Console.WriteLine(123);
         var dt = _db.ExecuteQuery("SELECT id FROM cschool.students ORDER BY id DESC LIMIT 1");
         if (dt.Rows.Count > 0)
-            return System.Convert.ToInt32(dt.Rows[0]["id"]);
+            return Convert.ToInt32(dt.Rows[0]["id"]);
         return 0;
     }
 
@@ -126,12 +133,12 @@ public class StudentService
         }
         string sql = @$"
             INSERT INTO cschool.students 
-            (fullname, avatar, birthday, gender, ethnicity, religion, address, phone, email, learn_year, learn_status)
+            (fullname, avatar, birthday, gender, ethnicity, religion, address, phone, email, learn_year, learn_status, parent_name, parent_phone)
             VALUES 
             ('{student.Fullname}', '{student.Avatar}', {formattedBirthDay}, 
                 '{student.Gender}', '{student.Ethnicity}', '{student.Religion}', 
                 '{student.Address}', '{student.Phone}', '{student.Email}', 
-                '{student.LearnYear}', '{student.LearnStatus}');";
+                '{student.LearnYear}', '{student.LearnStatus}', '{student.ParentName}', '{student.ParentPhone}');";
 
         int rows = _db.ExecuteNonQuery(sql);
         return rows > 0;
@@ -157,7 +164,9 @@ public class StudentService
                 email = '{student.Email}',
                 address = '{student.Address}',
                 learn_year = '{student.LearnYear}',
-                learn_status = '{student.LearnStatus}'
+                learn_status = '{student.LearnStatus}',
+                parent_name = '{student.ParentName}',
+                parent_phone = '{student.ParentPhone}'
             WHERE id = {student.Id};";
 
         int rows = _db.ExecuteNonQuery(sql);
