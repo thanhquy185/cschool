@@ -1,9 +1,8 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using ReactiveUI;
 
-namespace cschool.ViewModels;
+namespace ViewModels;
 
 public partial class UserViewModel : ViewModelBase
 {

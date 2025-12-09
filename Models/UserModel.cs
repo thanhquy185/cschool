@@ -1,4 +1,3 @@
-using System;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
@@ -23,10 +22,10 @@ public class UserModel
     {
         get
         {
-            var uri = new Uri($"avares://cschool/Assets/Images/Others/no-image.png");
+            var uri = new Uri($"avares://Views/Assets/Images/Others/no-image.png");
             if (!string.IsNullOrEmpty(Avatar))
             {
-                uri = new Uri($"avares://cschool/Assets/Images/Users/{Avatar}");
+                uri = new Uri($"avares://Views/Assets/Images/Users/{Avatar}");
             }
             return new Bitmap(AssetLoader.Open(uri));
         }

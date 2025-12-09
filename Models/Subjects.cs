@@ -1,17 +1,15 @@
-using System;
-
-namespace cschool.Models;
+namespace Models;
 
 public class Subjects
 {
     public int Id { get; set; }
     public string Code { get; set; } = "";
-    public string Name { get; set; } = "";
+    public string Name_Subject { get; set; } = "";
     public int Credits { get; set; }
     public string Department { get; set; } = "";
     public Subjects(int ma, string ten)
     {
         Id = ma;
-        Name = ten;
+        Name_Subject = ten;
     }
 }

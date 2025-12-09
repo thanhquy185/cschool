@@ -1,0 +1,167 @@
+<UserControl
+  x:Class="Views.Tuition.TuitionUpdateDialog"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:vm="using:ViewModels"
+  mc:Ignorable="d"
+  x:DataType="vm:TuitionViewModel">
+
+  <Border Padding="12" Background="#FAFAFA" CornerRadius="8">
+    <StackPanel Spacing="8">
+
+      <!-- HEADER -->
+      <TextBlock Text="Thiết lập học phí lớp"
+                 FontSize="20"
+                 FontWeight="Bold"
+                 Margin="0,0,0,8"/>
+
+      <!-- TAB HỌC KỲ -->
+      <TabControl SelectedIndex="{Binding SelectedTerm}" Height="400">
+
+        <!-- HK1 -->
+        <TabItem Header="Học kỳ 1">
+          <ScrollViewer>
+            <StackPanel Spacing="8">
+
+              <!-- PHÍ CƠ BẢN -->
+              <TextBlock Text="Phí cơ bản" FontWeight="Bold"/>
+              <ItemsControl ItemsSource="{Binding BaseFees1}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="2"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="2">
+                      <CheckBox IsChecked="{Binding IsSelected,Mode=TwoWay}" 
+                      Click="FeeCheckBox_Changed" />
+                      <TextBlock Text="{Binding Name}" Width="100"/>
+                      <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} đ'}" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- PHÍ KHÁC -->
+              <TextBlock Text="Phí khác" FontWeight="Bold" Margin="0,4,0,0"/>
+              <ItemsControl ItemsSource="{Binding ExtraFees1}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="2"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="2">
+                      <CheckBox IsChecked="{Binding IsSelected,Mode=TwoWay}" 
+                           Click="FeeCheckBox_Changed"   />
+                      <TextBlock Text="{Binding Name}" Width="100"/>
+                      <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} đ'}" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- MONTHS -->
+              <TextBlock Text="Các tháng trong Học kỳ 1" FontWeight="Bold" Margin="0,4,0,0"/>
+              <DataGrid ItemsSource="{Binding MonthsHK1}">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Tháng" Binding="{Binding MonthName}" />
+                  <DataGridTemplateColumn Header="Áp dụng">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected}" 
+                                  Click="MonthCheckBox_Click"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Header="Tổng tiền" Binding="{Binding Amount}" />
+                </DataGrid.Columns>
+              </DataGrid>
+
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- HK2 -->
+        <TabItem Header="Học kỳ 2">
+          <ScrollViewer>
+            <StackPanel Spacing="8">
+
+              <!-- PHÍ CƠ BẢN -->
+              <TextBlock Text="Phí cơ bản" FontWeight="Bold"/>
+              <ItemsControl ItemsSource="{Binding BaseFees2}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="2"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="2">
+                      <CheckBox IsChecked="{Binding IsSelected}" 
+                            Click="FeeCheckBox_Changed"
+                               />
+                      <TextBlock Text="{Binding Name}" Width="100"/>
+                      <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} đ'}" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- PHÍ KHÁC -->
+              <TextBlock Text="Phí khác" FontWeight="Bold" Margin="0,4,0,0"/>
+              <ItemsControl ItemsSource="{Binding ExtraFees2}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="2"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="2">
+                      <CheckBox IsChecked="{Binding IsSelected}" 
+                          Click="FeeCheckBox_Changed"
+                               />
+                      <TextBlock Text="{Binding Name}" Width="100"/>
+                      <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} đ'}" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- MONTHS -->
+              <TextBlock Text="Các tháng trong Học kỳ 2" FontWeight="Bold" Margin="0,4,0,0"/>
+              <DataGrid ItemsSource="{Binding MonthsHK2}">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Tháng" Binding="{Binding MonthName}" />
+                  <DataGridTemplateColumn Header="Áp dụng">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected}" 
+                                  Click="MonthCheckBox_Click"/>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Header="Tổng tiền" Binding="{Binding Amount}" />
+                </DataGrid.Columns>
+              </DataGrid>
+
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
+      </TabControl>
+
+      <!-- BUTTONS -->
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,4,0,0">
+        <Button Content="Hủy" Classes="CancelButton" Padding="8,4"/>
+        <Button Content="Lưu" Classes="CreateButton" Padding="8,4" Click="Save"/>
+      </StackPanel>
+
+    </StackPanel>
+  </Border>
+</UserControl>

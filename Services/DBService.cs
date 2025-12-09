@@ -1,7 +1,7 @@
 using System.Data;
 using MySql.Data.MySqlClient;
 
-namespace cschool.Services
+namespace Services
 {
     public class DBService
     {
@@ -43,5 +43,25 @@ namespace cschool.Services
             return command.ExecuteNonQuery();
         }
 
+        // ---- Thêm ExecuteScalar (trả object) ----
+        public object? ExecuteScalar(string sql)
+        {
+            using var conn = new MySqlConnection(_connectionString);
+            using var cmd = new MySqlCommand(sql, conn);
+            conn.Open();
+            return cmd.ExecuteScalar();
+        }
+
+        // ---- Hoặc Generic tiện dụng (trả T) ----
+        public T ExecuteScalar<T>(string sql)
+        {
+            using var conn = new MySqlConnection(_connectionString);
+            using var cmd = new MySqlCommand(sql, conn);
+            conn.Open();
+            var result = cmd.ExecuteScalar();
+            if (result == null || result == DBNull.Value)
+                return default!;
+            return (T)Convert.ChangeType(result, typeof(T));
+        }
     }
 }

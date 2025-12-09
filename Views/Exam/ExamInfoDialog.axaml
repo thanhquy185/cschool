@@ -1,0 +1,213 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:ViewModels;assembly=ViewModels"
+        x:Class="Views.Exam.ExamInfoDialog"
+        x:DataType="vm:ExamViewModel"
+        xmlns:conv="using:Views.Exam"
+        Title="Chi tiết lịch thi"
+        Width="1100"
+        Height="600"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*">
+            
+            <!-- 🔹 Header -->
+            <Border Background="#4285F4" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <!-- Cột trái rỗng để cân -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tiêu đề ở giữa -->
+                    <TextBlock Grid.Column="1"
+                            Text="Chi tiết lịch thi"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            />
+
+                    <!-- Nút đóng ở bên phải -->
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="CloseButton_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- 🔹 Nội dung -->
+            <Border Grid.Row="1" Padding="20">
+
+                <!-- 🧾 Thông tin học sinh -->
+                <Grid Margin="10,0,30,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Mã -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã" FontSize="15" FontWeight="Bold" Margin="0,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding ExamDetails.Id}" HorizontalContentAlignment="Center" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="0,0,0,30"/>
+
+                    <!-- Tên môn học -->
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Tên môn học" FontSize="15" FontWeight="Bold" Margin="20,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ExamDetails.Subject}" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="20,0,0,30"/>
+
+                    <!-- Khối lớp -->
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Khối lớp" FontSize="15" FontWeight="Bold" Margin="20,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding ExamDetails.Grade}" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="20,0,0,30"/>
+
+                    <!-- Ngày kiểm tra -->
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="Ngày kiểm tra" FontSize="15" FontWeight="Bold" Margin="20,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding ExamDetails.ExamDateDisplay}" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="20,0,0,30"/>
+
+                    <!-- Giờ bắt đầu -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Giờ bắt đầu" FontSize="15" FontWeight="Bold" Margin="0,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="4" Grid.Column="0" Text="{Binding ExamDetails.StartTimeDisplay}" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="0,0,0,30"/>
+
+                    <!-- Giờ kết thúc -->
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Giờ kết thúc" FontSize="15" FontWeight="Bold" Margin="20,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ExamDetails.EndTimeDisplay}" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="20,0,0,30"/>
+
+                    <!-- Học kỳ -->
+                    <TextBlock Grid.Row="3" Grid.Column="2" Text="Học kỳ" FontSize="15" FontWeight="Bold" Margin="20,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding ExamDetails.TermName}" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="20,0,0,30"/>
+
+                    <!-- Năm học -->
+                    <TextBlock Grid.Row="3" Grid.Column="3" Text="Năm học" FontSize="15" FontWeight="Bold" Margin="20,0,0,5" Foreground="Black"/>
+                    <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding ExamDetails.TermYear}" IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="20,0,0,30"/>
+
+                    <Grid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4">
+                        <UniformGrid Columns="2">
+
+                            <!-- Danh sách phòng thi -->
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+                                Margin="10,0,10,20" RowDefinitions="Auto,*" Height="320">
+                                
+                                <TextBlock Grid.Row="0"
+                                        Text="Danh sách phòng thi"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Margin="0,0,0,10"
+                                        Foreground="Black"
+                                        HorizontalAlignment="Center"/>
+
+                                <Border Grid.Row="1" Classes="TableDataWarper" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="0">
+                                    <DataGrid Classes="TableData" ItemsSource="{Binding RoomDetails}" SelectionChanged="RoomSelectionChanged"
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="STT" Width="65">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding $parent[DataGridRow].Index, Converter={x:Static conv:IntToIndexConverter.Instance}}" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn 
+                                                Binding="{Binding RoomName}"
+                                                Header="Số phòng"
+                                                Width="*" />
+                                            <DataGridTextColumn 
+                                                Binding="{Binding TeacherName}"
+                                                Header="Giáo viên"
+                                                Width="2*" />
+                                            <DataGridTextColumn 
+                                                Binding="{Binding RoomQuantity}"
+                                                Header="Sức chứa"
+                                                Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                            </Grid>
+
+                            <!-- Danh sách học sinh -->
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+                                Margin="10,0,10,20" RowDefinitions="Auto,*" Height="320">
+                                
+                                <TextBlock Grid.Row="0"
+                                        Text="Danh sách học sinh"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Margin="0,0,0,10"
+                                        Foreground="Black"
+                                        HorizontalAlignment="Center"/>
+
+                                <Border Grid.Row="1" Classes="TableDataWarper" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="0">
+                                    <DataGrid Classes="TableData" ItemsSource="{Binding StudentDetails}" 
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="STT" Width="65">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding $parent[DataGridRow].Index, Converter={x:Static conv:IntToIndexConverter.Instance}}" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn 
+                                                Binding="{Binding StudentId}"
+                                                Header="Mã HS"
+                                                Width="*" />
+                                            <DataGridTextColumn 
+                                                Binding="{Binding StudentName}"
+                                                Header="Họ tên học sinh"
+                                                Width="2*" />
+                                            <DataGridTextColumn 
+                                                Binding="{Binding ClassName}"
+                                                Header="Lớp"
+                                                Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                            </Grid>
+                        </UniformGrid>
+                    </Grid>
+                
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,134 @@
+<UserControl
+  x:Class="Views.ExamView"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:view="using:Views"
+  xmlns:vm="using:ViewModels"
+  x:DataType="vm:ExamViewModel"
+  mc:Ignorable="d">
+  <Design.DataContext>
+    <vm:ExamViewModel />
+  </Design.DataContext>
+  <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
+    <!--  Header  -->
+    <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+      <!--  Title And SubTitle  -->
+      <StackPanel Classes="MainLayoutHeaderInfo">
+        <!--  Titlte  -->
+        <TextBlock Classes="Title" Text="Thông tin lịch thi" />
+        <!--  SubTitle  -->
+        <!-- <TextBlock Classes="SubTitle" Text="Thông tin cơ bản của lịch thi" /> -->
+      </StackPanel>
+
+      <!-- Butttons -->
+      <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+
+        <Button x:Name="InfoButton" Classes="CrudButton Info">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="{DynamicResource InfoIcon}"/>
+              <TextBlock Text="Chi tiết" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+            </StackPanel>
+          </Border>
+        </Button>
+
+        <Button x:Name="CreateButton" Classes="CrudButton Create">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="{DynamicResource CreateIcon}"/>
+              <TextBlock Text="Thêm" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+            </StackPanel>
+          </Border>
+        </Button>
+
+        <Button x:Name="UpdateButton" Classes="CrudButton Update">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="{DynamicResource UpdateIcon}"/>
+              <TextBlock Text="Cập nhật" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+            </StackPanel>
+          </Border>
+        </Button>
+
+        <Button x:Name="LockButton" Classes="CrudButton Lock">
+          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+            <StackPanel>
+              <Image Source="{DynamicResource BinIcon}"/>
+              <TextBlock Text="Xóa" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+            </StackPanel>
+          </Border>
+        </Button>
+      </StackPanel>
+
+    </Grid>
+    <!--  Filter  -->
+    <Border Grid.Row="1" Classes="FilterDataWarper">
+      <Grid Classes="FilterData" RowDefinitions="*,Auto">
+        <StackPanel Classes="FilterDataInputs">
+          <Grid Classes="FilterDataFindInput">
+            <TextBox Watermark="Nhập tên môn học" x:Name="SearchBox" TextChanged="OnSearchTextChanged"/>
+            <Image Source="{DynamicResource SearchIcon}" />
+          </Grid>
+          <ComboBox
+            x:Name="StatusFilterBox"
+            Classes="FilterDataFindSelect"
+            MaxDropDownHeight="300"
+            ItemsSource="{Binding StudyTerm}" 
+            PlaceholderText="Chọn học kỳ"
+            SelectionChanged="OnStatusFilterChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding TermName}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+        <Button
+          x:Name="ResetFilterButton"
+          HorizontalAlignment="Right"
+          VerticalAlignment="Center"
+          Classes="FilterDataResetButton"
+          Click="OnResetFilterClicked">
+          <Image Source="{DynamicResource ResetIcon}" />
+        </Button>
+      </Grid>
+    </Border>
+    <!--  Table  -->
+    <Border Grid.Row="2" Classes="TableDataWarper">
+      <DataGrid x:Name="ExamDataGrid" Classes="TableData" ItemsSource="{Binding ExamsTemp}">
+        <DataGrid.Columns>
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding Subject}"
+            Header="Môn học" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding Grade}"
+            Header="Khối lớp" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding ExamDateDisplay}"
+            Header="Ngày thi" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding StartTimeDisplay}"
+            Header="Giờ bắt đầu" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding EndTimeDisplay}"
+            Header="Giờ kết thúc" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding TermName}"
+            Header="Học kỳ" />
+          <DataGridTextColumn
+            Width="*"
+            Binding="{Binding TermYear}"
+            Header="Năm học" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Border>
+  </Grid>
+</UserControl>

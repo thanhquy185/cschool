@@ -1,19 +1,163 @@
+using System;
+using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using cschool.Services;
-using cschool.ViewModels;
+using Models;
+using Services;
+using Utils;
+using ViewModels;
+using Views.DialogAssignTeacher;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class AssignTeacherView : UserControl
 {
+    // AssignTeacherViewModel ViewModel => DataContext as AssignTeacherViewModel;
     public AssignTeacherView()
     {
         InitializeComponent();
+
+        this.AttachedToVisualTree += (_, _) =>
+        {
+            if (DataContext is AssignTeacherViewModel vm)
+            {
+                vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
+                vm.RequestOpenEditDialog += Vm_RequestOpenEditDialog;
+                vm.RequestCloseAddDialog += Vm_RequestCloseAddAssignTeacher;
+                vm.RequestCloseEditDialog += Vm_RequestCloseEditAssignTeacher;
+            }
+        };
+
     }
 
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+    private async void OnAddButtonClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is AssignTeacherViewModel vm)
+        {
+            vm.ClearForm();
+            var dialog = new AssignTeacherAddDialog
+            {
+                DataContext = vm   // ✅ GÁN VM CHO DIALOG
+            };
+
+            var window = (Window)this.VisualRoot!;
+            var result = await dialog.ShowDialog<bool>(window);
+
+            if (result)
+            {
+                // vm.LoadDataCommand.Execute(null);
+            }
+        }
+    }
+    private async void OnDetailButtonClick(object? sender, RoutedEventArgs e)
+    {
+
+        if (DataContext is AssignTeacherViewModel vm )
+
+        {
+            if (vm.SelectedAssignTeacher != null)
+            {
+                // DataContext = vm;
+                await vm.OpenDetailDialogCommand.ExecuteAsync(vm.SelectedAssignTeacher);
+            }
+            else
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để xem chi tiết", null);
+                return;
+            }
+        }
+    }
+
+    private async void Vm_RequestOpenDetailDialog(object? sender, AssignTeacher a)
+    {
+        if (DataContext is AssignTeacherViewModel vm)
+        {
+            var dialog = new AssignTeacherDetailDialog
+            {
+                DataContext = vm   // vẫn dùng VM chính
+            };
+
+            var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+            await dialog.ShowDialog(owner);
+        }
+    }
+
+
+    private async void OnEditButtonClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is AssignTeacherViewModel vm )
+        {
+            if (vm.SelectedAssignTeacher != null)
+            {
+                // DataContext = vm;
+                await vm.OpenEditDialogCommand.ExecuteAsync(vm.SelectedAssignTeacher);
+            }
+            else
+            {
+                await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để sửa", null);
+                return;
+            }
+            
+        }
+    }
+
+    private async void Vm_RequestOpenEditDialog(object? sender, AssignTeacher a)
+    {
+        if (DataContext is AssignTeacherViewModel vm)
+        {
+            var dialog = new AssignTeacherEditDialog
+            {
+                DataContext = vm
+            };
+
+            var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+            await dialog.ShowDialog(owner);
+        }
+    }
+
+    private void SubjectCombo_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        var vm = DataContext as AssignTeacherViewModel;
+        vm?.SearchNameSubjectCommand.Execute(null);
+    }
+
+    // Đóng Dialog
+    private async void Vm_RequestCloseAddAssignTeacher(object? sender, EventArgs e)
+    {
+        var lifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        var mainWindow = lifetime?.MainWindow;
+
+        var dialog = mainWindow?.OwnedWindows
+            .OfType<AssignTeacherAddDialog>()
+            .FirstOrDefault();
+
+        dialog?.Close();
+
+        if (DataContext is AssignTeacherViewModel vm)
+            vm.SelectedAssignTeacher = null;
+    }
+
+    private async void Vm_RequestCloseEditAssignTeacher(object? sender, EventArgs e)
+    {
+        var lifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        var mainWindow = lifetime?.MainWindow;
+
+        var dialog = mainWindow?.OwnedWindows
+            .OfType<AssignTeacherEditDialog>()
+            .FirstOrDefault();
+
+        dialog?.Close();
+
+        if (DataContext is AssignTeacherViewModel vm)
+            vm.SelectedAssignTeacher = null;
     }
 }

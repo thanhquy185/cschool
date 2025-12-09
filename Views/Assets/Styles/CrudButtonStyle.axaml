@@ -1,0 +1,62 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  Crud Button Style  -->
+    <Style Selector="Button.CrudButton">
+        <Setter Property="Width" Value="85" />
+        <Setter Property="Height" Value="80" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Foreground" Value="#777" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.CrudButton Border">
+        <Setter Property="Width" Value="85" />
+        <Setter Property="Height" Value="80" />
+        <Setter Property="BorderThickness" Value="3" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+
+    <Style Selector="Button.CrudButton StackPanel">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Orientation" Value="Vertical" />
+        <Setter Property="Spacing" Value="8" />
+    </Style>
+
+    <Style Selector="Button.CrudButton Image">
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+    </Style>
+
+    <Style Selector="Button.CrudButton.Info:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource BlueSecondaryColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource BlueSecondaryColor}" />
+    </Style>
+
+    <Style Selector="Button.CrudButton.Create:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource GreenPrimaryColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource GreenPrimaryColor}" />
+    </Style>
+
+    <Style Selector="Button.CrudButton.Update:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource YellowPrimaryColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource YellowPrimaryColor}" />
+    </Style>
+
+    <Style Selector="Button.CrudButton.Lock:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource RedPrimaryColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource RedPrimaryColor}" />
+    </Style>
+
+    <Style Selector="Button.CrudButton:pressed">
+        <Setter Property="Background" Value="#E0E0E0" />
+        <Setter Property="Foreground" Value="#333" />
+    </Style>
+</Styles>

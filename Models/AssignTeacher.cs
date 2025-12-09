@@ -1,11 +1,7 @@
-
-using System.Dynamic;
-
-namespace cschool.Models;
+namespace Models;
 
 public class AssignTeacher
 {
-
     public int Assign_class_id { get; set; }
     public int Teachers_id { get; set; }
     public int Subject_id { get; set; }
@@ -20,35 +16,5 @@ public class AssignTeacher
     public int ClassId { get; internal set; }
     public int Start { get; set; }
     public int End { get; set; }
-    public AssignTeacher(int assign_class_id, int teacher_id, int subject_id, string courseName, string className, string teacher, string room, string day, int start, int end)
-    {
-        Assign_class_id = assign_class_id;
-        Teachers_id = teacher_id;
-        Subject_id = subject_id;
-        CourseName = courseName;
-        ClassName = className;
-        Teachers = teacher;
-        RoomName = room;
-        Day = day;
-        Start = start;
-        End = end;
-
-    }
-        public AssignTeacher(int assign_class_id, int teacher_id, string courseName,int quiz_connt,int oral_count, string className, string teacher, string room, string day, int start, int end)
-    {
-        Assign_class_id = assign_class_id;
-        Teachers_id = teacher_id;
-        CourseName = courseName;
-        QuizCount = quiz_connt;
-        OralCount = oral_count;
-        ClassName = className;
-        Teachers = teacher;
-        RoomName = room;
-        Day = day;
-        Start = start;
-        End = end;
-        
-    }
-
-
+    public int term_id { get; set; }
 }

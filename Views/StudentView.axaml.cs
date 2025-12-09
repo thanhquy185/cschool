@@ -1,10 +1,15 @@
-using System;
 using Avalonia.Controls;
+using ViewModels;
+using System.Threading.Tasks;
+using System.IO;
+using Utils;
+using Views.Student;
+using System.Collections.Generic;
+using System.Reactive.Threading.Tasks;
+using System;
 using Avalonia.Interactivity;
-using cschool.ViewModels;
-using FluentAvalonia.UI.Controls;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class StudentView : UserControl
 {
@@ -12,88 +17,160 @@ public partial class StudentView : UserControl
     {
         InitializeComponent();
         DataContext = new StudentViewModel();
+
+        InfoButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Info);
+        CreateButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Create);
+        UpdateButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Update);
+        LockButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Lock);
+        ImportExcelButton.Click += async (_, _) => await ImportExcelButton_Click();
+        ExportExcelButton.Click += async (_, _) => await ExportExcelButton_Click();
     }
 
-    private async void TestDialogButton_Click(object sender, RoutedEventArgs e)
+    private async Task ShowStudentDialog(DialogModeEnum mode)
     {
-        // Header
-        var header = new Grid
-        {
-            ColumnDefinitions = new ColumnDefinitions("*, Auto, *"),
-            Classes = { "DialogHeader" }
-        };
-        // - Title
-        var title = new TextBlock
-        {
-            Text = "Thông tin học sinh",
-            Classes = { "DialogHeaderTitle" }
-        };
-        Grid.SetColumn(title, 1);
-        header.Children.Add(title);
-        // - Close Button
-        var closeButton = new Button
-        {
-            Content = "X",
-            Classes = { "DialogCloseButton" }
-        };
-        Grid.SetColumn(closeButton, 2);
-        header.Children.Add(closeButton);
+        var vm = DataContext as StudentViewModel;
+        var selectedStudent = StudentsDataGrid.SelectedItem as StudentModel;
 
-        // Form 
-        var form = new StackPanel
+        if (selectedStudent == null && mode != DialogModeEnum.Create)
         {
-            Classes = { "DialogForm" },
-        };
-        // - Label, Input, Select...
-        form.Children.Add(new TextBlock { Text = "Tên học sinh:" });
-        var nameTextBox = new TextBox { Width = 200 };
-        form.Children.Add(nameTextBox);
-        form.Children.Add(new TextBlock { Text = "Tuổi:" });
-        var ageTextBox = new TextBox { Width = 50 };
-        form.Children.Add(ageTextBox);
-        // - Submit Button
-        var submitButton = new Button
-        {
-            Content = "Xác nhận",
-            Classes = { "DialogSubmitButton" }
-        };
-        form.Children.Add(submitButton);
-        // - Form Warper
-        var formCWarper = new Border
-        {
-            Classes = { "DialogFormCWarper" },
-            Child = form
-        };
-
-        // Nội dung dialog (vì không dùng title và các nút mặc định của control)
-        var dialogContent = new StackPanel
-        {
-            Children =
-        {
-            header,
-            formCWarper
+            await MessageBoxUtil.ShowError("Vui lòng chọn người dùng để thực hiện thao tác!");
+            return;
         }
-        };
 
-        // Tạo dialog
-        var dialog = new ContentDialog
+        Window? dialog = null;
+        switch (mode)
         {
-            Title = null,
-            Content = dialogContent,
-            PrimaryButtonText = null,
-            Classes = { "Dialog", "Create" },
-        };
+            case DialogModeEnum.Info:
+                if (vm != null && selectedStudent != null)
+                {
+                    vm.GetStudentByIdCommand.Execute(selectedStudent.Id).ToTask();
+                }
+                dialog = new StudentInfoDialog(vm);
+                break;
 
-        // Đóng dialog khi bấm X
-        closeButton.Click += (_, __) => dialog.Hide();
+            case DialogModeEnum.Create:
+                dialog = new StudentCreateDialog{studentViewModel = vm};
+                break;
 
-        // Hiện dialog
-        var result = await dialog.ShowAsync();
-        submitButton.Click += (_, __) =>
-        {
-            Console.WriteLine($"Tên: {nameTextBox.Text}, Tuổi: {ageTextBox.Text}");
-            dialog.Hide(ContentDialogResult.Primary);
-        };
+            case DialogModeEnum.Update:
+                if (vm != null && selectedStudent != null)
+                {
+                    vm.GetStudentByIdCommand.Execute(selectedStudent.Id).ToTask();
+                }
+                dialog = new StudentUpdateDialog(vm);
+                break;
+
+            case DialogModeEnum.Lock:
+                if (vm != null && selectedStudent != null)
+                {
+                    vm.GetStudentByIdCommand.Execute(selectedStudent.Id).ToTask();
+                }
+                dialog = new StudentLockDialog(vm);
+                break;
+        }
+
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        if (owner != null)
+            await dialog.ShowDialog(owner);
+        else
+            dialog.Show();
     }
-}
 
+    private async Task ImportExcelButton_Click()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Chọn file Excel để nhập",
+            AllowMultiple = false,
+            Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            }
+        };
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        var result = await dialog.ShowAsync(owner);
+        if (result == null || result.Length == 0)
+            return;
+
+        var filePath = result[0];
+        if (!File.Exists(filePath))
+            return;
+
+        // Gọi vào ViewModel
+        var vm = DataContext as StudentViewModel;
+        if (vm != null)
+            await vm.ImportExcel(filePath);
+    }
+    
+    private async Task ExportExcelButton_Click()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Chọn nơi lưu file Excel",
+            Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            },
+            InitialFileName = "DanhSachHocSinh.xlsx"
+        };
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        var filePath = await dialog.ShowAsync(owner);
+
+        if (string.IsNullOrWhiteSpace(filePath))
+            return;
+
+        var vm = DataContext as StudentViewModel;
+        if (vm != null)
+        {
+            try
+            {
+                await vm.ExportExcel(filePath);
+                await MessageBoxUtil.ShowSuccess("Xuất file Excel thành công!\n", owner: owner);
+            }
+            catch (Exception ex)
+            {
+                await MessageBoxUtil.ShowError(ex.Message, owner: owner);
+            }
+        }
+    }
+
+    private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (DataContext is StudentViewModel vm)
+        {
+            var textBox = sender as TextBox;
+            vm.FilterKeyword = textBox?.Text ?? "";
+            vm.ApplyFilter();
+        }
+    }
+
+    private void OnStatusFilterChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is StudentViewModel vm)
+        {
+            var combo = sender as ComboBox;
+            var selectedItem = combo?.SelectedItem as ComboBoxItem;
+            var selectedText = selectedItem?.Content?.ToString() ?? "";
+
+            vm.FilterStatus = selectedText == "Chọn Trạng thái" ? "" : selectedText;
+            vm.ApplyFilter();
+        }
+    }
+
+    private void OnResetFilterClicked(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is StudentViewModel vm)
+        {
+            vm.FilterKeyword = "";
+            vm.FilterStatus = "";
+            vm.ApplyFilter();
+
+            SearchBox.Text = "";
+            StatusFilterBox.SelectedIndex = 0;
+        }
+    }
+
+}

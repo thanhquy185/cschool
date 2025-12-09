@@ -4,10 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using cschool.Utils;
-using cschool.ViewModels;
+using Utils;
+using ViewModels;
 
-namespace cschool.Views;
+namespace Views;
 
 public partial class UserView : UserControl
 {
@@ -440,7 +440,7 @@ public partial class UserView : UserControl
                         var user = new UserModel();
                         if (isUpdate) user.Id = int.Parse(idTextBox.Text);
                         if (isCreate || isUpdate) user.AvatarFile = selectedImagePath;
-                        if (isCreate || isUpdate) user.RoleId = 0;
+                        if (isCreate || isUpdate) user.RoleId = 1;
                         if (isCreate) user.Username = usernameTextBox.Text;
                         if (isCreate) user.Password = passwordTextBox.Text;
                         if (isCreate || isUpdate) user.Fullname = fullnameTextBox.Text;

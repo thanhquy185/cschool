@@ -1,4 +1,4 @@
-namespace cschool.Models;
+namespace Models;
 
 public class Classes
 {
@@ -16,6 +16,4 @@ public class Classes
         Name = ten;
         Room = phong;
     }
-    
-
 }
