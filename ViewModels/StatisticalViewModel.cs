@@ -142,8 +142,15 @@ public partial class StatisticalViewModel : ViewModelBase
                 // Tự động chọn kỳ học đầu tiên nếu có
                 if (Terms.Count > 0 && SelectedTerm == null)
                 {
-                    SelectedTerm = Terms[Terms.Count - 1]; // Chọn kỳ học mới nhất
+                    // SelectedTerm = Terms[Terms.Count - 1]; // Chọn kỳ học mới nhất
+                    var term = AppService.TeacherService.GetTermByDate(DateTime.Now);
+                    if (term == null)
+                    {
+                        term = AppService.TeacherService.GetLatestTerm();
+                    }
+                    SelectedTerm = Terms.FirstOrDefault(t => t.Id == term?.Id);
                 }
+
 
                 UpdateChartData(stats);
             }

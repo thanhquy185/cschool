@@ -83,5 +83,8 @@ public partial class HomeClassView : UserControl
             .FirstOrDefault();
 
         dialog?.Close();
+
+        if (DataContext is HomeClassViewModel vm)
+            vm.SelectedStudent = null;
     }
 }

@@ -34,7 +34,6 @@
             </StackPanel>
           </Border>
         </Button>
-
         <Button x:Name="ExportExcelButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
@@ -43,8 +42,11 @@
             </StackPanel>
           </Border>
         </Button>
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 7c77206544d2c9d45994414f9a458ab7783da59f
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
@@ -72,10 +74,18 @@
 
         <Button x:Name="LockButton" Classes="CrudButton Lock">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+<<<<<<< HEAD
             <StackPanel>
               <Image Source="{DynamicResource LockIcon}" />
               <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
             </StackPanel>
+=======
+              <StackPanel>
+                  <Image Source="{DynamicResource BinIcon}" />
+                  <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                            Text="Xóa" />
+              </StackPanel>
+>>>>>>> 7c77206544d2c9d45994414f9a458ab7783da59f
           </Border>
         </Button>
       </StackPanel>

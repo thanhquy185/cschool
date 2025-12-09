@@ -23,14 +23,17 @@
         <!--  SubTitle  -->
         <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
       </StackPanel>
-
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+<<<<<<< HEAD
 
 
         <Button
           x:Name="CreateButton"
           Padding="20,10"
           Classes="CrudButton Create">
+=======
+        <Button x:Name="CreateButton" Classes="CrudButton Create" Padding="20,10"   >
+>>>>>>> 7c77206544d2c9d45994414f9a458ab7783da59f
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
               <Image Source="{DynamicResource SettingIcon}" />
@@ -38,8 +41,11 @@
             </StackPanel>
           </Border>
         </Button>
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 7c77206544d2c9d45994414f9a458ab7783da59f
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
@@ -48,7 +54,6 @@
             </StackPanel>
           </Border>
         </Button>
-
         <Button x:Name="UpdateButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>

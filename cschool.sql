@@ -32,9 +32,7 @@ INSERT INTO `assign_classes` (`id`, `class_id`, `head_teacher_id`, `term_id`, `s
 (15, 5, 5, 9, 1),
 (16, 6, 6, 9, 1),
 (17, 7, 7, 9, 1),
-(18, 8, 8, 9, 1),
-(19, 2, 9, 9, 1),
-(20, 1, 10, 9, 1);
+(18, 8, 8, 9, 1);
 
 -- --------------------------------------------------------
 
@@ -65,8 +63,6 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (17, 10, 'Thành viên'),
 
 (18, 11, 'Lớp trưởng'),
-(19, 12, 'Lớp phó học tập'),
-(20, 13, 'Lớp phó lao động'),
 (11, 14, 'Thành viên'),
 (11, 15, 'Thành viên'),
 (15, 16, 'Thành viên'),
@@ -83,8 +79,6 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (16, 26, 'Thành viên'),
 (17, 27, 'Thành viên'),
 (18, 28, 'Thành viên'),
-(19, 29, 'Thành viên'),
-(20, 30, 'Thành viên'),
 
 (11, 31, 'Lớp trưởng'),
 (13, 32, 'Lớp phó học tập'),
@@ -97,8 +91,6 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (17, 39, 'Thành viên'),
 (18, 40, 'Thành viên'),
 
-(19, 41, 'Lớp trưởng'),
-(20, 42, 'Lớp phó học tập'),
 (11, 43, 'Lớp phó lao động'),
 (16, 44, 'Thành viên'),
 (17, 45, 'Thành viên'),
@@ -139,10 +131,7 @@ INSERT INTO `assign_class_teachers` (`assign_class_id`, `teacher_id`, `subject_i
 (13, 3, 5, 1, 1, 'Thứ Ba', 2, 3),
 (14, 4, 1, 2, 2, 'Thứ Năm', 4, 5),
 (15, 5, 6, 3, 1, 'Thứ Ba', 1, 2),
-(16, 6, 9, 2, 2, 'Thứ Tư', 3, 4),
-(19, 2, 1, 1, 2, 'Thứ Hai', 2, 4),
-(19, 9, 3, 1, 1, 'Thứ Năm', 1, 2),
-(20, 10, 4, 2, 2, 'Thứ Ba', 3, 4);
+(16, 6, 9, 2, 2, 'Thứ Tư', 3, 4);
 
 -- --------------------------------------------------------
 
