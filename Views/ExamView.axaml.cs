@@ -45,7 +45,7 @@ public partial class ExamView : UserControl
 
         if (selectedExam == null && mode != DialogModeEnum.Create)
         {
-            await MessageBoxUtil.ShowError("Vui lòng chọn người dùng để thực hiện thao tác!");
+            await MessageBoxUtil.ShowError("Vui lòng chọn lịch thi để thực hiện thao tác!");
             return;
         }
 

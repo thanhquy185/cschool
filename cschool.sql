@@ -1,4 +1,3 @@
--- Active: 1741076832945@@127.0.0.1@3306@cschool
 --
 -- Database: `cschool`
 --
@@ -385,79 +384,6 @@ INSERT INTO `functions` (`id`, `name`, `is_teacher_function`,`actions`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `relations`
---
-
-CREATE TABLE `relations` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `fullname` varchar(100) NOT NULL,
-  `phone` varchar(10) DEFAULT NULL,
-  `birthday` date DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `job` varchar(100) DEFAULT NULL,
-  `status` tinyint(4) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `relations`
---
-
-INSERT INTO `relations` (`id`, `student_id`, `fullname`, `phone`, `birthday`, `email`, `job`, `status`) VALUES
-(1, 1, 'Nguyễn Văn Bảo', '0901123456', '1975-04-12', 'nvb1@example.com', 'Kỹ sư', 1),
-(2, 2, 'Trần Thị Mai', '0902234567', '1980-06-25', 'ttm2@example.com', 'Giáo viên', 1),
-(3, 3, 'Lê Văn Hùng', '0903345678', '1972-09-18', 'lvh3@example.com', 'Bác sĩ', 1),
-(4, 4, 'Phạm Thị Lan', '0904456789', '1983-11-03', 'ptl4@example.com', 'Kế toán', 1),
-(5, 5, 'Hoàng Văn Minh', '0905567890', '1978-02-14', 'hvm5@example.com', 'Tài xế', 1),
-(6, 6, 'Đặng Thị Hồng', '0906678901', '1985-08-30', 'dth6@example.com', 'Nhân viên văn phòng', 1),
-(7, 7, 'Vũ Văn Quang', '0907789012', '1970-12-22', 'vvq7@example.com', 'Thợ điện', 1),
-(8, 8, 'Bùi Thị Ngọc', '0908890123', '1982-03-09', 'btn8@example.com', 'Nội trợ', 1),
-(9, 9, 'Ngô Văn Sơn', '0909901234', '1976-07-17', 'nvs9@example.com', 'Công nhân', 1),
-(10, 10, 'Dương Thị Thu', '0910012345', '1978-07-17', 'dtt10@example.com', 'Luật sư', 1),
-(11, 11, 'Nguyễn Văn Thành', '0911123456', '1974-01-01', 'nvt11@example.com', 'Kỹ sư', 1),
-(12, 12, 'Trần Thị Hạnh', '0912234567', '1981-02-02', 'tth12@example.com', 'Giáo viên', 1),
-(13, 13, 'Lê Văn Phúc', '0913345678', '1973-03-03', 'lvp13@example.com', 'Bác sĩ', 1),
-(14, 14, 'Phạm Thị Hương', '0914456789', '1984-04-04', 'pth14@example.com', 'Kế toán', 1),
-(15, 15, 'Hoàng Văn Tâm', '0915567890', '1979-05-05', 'hvt15@example.com', 'Tài xế', 1),
-(16, 16, 'Đặng Thị Tuyết', '0916678901', '1986-06-06', 'dtt16@example.com', 'Nhân viên văn phòng', 1),
-(17, 17, 'Vũ Văn Lâm', '0917789012', '1971-07-07', 'vvl17@example.com', 'Thợ điện', 1),
-(18, 18, 'Bùi Thị Hoa', '0918890123', '1983-08-08', 'bth18@example.com', 'Nội trợ', 1),
-(19, 19, 'Ngô Văn Dũng', '0919901234', '1977-09-09', 'nvd19@example.com', 'Công nhân', 1),
-(20, 20, 'Dương Thị Yến', '0920012345', '1985-10-10', 'dty20@example.com', 'Luật sư', 1),
-(21, 21, 'Nguyễn Văn Hòa', '0921123456', '1975-11-11', 'nvh21@example.com', 'Kỹ sư', 1),
-(22, 22, 'Trần Thị Vân', '0922234567', '1980-12-12', 'ttv22@example.com', 'Giáo viên', 1),
-(23, 23, 'Lê Văn Tài', '0923345678', '1972-01-13', 'lvt23@example.com', 'Bác sĩ', 1),
-(24, 24, 'Phạm Thị Nga', '0924456789', '1983-02-14', 'ptn24@example.com', 'Kế toán', 1),
-(25, 25, 'Hoàng Văn Phú', '0925567890', '1978-03-15', 'hvp25@example.com', 'Tài xế', 1),
-(26, 26, 'Đặng Thị Kim', '0926678901', '1985-04-16', 'dtk26@example.com', 'Nhân viên văn phòng', 1),
-(27, 27, 'Vũ Văn Đức', '0927789012', '1970-05-17', 'vvd27@example.com', 'Thợ điện', 1),
-(28, 28, 'Bùi Thị Thảo', '0928890123', '1982-06-18', 'btt28@example.com', 'Nội trợ', 1),
-(29, 29, 'Ngô Văn Khánh', '0929901234', '1976-07-19', 'nvk29@example.com', 'Công nhân', 1),
-(30, 30, 'Dương Thị Hằng', '0930012345', '1984-08-20', 'dth30@example.com', 'Luật sư', 1),
-(31, 31, 'Nguyễn Văn Lộc', '0931123456', '1975-09-21', 'nvl31@example.com', 'Kỹ sư', 1),
-(32, 32, 'Trần Thị Xuân', '0932234567', '1980-10-22', 'ttx32@example.com', 'Giáo viên', 1),
-(33, 33, 'Lê Văn Bình', '0933345678', '1972-11-23', 'lvb33@example.com', 'Bác sĩ', 1),
-(34, 34, 'Phạm Thị Diễm', '0934456789', '1983-12-24', 'ptd34@example.com', 'Kế toán', 1),
-(35, 35, 'Hoàng Văn Quý', '0935567890', '1978-01-25', 'hvq35@example.com', 'Tài xế', 1),
-(36, 36, 'Đặng Thị Loan', '0936678901', '1985-02-26', 'dtl36@example.com', 'Nhân viên văn phòng', 1),
-(37, 37, 'Vũ Văn Hưng', '0937789012', '1970-03-27', 'vvh37@example.com', 'Thợ điện', 1),
-(38, 38, 'Bùi Thị Dung', '0938890123', '1982-04-28', 'btd38@example.com', 'Nội trợ', 1),
-(39, 39, 'Ngô Văn Trí', '0939901234', '1976-05-29', 'nvt39@example.com', 'Công nhân', 1),
-(40, 40, 'Dương Thị Nhung', '0940012345', '1984-06-30', 'dtn40@example.com', 'Luật sư', 1),
-(41, 41, 'Nguyễn Văn Cường', '0941123456', '1975-07-01', 'nvc41@example.com', 'Kỹ sư', 1),
-(42, 42, 'Trần Thị Huyền', '0942234567', '1980-08-02', 'tth42@example.com', 'Giáo viên', 1),
-(43, 43, 'Lê Văn Sơn', '0943345678', '1972-09-03', 'lvs43@example.com', 'Bác sĩ', 1),
-(44, 44, 'Phạm Thị Thanh', '0944456789', '1983-10-04', 'ptt44@example.com', 'Kế toán', 1),
-(45, 45, 'Hoàng Văn Tùng', '0945567890', '1978-11-05', 'hvt45@example.com', 'Tài xế', 1),
-(46, 46, 'Đặng Thị Hà', '0946678901', '1985-12-06', 'dth46@example.com', 'Nhân viên văn phòng', 1),
-(47, 47, 'Vũ Văn Nam', '0947789012', '1970-01-07', 'vvn47@example.com', 'Thợ điện', 1),
-(48, 48, 'Bùi Thị Tuyết', '0948890123', '1982-02-08', 'btt48@example.com', 'Nội trợ', 1),
-(49, 49, 'Ngô Văn Lâm', '0949901234', '1976-03-09', 'nvl49@example.com', 'Công nhân', 1),
-(50, 50, 'Dương Thị Hòa', '0950012345', '1984-04-10', 'dth50@example.com', 'Luật sư', 1);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `roles`
 --
 
@@ -630,6 +556,8 @@ CREATE TABLE `students` (
   `email` varchar(100) DEFAULT NULL,
   `learn_year` varchar(100) DEFAULT NULL,
   `learn_status` varchar(15) DEFAULT NULL,
+  `parent_name` varchar(100) NOT NULL,
+  `parent_phone` varchar(10) DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -637,57 +565,84 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `fullname`, `avatar`, `birthday`, `gender`, `ethnicity`, `religion`, `address`, `phone`, `email`, `learn_year`, `learn_status`, `status`) VALUES
-(1, 'Nguyễn Văn An', NULL, '2010-05-12', 'Nam', 'Kinh', 'Không', '123 Lý Thường Kiệt, TP. Hồ Chí Minh', '0912345678', 'an.nguyen@example.com', '2021-2024', 'Đang học', 1),
-(2, 'Trần Thị Bình', NULL, '2010-09-23', 'Nữ', 'Kinh', 'Phật giáo', '45 Nguyễn Trãi, TP. Hồ Chí Minh', '0923456789', 'binh.tran@example.com', '2022-2025', 'Đang học', 1),
-(3, 'Lê Văn Cường', NULL, '2009-03-15', 'Nam', 'Mường', 'Không', '67 Hai Bà Trưng, TP. Hồ Chí Minh', '0934567890', 'cuong.le@example.com', '2020-2023', 'Bảo lưu', 1),
-(4, 'Phạm Thị Dung', NULL, '2011-07-08', 'Nữ', 'Kinh', 'Công giáo', '89 Điện Biên Phủ, TP. Hồ Chí Minh', '0945678901', 'dung.pham@example.com', '2021-2024', 'Đang học', 1),
-(5, 'Hoàng Văn Em', NULL, '2011-11-30', 'Nam', 'Thái', 'Không', '12 Cách Mạng Tháng Tám, TP. Hồ Chí Minh', '0956789012', 'em.hoang@example.com', '2022-2025', 'Đang học', 1),
-(6, 'Đỗ Thị Hạnh', NULL, '2008-04-22', 'Nữ', 'Kinh', 'Phật giáo', '234 Nguyễn Văn Cừ, TP. Hồ Chí Minh', '0967890123', 'hanh.do@example.com', '2019-2022', 'Tốt nghiệp', 1),
-(7, 'Bùi Văn Khánh', NULL, '2010-01-19', 'Nam', 'Tày', 'Không', '56 Võ Văn Tần, TP. Hồ Chí Minh', '0978901234', 'khanh.bui@example.com', '2021-2024', 'Đang học', 1),
-(8, 'Ngô Thị Lan', NULL, '2011-06-05', 'Nữ', 'Kinh', 'Không', '78 Trần Hưng Đạo, TP. Hồ Chí Minh', '0989012345', 'lan.ngo@example.com', '2022-2025', 'Nghỉ học', 1),
-(9, 'Vũ Văn Minh', NULL, '2009-08-17', 'Nam', 'Hoa', 'Không', '90 Pasteur, TP. Hồ Chí Minh', '0990123456', 'minh.vu@example.com', '2020-2023', 'Bảo lưu', 1),
-(10, 'Phan Thị Ngọc', NULL, '2011-12-25', 'Nữ', 'Khmer', 'Không', '321 Nguyễn Thị Minh Khai, TP. Hồ Chí Minh', '0901234567', 'ngoc.phan@example.com', '2021-2024', 'Đang học', 1),
-(11, 'Nguyễn Văn A', NULL, '2007-05-12', 'Nam', 'Kinh', 'Không', '123 Lê Lợi, TP.HCM', '0901234567', 'nva@example.com', '2022-2025', 'Đang học', 1),
-(12, 'Trần Thị B', NULL, '2008-03-22', 'Nữ', 'Kinh', 'Phật giáo', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttb@example.com', '2022-2025', 'Đang học', 1),
-(13, 'Lê Văn C', NULL, '2007-11-30', 'Nam', 'Kinh', 'Thiên chúa', '789 Hai Bà Trưng, TP.HCM', '0903456789', 'lvc@example.com', '2022-2025', 'Đang học', 1),
-(14, 'Phạm Thị D', NULL, '2008-07-15', 'Nữ', 'Kinh', 'Không', '321 Trần Hưng Đạo, TP.HCM', '0904567890', 'ptd@example.com', '2022-2025', 'Đang học', 1),
-(15, 'Hoàng Văn E', NULL, '2007-09-05', 'Nam', 'Kinh', 'Không', '654 Võ Văn Tần, TP.HCM', '0905678901', 'hve@example.com', '2022-2025', 'Đang học', 1),
-(16, 'Đặng Thị F', NULL, '2008-01-18', 'Nữ', 'Kinh', 'Phật giáo', '987 Nguyễn Thị Minh Khai, TP.HCM', '0906789012', 'dtf@example.com', '2022-2025', 'Đang học', 1),
-(17, 'Vũ Văn G', NULL, '2007-06-25', 'Nam', 'Kinh', 'Không', '159 Cách Mạng Tháng 8, TP.HCM', '0907890123', 'vvg@example.com', '2022-2025', 'Đang học', 1),
-(18, 'Bùi Thị H', NULL, '2008-10-10', 'Nữ', 'Kinh', 'Thiên chúa', '753 Điện Biên Phủ, TP.HCM', '0908901234', 'bth@example.com', '2022-2025', 'Đang học', 1),
-(19, 'Ngô Văn I', NULL, '2007-12-01', 'Nam', 'Kinh', 'Không', '852 Nguyễn Đình Chiểu, TP.HCM', '0909012345', 'nvi@example.com', '2022-2025', 'Đang học', 1),
-(20, 'Dương Thị J', NULL, '2008-04-09', 'Nữ', 'Kinh', 'Phật giáo', '951 Lý Tự Trọng, TP.HCM', '0910123456', 'dtj@example.com', '2022-2025', 'Đang học', 1),
-(21, 'Tạ Văn K', NULL, '2007-08-14', 'Nam', 'Kinh', 'Không', '147 Pasteur, TP.HCM', '0911234567', 'tvk@example.com', '2022-2025', 'Đang học', 1),
-(22, 'Lâm Thị L', NULL, '2008-02-28', 'Nữ', 'Kinh', 'Thiên chúa', '369 Nam Kỳ Khởi Nghĩa, TP.HCM', '0912345678', 'ltl@example.com', '2022-2025', 'Đang học', 1),
-(23, 'Mai Văn M', NULL, '2007-10-20', 'Nam', 'Kinh', 'Không', '258 Nguyễn Trãi, TP.HCM', '0913456789', 'mvm@example.com', '2022-2025', 'Đang học', 1),
-(24, 'Thảo Thị N', NULL, '2008-06-06', 'Nữ', 'Kinh', 'Phật giáo', '147 Lý Chính Thắng, TP.HCM', '0914567890', 'ttn@example.com', '2022-2025', 'Đang học', 1),
-(25, 'Quách Văn O', NULL, '2007-03-17', 'Nam', 'Kinh', 'Không', '369 Trương Định, TP.HCM', '0915678901', 'qvo@example.com', '2022-2025', 'Đang học', 1),
-(26, 'Hồ Thị P', NULL, '2008-09-29', 'Nữ', 'Kinh', 'Thiên chúa', '753 Nguyễn Văn Cừ, TP.HCM', '0916789012', 'htp@example.com', '2022-2025', 'Đang học', 1),
-(27, 'Lương Văn Q', NULL, '2007-01-03', 'Nam', 'Kinh', 'Không', '852 Tôn Đức Thắng, TP.HCM', '0917890123', 'lvq@example.com', '2022-2025', 'Đang học', 1),
-(28, 'Phan Thị R', NULL, '2008-12-12', 'Nữ', 'Kinh', 'Phật giáo', '951 Bà Huyện Thanh Quan, TP.HCM', '0918901234', 'ptr@example.com', '2022-2025', 'Đang học', 1),
-(29, 'Trịnh Văn S', NULL, '2007-07-07', 'Nam', 'Kinh', 'Không', '147 Nguyễn Phi Khanh, TP.HCM', '0919012345', 'tvs@example.com', '2022-2025', 'Đang học', 1),
-(30, 'Lý Thị T', NULL, '2008-05-01', 'Nữ', 'Kinh', 'Thiên chúa', '369 Nguyễn Văn Thủ, TP.HCM', '0920123456', 'ltt@example.com', '2022-2025', 'Đang học', 1),
-(31, 'Nguyễn Thị U', NULL, '2008-03-11', 'Nữ', 'Kinh', 'Không', '101 Nguyễn Văn Đậu, TP.HCM', '0921234567', 'ntu@example.com', '2022-2025', 'Đang học', 1),
-(32, 'Trần Văn V', NULL, '2007-06-19', 'Nam', 'Kinh', 'Phật giáo', '202 Phan Đăng Lưu, TP.HCM', '0922345678', 'tvv@example.com', '2022-2025', 'Đang học', 1),
-(33, 'Lê Thị W', NULL, '2008-09-23', 'Nữ', 'Kinh', 'Thiên chúa', '303 Hoàng Hoa Thám, TP.HCM', '0923456789', 'ltw@example.com', '2022-2025', 'Đang học', 1),
-(34, 'Phạm Văn X', NULL, '2007-12-05', 'Nam', 'Kinh', 'Không', '404 Phan Xích Long, TP.HCM', '0924567890', 'pvx@example.com', '2022-2025', 'Đang học', 1),
-(35, 'Hoàng Thị Y', NULL, '2008-01-17', 'Nữ', 'Kinh', 'Phật giáo', '505 Trường Sa, TP.HCM', '0925678901', 'hty@example.com', '2022-2025', 'Đang học', 1),
-(36, 'Đặng Văn Z', NULL, '2007-04-28', 'Nam', 'Kinh', 'Không', '606 Hoàng Sa, TP.HCM', '0926789012', 'dvz@example.com', '2022-2025', 'Đang học', 1),
-(37, 'Vũ Thị AA', NULL, '2008-07-09', 'Nữ', 'Kinh', 'Thiên chúa', '707 Nguyễn Kiệm, TP.HCM', '0927890123', 'vtaa@example.com', '2022-2025', 'Đang học', 1),
-(38, 'Bùi Văn BB', NULL, '2007-10-30', 'Nam', 'Kinh', 'Không', '808 Nguyễn Oanh, TP.HCM', '0928901234', 'bvbb@example.com', '2022-2025', 'Đang học', 1),
-(39, 'Ngô Thị CC', NULL, '2008-02-14', 'Nữ', 'Kinh', 'Phật giáo', '909 Quang Trung, TP.HCM', '0929012345', 'ntcc@example.com', '2022-2025', 'Đang học', 1),
-(40, 'Dương Văn DD', NULL, '2007-08-21', 'Nam', 'Kinh', 'Không', '111 Phạm Văn Chiêu, TP.HCM', '0930123456', 'dvdd@example.com', '2022-2025', 'Đang học', 1),
-(41, 'Tạ Thị EE', NULL, '2008-05-03', 'Nữ', 'Kinh', 'Thiên chúa', '222 Lê Đức Thọ, TP.HCM', '0931234567', 'ttee@example.com', '2022-2025', 'Đang học', 1),
-(42, 'Lâm Văn FF', NULL, '2007-11-16', 'Nam', 'Kinh', 'Không', '333 Thống Nhất, TP.HCM', '0932345678', 'lvff@example.com', '2022-2025', 'Đang học', 1),
-(43, 'Mai Thị GG', NULL, '2008-06-27', 'Nữ', 'Kinh', 'Phật giáo', '444 Nguyễn Văn Lượng, TP.HCM', '0933456789', 'magg@example.com', '2022-2025', 'Đang học', 1),
-(44, 'Thảo Văn HH', NULL, '2007-09-08', 'Nam', 'Kinh', 'Không', '555 Lê Văn Thọ, TP.HCM', '0934567890', 'tvhh@example.com', '2022-2025', 'Đang học', 1),
-(45, 'Quách Thị II', NULL, '2008-12-19', 'Nữ', 'Kinh', 'Thiên chúa', '666 Phan Huy Ích, TP.HCM', '0935678901', 'qtii@example.com', '2022-2025', 'Đang học', 1),
-(46, 'Hồ Văn JJ', NULL, '2007-03-02', 'Nam', 'Kinh', 'Không', '777 Trường Chinh, TP.HCM', '0936789012', 'hvjj@example.com', '2022-2025', 'Đang học', 1),
-(47, 'Lương Thị KK', NULL, '2008-10-13', 'Nữ', 'Kinh', 'Phật giáo', '888 Âu Cơ, TP.HCM', '0937890123', 'ltkk@example.com', '2022-2025', 'Đang học', 1),
-(48, 'Phan Văn LL', NULL, '2007-01-25', 'Nam', 'Kinh', 'Không', '999 Lũy Bán Bích, TP.HCM', '0938901234', 'pvll@example.com', '2022-2025', 'Đang học', 1),
-(49, 'Trịnh Thị MM', NULL, '2008-04-06', 'Nữ', 'Kinh', 'Thiên chúa', '121 Tân Kỳ Tân Quý, TP.HCM', '0939012345', 'ttmm@example.com', '2022-2025', 'Đang học', 1),
-(50, 'Lý Văn NN', NULL, '2007-07-18', 'Nam', 'Kinh', 'Không', '232 Tây Thạnh, TP.HCM', '0940123456', 'lvnn@example.com', '2022-2025', 'Đang học', 1);
+INSERT INTO `students` (`id`, `fullname`, `avatar`, `birthday`, `gender`, `ethnicity`, `religion`, `address`, `phone`, `email`, `learn_year`, `learn_status`, `parent_name`, `parent_phone`, `status`) VALUES
+(1, 'Nguyễn Văn An', NULL, '2010-05-12', 'Nam', 'Kinh', 'Không', '123 Lý Thường Kiệt, TP. Hồ Chí Minh', '0912345678', 'an.nguyen@example.com', '2021-2024', 'Đang học', 'Nguyễn Văn A', '0901111111', 1),
+(2, 'Trần Thị Bình', NULL, '2010-09-23', 'Nữ', 'Kinh', 'Phật giáo', '45 Nguyễn Trãi, TP. Hồ Chí Minh', '0923456789', 'binh.tran@example.com', '2022-2025', 'Đang học', 'Trần Thị M', '0902222222', 1),
+(3, 'Lê Văn Cường', NULL, '2009-03-15', 'Nam', 'Mường', 'Không', '67 Hai Bà Trưng, TP. Hồ Chí Minh', '0934567890', 'cuong.le@example.com', '2020-2023', 'Bảo lưu', 'Lê Văn B', '0903333333', 1),
+(4, 'Phạm Thị Dung', NULL, '2011-07-08', 'Nữ', 'Kinh', 'Công giáo', '89 Điện Biên Phủ, TP. Hồ Chí Minh', '0945678901', 'dung.pham@example.com', '2021-2024', 'Đang học', 'Phạm Thị H', '0904444444', 1),
+(5, 'Hoàng Văn Em', NULL, '2011-11-30', 'Nam', 'Thái', 'Không', '12 Cách Mạng Tháng Tám, TP. Hồ Chí Minh', '0956789012', 'em.hoang@example.com', '2022-2025', 'Đang học', 'Hoàng Văn D', '0905555555', 1),
+(6, 'Đỗ Thị Hạnh', NULL, '2008-04-22', 'Nữ', 'Kinh', 'Phật giáo', '234 Nguyễn Văn Cừ, TP. Hồ Chí Minh', '0967890123', 'hanh.do@example.com', '2019-2022', 'Tốt nghiệp', 'Đỗ Thị L', '0906666666', 1),
+(7, 'Bùi Văn Khánh', NULL, '2010-01-19', 'Nam', 'Tày', 'Không', '56 Võ Văn Tần, TP. Hồ Chí Minh', '0978901234', 'khanh.bui@example.com', '2021-2024', 'Đang học', 'Bùi Văn N', '0907777777', 1),
+(8, 'Ngô Thị Lan', NULL, '2011-06-05', 'Nữ', 'Kinh', 'Không', '78 Trần Hưng Đạo, TP. Hồ Chí Minh', '0989012345', 'lan.ngo@example.com', '2022-2025', 'Nghỉ học', 'Ngô Thị Q', '0908888888', 1),
+(9, 'Vũ Văn Minh', NULL, '2009-08-17', 'Nam', 'Hoa', 'Không', '90 Pasteur, TP. Hồ Chí Minh', '0990123456', 'minh.vu@example.com', '2020-2023', 'Bảo lưu', 'Vũ Văn M', '0909999999', 1),
+(10, 'Phan Thị Ngọc', NULL, '2011-12-25', 'Nữ', 'Khmer', 'Không', '321 Nguyễn Thị Minh Khai, TP. Hồ Chí Minh', '0901234567', 'ngoc.phan@example.com', '2021-2024', 'Đang học', 'Phan Thị P', '0910000001', 1),
+(11, 'Nguyễn Văn A', NULL, '2007-05-12', 'Nam', 'Kinh', 'Không', '123 Lê Lợi, TP.HCM', '0901234567', 'nva@example.com', '2022-2025', 'Đang học', 'Nguyễn Văn B', '0910000002', 1),
+(12, 'Trần Thị B', NULL, '2008-03-22', 'Nữ', 'Kinh', 'Phật giáo', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttb@example.com', '2022-2025', 'Đang học', 'Trần Thị C', '0910000003', 1),
+(13, 'Lê Văn C', NULL, '2007-11-30', 'Nam', 'Kinh', 'Thiên chúa', '789 Hai Bà Trưng, TP.HCM', '0903456789', 'lvc@example.com', '2022-2025', 'Đang học', 'Lê Văn D', '0910000004', 1),
+(14, 'Phạm Thị D', NULL, '2008-07-15', 'Nữ', 'Kinh', 'Không', '321 Trần Hưng Đạo, TP.HCM', '0904567890', 'ptd@example.com', '2022-2025', 'Đang học', 'Phạm Thị E', '0910000005', 1),
+(15, 'Hoàng Văn E', NULL, '2007-09-05', 'Nam', 'Kinh', 'Không', '654 Võ Văn Tần, TP.HCM', '0905678901', 'hve@example.com', '2022-2025', 'Đang học', 'Hoàng Văn F', '0910000006', 1),
+(16, 'Hoàng Minh Quân', NULL, '2008-02-14', 'Nam', 'Kinh', 'Không', 'Phường 4, Q5, TP.HCM', '091234516', 'quan.hm16@example.com', '2023-2024', 'Đang học', 'Hoàng Hữu Tấn', '098765416', 1),
+(17, 'Nguyễn Nhật Vy', NULL, '2008-09-30', 'Nữ', 'Kinh', 'Không', 'Phường Bình Trị Đông, Q.Bình Tân', '091234517', 'vy.nn17@example.com', '2023-2024', 'Đang học', 'Nguyễn Thành Công', '098765417', 1),
+(18, 'Trần Gia Huy', NULL, '2008-11-20', 'Nam', 'Kinh', 'Không', 'Phường Tân Tạo, Q.Bình Tân', '091234518', 'huy.tg18@example.com', '2023-2024', 'Đang học', 'Trần Hữu Nghĩa', '098765418', 1),
+(19, 'Phạm Khánh Linh', NULL, '2008-01-25', 'Nữ', 'Kinh', 'Không', 'Phường Linh Đông, TP.Thủ Đức', '091234519', 'linh.pk19@example.com', '2023-2024', 'Đang học', 'Phạm Quốc Hậu', '098765419', 1),
+(20, 'Đỗ Nhật Minh', NULL, '2008-04-09', 'Nam', 'Kinh', 'Không', 'Phường Hiệp Bình Chánh, TP.Thủ Đức', '091234520', 'minh.dn20@example.com', '2023-2024', 'Đang học', 'Đỗ Văn Bửu', '098765420', 1),
+
+(21, 'Võ Thảo My', NULL, '2008-07-11', 'Nữ', 'Kinh', 'Không', 'Phường Tân Hưng Thuận, Q12', '091234521', 'my.vt21@example.com', '2023-2024', 'Đang học', 'Võ Quốc Phong', '098765421', 1),
+(22, 'Nguyễn Thành Đạt', NULL, '2008-05-18', 'Nam', 'Kinh', 'Không', 'Phường Đông Hưng Thuận, Q12', '091234522', 'dat.nt22@example.com', '2023-2024', 'Đang học', 'Nguyễn Hữu Trí', '098765422', 1),
+(23, 'Lê Khánh An', NULL, '2008-10-12', 'Nữ', 'Kinh', 'Không', 'Phường Trường Thọ, TP.Thủ Đức', '091234523', 'an.lk23@example.com', '2023-2024', 'Đang học', 'Lê Văn Hòa', '098765423', 1),
+(24, 'Bùi Gia Phúc', NULL, '2008-03-15', 'Nam', 'Kinh', 'Không', 'Phường 10, Q.Gò Vấp', '091234524', 'phuc.bg24@example.com', '2023-2024', 'Đang học', 'Bùi Quang Trí', '098765424', 1),
+(25, 'Huỳnh Ngọc Mai', NULL, '2008-08-02', 'Nữ', 'Kinh', 'Không', 'Phường 9, Q.Gò Vấp', '091234525', 'mai.hn25@example.com', '2023-2024', 'Đang học', 'Huỳnh Thanh Bình', '098765425', 1),
+
+(26, 'Nguyễn Anh Khoa', NULL, '2008-12-02', 'Nam', 'Kinh', 'Không', 'Phường 8, Q.Phú Nhuận', '091234526', 'khoa.na26@example.com', '2023-2024', 'Đang học', 'Nguyễn Hoàng Phúc', '098765426', 1),
+(27, 'Trịnh Minh Châu', NULL, '2008-06-27', 'Nữ', 'Kinh', 'Không', 'Phường 7, Q.Phú Nhuận', '091234527', 'chau.tm27@example.com', '2023-2024', 'Đang học', 'Trịnh Đình Tài', '098765427', 1),
+(28, 'Phan Quốc Bảo', NULL, '2008-09-17', 'Nam', 'Kinh', 'Không', 'Phường 15, Q.Tân Bình', '091234528', 'bao.pq28@example.com', '2023-2024', 'Đang học', 'Phan Công Minh', '098765428', 1),
+(29, 'Đặng Ngọc Hân', NULL, '2008-11-08', 'Nữ', 'Kinh', 'Không', 'Phường 13, Q.Tân Bình', '091234529', 'han.dn29@example.com', '2023-2024', 'Đang học', 'Đặng Văn Thuận', '098765429', 1),
+(30, 'Lý Minh Hoàng', NULL, '2008-02-19', 'Nam', 'Kinh', 'Không', 'Phường 5, Q3', '091234530', 'hoang.lm30@example.com', '2023-2024', 'Đang học', 'Lý Hữu Khánh', '098765430', 1),
+
+(31, 'Hồ Thái Nghi', NULL, '2008-04-29', 'Nữ', 'Kinh', 'Không', 'Phường 3, Q10', '091234531', 'nghi.ht31@example.com', '2023-2024', 'Đang học', 'Hồ Văn Duy', '098765431', 1),
+(32, 'Trương Gia Bảo', NULL, '2008-07-06', 'Nam', 'Kinh', 'Không', 'Phường 1, Q11', '091234532', 'bao.tg32@example.com', '2023-2024', 'Đang học', 'Trương Minh Quang', '098765432', 1),
+(33, 'Ngô Nhật Minh', NULL, '2008-03-23', 'Nam', 'Kinh', 'Không', 'Phường 15, Q11', '091234533', 'minh.nn33@example.com', '2023-2024', 'Đang học', 'Ngô Văn Kiệt', '098765433', 1),
+(34, 'Tạ Khánh Vy', NULL, '2008-01-18', 'Nữ', 'Kinh', 'Không', 'Phường 2, Q.Tân Phú', '091234534', 'vy.tk34@example.com', '2023-2024', 'Đang học', 'Tạ Quốc Vinh', '098765434', 1),
+(35, 'Vương Tuấn Kiệt', NULL, '2008-05-09', 'Nam', 'Kinh', 'Không', 'Phường 9, Q.Tân Phú', '091234535', 'kiet.vt35@example.com', '2023-2024', 'Đang học', 'Vương Hoàng Lộc', '098765435', 1),
+
+(36, 'Phùng Hoài Phương', NULL, '2008-09-05', 'Nữ', 'Kinh', 'Không', 'Phường Tân Sơn Nhì, Q.Tân Phú', '091234536', 'phuong.ph36@example.com', '2023-2024', 'Đang học', 'Phùng Thành Công', '098765436', 1),
+(37, 'Đoàn Minh Trí', NULL, '2008-12-21', 'Nam', 'Kinh', 'Không', 'Phường Sơn Kỳ, Q.Tân Phú', '091234537', 'tri.dm37@example.com', '2023-2024', 'Đang học', 'Đoàn Quốc Bình', '098765437', 1),
+(38, 'La Trúc Chi', NULL, '2008-08-16', 'Nữ', 'Kinh', 'Không', 'Phường Tây Thạnh, Q.Tân Phú', '091234538', 'chi.lt38@example.com', '2023-2024', 'Đang học', 'La Khánh Duy', '098765438', 1),
+(39, 'Tôn Nhật Vũ', NULL, '2008-03-12', 'Nam', 'Kinh', 'Không', 'Phường 8, Q.Tân Bình', '091234539', 'vu.tn39@example.com', '2023-2024', 'Đang học', 'Tôn Thành Phú', '098765439', 1),
+(40, 'Hứa Uyển Nhi', NULL, '2008-10-28', 'Nữ', 'Kinh', 'Không', 'Phường 14, Q10', '091234540', 'nhi.hu40@example.com', '2023-2024', 'Đang học', 'Hứa Chí Tín', '098765440', 1),
+
+(41, 'Tăng Kiến Quốc', NULL, '2008-06-24', 'Nam', 'Kinh', 'Không', 'Phường 6, Q5', '091234541', 'quoc.tk41@example.com', '2023-2024', 'Đang học', 'Tăng Văn Hậu', '098765441', 1),
+(42, 'Lâm Tuệ Nhi', NULL, '2008-02-06', 'Nữ', 'Kinh', 'Không', 'Phường 13, Q5', '091234542', 'nhi.lt42@example.com', '2023-2024', 'Đang học', 'Lâm Ngọc Hiếu', '098765442', 1),
+(43, 'Diệp Quốc Hưng', NULL, '2008-11-01', 'Nam', 'Kinh', 'Không', 'Phường 4, Q10', '091234543', 'hung.dq43@example.com', '2023-2024', 'Đang học', 'Diệp Hữu Lộc', '098765443', 1),
+(44, 'Sơn Hạ Vy', NULL, '2008-05-14', 'Nữ', 'Kinh', 'Không', 'Phường 3, Q3', '091234544', 'vy.sh44@example.com', '2023-2024', 'Đang học', 'Sơn Văn Minh', '098765444', 1),
+(45, 'Trần Hoài Nam', NULL, '2008-09-09', 'Nam', 'Kinh', 'Không', 'Phường 4, Q8', '091234545', 'nam.th45@example.com', '2023-2024', 'Đang học', 'Trần Nhật Hào', '098765445', 1),
+
+(46, 'Đặng Thanh Yên', NULL, '2008-04-11', 'Nữ', 'Kinh', 'Không', 'Phường 1, Q8', '091234546', 'yen.dt46@example.com', '2023-2024', 'Đang học', 'Đặng Minh Phú', '098765446', 1),
+(47, 'Phạm Quốc Thiên', NULL, '2008-07-19', 'Nam', 'Kinh', 'Không', 'Phường 16, Q8', '091234547', 'thien.pq47@example.com', '2023-2024', 'Đang học', 'Phạm Công Hậu', '098765447', 1),
+(48, 'Nguyễn Ngọc Hạ Vy', NULL, '2008-01-31', 'Nữ', 'Kinh', 'Không', 'Phường 5, Q4', '091234548', 'vy.nh48@example.com', '2023-2024', 'Đang học', 'Nguyễn Hoài Trung', '098765448', 1),
+(49, 'Bạch Minh Khôi', NULL, '2008-03-08', 'Nam', 'Kinh', 'Không', 'Phường 6, Q4', '091234549', 'khoi.bm49@example.com', '2023-2024', 'Đang học', 'Bạch Công Lâm', '098765449', 1),
+(50, 'Thái Ngọc Châu', NULL, '2008-10-03', 'Nữ', 'Kinh', 'Không', 'Phường 8, Q3', '091234550', 'chau.tn50@example.com', '2023-2024', 'Đang học', 'Thái Thanh Phong', '098765450', 1),
+(51, 'Đinh Hữu Khải', NULL, '2011-05-19', 'Nam', 'Kinh', 'Không', 'Hải Châu, Đà Nẵng', '0912456789', 'khaidinh51@example.com', '2024-2025', 'Đang học', 'Đinh Hữu Long', '0912345001', 1),
+(52, 'Nguyễn Hoài Phương', NULL, '2012-07-22', 'Nữ', 'Kinh', 'Không', 'Cẩm Lệ, Đà Nẵng', '0912451111', 'phuongnguyen52@example.com', '2024-2025', 'Đang học', 'Nguyễn Văn Dương', '0912345002', 1),
+(53, 'Phạm Thanh Hòa', NULL, '2011-09-10', 'Nam', 'Kinh', 'Không', 'Liên Chiểu, Đà Nẵng', '0912452222', 'hoapham53@example.com', '2024-2025', 'Đang học', 'Phạm Minh Tâm', '0912345003', 1),
+(54, 'Trần Mỹ An', NULL, '2012-11-08', 'Nữ', 'Kinh', 'Không', 'Thanh Khê, Đà Nẵng', '0912453333', 'antran54@example.com', '2024-2025', 'Đang học', 'Trần Đức Hòa', '0912345004', 1),
+(55, 'Lê Quốc Hưng', NULL, '2011-03-14', 'Nam', 'Kinh', 'Không', 'Hòa Vang, Đà Nẵng', '0912454444', 'hungle55@example.com', '2024-2025', 'Đang học', 'Lê Quốc Thái', '0912345005', 1),
+(56, 'Huỳnh Nhật Ánh', NULL, '2012-04-19', 'Nữ', 'Kinh', 'Không', 'Sơn Trà, Đà Nẵng', '0912455555', 'anhhuynh56@example.com', '2024-2025', 'Đang học', 'Huỳnh Đức Anh', '0912345006', 1),
+(57, 'Bùi Thanh Lộc', NULL, '2011-06-25', 'Nam', 'Kinh', 'Không', 'Hải Châu, Đà Nẵng', '0912456666', 'locbui57@example.com', '2024-2025', 'Đang học', 'Bùi Văn Tường', '0912345007', 1),
+(58, 'Võ Ngọc Duyên', NULL, '2012-01-29', 'Nữ', 'Kinh', 'Không', 'Cẩm Lệ, Đà Nẵng', '0912457777', 'duyenvo58@example.com', '2024-2025', 'Đang học', 'Võ Văn Bình', '0912345008', 1),
+(59, 'Đặng Gia Huy', NULL, '2011-10-30', 'Nam', 'Kinh', 'Không', 'Liên Chiểu, Đà Nẵng', '0912458888', 'huydang59@example.com', '2024-2025', 'Đang học', 'Đặng Trọng Lực', '0912345009', 1),
+(60, 'Ngô Kim Yến', NULL, '2012-02-05', 'Nữ', 'Kinh', 'Không', 'Thanh Khê, Đà Nẵng', '0912459999', 'yenngo60@example.com', '2024-2025', 'Đang học', 'Ngô Quốc Hào', '0912345010', 1),
+
+(61, 'Lý Minh Tâm', NULL, '2011-07-07', 'Nam', 'Kinh', 'Không', 'Hòa Vang, Đà Nẵng', '0912460001', 'tamly61@example.com', '2024-2025', 'Đang học', 'Lý Thanh Huy', '0912345011', 1),
+(62, 'Hồng Mỹ Linh', NULL, '2012-08-14', 'Nữ', 'Kinh', 'Không', 'Sơn Trà, Đà Nẵng', '0912460002', 'linhhong62@example.com', '2024-2025', 'Đang học', 'Hồng Văn Trí', '0912345012', 1),
+(63, 'Trịnh Quốc Bảo', NULL, '2011-12-01', 'Nam', 'Kinh', 'Không', 'Hải Châu, Đà Nẵng', '0912460003', 'baotrinh63@example.com', '2024-2025', 'Đang học', 'Trịnh Văn Hòa', '0912345013', 1),
+(64, 'Đoàn Thúy Vy', NULL, '2012-05-12', 'Nữ', 'Kinh', 'Không', 'Cẩm Lệ, Đà Nẵng', '0912460004', 'vydoan64@example.com', '2024-2025', 'Đang học', 'Đoàn Minh Lộc', '0912345014', 1),
+(65, 'Tôn Nhật Minh', NULL, '2011-09-18', 'Nam', 'Kinh', 'Không', 'Liên Chiểu, Đà Nẵng', '0912460005', 'minhton65@example.com', '2024-2025', 'Đang học', 'Tôn Đức Cảnh', '0912345015', 1),
+(66, 'La Trúc Quỳnh', NULL, '2012-03-23', 'Nữ', 'Kinh', 'Không', 'Thanh Khê, Đà Nẵng', '0912460006', 'quynhla66@example.com', '2024-2025', 'Đang học', 'La Minh Đạt', '0912345016', 1),
+(67, 'Triệu Trung Kiên', NULL, '2011-04-09', 'Nam', 'Kinh', 'Không', 'Hòa Vang, Đà Nẵng', '0912460007', 'kientrieu67@example.com', '2024-2025', 'Đang học', 'Triệu Hoàng Phúc', '0912345017', 1),
+(68, 'Cao Minh Châu', NULL, '2012-10-10', 'Nữ', 'Kinh', 'Không', 'Sơn Trà, Đà Nẵng', '0912460008', 'chaucao68@example.com', '2024-2025', 'Đang học', 'Cao Văn Sỹ', '0912345018', 1),
+(69, 'Đinh Hồng Quân', NULL, '2011-11-21', 'Nam', 'Kinh', 'Không', 'Hải Châu, Đà Nẵng', '0912460009', 'quandinh69@example.com', '2024-2025', 'Đang học', 'Đinh Đức Trọng', '0912345019', 1),
+(70, 'Mai Thúy Hằng', NULL, '2012-06-17', 'Nữ', 'Kinh', 'Không', 'Cẩm Lệ, Đà Nẵng', '0912460010', 'hangmai70@example.com', '2024-2025', 'Đang học', 'Mai Thanh Tùng', '0912345020', 1);
 
 -- --------------------------------------------------------
 
@@ -884,62 +839,6 @@ INSERT INTO `term_gpa` (`assign_class_id`, `student_id`, `gpa`, `conduct_level`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tuitions`
---
-
-CREATE TABLE `tuitions` (
-  `id` int(11) NOT NULL,
-  `assign_class_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `time_create` datetime DEFAULT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `status` tinyint(4) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tuitions`
---
-
-INSERT INTO `tuitions` (`id`, `assign_class_id`, `user_id`, `time_create`, `amount`, `status`) VALUES
-(1, 11, 1, '2025-09-01 08:00:00', 1200000.00, 1),
-(2, 12, 2, '2025-09-01 08:05:00', 1200000.00, 1),
-(3, 13, 1, '2025-09-01 08:10:00', 1200000.00, 1),
-(4, 14, 1, '2025-09-02 09:00:00', 1250000.00, 1),
-(5, 15, 1, '2025-09-02 09:10:00', 1250000.00, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tuition_details`
---
-
-CREATE TABLE `tuition_details` (
-  `tuition_id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `time_create` datetime DEFAULT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `status` enum('Paid','Unpaid') DEFAULT 'Unpaid'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tuition_details`
---
-
-INSERT INTO `tuition_details` (`tuition_id`, `student_id`, `time_create`, `price`, `status`) VALUES
-(1, 1, '2025-09-01 08:00:00', 1200000.00, 'Paid'),
-(1, 2, '2025-09-01 08:05:00', 1200000.00, 'Paid'),
-(2, 3, '2025-09-02 09:00:00', 1250000.00, 'Unpaid'),
-(2, 4, '2025-09-02 09:10:00', 1250000.00, 'Paid'),
-(3, 5, '2025-09-03 10:00:00', 1300000.00, 'Paid'),
-(3, 6, '2025-09-03 10:15:00', 1300000.00, 'Unpaid'),
-(4, 7, '2025-09-04 11:00:00', 1350000.00, 'Paid'),
-(4, 8, '2025-09-04 11:20:00', 1350000.00, 'Paid'),
-(5, 9, '2025-09-05 13:00:00', 1400000.00, 'Unpaid'),
-(5, 10, '2025-09-05 13:15:00', 1400000.00, 'Paid');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
@@ -1069,7 +968,7 @@ ALTER TABLE `department_details`
 -- Indexes for table `exams`
 --
 ALTER TABLE `exams`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`id`,`exam_detail_id`),
   ADD KEY `exam_detail_id` (`exam_detail_id`);
 
 --
@@ -1082,7 +981,7 @@ ALTER TABLE `rooms`
 -- Indexes for table `exam_details`
 --
 ALTER TABLE `exam_details`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`id`,`subject_id`,`term_id`),
   ADD KEY `subject_id` (`subject_id`),
   ADD KEY `term_id` (`term_id`);
 
@@ -1097,13 +996,6 @@ ALTER TABLE `exam_types`
 --
 ALTER TABLE `functions`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `relations`
---
-ALTER TABLE `relations`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`);
 
 --
 -- Indexes for table `roles`
@@ -1182,21 +1074,6 @@ ALTER TABLE `term_gpa`
   ADD KEY `student_id` (`student_id`);
 
 --
--- Indexes for table `tuitions`
---
-ALTER TABLE `tuitions`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `assign_class_id` (`assign_class_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `tuition_details`
---
-ALTER TABLE `tuition_details`
-  ADD PRIMARY KEY (`tuition_id`,`student_id`),
-  ADD KEY `student_id` (`student_id`);
-
---
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -1266,12 +1143,6 @@ ALTER TABLE `functions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `relations`
---
-ALTER TABLE `relations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
-
---
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
@@ -1312,12 +1183,6 @@ ALTER TABLE `teachers`
 --
 ALTER TABLE `terms`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT for table `tuitions`
---
-ALTER TABLE `tuitions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1394,12 +1259,6 @@ ALTER TABLE `exam_details`
   ADD CONSTRAINT `exam_details_ibfk_3` FOREIGN KEY (`exam_type_id`) REFERENCES `exam_types`(`id`);
 
 --
--- Constraints for table `relations`
---
-ALTER TABLE `relations`
-  ADD CONSTRAINT `relations_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`);
-
---
 -- Constraints for table `role_details`
 --
 ALTER TABLE `role_details`
@@ -1436,20 +1295,6 @@ ALTER TABLE `subject_term_avg`
 ALTER TABLE `term_gpa`
   ADD CONSTRAINT `term_gpa_ibfk_1` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`),
   ADD CONSTRAINT `term_gpa_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`);
-
---
--- Constraints for table `tuitions`
---
-ALTER TABLE `tuitions`
-  ADD CONSTRAINT `tuitions_ibfk_1` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`),
-  ADD CONSTRAINT `tuitions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `tuition_details`
---
-ALTER TABLE `tuition_details`
-  ADD CONSTRAINT `tuition_details_ibfk_1` FOREIGN KEY (`tuition_id`) REFERENCES `tuitions` (`id`),
-  ADD CONSTRAINT `tuition_details_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`);
 
 --
 -- Constraints for table `users`
@@ -1716,4 +1561,111 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- 1) Months: danh sách các tháng (dùng chung)
+CREATE TABLE `months` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL COMMENT 'Ví dụ: Tháng 8, Tháng 9, ...',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- 2) Fee templates: định nghĩa loại phí
+CREATE TABLE `fee_templates` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NOT NULL COMMENT 'Tên phí: Học phí, Tiền xe, Bữa ăn, ...',
+  `description` TEXT NULL,
+  `fee_type` ENUM('BASE','EXTRA') NOT NULL DEFAULT 'BASE' COMMENT 'BASE = phí cơ bản, EXTRA = phí phát sinh/khác',
+  `amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_fee_type` (`fee_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `class_fee_months` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+
+
+  `assign_class_id` INT NOT NULL,
+
+
+  `fee_template_id` INT NOT NULL,
+
+  `month_id` INT NOT NULL,
+
+  `term` TINYINT(1) NOT NULL COMMENT '1 = HK1, 2 = HK2',
+
+ 
+  `is_selected` TINYINT(1) NOT NULL DEFAULT 1,
+
+  `amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
+
+  `start_date` DATE DEFAULT NULL,
+  `end_date` DATE DEFAULT NULL,
+
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`id`),
+
+  KEY `idx_class_fee_months_assign` (`assign_class_id`),
+  KEY `idx_class_fee_months_template` (`fee_template_id`),
+  KEY `idx_class_fee_months_month` (`month_id`),
+
+  CONSTRAINT `fk_cfm_assign_class` FOREIGN KEY (`assign_class_id`)
+       REFERENCES `assign_classes` (`id`) ON DELETE CASCADE,
+
+  CONSTRAINT `fk_cfm_fee_template` FOREIGN KEY (`fee_template_id`)
+       REFERENCES `fee_templates` (`id`) ON DELETE CASCADE,
+
+  CONSTRAINT `fk_cfm_month` FOREIGN KEY (`month_id`)
+       REFERENCES `months` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 12) TuitionPayment: các lần thanh toán (ghi log)
+CREATE TABLE tuition_monthly (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    student_id INT NOT NULL,
+    assign_class_id INT NOT NULL,
+    month_id INT NOT NULL,
+
+    total_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+
+    is_paid TINYINT(1) NOT NULL DEFAULT 0, -- 0 = chưa đóng, 1 = đã đóng
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_tm_student
+        FOREIGN KEY (student_id) REFERENCES students(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_tm_assign_class
+        FOREIGN KEY (assign_class_id) REFERENCES assign_class_students(assign_class_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_tm_month
+        FOREIGN KEY (month_id) REFERENCES months(id)
+        ON DELETE CASCADE
+);
+
+
+
+INSERT INTO months (id, name) VALUES
+(1, 'Tháng 1'),
+(2, 'Tháng 2'),
+(3, 'Tháng 3'),
+(4, 'Tháng 4'),
+(5, 'Tháng 5'),
+(6, 'Tháng 6'),
+(7, 'Tháng 7'),
+(8, 'Tháng 8'),
+(9, 'Tháng 9'),
+(10, 'Tháng 10'),
+(11, 'Tháng 11'),
+(12, 'Tháng 12');
+
 COMMIT;

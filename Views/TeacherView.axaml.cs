@@ -70,7 +70,7 @@ public partial class TeacherView : UserControl
 
         if (vm.SelectedTeacher == null && mode != DialogModeEnum.Create)
         {
-            await MessageBoxUtil.ShowError("Vui lòng chọn người dùng để thực hiện thao tác!");
+            await MessageBoxUtil.ShowError("Vui lòng chọn giáo viên để thực hiện thao tác!");
             return;
         }
 

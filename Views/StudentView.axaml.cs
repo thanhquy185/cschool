@@ -53,7 +53,7 @@ public partial class StudentView : UserControl
 
         if (selectedStudent == null && mode != DialogModeEnum.Create)
         {
-            await MessageBoxUtil.ShowError("Vui lòng chọn người dùng để thực hiện thao tác!");
+            await MessageBoxUtil.ShowError("Vui lòng chọn học sinh để thực hiện thao tác!");
             return;
         }
 
