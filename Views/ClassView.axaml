@@ -73,6 +73,8 @@
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
           <ComboBox ItemsSource="{Binding YearList}"
+           Width = "150"
+           Height = "40"
           SelectedItem="{Binding SelectedYear, Mode=TwoWay}"/>
         </StackPanel>
         <Button

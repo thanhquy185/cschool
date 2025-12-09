@@ -28,37 +28,52 @@ public partial class StatisticalView : UserControl
         if (DataContext is StatisticalViewModel vm)
         {
             vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
-            vm.RequestCloseDetailDialog += Vm_RequestCloseDetailDialog;
+            // vm.RequestCloseDetailDialog += Vm_RequestCloseDetailDialog;
         }
     }
 
     private async void Vm_RequestOpenDetailDialog(object? sender, EventArgs e)
+{
+    if (DataContext is StatisticalViewModel vm)
     {
-        if (DataContext is StatisticalViewModel vm)
+        var dialog = new StatisticalDetailDialog
         {
-            var dialog = new StatisticalDetailDialog
-            {
-                DataContext = vm
-            };
+            DataContext = vm
+        };
 
-            await dialog.ShowDialog((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
-        }
+        // Gắn sự kiện đóng trực tiếp vào dialog
+        vm.RequestCloseDetailDialog += (s, args) => 
+        {
+            try
+            {
+                dialog.Close();
+            }
+            catch { }
+        };
+
+        await dialog.ShowDialog(
+            (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)
+            ?.MainWindow);
+            
+        // Cleanup: gỡ bỏ event handler sau khi dialog đóng
+        vm.RequestCloseDetailDialog -= (s, args) => dialog.Close();
     }
+}
 
     // Đóng Dialog
-    private void Vm_RequestCloseDetailDialog(object? sender, EventArgs e)
-    {
-        // Tìm dialog đang mở, rồi đóng
-        var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+    // private void Vm_RequestCloseDetailDialog(object? sender, EventArgs e)
+    // {
+    //     // Tìm dialog đang mở, rồi đóng
+    //     var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
-        if (desktop is null) return;
+    //     if (desktop is null) return;
 
-        var dialog = desktop.Windows
-            .OfType<StatisticalDetailDialog>()
-            .FirstOrDefault(w => w.DataContext == sender);
+    //     var dialog = desktop.Windows
+    //         .OfType<StatisticalDetailDialog>()
+    //         .FirstOrDefault(w => w.DataContext == sender);
 
-        dialog?.Close();
-    }
+    //     dialog?.Close();
+    // }
 
     private void GpaChart_DataPointerDown(object? sender, object? e)
     {
