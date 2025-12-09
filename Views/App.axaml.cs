@@ -34,6 +34,7 @@ public partial class App : Application
             AppService.TuitionService = new TuitionService(AppService.DBService);
             AppService.HomeClassService = new HomeClassService(AppService.DBService);
             AppService.SubjectClassService = new SubjectClassService(AppService.DBService);
+            AppService.ClassService = new ClassService(AppService.DBService);
             AppService.TeacherService = new TeacherService(AppService.DBService);
             AppService.StudentService = new StudentService(AppService.DBService);
             AppService.FunctionService = new FunctionService(AppService.DBService);

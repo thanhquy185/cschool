@@ -1,0 +1,123 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ViewModels"
+        x:Class="Views.Tuition.TuitionInfoDialog"
+        Title="Chi tiết học phí"
+        Width="1100"
+        Height="680"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="8"
+        Padding="0"
+        x:DataType="vm:TuitionViewModel">
+
+    <Border CornerRadius="8" Background="White" BorderBrush="#DDD" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*">
+            <!-- Header -->
+            <Border Background="#4285F4" Padding="16,10" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="1"
+                               Text="Chi tiết học phí"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+                    <Button Grid.Column="2"
+                            Content="✕"
+                            Background="Transparent"
+                            Foreground="White"
+                            FontSize="18"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            Click="Close_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Nội dung -->
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Margin="20" Spacing="10">
+                    <!-- Filter panel -->
+                    <Border Classes="FilterDataWarper">
+                        <Grid Classes="FilterData" RowDefinitions="*,Auto">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <!-- ComboBox Học kỳ -->
+                                <ComboBox ItemsSource="{Binding TermList}" 
+                                          SelectedItem="{Binding SelectedTerm}" Width="200">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayName}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <!-- ComboBox Tháng -->
+                                <ComboBox ItemsSource="{Binding MonthList}" 
+                                SelectedItem="{Binding SelectedMonth}"
+                                Width="120"
+                                 SelectionChanged="MonthComboBox_SelectionChanged"/>
+
+
+                                <!-- Button Xuất Excel -->
+                                <Button Width="120" Height="35" Content="Xuất Excel"/>
+
+                                <!-- Button Reset -->
+                                <Button Width="80" Content="Reset"/>
+                            </StackPanel>
+
+                            <!-- DataGrid hiển thị chi tiết học phí -->
+                            <!-- <DataGrid ItemsSource="{Binding StudentFeeMonthDetail}" AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Lớp" Binding="{Binding AssignClassId}"/>
+                                    <DataGridTextColumn Header="Tháng" Binding="{Binding MonthId}"/>
+                                    <DataGridTextColumn Header="Số tiền" Binding="{Binding Amount}"/>
+                                    <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}"/>
+                                    <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}"/>
+                                </DataGrid.Columns>
+                            </DataGrid> -->
+                        </Grid>
+                    </Border>
+
+                    <!-- DataGrid Tổng hợp học phí -->
+                    <DataGrid x:Name="TuitionSummaryGrid"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              Height="400"
+                              ItemsSource="{Binding TuitionDetail}"  
+                              GridLinesVisibility="All">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" Header="Học sinh" Binding="{Binding StudentName}" />
+                            <DataGridTextColumn Width="150" Header="Lớp" Binding="{Binding ClassName}" />
+                            <DataGridTextColumn Width="100" Header="Niên học" Binding="{Binding ClassYear}" />
+                            <DataGridTextColumn Width="150" Header="Tổng tiền" Binding="{Binding TotalAmount, StringFormat='{}{0:N0}'}" />
+                            <DataGridTextColumn Width="150" Header="Tình trạng" Binding="{Binding PaymentStatus}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- DataGrid chi tiết học phí -->
+                    <DataGrid x:Name="TuitionDetailGrid"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              Height="400"
+                              ItemsSource="{Binding StudentFeeMonthDetail}"  
+                              GridLinesVisibility="All"
+                              IsVisible="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="300" Header="Diễn giải" Binding="{Binding FeeTemplateName}" />
+                            <DataGridTextColumn Width="150" Header="Số tiền" Binding="{Binding Amount, StringFormat='{}{0:N0}'}" />
+                            <DataGridTextColumn Width="150" Header="Tổng cộng" Binding="{Binding Amount, StringFormat='{}{0:N0}'}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>

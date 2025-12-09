@@ -60,6 +60,14 @@ public class RoleService
         return null;
     }
 
+    public int GetIdLastRole()
+    {
+        var dt = _db.ExecuteQuery("SELECT id FROM roles ORDER BY id DESC LIMIT 1");
+        if (dt.Rows.Count > 0)
+            return System.Convert.ToInt32(dt.Rows[0]["id"]);
+        return 0;
+    }
+
     public int CreateRole(RoleModel role)
     {
         string sql = $"INSERT INTO roles (name, status) VALUES ('{role.Name}', '{role.Status}')";
@@ -68,7 +76,7 @@ public class RoleService
 
     public int UpdateRole(RoleModel role)
     {
-        string sql = $"UPDATE roles SET name = '{role.Name}', status = '{role.Status}' WHERE id = {role.Id}";
+        string sql = $"UPDATE roles SET name = '{role.Name}' WHERE id = {role.Id}";
         return _db.ExecuteNonQuery(sql);
     }
 

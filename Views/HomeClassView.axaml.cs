@@ -11,9 +11,13 @@ namespace Views;
 
 public partial class HomeClassView : UserControl
 {
+    private HomeClassViewModel _homeClassViewModel { get; set; }
     public HomeClassView()
     {
         InitializeComponent();
+        this._homeClassViewModel = new HomeClassViewModel();
+        DataContext = this._homeClassViewModel;
+
         this.AttachedToVisualTree += (_, _) =>
         {
             if (DataContext is HomeClassViewModel vm)

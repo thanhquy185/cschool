@@ -17,6 +17,8 @@ using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Layout;
 using System.Collections.Generic;
+using Services;
+using System.IO;
 
 
 namespace Views;
@@ -28,8 +30,121 @@ public partial class RoleView : UserControl
     public RoleView()
     {
         InitializeComponent();
-        _roleViewModel = new RoleViewModel();
-        DataContext = _roleViewModel;
+        this._roleViewModel = new RoleViewModel();
+        DataContext = this._roleViewModel;
+
+        // Phân quyền các nút chức năng
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+              SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Thêm");
+            ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
+            InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
+            CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Thêm");
+            UpdateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Cập nhật");
+            LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xoá / Khoá");
+        }
+    }
+
+    private void OnFilterFindChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (DataContext is RoleViewModel vm)
+        {
+            var textBox = sender as TextBox;
+            vm.FilterFind = textBox?.Text ?? "";
+            vm.ApplyFilter();
+        }
+    }
+    private void OnFilterStatusChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is RoleViewModel vm)
+        {
+            var combo = sender as ComboBox;
+            var selectedItem = combo?.SelectedItem as ComboBoxItem;
+            var selectedText = selectedItem?.Content?.ToString() ?? "";
+
+            vm.FilterStatus = selectedText == "Chọn Trạng thái" ? "" : selectedText;
+            vm.ApplyFilter();
+        }
+    }
+    private void OnFilterResetClicked(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is RoleViewModel vm)
+        {
+            FilterFindTextBox.Text = "";
+            FilterStatusComboBox.SelectedIndex = 0;
+
+            vm.FilterFind = "";
+            vm.FilterStatus = "";
+            vm.ApplyFilter();
+
+        }
+    }
+
+    private void ImportExcelButton_Click(object sender, RoutedEventArgs e) => _ = HandleImportExcel();
+    private async Task HandleImportExcel()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Chọn file Excel để nhập",
+            AllowMultiple = false,
+            Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            }
+        };
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        var result = await dialog.ShowAsync(owner);
+        if (result == null || result.Length == 0)
+            return;
+
+        var filePath = result[0];
+        if (!File.Exists(filePath))
+            return;
+
+        // Gọi vào ViewModel
+        var vm = DataContext as RoleViewModel;
+        if (vm != null)
+            await vm.ImportExcel(filePath);
+    }
+    private void ExportExcelButton_Click(object sender, RoutedEventArgs e) => _ = HandleExportExcel();
+    private async Task HandleExportExcel()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Chọn nơi lưu file Excel",
+            Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            },
+            InitialFileName = "DanhSachNhomQuyen.xlsx"
+        };
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        var filePath = await dialog.ShowAsync(owner);
+
+        if (string.IsNullOrWhiteSpace(filePath))
+            return;
+
+        var vm = DataContext as RoleViewModel;
+        if (vm != null)
+        {
+            try
+            {
+                await vm.ExportExcel(filePath);
+                await MessageBoxUtil.ShowSuccess("Xuất file Excel thành công!\n", owner: owner);
+            }
+            catch (Exception ex)
+            {
+                await MessageBoxUtil.ShowError(ex.Message, owner: owner);
+            }
+        }
     }
 
     private IDataTemplate CreateCheckboxTemplate(string valueProp, string allowProp, DialogModeEnum mode)
@@ -47,7 +162,6 @@ public partial class RoleView : UserControl
     }
 
     private void InfoButton_Click(object sender, RoutedEventArgs e) => _ = ShowRoleDialog(DialogModeEnum.Info);
-
     private void CreateButton_Click(object sender, RoutedEventArgs e) => _ = ShowRoleDialog(DialogModeEnum.Create);
     private void UpdateButton_Click(object sender, RoutedEventArgs e) => _ = ShowRoleDialog(DialogModeEnum.Update);
     private void LockButton_Click(object sender, RoutedEventArgs e) => _ = ShowRoleDialog(DialogModeEnum.Lock);
@@ -179,7 +293,7 @@ public partial class RoleView : UserControl
                 Classes = { "DialogFormGroupLabel" },
                 Inlines =
                 {
-                    isCreate ? new Run { Text = "* ", Foreground = Brushes.Red } : new Run {},
+                    isCreate || isUpdate ? new Run { Text = "* ", Foreground = Brushes.Red } : new Run {},
                     new Run { Text = "Tên nhóm quyền" }
                 }
             };
@@ -188,7 +302,7 @@ public partial class RoleView : UserControl
                 Classes = { "DialogFormGroupInput" },
                 Watermark = "Nhập Tên nhóm quyền",
                 Text = !string.IsNullOrWhiteSpace(selectedRole?.Name) ? selectedRole?.Name : null,
-                IsEnabled = !isInfo && !isUpdate
+                IsEnabled = !isInfo
             };
             // - Thêm vào stack
             nameStack.Children.Add(nameLabel);
@@ -220,10 +334,8 @@ public partial class RoleView : UserControl
                 AutoGenerateColumns = false,
                 Classes = { "FunctionTable" },
                 Margin = new Thickness(0, 10, 0, 0),
-                Height = 300
+                Height = 320
             };
-            // -
-
             // -- Thêm các cột
             // --- Tên chức năng
             roleDetailsGrid.Columns.Add(new DataGridTextColumn
@@ -316,50 +428,80 @@ public partial class RoleView : UserControl
 
                         }
                         // - Kiểm tra tên nhóm quyền
-                        if (isCreate && Rules.ruleRequiredForTextBox(nameTextBox.Text ?? ""))
+                        if ((isCreate || isUpdate) && Rules.ruleRequiredForTextBox(nameTextBox.Text ?? ""))
                         {
                             await MessageBoxUtil.ShowError("Tên nhóm quyền không được để trống!", owner: dialog);
                             return;
                         }
 
+                        // - Chuyển thành kiểu chi tiết quyền để lưu trong csdl
+                        List<RoleDetailModel> roleDetailsValue = new List<RoleDetailModel>();
                         foreach (var roleDetail in roleDetails)
                         {
-                            Console.WriteLine(roleDetail.FunctionId + " " + roleDetail.CanCreate);
+                            if (roleDetail.CanView)
+                            {
+                                RoleDetailModel newRoleDetailForView = new RoleDetailModel();
+                                newRoleDetailForView.FunctionId = roleDetail.FunctionId;
+                                newRoleDetailForView.Action = "Xem";
+                                roleDetailsValue.Add(newRoleDetailForView);
+                            }
+                            if (roleDetail.CanCreate)
+                            {
+                                RoleDetailModel newRoleDetailForCreate = new RoleDetailModel();
+                                newRoleDetailForCreate.FunctionId = roleDetail.FunctionId;
+                                newRoleDetailForCreate.Action = "Thêm";
+                                roleDetailsValue.Add(newRoleDetailForCreate);
+                            }
+                            if (roleDetail.CanUpdate)
+                            {
+                                RoleDetailModel newRoleDetailForUpdate = new RoleDetailModel();
+                                newRoleDetailForUpdate.FunctionId = roleDetail.FunctionId;
+                                newRoleDetailForUpdate.Action = "Cập nhật";
+                                roleDetailsValue.Add(newRoleDetailForUpdate);
+                            }
+                            if (roleDetail.CanDelete)
+                            {
+                                RoleDetailModel newRoleDetailForDelete = new RoleDetailModel();
+                                newRoleDetailForDelete.FunctionId = roleDetail.FunctionId;
+                                newRoleDetailForDelete.Action = "Xoá / Khoá";
+                                roleDetailsValue.Add(newRoleDetailForDelete);
+                            }
                         }
 
-                        // // Nếu dữ liệu hợp lệ
-                        // // - Khởi tạo đối tượng
-                        // var role = new RoleModel();
-                        // if (isUpdate) role.Id = int.Parse(idTextBox.Text);
-                        // if (isCreate || isUpdate) role.Name = nameTextBox.Text;
-                        // if (isCreate) role.Status = statusComboBox.SelectedItem.ToString();
-                        // // - Xử lý
-                        // bool isSuccess = mode switch
-                        // {
-                        //     DialogModeEnum.Create => await _roleViewModel.CreateRoleCommand.Execute(role).ToTask(),
-                        //     DialogModeEnum.Update => await _roleViewModel.UpdateRoleCommand.Execute(role).ToTask(),
-                        // };
+                        // Nếu dữ liệu hợp lệ
+                        // - Khởi tạo đối tượng
+                        var role = new RoleModel();
+                        if (isUpdate) role.Id = int.Parse(idTextBox.Text);
+                        if (isCreate || isUpdate) role.Name = nameTextBox.Text;
+                        if (isCreate) role.Status = statusComboBox.SelectedItem.ToString();
+                        if (isCreate || isUpdate) role.RoleDetails = roleDetailsValue;
+                        // - Xử lý
+                        bool isSuccess = mode switch
+                        {
+                            DialogModeEnum.Create => await _roleViewModel.CreateRoleCommand.Execute(role).ToTask(),
+                            DialogModeEnum.Update => await _roleViewModel.UpdateRoleCommand.Execute(role).ToTask(),
+                        };
 
-                        // // Thông báo xử lý, nếu thành công thì ẩn dialog
-                        // if (isSuccess)
-                        // {
-                        //     if (isCreate) await MessageBoxUtil.ShowSuccess("Thêm người dùng thành công!", owner: dialog);
-                        //     if (isUpdate) await MessageBoxUtil.ShowSuccess("Cập nhật người dùng thành công!", owner: dialog);
-                        //     dialog.Close();
+                        // Thông báo xử lý, nếu thành công thì ẩn dialog
+                        if (isSuccess)
+                        {
+                            if (isCreate) await MessageBoxUtil.ShowSuccess("Thêm nhóm quyền thành công!", owner: dialog);
+                            if (isUpdate) await MessageBoxUtil.ShowSuccess("Cập nhật nhóm quyền thành công!", owner: dialog);
+                            dialog.Close();
 
-                        //     RolesDataGrid.ItemsSource = await _roleViewModel.GetRolesCommand.Execute().ToTask();
-                        // }
-                        // else
-                        // {
-                        //     if (isCreate) await MessageBoxUtil.ShowSuccess("Thêm người dùng thất bại!", owner: dialog);
-                        //     if (isUpdate) await MessageBoxUtil.ShowSuccess("Cập nhật người dùng thất bại!", owner: dialog);
-                        // }
+                            RolesDataGrid.ItemsSource = await _roleViewModel.GetRolesCommand.Execute().ToTask();
+                        }
+                        else
+                        {
+                            if (isCreate) await MessageBoxUtil.ShowSuccess("Thêm nhóm quyền thất bại!", owner: dialog);
+                            if (isUpdate) await MessageBoxUtil.ShowSuccess("Cập nhật nhóm quyền thất bại!", owner: dialog);
+                        }
                     }
                 };
                 form.Children.Add(submitButton);
             }
         }
-        else if (isLock)
+        else
         {
             // =========== Tạo 1 dòng ==========
             formGroupWarper.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -385,7 +527,7 @@ public partial class RoleView : UserControl
                 {
                     new Run { Text = "Bạn có chắc chắn rằng muốn " },
                     new Run { Text = $"{(selectedRole?.Status == "Hoạt động" ? "khoá" : "mở khoá")} đối tượng "},
-                    new Run { Text = "người dùng", Foreground = new SolidColorBrush(Color.Parse("#9f4d4d")), FontWeight = FontWeight.SemiBold},
+                    new Run { Text = "nhóm quyền", Foreground = new SolidColorBrush(Color.Parse("#9f4d4d")), FontWeight = FontWeight.SemiBold},
                     new Run { Text = " có mã là " },
                     new Run { Text = $"#{selectedRole?.Id}", Foreground = new SolidColorBrush(Color.Parse("#9f4d4d")), FontWeight = FontWeight.SemiBold},
                 },
@@ -404,18 +546,24 @@ public partial class RoleView : UserControl
                         var role = new RoleModel();
                         role.Id = selectedRole.Id;
                         role.Status = selectedRole.Status == "Hoạt động" ? "Tạm dừng" : "Hoạt động";
+                        // - Kiểm tra đã có người dùng nào sử dụng hay chưa ?
+                        if (role.Status.Equals("Tạm dừng") && AppService.UserService.GetUsersByRoleId(role.Id).Count > 0)
+                        {
+                            await MessageBoxUtil.ShowError("Nhóm quyền này đang có ít nhất 1 người dùng sử dụng!", owner: dialog);
+                            return;
+                        }
                         // - Xử lý
                         bool isSuccess = await _roleViewModel.LockRoleCommand.Execute(role).ToTask();
 
                         // Thông báo xử lý, nếu thành công thì ẩn dialog
                         if (isSuccess)
                         {
-                            await MessageBoxUtil.ShowSuccess($"{(selectedRole.Status == "Hoạt động" ? "Khoá" : "Mở khoá")} người dùng thành công!", owner: dialog);
+                            await MessageBoxUtil.ShowSuccess($"{(selectedRole.Status == "Hoạt động" ? "Khoá" : "Mở khoá")} nhóm quyền thành công!", owner: dialog);
                             dialog.Close();
 
                             RolesDataGrid.ItemsSource = await _roleViewModel.GetRolesCommand.Execute().ToTask();
                         }
-                        else await MessageBoxUtil.ShowSuccess($"{(selectedRole.Status == "Hoạt động" ? "Khoá" : "Mở khoá")} người dùng thất bại!", owner: dialog);
+                        else await MessageBoxUtil.ShowError($"{(selectedRole.Status == "Hoạt động" ? "Khoá" : "Mở khoá")} nhóm quyền thất bại!", owner: dialog);
                     }
                 };
 

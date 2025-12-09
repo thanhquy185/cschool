@@ -34,9 +34,24 @@ public class UserModel
 
     // Constructors
     public UserModel() { }
-    public UserModel(int Id, string Avatar, string Username, string Password,
-        int RoleId, string Fullname, string Phone, string Email,
-        string Address, string Status, string RoleName)
+    public UserModel(int Id, string? Avatar, string Username, string Password,
+        int RoleId, string Fullname, string? Phone, string? Email,
+        string? Address, string Status)
+    {
+        this.Id = Id;
+        this.Avatar = Avatar;
+        this.Username = Username;
+        this.Password = Password;
+        this.RoleId = RoleId;
+        this.Fullname = Fullname;
+        this.Phone = Phone;
+        this.Email = Email;
+        this.Address = Address;
+        this.Status = Status;
+    }
+    public UserModel(int Id, string? Avatar, string Username, string Password,
+        int RoleId, string Fullname, string? Phone, string? Email,
+        string? Address, string Status, string RoleName)
     {
         this.Id = Id;
         this.Avatar = Avatar;

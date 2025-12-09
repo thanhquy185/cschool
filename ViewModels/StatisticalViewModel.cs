@@ -10,21 +10,27 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using Avalonia.Threading;
 using Application = Avalonia.Application;
 using Avalonia.Controls.ApplicationLifetimes;
+using System.ComponentModel;
 
 
 namespace ViewModels;
 
 public partial class StatisticalViewModel : ViewModelBase
 {
+    // Tiêu đề trang
+    public string TitlePage { get; } = "Thống kê";
+    // Mô tả trang
+    public string DescriptionPage { get; } = "Thống kê điểm và hạnh kiểm";
+
     private readonly StatisticalService _statService;
 
     // Series collections bound to the PieCharts
     [ObservableProperty]
     private ObservableCollection<ISeries> academicSeries = new();
-    
+
     [ObservableProperty]
     // biến lưu tất cả các kì học
-    private ObservableCollection<TermModel> terms = new(); 
+    private ObservableCollection<TermModel> terms = new();
 
     [ObservableProperty]
     private string totalStudentsInDetail = "0";
@@ -77,9 +83,23 @@ public partial class StatisticalViewModel : ViewModelBase
     // Keep raw stats so we can filter quickly on click
     private List<Statistical> _rawStats = new();
 
-    public StatisticalViewModel(StatisticalService statService)
+    [ObservableProperty]
+    public bool _infoButtonEnabled;
+
+    public StatisticalViewModel()
     {
-        _statService = statService ?? throw new ArgumentNullException(nameof(statService));
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            this.InfoButtonEnabled = AppService.RoleDetailService.HasPermission(
+                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Statistical, "Xem");
+            Console.WriteLine("---------------------" + InfoButtonEnabled);
+        }
+        else
+        {
+            this.InfoButtonEnabled = false;
+        }
+
+        _statService = AppService.StatisticalService;
         LoadDataCommand = new AsyncRelayCommand(LoadDataAsync);
 
         // auto-load once constructed
@@ -152,11 +172,11 @@ public partial class StatisticalViewModel : ViewModelBase
             UpdateChartData(filteredStats);
         });
     }
-    
+
     // Tự động lọc khi SelectedTerm thay đổi
-       partial void OnSelectedTermChanged(TermModel? value)
+    partial void OnSelectedTermChanged(TermModel? value)
     {
-        
+
         SearchByTerm();
     }
 
@@ -175,18 +195,18 @@ public partial class StatisticalViewModel : ViewModelBase
                 .GroupBy(s => (s.ConductLevel ?? "").Trim())
                 .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
 
-   
+
             int gpaGood = stats.Count(s => s.Gpa >= 8f);
             int gpaFair = stats.Count(s => s.Gpa >= 6.5f && s.Gpa < 8f);
             int gpaSat = stats.Count(s => s.Gpa >= 5f && s.Gpa < 6.5f);
 
-            
+
             int totalAcademic = academicGroups.Values.Sum();
             int totalConduct = conductGroups.Values.Sum();
             int totalGpa = gpaGood + gpaFair + gpaSat;
 
             // Categories canonical order
-            string[] canonical = new[] { "Giỏi", "Khá", "Trung bình","Yếu" };
+            string[] canonical = new[] { "Giỏi", "Khá", "Trung bình", "Yếu" };
 
             var academicCounts = canonical.ToDictionary(k => k, k => academicGroups.ContainsKey(k) ? academicGroups[k] : 0);
             var conductCounts = canonical.ToDictionary(k => k, k => conductGroups.ContainsKey(k) ? conductGroups[k] : 0);
@@ -219,8 +239,8 @@ public partial class StatisticalViewModel : ViewModelBase
                 GpaSummary = gpSum;
 
                 SelectedStudents = new ObservableCollection<Statistical>();
-                SelectedGroupHeader = SelectedTerm != null ? 
-                    $"Đang hiển thị: {SelectedTerm.Name}" : 
+                SelectedGroupHeader = SelectedTerm != null ?
+                    $"Đang hiển thị: {SelectedTerm.Name}" :
                     "Đang hiển thị: Tất cả kỳ học";
             });
         }
@@ -330,92 +350,93 @@ public partial class StatisticalViewModel : ViewModelBase
 
 
     [RelayCommand]
-public async Task LoadDetail()
-{
-    try
+    public async Task LoadDetail()
     {
-        // Lấy termId đang được chọn
-        int termId = SelectedTerm?.Id ?? 0;
-        
-        // Load dữ liệu cho cả 3 loại
-        await Task.Run(() =>
+        try
         {
-            // Học sinh Giỏi
-            var excellent = _statService.DetailStatistic("Giỏi", termId);
-            ExcellentStudents = new ObservableCollection<Statistical>(
-                excellent.Select((s,index) => new Statistical
-                {   OrderNumber = index + 1,
-                    Student_id = s.Student_id,
-                    StudentName = s.StudentName,
-                    Class_name = s.Class_name ?? "",
-                    Gpa = s.Gpa,
-                    ConductLevel = s.ConductLevel,
-                })
-            );
-            
-            // Học sinh Khá
-            var good = _statService.DetailStatistic("Khá", termId);
-            GoodStudents = new ObservableCollection<Statistical>(
-             good.Select((s , index) => new Statistical
-                {
-                    OrderNumber = index + 1,
-                    Student_id = s.Student_id,
-                    StudentName = s.StudentName,
-                    Class_name = s.Class_name ?? "",
-                    Gpa = s.Gpa,
-                    ConductLevel = s.ConductLevel,
-                })
-            );
-            
-            // Học sinh Trung bình
-            var average = _statService.DetailStatistic("Trung bình", termId);
-            AverageStudents = new ObservableCollection<Statistical>(
-                average.Select((s,index) => new Statistical
-                {
-                    OrderNumber = index + 1,
-                    Student_id = s.Student_id,
-                    StudentName = s.StudentName,
-                    Class_name = s.Class_name ?? "",
-                    Gpa = s.Gpa,
-                    ConductLevel = s.ConductLevel,
-                })
-            );
-            TotalStudentsInDetail = (ExcellentStudents.Count + 
-                                   GoodStudents.Count + 
-                                   AverageStudents.Count).ToString();
-        });
-        
-        // Mở dialog
-       await OpenDetailDialog();
+            // Lấy termId đang được chọn
+            int termId = SelectedTerm?.Id ?? 0;
 
+            // Load dữ liệu cho cả 3 loại
+            await Task.Run(() =>
+            {
+                // Học sinh Giỏi
+                var excellent = _statService.DetailStatistic("Giỏi", termId);
+                ExcellentStudents = new ObservableCollection<Statistical>(
+                    excellent.Select((s, index) => new Statistical
+                    {
+                        OrderNumber = index + 1,
+                        Student_id = s.Student_id,
+                        StudentName = s.StudentName,
+                        Class_name = s.Class_name ?? "",
+                        Gpa = s.Gpa,
+                        ConductLevel = s.ConductLevel,
+                    })
+                );
+
+                // Học sinh Khá
+                var good = _statService.DetailStatistic("Khá", termId);
+                GoodStudents = new ObservableCollection<Statistical>(
+                 good.Select((s, index) => new Statistical
+                 {
+                     OrderNumber = index + 1,
+                     Student_id = s.Student_id,
+                     StudentName = s.StudentName,
+                     Class_name = s.Class_name ?? "",
+                     Gpa = s.Gpa,
+                     ConductLevel = s.ConductLevel,
+                 })
+                );
+
+                // Học sinh Trung bình
+                var average = _statService.DetailStatistic("Trung bình", termId);
+                AverageStudents = new ObservableCollection<Statistical>(
+                    average.Select((s, index) => new Statistical
+                    {
+                        OrderNumber = index + 1,
+                        Student_id = s.Student_id,
+                        StudentName = s.StudentName,
+                        Class_name = s.Class_name ?? "",
+                        Gpa = s.Gpa,
+                        ConductLevel = s.ConductLevel,
+                    })
+                );
+                TotalStudentsInDetail = (ExcellentStudents.Count +
+                                       GoodStudents.Count +
+                                       AverageStudents.Count).ToString();
+            });
+
+            // Mở dialog
+            await OpenDetailDialog();
+
+        }
+        catch (Exception ex)
+        {
+            // Xử lý lỗi - bạn có thể dùng dialog thông báo lỗi
+            Console.WriteLine($"Error loading detail: {ex.Message}");
+        }
     }
-    catch (Exception ex)
+
+    public event EventHandler? RequestOpenDetailDialog;
+    [RelayCommand]
+    private async Task OpenDetailDialog()
     {
-        // Xử lý lỗi - bạn có thể dùng dialog thông báo lỗi
-        Console.WriteLine($"Error loading detail: {ex.Message}");
+        try
+        {
+            RequestOpenDetailDialog?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error opening dialog: {ex.Message}");
+        }
     }
-}
 
-public event EventHandler? RequestOpenDetailDialog;
-[RelayCommand]
-private async Task OpenDetailDialog()
-{
-    try
+
+    public event EventHandler? RequestCloseDetailDialog;
+    [RelayCommand]
+    public void CloseDetailDialog()
     {
-        RequestOpenDetailDialog?.Invoke(this, EventArgs.Empty);
+        RequestCloseDetailDialog?.Invoke(this, EventArgs.Empty);
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error opening dialog: {ex.Message}");
-    }
-}
-
-
-public event EventHandler? RequestCloseDetailDialog;
-[RelayCommand]
-public void CloseDetailDialog()
-{
-    RequestCloseDetailDialog?.Invoke(this, EventArgs.Empty);
-}
 
 }

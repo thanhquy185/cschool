@@ -12,7 +12,7 @@
     <Design.DataContext>
         <vm:RoleViewModel />
     </Design.DataContext>
-    <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,*">
+    <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
         <!--  Header  -->
         <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
             <StackPanel Classes="MainLayoutHeaderInfo">
@@ -20,7 +20,32 @@
                 <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
             </StackPanel>
             <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-                <Button Classes="CrudButton Info" Click="InfoButton_Click">
+                <Button
+                    x:Name="ImportExcelButton"
+                    Classes="CrudButton Create"
+                    Click="ImportExcelButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource ImportExcelIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Nhập Excel" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button
+                    x:Name="ExportExcelButton"
+                    Classes="CrudButton Update"
+                    Click="ExportExcelButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource ExportExcelIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất Excel" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button
+                    x:Name="InfoButton"
+                    Classes="CrudButton Info"
+                    Click="InfoButton_Click">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
                         <StackPanel>
                             <Image Source="{DynamicResource InfoIcon}" />
@@ -28,7 +53,10 @@
                         </StackPanel>
                     </Border>
                 </Button>
-                <Button Classes="CrudButton Create" Click="CreateButton_Click">
+                <Button
+                    x:Name="CreateButton"
+                    Classes="CrudButton Create"
+                    Click="CreateButton_Click">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
                         <StackPanel>
                             <Image Source="{DynamicResource CreateIcon}" />
@@ -36,7 +64,10 @@
                         </StackPanel>
                     </Border>
                 </Button>
-                <Button Classes="CrudButton Update" Click="UpdateButton_Click">
+                <Button
+                    x:Name="UpdateButton"
+                    Classes="CrudButton Update"
+                    Click="UpdateButton_Click">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
                         <StackPanel>
                             <Image Source="{DynamicResource UpdateIcon}" />
@@ -44,7 +75,10 @@
                         </StackPanel>
                     </Border>
                 </Button>
-                <Button Classes="CrudButton Lock" Click="LockButton_Click">
+                <Button
+                    x:Name="LockButton"
+                    Classes="CrudButton Lock"
+                    Click="LockButton_Click">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
                         <StackPanel>
                             <Image Source="{DynamicResource LockIcon}" />
@@ -59,13 +93,18 @@
             <Grid Classes="FilterData" RowDefinitions="*,Auto">
                 <StackPanel Classes="FilterDataInputs">
                     <Grid Classes="FilterDataFindInput">
-                        <TextBox Watermark="Nhập ID / Tên nhóm quyền" />
+                        <TextBox
+                            x:Name="FilterFindTextBox"
+                            TextChanged="OnFilterFindChanged"
+                            Watermark="Nhập ID / Tên nhóm quyền" />
                         <Image Source="{DynamicResource SearchIcon}" />
                     </Grid>
                     <ComboBox
+                        x:Name="FilterStatusComboBox"
                         Classes="FilterDataFindSelect"
                         MaxDropDownHeight="100"
-                        SelectedIndex="0">
+                        SelectedIndex="0"
+                        SelectionChanged="OnFilterStatusChanged">
                         <ComboBoxItem>Chọn Trạng thái</ComboBoxItem>
                         <ComboBoxItem>Hoạt động</ComboBoxItem>
                         <ComboBoxItem>Tạm dừng</ComboBoxItem>
@@ -74,7 +113,8 @@
                 <Button
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Classes="FilterDataResetButton">
+                    Classes="FilterDataResetButton"
+                    Click="OnFilterResetClicked">
                     <Image Source="{DynamicResource ResetIcon}" />
                 </Button>
             </Grid>
@@ -84,7 +124,7 @@
             <DataGrid
                 x:Name="RolesDataGrid"
                 Classes="TableData Role"
-                ItemsSource="{Binding Roles}">
+                ItemsSource="{Binding FilteredRoles}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         Width="1*"

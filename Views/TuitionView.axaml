@@ -14,33 +14,37 @@
     <vm:TuitionViewModel />
   </Design.DataContext>
   <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
-    <!--  Header  -->
+
+    <!--  HEADER  -->
     <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
-      <!--  Title And SubTitle  -->
       <StackPanel Classes="MainLayoutHeaderInfo">
         <!--  Titlte  -->
-        <TextBlock Classes="Title" Text="Thông tin học phí" />
+        <TextBlock Classes="Title" Text="{Binding TitlePage}" />
         <!--  SubTitle  -->
-        <!-- <TextBlock Classes="SubTitle" Text="Thông tin cơ bản của lịch thi" /> -->
+        <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
       </StackPanel>
 
-      <!-- Butttons -->
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
 
-        <Button x:Name="InfoButton" Classes="CrudButton Info">
+
+        <Button
+          x:Name="CreateButton"
+          Padding="20,10"
+          Classes="CrudButton Create">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource InfoIcon}"/>
-              <TextBlock Text="Chi tiết" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource SettingIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thiết lập" />
             </StackPanel>
           </Border>
         </Button>
 
-        <Button x:Name="CreateButton" Classes="CrudButton Create">
+
+        <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource CreateIcon}"/>
-              <TextBlock Text="Thêm" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource InfoIcon}" />
+              <TextBlock Text="Chi tiết" />
             </StackPanel>
           </Border>
         </Button>
@@ -48,43 +52,56 @@
         <Button x:Name="UpdateButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource UpdateIcon}"/>
-              <TextBlock Text="Cập nhật" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-            </StackPanel>
-          </Border>
-        </Button>
-
-        <Button x:Name="LockButton" Classes="CrudButton Lock">
-          <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-            <StackPanel>
-              <Image Source="{DynamicResource LockIcon}"/>
-              <TextBlock Text="Khoá" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource UpdateIcon}" />
+              <TextBlock Text="Cập nhật" />
             </StackPanel>
           </Border>
         </Button>
       </StackPanel>
-
     </Grid>
-    <!--  Filter  -->
+
+    <!--  FILTER  -->
     <Border Grid.Row="1" Classes="FilterDataWarper">
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập ngày thi" x:Name="SearchBox"/>
+            <TextBox x:Name="SearchBox" Watermark="Nhập tên học sinh hoặc lớp" />
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
+
           <ComboBox
             x:Name="StatusFilterBox"
             Classes="FilterDataFindSelect"
             MaxDropDownHeight="200"
             SelectedIndex="0">
-            <ComboBoxItem>Chọn Trạng thái</ComboBoxItem>
-            <ComboBoxItem>Option 1</ComboBoxItem>
-            <ComboBoxItem>Option 2</ComboBoxItem>
-            <!-- <ComboBoxItem>Bảo lưu</ComboBoxItem>
-            <ComboBoxItem>Nghỉ học</ComboBoxItem> -->
+            <ComboBoxItem>Tất cả trạng thái</ComboBoxItem>
+            <ComboBoxItem>Đã đóng</ComboBoxItem>
+            <ComboBoxItem>Chưa đóng</ComboBoxItem>
+            <ComboBoxItem>Đóng một phần</ComboBoxItem>
           </ComboBox>
+
+          <ComboBox
+            x:Name="FilterYear"
+            Classes="FilterDataFindSelect"
+            MaxDropDownHeight="200"
+            SelectedIndex="0">
+            <ComboBoxItem>Năm 2024-2025</ComboBoxItem>
+            <ComboBoxItem>Năm 2025-2026</ComboBoxItem>
+          </ComboBox>
+
+          <ComboBox
+            x:Name="FilterClass"
+            Classes="FilterDataFindSelect"
+            MaxDropDownHeight="200"
+            SelectedIndex="0">
+            <ComboBoxItem>Năm 2024-2025</ComboBoxItem>
+            <ComboBoxItem>Năm 2025-2026</ComboBoxItem>
+          </ComboBox>
+
+
+
         </StackPanel>
+
         <Button
           x:Name="ResetFilterButton"
           HorizontalAlignment="Right"
@@ -94,36 +111,108 @@
         </Button>
       </Grid>
     </Border>
-    <!--  Table  -->
-    <!-- <Border Grid.Row="2" Classes="TableDataWarper">
-      <DataGrid x:Name="TuitionDataGrid" Classes="TableData" ItemsSource="{Binding StudentsTemp}">
-        <DataGrid.Columns>
-          <DataGridTextColumn
-            Width="*"
-            Binding="{Binding Id}"
-            Header="ID" />
-          <DataGridTextColumn
-            Width="*"
-            Binding="{Binding Fullname}"
-            Header="Họ và tên" />
-          <DataGridTextColumn
-            Width="*"
-            Binding="{Binding Gender}"
-            Header="Giới tính" />
-          <DataGridTextColumn
-            Width="*"
-            Binding="{Binding BirthDayDisplay}"
-            Header="Ngày sinh" />
-          <DataGridTextColumn
-            Width="*"
-            Binding="{Binding LearnYear}"
-            Header="Năm học" />
-          <DataGridTextColumn
-            Width="*"
-            Binding="{Binding LearnStatus}"
-            Header="Tình trạng học" />
-        </DataGrid.Columns>
-      </DataGrid>
-    </Border> -->
+
+    <!--  BODY: TAB CONTROL  -->
+    <Border Grid.Row="2" Classes="TableDataWarper">
+
+      <TabControl x:Name="TuitionTabControl">
+
+
+        <!--  TAB 1: Mức học phí  -->
+        <TabItem Header="Mức học phí">
+          <Border Classes="TableDataWarper">
+            <DataGrid
+              x:Name="Tuition_Class"
+              AutoGenerateColumns="False"
+              Classes="TableData"
+              ItemsSource="{Binding FeeClassListView}"
+              SelectedItem="{Binding SelectedClass, Mode=TwoWay}">
+
+              <DataGrid.Columns>
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Grade}"
+                  Header="Khối" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Name}"
+                  Header="Lớp" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Year}"
+                  Header="Năm học" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Status}"
+                  Header="Trạng thái" />
+
+
+
+              </DataGrid.Columns>
+
+            </DataGrid>
+          </Border>
+        </TabItem>
+
+
+        <!--  TAB 2: Quản lý học phí  -->
+        <TabItem Header="Quản lý học phí">
+          <Border Classes="TableDataWarper">
+            <DataGrid
+              AutoGenerateColumns="False"
+              Classes="TableData"
+              ItemsSource="{Binding TuitionListView}">
+
+              <DataGrid.Columns>
+
+                <DataGridTextColumn
+                  Width="2*"
+                  Binding="{Binding StudentName}"
+                  Header="Học sinh" />
+                <DataGridTextColumn
+                  Width="1.2*"
+                  Binding="{Binding ClassName}"
+                  Header="Lớp" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding ClassYear}"
+                  Header="Năm học" />
+
+
+                <DataGridTemplateColumn Width="120" Header="Thu tiền">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Button
+                        Classes="TableActionButton Create"
+                        Click="CollectionFee_Click"
+                        Content="Thu"
+                        DataContext="{Binding}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="120" Header="Chi tiết">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Button
+                        Classes="TableActionButton Info"
+                        Click="StudentDetail_Click"
+                        Content="Xem"
+                        DataContext="{Binding}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+
+              </DataGrid.Columns>
+            </DataGrid>
+
+
+          </Border>
+        </TabItem>
+
+      </TabControl>
+    </Border>
+
   </Grid>
 </UserControl>

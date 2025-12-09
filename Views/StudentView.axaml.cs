@@ -8,15 +8,18 @@ using System.Collections.Generic;
 using System.Reactive.Threading.Tasks;
 using System;
 using Avalonia.Interactivity;
+using Services;
 
 namespace Views;
 
 public partial class StudentView : UserControl
 {
+    private StudentViewModel _studentViewModel { get; set; }
     public StudentView()
     {
         InitializeComponent();
-        DataContext = new StudentViewModel();
+        this._studentViewModel = new StudentViewModel();
+        DataContext = this._studentViewModel;
 
         InfoButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Info);
         CreateButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Create);
@@ -24,6 +27,23 @@ public partial class StudentView : UserControl
         LockButton.Click += async (_, _) => await ShowStudentDialog(DialogModeEnum.Lock);
         ImportExcelButton.Click += async (_, _) => await ImportExcelButton_Click();
         ExportExcelButton.Click += async (_, _) => await ExportExcelButton_Click();
+
+        // Phân quyền các nút chức năng
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Xem");
+            CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Thêm");
+            UpdateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Cập nhật");
+            LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Xoá / Khoá");
+            ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Thêm");
+            ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Xem");
+        }
     }
 
     private async Task ShowStudentDialog(DialogModeEnum mode)
@@ -49,7 +69,7 @@ public partial class StudentView : UserControl
                 break;
 
             case DialogModeEnum.Create:
-                dialog = new StudentCreateDialog{studentViewModel = vm};
+                dialog = new StudentCreateDialog { studentViewModel = vm };
                 break;
 
             case DialogModeEnum.Update:
@@ -103,7 +123,7 @@ public partial class StudentView : UserControl
         if (vm != null)
             await vm.ImportExcel(filePath);
     }
-    
+
     private async Task ExportExcelButton_Click()
     {
         var dialog = new SaveFileDialog

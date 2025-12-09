@@ -41,7 +41,7 @@
                             <Image
                                 Width="50"
                                 Height="50"
-                                Source="{Binding CurrentUser.AvatarImage}"
+                                Source="{Binding CurrentUserLogin.AvatarImage}"
                                 Stretch="UniformToFill" />
                         </Border>
                         <!--  Name + Role  -->
@@ -55,12 +55,12 @@
                                 FontSize="20"
                                 FontWeight="Bold"
                                 Foreground="#FFF"
-                                Text="{Binding CurrentUser.Fullname}" />
+                                Text="{Binding CurrentUserLogin.Fullname}" />
                             <TextBlock
                                 Margin="0,2,0,0"
                                 FontSize="16"
                                 Foreground="#dedede"
-                                Text="{Binding CurrentUser.RoleName}" />
+                                Text="{Binding CurrentUserLogin.RoleName}" />
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -75,52 +75,9 @@
                     <StackPanel Spacing="10">
                         <Button
                             Classes="ButtonInMenu"
-                            Classes.active="{Binding StatisticalButtonActive}"
-                            Command="{Binding GoToStatisticalViewCommand}">
-                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
-                                <StackPanel>
-                                    <Image Source="{Binding StatisticalButtonImage}" />
-                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding StatisticalButtonLabel}" />
-                                </StackPanel>
-                            </Border>
-                        </Button>
-                        <Button
-                            Classes="ButtonInMenu"
-                            Classes.active="{Binding AssignTeacherButtonActive}"
-                            Command="{Binding GoToAssignTeacherViewCommand}">
-                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
-                                <StackPanel>
-                                    <Image Source="{Binding AssignTeacherButtonImage}" />
-                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding AssignTeacherButtonLabel}" />
-                                </StackPanel>
-                            </Border>
-                        </Button>
-                        <Button
-                            Classes="ButtonInMenu"
-                            Classes.active="{Binding ExamButtonActive}"
-                            Command="{Binding GoToExamViewCommand}">
-                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
-                                <StackPanel>
-                                    <Image Source="{Binding ExamButtonImage}" />
-                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding ExamButtonLabel}" />
-                                </StackPanel>
-                            </Border>
-                        </Button>
-                        <Button
-                            Classes="ButtonInMenu"
-                            Classes.active="{Binding TuitionButtonActive}"
-                            Command="{Binding GoToTuitionViewCommand}">
-                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
-                                <StackPanel>
-                                    <Image Source="{Binding TuitionButtonImage}" />
-                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding TuitionButtonLabel}" />
-                                </StackPanel>
-                            </Border>
-                        </Button>
-                        <Button
-                            Classes="ButtonInMenu"
                             Classes.active="{Binding HomeClassButtonActive}"
-                            Command="{Binding GoToHomeClassViewCommand}">
+                            Command="{Binding GoToHomeClassViewCommand}"
+                            IsVisible="{Binding HomeClassButtonVisible}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
                                     <Image Source="{Binding HomeClassButtonImage}" />
@@ -131,7 +88,8 @@
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding AttendanceButtonActive}"
-                            Command="{Binding GoToAttendanceViewCommand}">
+                            Command="{Binding GoToAttendanceViewCommand}"
+                            IsVisible="{Binding AttendanceButtonVisible}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
                                     <Image Source="{Binding AttendanceButtonImage}" />
@@ -142,7 +100,8 @@
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding SubjectClassButtonActive}"
-                            Command="{Binding GoToSubjectClassViewCommand}">
+                            Command="{Binding GoToSubjectClassViewCommand}"
+                            IsVisible="{Binding SubjectClassButtonVisible}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
                                     <Image Source="{Binding SubjectClassButtonImage}" />
@@ -152,8 +111,69 @@
                         </Button>
                         <Button
                             Classes="ButtonInMenu"
+                            Classes.active="{Binding StatisticalButtonActive}"
+                            Command="{Binding GoToStatisticalViewCommand}"
+                            IsVisible="{Binding StatisticalButtonVisible}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding StatisticalButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding StatisticalButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding AssignTeacherButtonActive}"
+                            Command="{Binding GoToAssignTeacherViewCommand}"
+                            IsVisible="{Binding AssignTeacherButtonVisible}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding AssignTeacherButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding AssignTeacherButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding ExamButtonActive}"
+                            Command="{Binding GoToExamViewCommand}"
+                            IsVisible="{Binding ExamButtonVisible}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding ExamButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding ExamButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding TuitionButtonActive}"
+                            Command="{Binding GoToTuitionViewCommand}"
+                            IsVisible="{Binding TuitionButtonVisible}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding TuitionButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding TuitionButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
+                            Classes.active="{Binding ClassButtonActive}"
+                            Command="{Binding GoToClassViewCommand}"
+                            IsVisible="{Binding ClassButtonVisible}">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
+                                <StackPanel>
+                                    <Image Source="{Binding ClassButtonImage}" />
+                                    <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding ClassButtonLabel}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                        <Button
+                            Classes="ButtonInMenu"
                             Classes.active="{Binding TeacherButtonActive}"
-                            Command="{Binding GoToTeacherViewCommand}">
+                            Command="{Binding GoToTeacherViewCommand}"
+                            IsVisible="{Binding TeacherButtonVisible}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
                                     <Image Source="{Binding TeacherButtonImage}" />
@@ -164,7 +184,8 @@
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding StudentButtonActive}"
-                            Command="{Binding GoToStudentViewCommand}">
+                            Command="{Binding GoToStudentViewCommand}"
+                            IsVisible="{Binding StudentButtonVisible}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
                                     <Image Source="{Binding StudentButtonImage}" />
@@ -175,7 +196,8 @@
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding RoleButtonActive}"
-                            Command="{Binding GoToRoleViewCommand}">
+                            Command="{Binding GoToRoleViewCommand}"
+                            IsVisible="{Binding RoleButtonVisible}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
                                     <Image Source="{Binding RoleButtonImage}" />
@@ -186,7 +208,8 @@
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding UserButtonActive}"
-                            Command="{Binding GoToUserViewCommand}">
+                            Command="{Binding GoToUserViewCommand}"
+                            IsVisible="{Binding UserButtonVisible}">
                             <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Button}}">
                                 <StackPanel>
                                     <Image Source="{Binding UserButtonImage}" />

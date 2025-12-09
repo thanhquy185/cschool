@@ -59,9 +59,12 @@ public partial class HomeClassViewModel : ViewModelBase
     };
 
     #region Constructor và Load dữ liệu ban đầu
-    public HomeClassViewModel(HomeClassService service)
+    public HomeClassViewModel()
     {
-        _service = service;
+        var currentUserLogin = SessionService.currentUserLogin;
+        Console.WriteLine("Trang lớp chủ nhiệm: " + currentUserLogin?.Username);
+
+        this._service = AppService.HomeClassService;
         
         // Load danh sách học kỳ của giáo viên ID = 3
         LoadTermsCommand.Execute(null);

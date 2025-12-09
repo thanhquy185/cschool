@@ -110,6 +110,37 @@ public class UserService
         return list;
     }
 
+    public List<UserModel> GetUsersByRoleId(int roleId)
+    {
+        // var dt = _db.ExecuteQuery("SELECT * FROM users");
+        var dt = _db.ExecuteQuery(
+            "SELECT u.*, r.name AS RoleName " +
+            "FROM users u " +
+            "JOIN roles r ON u.role_id = r.id " +
+            $"WHERE u.role_id = {roleId}"
+        );
+        var list = new List<UserModel>();
+
+        foreach (DataRow row in dt.Rows)
+        {
+            list.Add(new UserModel(
+                (int)row["id"],
+                row["avatar"].ToString()!,
+                row["username"].ToString()!,
+                row["password"].ToString()!,
+                (int)row["role_id"],
+                row["fullname"].ToString()!,
+                row["phone"].ToString()!,
+                row["email"].ToString()!,
+                row["address"].ToString()!,
+                row["status"].ToString()!,
+                row["RoleName"].ToString()!
+            ));
+        }
+
+        return list;
+    }
+
     public int CreateUser(UserModel user)
     {
         try
@@ -146,6 +177,12 @@ public class UserService
                      $"status = '{user.Status}' " +
                      $"WHERE id = {user.Id}";
 
+        return _db.ExecuteNonQuery(sql);
+    }
+
+    public int ChangePasswordUser(UserModel user)
+    {
+        string sql = $"UPDATE users SET password = '{user.Password}' WHERE id = {user.Id}";
         return _db.ExecuteNonQuery(sql);
     }
 }

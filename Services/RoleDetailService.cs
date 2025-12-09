@@ -28,25 +28,31 @@ public class RoleDetailService
         return list;
     }
 
-    public int AssignFunctionToRole(RoleDetailModel rd)
+    public int Create(RoleDetailModel rd)
     {
         string sql = $"INSERT INTO role_details (role_id, function_id, action) " +
                      $"VALUES ({rd.RoleId}, {rd.FunctionId}, '{rd.Action}')";
         return _db.ExecuteNonQuery(sql);
     }
 
-    public int UpdateRoleFunction(RoleDetailModel rd)
+    public int DeleteAllByRoleId(int roleId)
     {
-        string sql = $"UPDATE role_details SET action = '{rd.Action}' " +
-                     $"WHERE role_id = {rd.RoleId} AND function_id = {rd.FunctionId}";
+        string sql = $"DELETE FROM role_details WHERE role_id = {roleId}";
         return _db.ExecuteNonQuery(sql);
     }
 
-    public int RemoveFunctionFromRole(int roleId, int functionId)
-    {
-        string sql = $"DELETE FROM role_details WHERE role_id = {roleId} AND function_id = {functionId}";
-        return _db.ExecuteNonQuery(sql);
-    }
+    // public int UpdateRoleFunction(RoleDetailModel rd)
+    // {
+    //     string sql = $"UPDATE role_details SET action = '{rd.Action}' " +
+    //                  $"WHERE role_id = {rd.RoleId} AND function_id = {rd.FunctionId}";
+    //     return _db.ExecuteNonQuery(sql);
+    // }
+
+    // public int RemoveFunctionFromRole(int roleId, int functionId)
+    // {
+    //     string sql = $"DELETE FROM role_details WHERE role_id = {roleId} AND function_id = {functionId}";
+    //     return _db.ExecuteNonQuery(sql);
+    // }
 
     // Kiểm tra quyền
     public bool HasPermission(int roleId, int functionId, string action)

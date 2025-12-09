@@ -13,11 +13,13 @@ namespace Views;
 
 public partial class SubjectClassView : UserControl
 {
-    // AssignTeacherViewModel ViewModel => DataContext as AssignTeacherViewModel;
+    private SubjectClassViewModel _subjectClassViewModel { get; set; }
+
     public SubjectClassView()
     {
         InitializeComponent();
-        DataContext = new SubjectClassViewModel();
+        this._subjectClassViewModel = new SubjectClassViewModel();
+        DataContext = this._subjectClassViewModel;
 
         // Use FindControl to locate named controls at runtime in case generated fields are not available
         var infoButton = this.FindControl<Button>("InfoButton");
@@ -27,7 +29,7 @@ public partial class SubjectClassView : UserControl
         var updateScoreColumnButton = this.FindControl<Button>("UpdateButton");
 
         infoButton.Click += async (_, _) => await ShowSubjectClassDialog(DialogModeEnum.Info);
-        createButton.Click += async (_, _) => await ShowSubjectClassDialog(DialogModeEnum.Create); 
+        createButton.Click += async (_, _) => await ShowSubjectClassDialog(DialogModeEnum.Create);
         updateScoreColumnButton.Click += async (_, _) => await ShowSubjectClassDialog(DialogModeEnum.Update);
         importExcelButton.Click += (_, _) =>
         {
@@ -75,7 +77,7 @@ public partial class SubjectClassView : UserControl
                 {
                     vm.LoadStudentScores(selectedSubjectClass);
                     dialog = new SubjectClassCreateDialog(vm);
-                }   
+                }
                 break;
             case DialogModeEnum.Update:
                 if (vm != null && selectedSubjectClass != null)

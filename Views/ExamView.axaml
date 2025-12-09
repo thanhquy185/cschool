@@ -17,46 +17,42 @@
       <!--  Title And SubTitle  -->
       <StackPanel Classes="MainLayoutHeaderInfo">
         <!--  Titlte  -->
-        <TextBlock Classes="Title" Text="Thông tin lịch thi" />
+        <TextBlock Classes="Title" Text="{Binding TitlePage}" />
         <!--  SubTitle  -->
-        <!-- <TextBlock Classes="SubTitle" Text="Thông tin cơ bản của lịch thi" /> -->
+        <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
       </StackPanel>
 
-      <!-- Butttons -->
+      <!--  Butttons  -->
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource InfoIcon}"/>
-              <TextBlock Text="Chi tiết" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource InfoIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
             </StackPanel>
           </Border>
         </Button>
-
         <Button x:Name="CreateButton" Classes="CrudButton Create">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource CreateIcon}"/>
-              <TextBlock Text="Thêm" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource CreateIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
             </StackPanel>
           </Border>
         </Button>
-
         <Button x:Name="UpdateButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource UpdateIcon}"/>
-              <TextBlock Text="Cập nhật" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource UpdateIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
             </StackPanel>
           </Border>
         </Button>
-
         <Button x:Name="LockButton" Classes="CrudButton Lock">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource BinIcon}"/>
-              <TextBlock Text="Xóa" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource BinIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
             </StackPanel>
           </Border>
         </Button>
@@ -68,20 +64,23 @@
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập tên môn học" x:Name="SearchBox" TextChanged="OnSearchTextChanged"/>
+            <TextBox
+              x:Name="SearchBox"
+              TextChanged="OnSearchTextChanged"
+              Watermark="Nhập tên môn học" />
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
           <ComboBox
             x:Name="StatusFilterBox"
             Classes="FilterDataFindSelect"
+            ItemsSource="{Binding StudyTerm}"
             MaxDropDownHeight="300"
-            ItemsSource="{Binding StudyTerm}" 
             PlaceholderText="Chọn học kỳ"
             SelectionChanged="OnStatusFilterChanged">
             <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding TermName}"/>
-                </DataTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding TermName}" />
+              </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
         </StackPanel>
@@ -97,7 +96,10 @@
     </Border>
     <!--  Table  -->
     <Border Grid.Row="2" Classes="TableDataWarper">
-      <DataGrid x:Name="ExamDataGrid" Classes="TableData" ItemsSource="{Binding ExamsTemp}">
+      <DataGrid
+        x:Name="ExamDataGrid"
+        Classes="TableData"
+        ItemsSource="{Binding ExamsTemp}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="*"

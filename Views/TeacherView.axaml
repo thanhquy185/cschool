@@ -20,17 +20,17 @@
       <!--  Title And SubTitle  -->
       <StackPanel Classes="MainLayoutHeaderInfo">
         <!--  Titlte  -->
-        <TextBlock Classes="Title" Text="Thông tin giáo viên" />
+        <TextBlock Classes="Title" Text="{Binding TitlePage}" />
         <!--  SubTitle  -->
-        <TextBlock Classes="SubTitle" Text="Thông tin cơ bản của giáo viên" />
+        <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
       </StackPanel>
       <!--  Buttons  -->
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
         <Button x:Name="ImportExcelButton" Classes="CrudButton Create">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource ImportExcelIcon}"/>
-              <TextBlock Text="Nhập Excel" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource ImportExcelIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Nhập Excel" />
             </StackPanel>
           </Border>
         </Button>
@@ -38,13 +38,13 @@
         <Button x:Name="ExportExcelButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource ExportExcelIcon}"/>
-              <TextBlock Text="Xuất Excel" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource ExportExcelIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất Excel" />
             </StackPanel>
           </Border>
         </Button>
 
-        
+
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
@@ -69,15 +69,13 @@
             </StackPanel>
           </Border>
         </Button>
-        
-        <Button x:Name="LockButton"
-                Classes="CrudButton Lock">
+
+        <Button x:Name="LockButton" Classes="CrudButton Lock">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-              <StackPanel>
-                  <Image Source="{DynamicResource LockIcon}" />
-                  <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                            Text="Xóa" />
-              </StackPanel>
+            <StackPanel>
+              <Image Source="{DynamicResource LockIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
+            </StackPanel>
           </Border>
         </Button>
       </StackPanel>
@@ -87,21 +85,21 @@
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập ID / Họ tên giáo viên" x:Name="SearchBox" Text="{Binding SearchText, Mode=TwoWay}"/>
+            <TextBox
+              x:Name="SearchBox"
+              Text="{Binding SearchText, Mode=TwoWay}"
+              Watermark="Nhập ID / Họ tên giáo viên" />
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
           <ComboBox
             x:Name="DepartmentFilterBox"
             Classes="FilterDataFindSelect"
-            MaxDropDownHeight="200"
-            SelectedIndex="0"
-            PlaceholderText="---- Chọn Bộ môn ----"
-            ItemsSource="{Binding DepartmentOptions}"
             DisplayMemberBinding="{Binding Name}"
-            SelectedItem="{Binding SelectedDepartmentFilter}"
-            >
-
-          </ComboBox>
+            ItemsSource="{Binding DepartmentOptions}"
+            MaxDropDownHeight="200"
+            PlaceholderText="---- Chọn Bộ môn ----"
+            SelectedIndex="0"
+            SelectedItem="{Binding SelectedDepartmentFilter}" />
         </StackPanel>
         <Button
           HorizontalAlignment="Right"
@@ -114,11 +112,12 @@
     </Border>
     <!--  Table  -->
     <Border Grid.Row="2" Classes="TableDataWarper">
-      <DataGrid x:Name="TeachersDataGrid" 
-                Classes="TableData" 
-                ItemsSource="{Binding Teachers}" 
-                AutoGenerateColumns="False"
-                SelectedItem="{Binding SelectedTeacher, Mode=TwoWay}">
+      <DataGrid
+        x:Name="TeachersDataGrid"
+        AutoGenerateColumns="False"
+        Classes="TableData"
+        ItemsSource="{Binding Teachers}"
+        SelectedItem="{Binding SelectedTeacher, Mode=TwoWay}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="*"
@@ -139,7 +138,7 @@
           <!-- <DataGridTextColumn
             Width="*"
             Binding="{Binding Address}"
-            Header="Address" /> -->
+            Header="Address" />-->
           <DataGridTextColumn
             Width="*"
             Binding="{Binding Phone}"

@@ -14,6 +14,7 @@ using Utils;
 using System.Reactive.Threading.Tasks;
 using Avalonia;
 using Avalonia.Platform.Storage;
+using Services;
 
 
 
@@ -21,6 +22,10 @@ namespace ViewModels;
 
 public partial class TeacherViewModel : ViewModelBase
 {
+    // Tiêu đề trang
+    public string TitlePage { get; } = "Quản lý giáo viên";
+    // Mô tả trang
+    public string DescriptionPage { get; } = "Quản lý thông tin giáo viên";
     public ObservableCollection<TeacherModel> Teachers { get; }
     public ObservableCollection<DepartmentModel> Departments { get; }
     public ObservableCollection<UserModel> Users { get; }
@@ -31,7 +36,7 @@ public partial class TeacherViewModel : ViewModelBase
     public ReactiveCommand<int, bool> LockTeacherCommand { get; }
     public ReactiveCommand<Unit, Unit> ImportFromExcelCommand { get; }
     public ReactiveCommand<Unit, Unit> ExportToExcelCommand { get; }
-    
+
 
     public List<KeyValuePair<int, string>> StatusOptions { get; } = new()
     {
@@ -54,7 +59,7 @@ public partial class TeacherViewModel : ViewModelBase
             return list;
         }
     }
-    
+
     private TeacherModel? _teacherDetails;
     public TeacherModel? TeacherDetails
     {
@@ -126,7 +131,8 @@ public partial class TeacherViewModel : ViewModelBase
     public TeacherModel? SelectedTeacher
     {
         get => _selectedTeacher;
-        set { 
+        set
+        {
             SetProperty(ref _selectedTeacher, value);
             Console.WriteLine($"SelectedTeacher changed: {value?.Id}");
         }
@@ -157,13 +163,13 @@ public partial class TeacherViewModel : ViewModelBase
         GetTeachersCommand = ReactiveCommand.CreateFromTask(async () =>
         {
             var teachers = AppService.TeacherService.GetTeachers();
-            
-                Teachers.Clear();
-                foreach (var teacher in teachers)
-                {
-                    Teachers.Add(teacher);
-                }
-            
+
+            Teachers.Clear();
+            foreach (var teacher in teachers)
+            {
+                Teachers.Add(teacher);
+            }
+
             return Teachers;
         });
 
@@ -181,11 +187,12 @@ public partial class TeacherViewModel : ViewModelBase
             {
                 string newAvatarFile = await UploadService.SaveImageAsync(teacher.AvatarFile, "teacher", AppService.TeacherService.GetIDLastTeacher() + 1);
                 teacher.Avatar = newAvatarFile;
-                var user = new UserModel{
+                var user = new UserModel
+                {
                     Username = teacher.Username,
                     Password = teacher.Password,
                     Fullname = teacher.Name,
-                    RoleId = 2, // role_id = 2 cho giáo viên
+                    RoleId = 1, // role_id = 1 cho giáo viên
                     Status = "Hoạt động",
                     Avatar = newAvatarFile,
                     Phone = teacher.Phone,
@@ -221,7 +228,7 @@ public partial class TeacherViewModel : ViewModelBase
                     string updatedAvatarFile = await UploadService.SaveImageAsync(teacher.AvatarFile, "teacher", teacher.Id);
                     teacher.Avatar = updatedAvatarFile;
                 }
-                
+
                 var result = AppService.TeacherService?.UpdateTeacher(teacher);
                 return result == true;
             }
@@ -235,7 +242,7 @@ public partial class TeacherViewModel : ViewModelBase
         LockTeacherCommand = ReactiveCommand.CreateFromTask<int, bool>(async (teacherId) =>
         {
             try
-            {                
+            {
                 return await Task.Run(() =>
                 {
                     var result = AppService.TeacherService.LockTeacher(teacherId);
@@ -259,7 +266,7 @@ public partial class TeacherViewModel : ViewModelBase
         {
             await ExportToExcel();
             return Unit.Default;
-        }, outputScheduler: RxApp.MainThreadScheduler);   
+        }, outputScheduler: RxApp.MainThreadScheduler);
     }
 
     public void LoadData()
@@ -308,7 +315,7 @@ public partial class TeacherViewModel : ViewModelBase
             Console.WriteLine($"LoadUsers Error: {ex.Message}");
         }
     }
-    
+
     private async Task ImportFromExcel()
     {
         // File picker using Avalonia StorageProvider

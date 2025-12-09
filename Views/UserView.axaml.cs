@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -18,9 +20,125 @@ public partial class UserView : UserControl
     public UserView()
     {
         InitializeComponent();
-        _userViewModel = new UserViewModel();
-        DataContext = _userViewModel;
+        this._userViewModel = new UserViewModel();
+        DataContext = this._userViewModel;
+
+        // Phân quyền các nút chức năng
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Thêm");
+            ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
+            InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
+            CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Thêm");
+            UpdateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Cập nhật");
+            DeleteButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xoá / Khoá");
+            ChangePasswordButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Cập nhật");
+        }
     }
+
+    private void OnFilterFindChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (DataContext is UserViewModel vm)
+        {
+            var textBox = sender as TextBox;
+            vm.FilterFind = textBox?.Text ?? "";
+            vm.ApplyFilter();
+        }
+    }
+    private void OnFilterStatusChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is UserViewModel vm)
+        {
+            var combo = sender as ComboBox;
+            var selectedItem = combo?.SelectedItem as ComboBoxItem;
+            var selectedText = selectedItem?.Content?.ToString() ?? "";
+
+            vm.FilterStatus = selectedText == "Chọn Trạng thái" ? "" : selectedText;
+            vm.ApplyFilter();
+        }
+    }
+    private void OnFilterResetClicked(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is UserViewModel vm)
+        {
+            FilterFindTextBox.Text = "";
+            FilterStatusComboBox.SelectedIndex = 0;
+
+            vm.FilterFind = "";
+            vm.FilterStatus = "";
+            vm.ApplyFilter();
+
+        }
+    }
+
+    private void ImportExcelButton_Click(object sender, RoutedEventArgs e) => _ = HandleImportExcel();
+    private async Task HandleImportExcel()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Chọn file Excel để nhập",
+            AllowMultiple = false,
+            Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            }
+        };
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        var result = await dialog.ShowAsync(owner);
+        if (result == null || result.Length == 0)
+            return;
+
+        var filePath = result[0];
+        if (!File.Exists(filePath))
+            return;
+
+        // Gọi vào ViewModel
+        var vm = DataContext as UserViewModel;
+        if (vm != null)
+            await vm.ImportExcel(filePath);
+    }
+    private void ExportExcelButton_Click(object sender, RoutedEventArgs e) => _ = HandleExportExcel();
+    private async Task HandleExportExcel()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Chọn nơi lưu file Excel",
+            Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            },
+            InitialFileName = "DanhSachNguoiDung.xlsx"
+        };
+
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        var filePath = await dialog.ShowAsync(owner);
+
+        if (string.IsNullOrWhiteSpace(filePath))
+            return;
+
+        var vm = DataContext as UserViewModel;
+        if (vm != null)
+        {
+            try
+            {
+                await vm.ExportExcel(filePath);
+                await MessageBoxUtil.ShowSuccess("Xuất file Excel thành công!\n", owner: owner);
+            }
+            catch (Exception ex)
+            {
+                await MessageBoxUtil.ShowError(ex.Message, owner: owner);
+            }
+        }
+    }
+
 
     private void InfoButton_Click(object sender, RoutedEventArgs e) => _ = ShowUserDialog(DialogModeEnum.Info);
     private void CreateButton_Click(object sender, RoutedEventArgs e) => _ = ShowUserDialog(DialogModeEnum.Create);
@@ -487,8 +605,8 @@ public partial class UserView : UserControl
                         }
                         else
                         {
-                            if (isCreate) await MessageBoxUtil.ShowSuccess("Thêm người dùng thất bại!", owner: dialog);
-                            if (isUpdate) await MessageBoxUtil.ShowSuccess("Cập nhật người dùng thất bại!", owner: dialog);
+                            if (isCreate) await MessageBoxUtil.ShowError("Thêm người dùng thất bại!", owner: dialog);
+                            if (isUpdate) await MessageBoxUtil.ShowError("Cập nhật người dùng thất bại!", owner: dialog);
                         }
                     }
                 };
@@ -551,7 +669,7 @@ public partial class UserView : UserControl
 
                             UsersDataGrid.ItemsSource = await _userViewModel.GetUsersCommand.Execute().ToTask();
                         }
-                        else await MessageBoxUtil.ShowSuccess($"{(selectedUser.Status == "Hoạt động" ? "Khoá" : "Mở khoá")} người dùng thất bại!", owner: dialog);
+                        else await MessageBoxUtil.ShowError($"{(selectedUser.Status == "Hoạt động" ? "Khoá" : "Mở khoá")} người dùng thất bại!", owner: dialog);
                     }
                 };
 
@@ -562,7 +680,121 @@ public partial class UserView : UserControl
         }
         else if (isChangePassword)
         {
+            // ========== Tạo 2 dòng ==========
+            formGroupWarper.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            formGroupWarper.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
+            // ========== Dòng thứ 1 ==========
+            var row0Grid = new Grid { Classes = { "DialogFormGroupRow" } };
+            row0Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            // ===== Mật khẩu mới =====
+            // - Tạo các control
+            var newPasswordStack = new StackPanel { Classes = { "DialogFormGroup" } };
+            var newPasswordLabel = new TextBlock
+            {
+                Classes = { "DialogFormGroupLabel" },
+                Inlines =
+                {
+                    new Run { Text = "* ", Foreground = Brushes.Red },
+                    new Run { Text = "Mật khẩu mới" }
+                }
+            };
+            var newPasswordTextBox = new TextBox
+            {
+                Classes = { "DialogFormGroupInput" },
+                Watermark = "Nhập Mật khẩu mới",
+            };
+            // - Thêm vào stack
+            newPasswordStack.Children.Add(newPasswordLabel);
+            newPasswordStack.Children.Add(newPasswordTextBox);
+            // - Thêm vào cột
+            Grid.SetColumn(newPasswordStack, 0);
+            row0Grid.Children.Add(newPasswordStack);
+            // --- Thêm tất cả vào dòng thứ 1 ---
+            Grid.SetRow(row0Grid, 0);
+            formGroupWarper.Children.Add(row0Grid);
+
+            // ========== Dòng thứ 2 ==========
+            var row1Grid = new Grid { Classes = { "DialogFormGroupRow" } };
+            row1Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            // ===== Xác nhận mật khẩu =====
+            // - Tạo các control
+            var authNewPasswordStack = new StackPanel { Classes = { "DialogFormGroup" } };
+            var authNewPasswordLabel = new TextBlock
+            {
+                Classes = { "DialogFormGroupLabel" },
+                Inlines =
+                {
+                    new Run { Text = "* ", Foreground = Brushes.Red },
+                    new Run { Text = "Xác nhận mật khẩu" }
+                }
+            };
+            var authNewPasswordTextBox = new TextBox
+            {
+                Classes = { "DialogFormGroupInput" },
+                Watermark = "Nhập Xác nhận mật khẩu",
+            };
+            // - Thêm vào stack
+            authNewPasswordStack.Children.Add(authNewPasswordLabel);
+            authNewPasswordStack.Children.Add(authNewPasswordTextBox);
+            // - Thêm vào cột
+            Grid.SetColumn(authNewPasswordStack, 0);
+            row1Grid.Children.Add(authNewPasswordStack);
+            // --- Thêm tất cả vào dòng thứ 2 ---
+            Grid.SetRow(row1Grid, 1);
+            formGroupWarper.Children.Add(row1Grid);
+
+            // ========== Thêm tất cả dòng ==========
+            form.Children.Add(formGroupWarper);
+
+            // ========== Thêm nút submit ==========
+            var submitButton = new Button { Content = "Xác nhận", Classes = { "DialogSubmitButton" } };
+            submitButton.Click += async (_, __) =>
+            {
+                if (await MessageBoxUtil.ShowConfirm("Bạn có chắc chắn xác nhận? Hành động này không thể hoàn tác!"))
+                {
+                    // Kiểm tra dữ liệu
+                    // - Kiểm tra mật khẩu mới
+                    if (Rules.ruleRequiredForTextBox(newPasswordTextBox.Text ?? ""))
+                    {
+                        await MessageBoxUtil.ShowError("Mật khẩu mới không được để trống!", owner: dialog);
+                        return;
+                    }
+                    // - Kiểm tra xác nhận mật khẩu
+                    if (Rules.ruleRequiredForTextBox(authNewPasswordTextBox.Text ?? ""))
+                    {
+                        await MessageBoxUtil.ShowError("Xác nhận mật khẩu không được để trống!", owner: dialog);
+                        return;
+                    }
+                    // - Kiểm tra mật khẩu mới và xác nhận mật khẩu có trùng khớp ?
+                    if (!(newPasswordTextBox.Text ?? "").Equals(authNewPasswordTextBox.Text ?? ""))
+                    {
+                        await MessageBoxUtil.ShowError("Mật khẩu với và Xác nhận mật khẩu không trùng khớp!", owner: dialog);
+                        return;
+                    }
+
+                    // Nếu dữ liệu hợp lệ
+                    // - Khởi tạo đối tượng
+                    var user = new UserModel();
+                    user.Id = selectedUser.Id;
+                    user.Password = newPasswordTextBox.Text;
+                    // - Xử lý
+                    bool isSuccess = await _userViewModel.ChangePasswordUserCommand.Execute(user).ToTask();
+                    // Thông báo xử lý, nếu thành công thì ẩn dialog
+                    if (isSuccess)
+                    {
+                        await MessageBoxUtil.ShowSuccess("Thay đổi mật khẩu người dùng thành công!", owner: dialog);
+                        dialog.Close();
+
+                        UsersDataGrid.ItemsSource = await _userViewModel.GetUsersCommand.Execute().ToTask();
+                    }
+                    else
+                    {
+                        await MessageBoxUtil.ShowError("Thay đổi mật khẩu người dùng thất bại!", owner: dialog);
+                    }
+                }
+            };
+            form.Children.Add(submitButton);
         }
 
         // Tạo Form Warper 

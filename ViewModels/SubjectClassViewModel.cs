@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using Utils;
 using Avalonia;
+using Services;
 
 namespace ViewModels;
 public partial class SubjectClassViewModel : ViewModelBase
