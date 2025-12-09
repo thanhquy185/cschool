@@ -53,13 +53,8 @@
         <Button x:Name="LockButton" Classes="CrudButton Lock">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-<<<<<<< HEAD
               <Image Source="{DynamicResource BinIcon}" />
               <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
-=======
-              <Image Source="{DynamicResource BinIcon}"/>
-              <TextBlock Text="Xoá" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
->>>>>>> 7c77206544d2c9d45994414f9a458ab7783da59f
             </StackPanel>
           </Border>
         </Button>

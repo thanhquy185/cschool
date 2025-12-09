@@ -21,7 +21,6 @@
             <!--  Buttons giống UserView  -->
 
             <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-<<<<<<< HEAD
                 <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
                     <Button
                         x:Name="InfoButton"
@@ -69,47 +68,6 @@
                         </Border>
                     </Button>
                 </StackPanel>
-=======
-                <Button Classes="CrudButton Info"
-                        Click="OnDetailButtonClick" >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                        <Image Source="{DynamicResource InfoIcon}" />
-                        <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
-                        </StackPanel>
-                    </Border>
-                </Button>
-                <Button Classes="CrudButton Create"
-                        Click="OnAddButtonClick" >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                            <Image Source="{DynamicResource CreateIcon}" />
-                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
-                        </StackPanel>
-                    </Border>
-                </Button>
-                <Button Classes="CrudButton Update"
-                        Click="OnEditButtonClick"
-                CommandParameter="{Binding SelectedAssignTeacher}"
-                >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                            <Image Source="{DynamicResource UpdateIcon}" />
-                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
-                        </StackPanel>
-                    </Border>
-                </Button>
-                <Button Classes="CrudButton Lock" Command="{Binding Delete}"
-                CommandParameter="{Binding SelectedAssignTeacher}"
-               >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                            <Image Source="{DynamicResource BinIcon}" />
-                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
-                        </StackPanel>
-                    </Border>
-                </Button>
->>>>>>> 7c77206544d2c9d45994414f9a458ab7783da59f
             </StackPanel>
         </Grid>
 

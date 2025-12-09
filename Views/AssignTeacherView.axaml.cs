@@ -94,13 +94,9 @@ public partial class AssignTeacherView : UserControl
                 await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để xem chi tiết", null);
                 return;
             }
-<<<<<<< HEAD
 
         }
 
-=======
-        }
->>>>>>> 7c77206544d2c9d45994414f9a458ab7783da59f
     }
 
     private async void Vm_RequestOpenDetailDialog(object? sender, AssignTeacher a)
