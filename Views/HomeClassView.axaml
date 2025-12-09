@@ -2,24 +2,23 @@
     x:Class="Views.HomeClassView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:ViewModels"
-    xmlns:model="using:Models"
-    x:DataType="vm:HomeClassViewModel"
     xmlns:conv="clr-namespace:Utils;assembly=Utils"
-    x:Name="Root">
+    xmlns:model="using:Models"
+    xmlns:vm="using:ViewModels"
+    x:Name="Root"
+    x:DataType="vm:HomeClassViewModel">
 
     <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,Auto,*">
-        
-        <!-- Header -->
+
+        <!--  Header  -->
         <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
             <StackPanel Classes="MainLayoutHeaderInfo">
                 <TextBlock Classes="Title" Text="Quản lý lớp chủ nhiệm" />
-                <TextBlock Classes="SubTitle" Text="Quản lý lớp chủ nhiệm" />
+                <TextBlock Classes="SubTitle" Text="Quản lý thông tin lớp chủ nhiệm" />
             </StackPanel>
-            
-            <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons" >
-            <Button Classes="CrudButton Create"
-                    Command="{Binding AddConductCommand}"     >
+
+            <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+                <Button Classes="CrudButton Create" Command="{Binding AddConductCommand}">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
                         <StackPanel>
                             <Image Source="{DynamicResource CreateIcon}" />
@@ -27,20 +26,18 @@
                         </StackPanel>
                     </Border>
                 </Button>
-                <Button Classes="CrudButton Info"
-                Command="{Binding ShowStudentDetailCommand}">
+                <Button Classes="CrudButton Info" Command="{Binding ShowStudentDetailCommand}">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel >
+                        <StackPanel>
                             <Image Source="{DynamicResource InfoIcon}" />
                             <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
                         </StackPanel>
                     </Border>
                 </Button>
-                
-                <Button Classes="CrudButton Create"
-                Command="{Binding ExportToExcelCommand}">
+
+                <Button Classes="CrudButton Create" Command="{Binding ExportToExcelCommand}">
                     <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel >
+                        <StackPanel>
                             <Image Source="{DynamicResource ExcelIcon}" />
                             <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất excel" />
                         </StackPanel>
@@ -49,91 +46,144 @@
             </StackPanel>
         </Grid>
 
-          <!-- Filter giống UserView -->
-     <Border Grid.Row="1" Classes="FilterDataWarper">
-    <Grid Classes="FilterData" RowDefinitions="*,Auto">
-        <StackPanel Classes="FilterDataInputs">
-            <!-- Ô tìm kiếm -->
-            <Grid Classes="FilterDataFindInput">
-                <!-- TextBox có chừa chỗ trống bên trái -->
-                <TextBox Watermark="Nhập tên học sinh"
-                         Text="{Binding SearchName, Mode=TwoWay}"
-                         Padding="35,0,10,0"
-                         Height="40"
-                         VerticalAlignment="Center"/>
-                <!-- Icon tìm kiếm nằm trong TextBox bên trái -->    
-                    <Image Source="{DynamicResource SearchIcon}" Width="18" Height="18"/>
+        <!--  Filter giống UserView  -->
+        <Border Grid.Row="1" Classes="FilterDataWarper">
+            <Grid Classes="FilterData" RowDefinitions="*,Auto">
+                <StackPanel Classes="FilterDataInputs">
+                    <!--  Ô tìm kiếm  -->
+                    <Grid Classes="FilterDataFindInput">
+                        <!--  TextBox có chừa chỗ trống bên trái  -->
+                        <TextBox
+                            Height="40"
+                            Padding="35,0,10,0"
+                            VerticalAlignment="Center"
+                            Text="{Binding SearchName, Mode=TwoWay}"
+                            Watermark="Nhập tên học sinh" />
+                        <!--  Icon tìm kiếm nằm trong TextBox bên trái  -->
+                        <Image
+                            Width="18"
+                            Height="18"
+                            Source="{DynamicResource SearchIcon}" />
+                    </Grid>
+                    <ComboBox
+                        Width="300"
+                        Height="40"
+                        DisplayMemberBinding="{Binding DisplayTextTermYear}"
+                        ItemsSource="{Binding Terms}"
+                        PlaceholderText="Chọn học kì"
+                        SelectedItem="{Binding SelectedTerm, Mode=TwoWay}" />
+                </StackPanel>
+
+                <!--  Nút reset bên phải  -->
+                <Button
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Classes="FilterDataResetButton"
+                    Command="{Binding ResetSearchCommand}"
+                    ToolTip.Tip="Đặt lại tìm kiếm">
+                    <Image
+                        Width="18"
+                        Height="18"
+                        Source="{DynamicResource ResetIcon}" />
+                </Button>
             </Grid>
-            <ComboBox ItemsSource="{Binding Terms}" 
-                              SelectedItem="{Binding SelectedTerm, Mode=TwoWay}" 
-                              DisplayMemberBinding="{ Binding DisplayTextTermYear}"
-                              PlaceholderText="Chọn học kì"
-                              Width = "300"
-                              Height = "40"
-    
-                              />
-        </StackPanel>
-
-        <!-- Nút reset bên phải -->
-        <Button HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Classes="FilterDataResetButton"
-                ToolTip.Tip="Đặt lại tìm kiếm"
-                Command = "{Binding ResetSearchCommand}">
-            <Image Source="{DynamicResource ResetIcon}" Width="18" Height="18"/>
-        </Button>
-    </Grid>
-</Border>
-
-       <!-- Hiện Thị thông tin lớp - ĐÃ CHỈNH SỬA VỊ TRÍ VÀ MARGIN -->
-      <Border Grid.Row = "2" Classes="DashboardCard" Background="#5aadf1ff" Margin="6,15,6,15">
-            <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
-                <Border Classes="DashboardIconBackground" Background="rgba(255,255,255,0.2)">
-                    <Image Source="{DynamicResource TeacherIcon}" Width="30" Height="30" Stretch="Uniform"/>
-                </Border>
-               <StackPanel>
-                    <TextBlock Text="Giáo viên chủ nhiệm" FontWeight="Bold" Foreground="#444" FontSize="12"/>
-                    <TextBlock Text="{Binding NameTeacher}" FontSize="14" Foreground="#111" FontWeight="SemiBold"/>
-                </StackPanel>
-
-                <StackPanel>
-                    <TextBlock Text="Lớp học" FontWeight="Bold" Foreground="#444" FontSize="12"/>
-                    <TextBlock Text="{Binding NameClass}" FontSize="14" Foreground="#111" FontWeight="SemiBold"/>
-                </StackPanel>
-
-                <StackPanel>
-                    <TextBlock Text="Kỳ học" FontWeight="Bold" Foreground="#444" FontSize="12"/>
-                    <TextBlock Text="{Binding NameTerm}" FontSize="14" Foreground="#111" FontWeight="SemiBold"/>
-                </StackPanel>
-
-                <StackPanel>
-                    <TextBlock Text="Năm học" FontWeight="Bold" Foreground="#444" FontSize="12"/>
-                    <TextBlock Text="{Binding Year}" FontSize="14" Foreground="#111" FontWeight="SemiBold"/>
-                </StackPanel>
-
-        </StackPanel>
         </Border>
 
-    <!--Bảng hiện thị dữ liệu - ĐÃ CHỈNH SỬA VỊ TRÍ-->
-      <Border Grid.Row="3" Classes="TableDataWarper" Margin="0,5,0,0"> <!-- Giảm margin top để gần với thông tin lớp -->
+        <!--  Hiện Thị thông tin lớp - ĐÃ CHỈNH SỬA VỊ TRÍ VÀ MARGIN  -->
+        <Border
+            Grid.Row="2"
+            Margin="6,15,6,15"
+            Background="#5aadf1ff"
+            Classes="DashboardCard">
+            <StackPanel
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="20">
+                <Border Background="rgba(255,255,255,0.2)" Classes="DashboardIconBackground">
+                    <Image
+                        Width="30"
+                        Height="30"
+                        Source="{DynamicResource TeacherIcon}"
+                        Stretch="Uniform" />
+                </Border>
+                <StackPanel>
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Foreground="#444"
+                        Text="Giáo viên chủ nhiệm" />
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="#111"
+                        Text="{Binding NameTeacher}" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Foreground="#444"
+                        Text="Lớp học" />
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="#111"
+                        Text="{Binding NameClass}" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Foreground="#444"
+                        Text="Kỳ học" />
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="#111"
+                        Text="{Binding NameTerm}" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Foreground="#444"
+                        Text="Năm học" />
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="#111"
+                        Text="{Binding Year}" />
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
+
+        <!--  Bảng hiện thị dữ liệu - ĐÃ CHỈNH SỬA VỊ TRÍ  -->
+        <Border
+            Grid.Row="3"
+            Margin="0,5,0,0"
+            Classes="TableDataWarper"> 
+            <!--  Giảm margin top để gần với thông tin lớp  -->
             <DataGrid
                 x:Name="HomeClassDataGrid"
-                Classes="TableData HomeClass"
-                ItemsSource="{Binding Students}"          
-                IsReadOnly="True"
                 AutoGenerateColumns="False"
-                SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
-               >
+                Classes="TableData HomeClass"
+                IsReadOnly="True"
+                ItemsSource="{Binding Students}"
+                SelectedItem="{Binding SelectedStudent, Mode=TwoWay}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         Width="1.0*"
-                        Binding="{Binding StudentName }"
+                        Binding="{Binding StudentName}"
                         Header="Học sinh" />
                     <!-- <DataGridTextColumn
                         Width="1.0*"
                         Binding="{Binding SubjectName}"
-                        Header="Điểm các môn học" /> -->
-                    
+                        Header="Điểm các môn học" />-->
+
                     <DataGridTextColumn
                         Width="1.0*"
                         Binding="{Binding GpaTotal}"
@@ -146,10 +196,10 @@
                         Width="1.0*"
                         Binding="{Binding Academic}"
                         Header="Xếp loại" />
-                        
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
-     
+
     </Grid>
 </UserControl>

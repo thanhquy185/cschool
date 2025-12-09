@@ -19,6 +19,9 @@
     <Style Selector="Border.Dialog.User">
         <Setter Property="Width" Value="1200" />
     </Style>
+    <Style Selector="Border.Dialog.Role">
+        <Setter Property="Width" Value="800" />
+    </Style>
     <Style Selector="Border.Dialog.Lock">
         <Setter Property="Width" Value="400" />
     </Style>

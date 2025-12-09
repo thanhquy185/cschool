@@ -2,105 +2,117 @@
     x:Class="Views.AssignTeacherView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:ViewModels"
-    xmlns:model="using:Models"
-    x:DataType="vm:AssignTeacherViewModel"
     xmlns:conv="clr-namespace:Utils;assembly=Utils"
-    x:Name="Root">
-    
-    <Grid  Classes="MainLayout"  RowDefinitions="Auto,Auto,*,Auto">
-        <!-- Header giống UserView -->
+    xmlns:model="using:Models"
+    xmlns:vm="using:ViewModels"
+    x:Name="Root"
+    x:DataType="vm:AssignTeacherViewModel">
+
+    <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
+        <!--  Header giống UserView  -->
         <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
-            <!-- Title And SubTitle -->
+            <!--  Title And SubTitle  -->
             <StackPanel Classes="MainLayoutHeaderInfo">
-                <TextBlock Classes="Title" Text="Quản lý phân công" />
-                <TextBlock Classes="SubTitle" Text="Quản lý phân công giảng dạy giáo viên" />
+                <!--  Titlte  -->
+                <TextBlock Classes="Title" Text="{Binding TitlePage}" />
+                <!--  SubTitle  -->
+                <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
             </StackPanel>
-            <!-- Buttons giống UserView -->
-            
+            <!--  Buttons giống UserView  -->
+
             <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-                <Button Classes="CrudButton Info"
-                        Click="OnDetailButtonClick" >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                        <Image Source="{DynamicResource InfoIcon}" />
-                        <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
-                        </StackPanel>
-                    </Border>
-                </Button>
-                <Button Classes="CrudButton Create"
-                        Click="OnAddButtonClick" >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                            <Image Source="{DynamicResource CreateIcon}" />
-                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
-                        </StackPanel>
-                    </Border>
-                </Button>
-                <Button Classes="CrudButton Update"
+                <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+                    <Button
+                        x:Name="InfoButton"
+                        Classes="CrudButton Info"
+                        Click="OnDetailButtonClick">
+                        <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                            <StackPanel>
+                                <Image Source="{DynamicResource InfoIcon}" />
+                                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+                            </StackPanel>
+                        </Border>
+                    </Button>
+                    <Button
+                        x:Name="CreateButton"
+                        Classes="CrudButton Create"
+                        Click="OnAddButtonClick">
+                        <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                            <StackPanel>
+                                <Image Source="{DynamicResource CreateIcon}" />
+                                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
+                            </StackPanel>
+                        </Border>
+                    </Button>
+                    <Button
+                        x:Name="UpdateButton"
+                        Classes="CrudButton Update"
                         Click="OnEditButtonClick"
-                CommandParameter="{Binding SelectedAssignTeacher}"
-                >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                            <Image Source="{DynamicResource UpdateIcon}" />
-                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
-                        </StackPanel>
-                    </Border>
-                </Button>
-                <Button Classes="CrudButton Lock" Command="{Binding Delete}"
-                CommandParameter="{Binding SelectedAssignTeacher}"
-               >
-                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <StackPanel>
-                            <Image Source="{DynamicResource BinIcon}" />
-                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
-                        </StackPanel>
-                    </Border>
-                </Button>
+                        CommandParameter="{Binding SelectedAssignTeacher}">
+                        <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                            <StackPanel>
+                                <Image Source="{DynamicResource UpdateIcon}" />
+                                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
+                            </StackPanel>
+                        </Border>
+                    </Button>
+                    <Button
+                        x:Name="LockButton"
+                        Classes="CrudButton Lock"
+                        CommandParameter="{Binding SelectedAssignTeacher}">
+                        <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                            <StackPanel>
+                                <Image Source="{DynamicResource BinIcon}" />
+                                <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xóa" />
+                            </StackPanel>
+                        </Border>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </Grid>
 
-        <!-- Filter giống UserView -->
+        <!--  Filter giống UserView  -->
         <Border Grid.Row="1" Classes="FilterDataWarper">
             <Grid Classes="FilterData" RowDefinitions="*,Auto">
                 <StackPanel Classes="FilterDataInputs">
                     <Grid Classes="FilterDataFindInput">
-                        <TextBox Watermark="Nhập tên giáo viên, môn học hoặc lớp học" 
-                                 Text="{Binding SearchText, Mode=TwoWay}"/>
-                         
-                        <Image Source="{DynamicResource SearchIcon}" Width="20" Height="20"/>
-                    
-                   
+                        <TextBox Text="{Binding SearchText, Mode=TwoWay}" Watermark="Nhập tên giáo viên, môn học hoặc lớp học" />
+
+                        <Image
+                            Width="20"
+                            Height="20"
+                            Source="{DynamicResource SearchIcon}" />
+
+
                     </Grid>
-                     <ComboBox ItemsSource="{Binding Subjects}" 
-                              SelectedItem="{Binding SelectedSubjectSearch, Mode=TwoWay}" 
-                              DisplayMemberBinding="{Binding Name_Subject}"
-                              PlaceholderText="Chọn môn học"
-                              Width = "150"
-                              Height = "40"
-                              SelectionChanged="SubjectCombo_SelectionChanged"/>
+                    <ComboBox
+                        Width="150"
+                        Height="40"
+                        DisplayMemberBinding="{Binding Name_Subject}"
+                        ItemsSource="{Binding Subjects}"
+                        PlaceholderText="Chọn môn học"
+                        SelectedItem="{Binding SelectedSubjectSearch, Mode=TwoWay}"
+                        SelectionChanged="SubjectCombo_SelectionChanged" />
                 </StackPanel>
                 <Button
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Classes="FilterDataResetButton"
-                    Command = "{Binding ResetSearchCommand}">
+                    Command="{Binding ResetSearchCommand}">
                     <Image Source="{DynamicResource ResetIcon}" />
                 </Button>
             </Grid>
         </Border>
 
-        <!-- Table giống UserView -->
+        <!--  Table giống UserView  -->
         <Border Grid.Row="2" Classes="TableDataWarper">
             <DataGrid
                 x:Name="AssignTeachersDataGrid"
-                Classes="TableData AssignTeacher"
-                ItemsSource="{Binding AssignTeachers}"
-                SelectedItem="{Binding SelectedAssignTeacher, Mode=TwoWay}"
-                IsReadOnly="True"
                 AutoGenerateColumns="False"
-               >
+                Classes="TableData AssignTeacher"
+                IsReadOnly="True"
+                ItemsSource="{Binding AssignTeachers}"
+                SelectedItem="{Binding SelectedAssignTeacher, Mode=TwoWay}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         Width="1.0*"
@@ -133,37 +145,37 @@
                     <!-- <DataGridTextColumn
                         Width="1.5*"
                         Binding="{Binding QuizCount}"
-                        Header="Số bài kiểm tra" /> 
+                        Header="Số bài kiểm tra" />
                     <DataGridTextColumn
                         Width="1.5*"
                         Binding="{Binding OralCount}"
-                        Header="Số bài miệng" /> -->
-                    
+                        Header="Số bài miệng" />-->
+
                     <!-- <DataGridTemplateColumn Header="Thao tác" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Button Content="✏️" 
+                                    <Button Content="✏️"
                                             ToolTip.Tip="Sửa"
                                             Command="{Binding DataContext.EditCommand, ElementName=Root}"
-                                            CommandParameter="{Binding}" 
-                                            Background="#07ff1cff" 
+                                            CommandParameter="{Binding}"
+                                            Background="#07ff1cff"
                                             Padding="8,2"/>
-                                    <Button Content="🗑️" 
+                                    <Button Content="🗑️"
                                             ToolTip.Tip="Xóa"
                                             Command="{Binding DataContext.DeleteCommand, ElementName=Root}"
-                                            CommandParameter="{Binding}" 
-                                            Background="#d6291cff" 
+                                            CommandParameter="{Binding}"
+                                            Background="#d6291cff"
                                             Foreground="White"
                                             Padding="8,2"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn> -->
-                        
+                    </DataGridTemplateColumn>-->
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
-   
+
     </Grid>
 </UserControl>

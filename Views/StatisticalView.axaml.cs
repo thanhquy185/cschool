@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Services;
 using ViewModels;
 using Views.Statistical;
 
@@ -11,11 +12,18 @@ namespace Views;
 
 public partial class StatisticalView : UserControl
 {
-    // AssignTeacherViewModel ViewModel => DataContext as AssignTeacherViewModel;
+    private StatisticalViewModel _statisticalViewModel { get; set; }
+
     public StatisticalView()
     {
         InitializeComponent();
+        this._statisticalViewModel = new StatisticalViewModel();
+        DataContext = this._statisticalViewModel;
+
         this.DataContextChanged += OnDataContextChanged;
+
+        this.AttachedToVisualTree += StatisticalView_AttachedToVisualTree;
+
     }
 
     private void InitializeComponent()
@@ -29,6 +37,19 @@ public partial class StatisticalView : UserControl
         {
             vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
             // vm.RequestCloseDetailDialog += Vm_RequestCloseDetailDialog;
+        }
+    }
+
+    private void StatisticalView_AttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (InfoButton != null)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                InfoButton.IsEnabled = this._statisticalViewModel.InfoButtonEnabled;
+                Console.WriteLine("++++++++++++++++++" + this._statisticalViewModel.InfoButtonEnabled);
+
+            });
         }
     }
 

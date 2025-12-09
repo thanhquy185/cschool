@@ -1,5 +1,5 @@
 // Dialog Mode Enum
-enum DialogModeEnum
+public enum DialogModeEnum
 {
     Info,
     Create,
@@ -7,6 +7,23 @@ enum DialogModeEnum
     Lock,
     Excel,
     ChangePassword
+}
+
+// Function Id
+enum FunctionIdEnum
+{
+    HomeClass = 1,
+    Attendance = 2,
+    SubjectClass = 3,
+    Statistical = 4,
+    AssignTeacher = 5,
+    Exam = 6,
+    Tuition = 7,
+    Class = 8,
+    Teacher = 9,
+    Student = 10,
+    Role = 11,
+    User = 12,
 }
 
 // // Common Status Enum

@@ -16,6 +16,7 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
+
     public override void OnFrameworkInitializationCompleted()
     {
         // // Thêm FluentAvaloniaTheme
@@ -27,17 +28,20 @@ public partial class App : Application
 
             var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=;SslMode=None;";
             AppService.DBService = new DBService(connectionString);
-            AppService.UserService = new UserService(AppService.DBService);
-            AppService.StudentService = new StudentService(AppService.DBService);
+            AppService.StatisticalService = new StatisticalService(AppService.DBService);
+            AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
             AppService.ExamService = new ExamService(AppService.DBService);
             AppService.TuitionService = new TuitionService(AppService.DBService);
-            AppService.ClassService= new ClassService(AppService.DBService);
-            AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);
-            AppService.TeacherService = new TeacherService(AppService.DBService);
+            AppService.HomeClassService = new HomeClassService(AppService.DBService);
             AppService.SubjectClassService = new SubjectClassService(AppService.DBService);
-            AppService.statisticalService = new StatisticalService(AppService.DBService);
-            AppService.homeClassService = new HomeClassService(AppService.DBService);
-            
+            AppService.ClassService = new ClassService(AppService.DBService);
+            AppService.TeacherService = new TeacherService(AppService.DBService);
+            AppService.StudentService = new StudentService(AppService.DBService);
+            AppService.FunctionService = new FunctionService(AppService.DBService);
+            AppService.UserService = new UserService(AppService.DBService);
+            AppService.RoleService = new RoleService(AppService.DBService);
+            AppService.RoleDetailService = new RoleDetailService(AppService.DBService);
+
             desktop.MainWindow = new MainWindow
             {
                 DataContext = new MainWindowViewModel(),

@@ -5,20 +5,37 @@ using Views.Exam;
 using ViewModels;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Interactivity;
+using Services;
 
 namespace Views;
 
 public partial class ExamView : UserControl
 {
+    private ExamViewModel _examViewModel { get; set; }
+
     public ExamView()
     {
         InitializeComponent();
-        DataContext = new ExamViewModel();
+        this._examViewModel = new ExamViewModel();
+        DataContext = this._examViewModel;
 
         InfoButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Info);
         CreateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Create);
         UpdateButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Update);
         LockButton.Click += async (_, _) => await ShowExamDialog(DialogModeEnum.Lock);
+
+        // Phân quyền các nút chức năng
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Exam, "Xem");
+            CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Exam, "Thêm");
+            UpdateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Exam, "Cập nhật");
+            LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Exam, "Xoá / Khoá");
+        }
     }
 
     private async Task ShowExamDialog(DialogModeEnum mode)
@@ -48,7 +65,7 @@ public partial class ExamView : UserControl
                 break;
 
             case DialogModeEnum.Create:
-                dialog = new ExamCreateDialog (vm);
+                dialog = new ExamCreateDialog(vm);
                 break;
 
             case DialogModeEnum.Update:
@@ -124,7 +141,7 @@ public partial class ExamView : UserControl
             // reset UI
             SearchBox.Text = "";
 
-            StatusFilterBox.SelectedIndex = -1; 
+            StatusFilterBox.SelectedIndex = -1;
             StatusFilterBox.PlaceholderText = "Chọn học kỳ";
         }
     }

@@ -4,11 +4,16 @@ using ReactiveUI;
 using Utils;
 using ClosedXML.Excel;
 using System.Reactive.Threading.Tasks;
+using Services;
 
 namespace ViewModels
 {
     public partial class StudentViewModel : ViewModelBase
     {
+        // Tiêu đề trang
+        public string TitlePage { get; } = "Quản lý học sinh";
+        // Mô tả trang
+        public string DescriptionPage { get; } = "Quản lý thông tin học sinh";
         // Danh sách học sinh
         public ObservableCollection<StudentModel> Students { get; }
         // Dữ liệu hiển thị (lọc / tìm kiếm)
@@ -144,7 +149,7 @@ namespace ViewModels
                 return false;
             });
         }
-    
+
         public async Task ImportExcel(string filePath)
         {
             try

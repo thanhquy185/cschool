@@ -5,20 +5,36 @@ using Utils;
 using ViewModels;
 using Views.Class;
 using System.Reactive.Threading.Tasks;
+using Services;
 
 namespace Views
 {
     public partial class ClassView : UserControl
     {
+        private ClassViewModel _classViewModel { get; set; }
         public ClassView()
         {
             InitializeComponent();
-            DataContext = new ClassViewModel();
+            this._classViewModel = new ClassViewModel();
+            DataContext = this._classViewModel;
 
             InfoButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Info);
             CreateButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Create);
             UpdateButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Update);
             LockButton.Click += async (_, _) => await DeleteClass();
+
+            // Phân quyền các nút chức năng
+            if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+            {
+                InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                    SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Xem");
+                CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                   SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Thêm");
+                UpdateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                   SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Cập nhật");
+                LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                   SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Xoá / Khoá");
+            }
         }
 
         // ============================

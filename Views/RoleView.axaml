@@ -1,0 +1,150 @@
+<UserControl
+    x:Class="Views.RoleView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fa="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvaloniaUI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:view="using:Views"
+    xmlns:vm="using:ViewModels"
+    x:DataType="vm:RoleViewModel"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <vm:RoleViewModel />
+    </Design.DataContext>
+    <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
+        <!--  Header  -->
+        <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
+            <StackPanel Classes="MainLayoutHeaderInfo">
+                <TextBlock Classes="Title" Text="{Binding TitlePage}" />
+                <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
+                <Button
+                    x:Name="ImportExcelButton"
+                    Classes="CrudButton Create"
+                    Click="ImportExcelButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource ImportExcelIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Nhập Excel" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button
+                    x:Name="ExportExcelButton"
+                    Classes="CrudButton Update"
+                    Click="ExportExcelButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource ExportExcelIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất Excel" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button
+                    x:Name="InfoButton"
+                    Classes="CrudButton Info"
+                    Click="InfoButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource InfoIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button
+                    x:Name="CreateButton"
+                    Classes="CrudButton Create"
+                    Click="CreateButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource CreateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button
+                    x:Name="UpdateButton"
+                    Classes="CrudButton Update"
+                    Click="UpdateButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource UpdateIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button
+                    x:Name="LockButton"
+                    Classes="CrudButton Lock"
+                    Click="LockButton_Click">
+                    <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <StackPanel>
+                            <Image Source="{DynamicResource LockIcon}" />
+                            <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Khoá" />
+                        </StackPanel>
+                    </Border>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <!--  Filter  -->
+        <Border Grid.Row="1" Classes="FilterDataWarper">
+            <Grid Classes="FilterData" RowDefinitions="*,Auto">
+                <StackPanel Classes="FilterDataInputs">
+                    <Grid Classes="FilterDataFindInput">
+                        <TextBox
+                            x:Name="FilterFindTextBox"
+                            TextChanged="OnFilterFindChanged"
+                            Watermark="Nhập ID / Tên nhóm quyền" />
+                        <Image Source="{DynamicResource SearchIcon}" />
+                    </Grid>
+                    <ComboBox
+                        x:Name="FilterStatusComboBox"
+                        Classes="FilterDataFindSelect"
+                        MaxDropDownHeight="100"
+                        SelectedIndex="0"
+                        SelectionChanged="OnFilterStatusChanged">
+                        <ComboBoxItem>Chọn Trạng thái</ComboBoxItem>
+                        <ComboBoxItem>Hoạt động</ComboBoxItem>
+                        <ComboBoxItem>Tạm dừng</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+                <Button
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Classes="FilterDataResetButton"
+                    Click="OnFilterResetClicked">
+                    <Image Source="{DynamicResource ResetIcon}" />
+                </Button>
+            </Grid>
+        </Border>
+        <!--  Table Roles  -->
+        <Border Grid.Row="2" Classes="TableDataWarper">
+            <DataGrid
+                x:Name="RolesDataGrid"
+                Classes="TableData Role"
+                ItemsSource="{Binding FilteredRoles}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="1*"
+                        Binding="{Binding Id}"
+                        Header="ID" />
+                    <DataGridTextColumn
+                        Width="3*"
+                        Binding="{Binding Name}"
+                        Header="Tên nhóm quyền" />
+                    <DataGridTemplateColumn Width="1*" Header="Trạng thái">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding Status, Converter={StaticResource StatusToBrushConverter}}" Classes="Status">
+                                    <TextBlock Text="{Binding Status}" />
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

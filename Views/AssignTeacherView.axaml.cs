@@ -16,21 +16,43 @@ namespace Views;
 public partial class AssignTeacherView : UserControl
 {
     // AssignTeacherViewModel ViewModel => DataContext as AssignTeacherViewModel;
+    private AssignTeacherViewModel _assignTeacherViewModel { get; set; }
+
     public AssignTeacherView()
     {
         InitializeComponent();
+        this._assignTeacherViewModel = new AssignTeacherViewModel();
+        DataContext = this._assignTeacherViewModel;
 
         this.AttachedToVisualTree += (_, _) =>
-        {
-            if (DataContext is AssignTeacherViewModel vm)
-            {
-                vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
-                vm.RequestOpenEditDialog += Vm_RequestOpenEditDialog;
-                vm.RequestCloseAddDialog += Vm_RequestCloseAddAssignTeacher;
-                vm.RequestCloseEditDialog += Vm_RequestCloseEditAssignTeacher;
-            }
-        };
+       {
+           if (DataContext is AssignTeacherViewModel vm)
+           {
+               vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
+               vm.RequestOpenEditDialog += Vm_RequestOpenEditDialog;
+               vm.RequestCloseAddDialog += Vm_RequestCloseAddAssignTeacher;
+               vm.RequestCloseEditDialog += Vm_RequestCloseEditAssignTeacher;
 
+               Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                {
+                    if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+                    {
+                        if (InfoButton != null)
+                            InfoButton.IsEnabled = this._assignTeacherViewModel.InfoButtonEnabled;
+
+                        if (CreateButton != null)
+                            CreateButton.IsEnabled = this._assignTeacherViewModel.CreateButtonEnabled;
+
+                        if (UpdateButton != null)
+                            UpdateButton.IsEnabled = this._assignTeacherViewModel.UpdateButtonEnabled;
+
+                        if (LockButton != null)
+                            LockButton.IsEnabled = this._assignTeacherViewModel.LockButtonEnabled;
+                    }
+                });
+
+           }
+       };
     }
 
     private void InitializeComponent()
@@ -59,7 +81,7 @@ public partial class AssignTeacherView : UserControl
     private async void OnDetailButtonClick(object? sender, RoutedEventArgs e)
     {
 
-        if (DataContext is AssignTeacherViewModel vm )
+        if (DataContext is AssignTeacherViewModel vm)
 
         {
             if (vm.SelectedAssignTeacher != null)
@@ -72,7 +94,9 @@ public partial class AssignTeacherView : UserControl
                 await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để xem chi tiết", null);
                 return;
             }
+
         }
+
     }
 
     private async void Vm_RequestOpenDetailDialog(object? sender, AssignTeacher a)
@@ -93,7 +117,7 @@ public partial class AssignTeacherView : UserControl
 
     private async void OnEditButtonClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is AssignTeacherViewModel vm )
+        if (DataContext is AssignTeacherViewModel vm)
         {
             if (vm.SelectedAssignTeacher != null)
             {
@@ -105,7 +129,7 @@ public partial class AssignTeacherView : UserControl
                 await MessageBoxUtil.ShowError("Vui lòng chọn 1 dòng để sửa", null);
                 return;
             }
-            
+
         }
     }
 

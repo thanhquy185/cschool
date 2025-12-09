@@ -3,11 +3,17 @@ using System.Collections.ObjectModel;
 using ReactiveUI;
 using System.Reactive;
 using Avalonia.Threading;
+using Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ViewModels;
 
-public class ClassViewModel : ViewModelBase
+public partial class ClassViewModel : ViewModelBase
 {
+    // Tiêu đề trang
+    public string TitlePage { get; } = "Quản lý lớp học";
+    // Mô tả trang
+    public string DescriptionPage { get; } = "Quản lý thông tin lớp học";
     public ObservableCollection<ClassModel> Classes { get; } = new();
     public ObservableCollection<ClassModel> Classes_list { get; } = new();
 
@@ -37,7 +43,7 @@ public class ClassViewModel : ViewModelBase
             }
         }
     }
-        private TeacherModel _selectedTeacherHK2;
+    private TeacherModel _selectedTeacherHK2;
     public TeacherModel SelectedTeacherHK2
     {
         get => _selectedTeacherHK2;
@@ -102,8 +108,8 @@ public class ClassViewModel : ViewModelBase
         }
     }
 
-// List các năm học có trong data
-public ObservableCollection<string> YearList { get; } = new ObservableCollection<string>();
+    // List các năm học có trong data
+    public ObservableCollection<string> YearList { get; } = new ObservableCollection<string>();
 
 
 
@@ -195,22 +201,22 @@ public ObservableCollection<string> YearList { get; } = new ObservableCollection
 
 
     public void LoadData()
-    {  
-       
-         SelectedClass = new ClassModel();
+    {
+
+        SelectedClass = new ClassModel();
         Classes.Clear();
         Classes_list.Clear();
         foreach (var c in AppService.ClassService.GetClasses())
             Classes.Add(c);
-            YearList.Clear();
-YearList.Add("Chọn năm học");
-foreach (var year in Classes.Select(c => c.Year).Distinct())
-    YearList.Add(year);
+        YearList.Clear();
+        YearList.Add("Chọn năm học");
+        foreach (var year in Classes.Select(c => c.Year).Distinct())
+            YearList.Add(year);
 
-// Hiển thị tất cả lớp khi chưa filter
-ApplyClassFilter();
+        // Hiển thị tất cả lớp khi chưa filter
+        ApplyClassFilter();
 
-    Classes_list.Clear();
+        Classes_list.Clear();
         foreach (var c in Classes
             .Where(x => x.Status != 0)
             .GroupBy(x => x.Id)
@@ -232,12 +238,9 @@ ApplyClassFilter();
 
     public ClassViewModel()
     {
-
         LoadData();
-        // LoadClassData();
 
-    
-        
+
         // Load students of class
         GetClassByIdCommand = ReactiveCommand.Create<int>(id =>
         {
@@ -268,13 +271,13 @@ ApplyClassFilter();
                 TeacherHK2 = AppService.ClassService.GetTeacherByClassAndTerm(classId, t2);
         });
 
-                ResetFilterCommand = ReactiveCommand.Create(() =>
-        {
-            SearchClassText = "";
-            SelectedYear = "Chọn năm học";
-        });
+        ResetFilterCommand = ReactiveCommand.Create(() =>
+{
+    SearchClassText = "";
+    SelectedYear = "Chọn năm học";
+});
 
-  
+
 
         AddStudentsToClassHK1Command =
             ReactiveCommand.Create(
@@ -369,21 +372,21 @@ ApplyClassFilter();
     }
 
     // MOVE CHUNG
-private void MoveStudents(
-    IList<object> selected,
-    ObservableCollection<StudentModel> from,
-    ObservableCollection<StudentModel> to)
-{
-    if (selected == null || selected.Count == 0) return;
-
-    foreach (StudentModel s in selected.Cast<StudentModel>())
+    private void MoveStudents(
+        IList<object> selected,
+        ObservableCollection<StudentModel> from,
+        ObservableCollection<StudentModel> to)
     {
-        if (!to.Contains(s))
-            to.Add(s);
+        if (selected == null || selected.Count == 0) return;
 
-        from.Remove(s);
+        foreach (StudentModel s in selected.Cast<StudentModel>())
+        {
+            if (!to.Contains(s))
+                to.Add(s);
+
+            from.Remove(s);
+        }
     }
-}
 
 
     private void FilterStudents(
@@ -435,95 +438,95 @@ private void MoveStudents(
             LoadStudentsWithoutClass();
     }
 
-  public void LoadClassData()
-{
-    // Nếu chưa chọn class thực sự thì không làm gì
-    if (SelectedClass == null || SelectedClass.Id == 0) 
-        return;
-
-    // Lấy 2 row theo học kỳ (an toàn)
-    var clsHK1 = Classes.FirstOrDefault(c => c.Id == SelectedClass.Id && c.Term == "Học kỳ 1");
-    var clsHK2 = Classes.FirstOrDefault(c => c.Id == SelectedClass.Id && c.Term == "Học kỳ 2");
-
-    // Gán chung từ HK1 (nếu có)
-    if (clsHK1 != null)
+    public void LoadClassData()
     {
-        SelectedGrade = clsHK1.Grade;
-        Year = clsHK1.Year;
-        SelectedClassTypeModel = ClassTypes.FirstOrDefault(ct => ct.Id == clsHK1.ClassTypeId);
+        // Nếu chưa chọn class thực sự thì không làm gì
+        if (SelectedClass == null || SelectedClass.Id == 0)
+            return;
 
-        System.Console.WriteLine("GVCN1: " + clsHK1.HeadTeacher);
-    }
+        // Lấy 2 row theo học kỳ (an toàn)
+        var clsHK1 = Classes.FirstOrDefault(c => c.Id == SelectedClass.Id && c.Term == "Học kỳ 1");
+        var clsHK2 = Classes.FirstOrDefault(c => c.Id == SelectedClass.Id && c.Term == "Học kỳ 2");
 
-    // Gán SelectedTeacherHK1 an toàn (nếu có)
-    if (clsHK1 != null && !string.IsNullOrWhiteSpace(clsHK1.HeadTeacher))
-    {
-        if (int.TryParse(clsHK1.HeadTeacher, out var t1Id))
-            SelectedTeacherHK1 = Teachers.FirstOrDefault(t => t.Id == t1Id);
+        // Gán chung từ HK1 (nếu có)
+        if (clsHK1 != null)
+        {
+            SelectedGrade = clsHK1.Grade;
+            Year = clsHK1.Year;
+            SelectedClassTypeModel = ClassTypes.FirstOrDefault(ct => ct.Id == clsHK1.ClassTypeId);
+
+            System.Console.WriteLine("GVCN1: " + clsHK1.HeadTeacher);
+        }
+
+        // Gán SelectedTeacherHK1 an toàn (nếu có)
+        if (clsHK1 != null && !string.IsNullOrWhiteSpace(clsHK1.HeadTeacher))
+        {
+            if (int.TryParse(clsHK1.HeadTeacher, out var t1Id))
+                SelectedTeacherHK1 = Teachers.FirstOrDefault(t => t.Id == t1Id);
+            else
+                SelectedTeacherHK1 = Teachers.FirstOrDefault(t => t.Name == clsHK1.HeadTeacher); // fallback theo tên
+        }
         else
-            SelectedTeacherHK1 = Teachers.FirstOrDefault(t => t.Name == clsHK1.HeadTeacher); // fallback theo tên
-    }
-    else
-    {
-        SelectedTeacherHK1 = null;
-    }
+        {
+            SelectedTeacherHK1 = null;
+        }
 
-    // Gán SelectedTeacherHK2 an toàn (nếu có)
-    if (clsHK2 != null && !string.IsNullOrWhiteSpace(clsHK2.HeadTeacher))
-    {
-        if (int.TryParse(clsHK2.HeadTeacher, out var t2Id))
-            SelectedTeacherHK2 = Teachers.FirstOrDefault(t => t.Id == t2Id);
+        // Gán SelectedTeacherHK2 an toàn (nếu có)
+        if (clsHK2 != null && !string.IsNullOrWhiteSpace(clsHK2.HeadTeacher))
+        {
+            if (int.TryParse(clsHK2.HeadTeacher, out var t2Id))
+                SelectedTeacherHK2 = Teachers.FirstOrDefault(t => t.Id == t2Id);
+            else
+                SelectedTeacherHK2 = Teachers.FirstOrDefault(t => t.Name == clsHK2.HeadTeacher); // fallback theo tên
+        }
         else
-            SelectedTeacherHK2 = Teachers.FirstOrDefault(t => t.Name == clsHK2.HeadTeacher); // fallback theo tên
-    }
-    else
-    {
-        SelectedTeacherHK2 = null;
-    }
+        {
+            SelectedTeacherHK2 = null;
+        }
 
-    // Load danh sách học sinh (chỉ khi SelectedClass.Id hợp lệ)
-    StudentInClassHK1.Clear();
-    foreach (var s in AppService.ClassService.GetStudentsByClassId(SelectedClass.Id, 1))
-        StudentInClassHK1.Add(s);
+        // Load danh sách học sinh (chỉ khi SelectedClass.Id hợp lệ)
+        StudentInClassHK1.Clear();
+        foreach (var s in AppService.ClassService.GetStudentsByClassId(SelectedClass.Id, 1))
+            StudentInClassHK1.Add(s);
 
-    StudentInClassHK2.Clear();
-    foreach (var s in AppService.ClassService.GetStudentsByClassId(SelectedClass.Id, 2))
-        StudentInClassHK2.Add(s);
+        StudentInClassHK2.Clear();
+        foreach (var s in AppService.ClassService.GetStudentsByClassId(SelectedClass.Id, 2))
+            StudentInClassHK2.Add(s);
 
-    // Load danh sách học sinh chưa có lớp
-    LoadStudentsWithoutClass();
+        // Load danh sách học sinh chưa có lớp
+        LoadStudentsWithoutClass();
 
-    // Loại bỏ những học sinh đã có trong lớp khỏi danh sách StudentsAvailable
-    foreach (var s in StudentInClassHK1.ToList())
-        StudentsAvailableHK1.Remove(s);
+        // Loại bỏ những học sinh đã có trong lớp khỏi danh sách StudentsAvailable
+        foreach (var s in StudentInClassHK1.ToList())
+            StudentsAvailableHK1.Remove(s);
 
-    foreach (var s in StudentInClassHK2.ToList())
-        StudentsAvailableHK2.Remove(s);
+        foreach (var s in StudentInClassHK2.ToList())
+            StudentsAvailableHK2.Remove(s);
     }
 
-            public (bool success, string message) DeleteClassById(int id)
+    public (bool success, string message) DeleteClassById(int id)
     {
         return AppService.ClassService.DeleteClass(id);
     }
 
-    
-private void ApplyClassFilter()
-{
-    Classes_list.Clear();
 
-    var filtered = Classes.AsEnumerable();
+    private void ApplyClassFilter()
+    {
+        Classes_list.Clear();
 
-    // Lọc theo tên lớp
-    if (!string.IsNullOrWhiteSpace(SearchClassText))
-        filtered = filtered.Where(c => c.Name?.ToLower().Contains(SearchClassText.ToLower()) == true);
+        var filtered = Classes.AsEnumerable();
 
-    // Lọc theo năm học
-    if (!string.IsNullOrWhiteSpace(SelectedYear) && SelectedYear != "Chọn năm học")
-        filtered = filtered.Where(c => c.Year == SelectedYear);
+        // Lọc theo tên lớp
+        if (!string.IsNullOrWhiteSpace(SearchClassText))
+            filtered = filtered.Where(c => c.Name?.ToLower().Contains(SearchClassText.ToLower()) == true);
 
-    foreach (var c in filtered)
-        Classes_list.Add(c);
-}
+        // Lọc theo năm học
+        if (!string.IsNullOrWhiteSpace(SelectedYear) && SelectedYear != "Chọn năm học")
+            filtered = filtered.Where(c => c.Year == SelectedYear);
+
+        foreach (var c in filtered)
+            Classes_list.Add(c);
+    }
 
 
 

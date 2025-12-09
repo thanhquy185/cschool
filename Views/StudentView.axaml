@@ -18,19 +18,19 @@
       <!--  Title And SubTitle  -->
       <StackPanel Classes="MainLayoutHeaderInfo">
         <!--  Titlte  -->
-        <TextBlock Classes="Title" Text="Thông tin học sinh" />
-         <!-- SubTitle 
-        <TextBlock Classes="SubTitle" Text="Thông tin cơ bản của học sinh" /> -->
+        <TextBlock Classes="Title" Text="{Binding TitlePage}" />
+        <!--  SubTitle  -->
+        <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
       </StackPanel>
 
-      <!-- Butttons -->
+      <!--  Butttons  -->
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
 
         <Button x:Name="ImportExcelButton" Classes="CrudButton Create">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource ImportExcelIcon}"/>
-              <TextBlock Text="Nhập Excel" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource ImportExcelIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Nhập Excel" />
             </StackPanel>
           </Border>
         </Button>
@@ -38,8 +38,8 @@
         <Button x:Name="ExportExcelButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource ExportExcelIcon}"/>
-              <TextBlock Text="Xuất Excel" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource ExportExcelIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xuất Excel" />
             </StackPanel>
           </Border>
         </Button>
@@ -47,8 +47,8 @@
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource InfoIcon}"/>
-              <TextBlock Text="Chi tiết" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource InfoIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Chi tiết" />
             </StackPanel>
           </Border>
         </Button>
@@ -56,8 +56,8 @@
         <Button x:Name="CreateButton" Classes="CrudButton Create">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource CreateIcon}"/>
-              <TextBlock Text="Thêm" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource CreateIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thêm" />
             </StackPanel>
           </Border>
         </Button>
@@ -65,8 +65,8 @@
         <Button x:Name="UpdateButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource UpdateIcon}"/>
-              <TextBlock Text="Cập nhật" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource UpdateIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Cập nhật" />
             </StackPanel>
           </Border>
         </Button>
@@ -74,8 +74,8 @@
         <Button x:Name="LockButton" Classes="CrudButton Lock">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource BinIcon}"/>
-              <TextBlock Text="Xoá" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource BinIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Xoá" />
             </StackPanel>
           </Border>
         </Button>
@@ -87,7 +87,10 @@
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập ID / Họ tên học sinh" x:Name="SearchBox" TextChanged="OnSearchTextChanged"/>
+            <TextBox
+              x:Name="SearchBox"
+              TextChanged="OnSearchTextChanged"
+              Watermark="Nhập ID / Họ tên học sinh" />
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
           <ComboBox
@@ -115,7 +118,10 @@
     </Border>
     <!--  Table  -->
     <Border Grid.Row="2" Classes="TableDataWarper">
-      <DataGrid x:Name="StudentsDataGrid" Classes="TableData" ItemsSource="{Binding StudentsTemp}">
+      <DataGrid
+        x:Name="StudentsDataGrid"
+        Classes="TableData"
+        ItemsSource="{Binding StudentsTemp}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Width="*"

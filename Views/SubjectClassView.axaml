@@ -13,8 +13,8 @@
         <!-- Header -->
         <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
             <StackPanel Classes="MainLayoutHeaderInfo">
-                <TextBlock Classes="Title" Text="Quản lý nhập điểm lớp môn học" />
-                <TextBlock Classes="SubTitle" Text="Quản lý nhập điểm lớp môn học" />
+                <TextBlock Classes="Title" Text="Quản lý nhập điểm" />
+                <TextBlock Classes="SubTitle" Text="Quản lý nhập điểm môn học" />
             </StackPanel>
             
             <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons" >

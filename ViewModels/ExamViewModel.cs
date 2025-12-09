@@ -2,12 +2,19 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ReactiveUI;
+using Services;
 
 namespace ViewModels;
 
 public partial class ExamViewModel : ViewModelBase
 {
+    // Tiêu đề trang
+    public string TitlePage { get; } = "Quản lý lịch thi";
+    // Mô tả trang
+    public string DescriptionPage { get; } = "Quản lý thông tin lịch thi";
+
     // Danh sách lịch thi
     public ObservableCollection<ExamModel> Exams { get; }
     public ObservableCollection<ExamModel> ExamsTemp { get; }
@@ -106,7 +113,7 @@ public partial class ExamViewModel : ViewModelBase
         }
 
         // Tổng số học sinh theo khối/lớp
-        int total = AppService.ExamService.GetStudentGrade(SelectedGrade.Value,SelectedUpdateTerm.Value);
+        int total = AppService.ExamService.GetStudentGrade(SelectedGrade.Value, SelectedUpdateTerm.Value);
 
         // Tổng số học sinh đã phân công trong ExamAssignments
         int assigned = ExamAssignments.Sum(a => a.AssignedStudents);
@@ -171,6 +178,15 @@ public partial class ExamViewModel : ViewModelBase
             ExamsTemp.Add(s);
     }
 
+    [ObservableProperty]
+    public bool _infoButtonEnabled;
+    [ObservableProperty]
+    public bool _createButtonEnabled;
+    [ObservableProperty]
+    public bool _updateButtonEnabled;
+    [ObservableProperty]
+    public bool _lockButtonEnabled;
+
     public ExamViewModel()
     {
         // Load danh sách ban đầu
@@ -178,7 +194,7 @@ public partial class ExamViewModel : ViewModelBase
         ExamsTemp = new ObservableCollection<ExamModel>();
         StudentDetails = new ObservableCollection<StudentExamModel>();
         RoomDetails = new ObservableCollection<RoomExamModel>();
-        
+
         var exams = AppService.ExamService.GetExamSchedule();
         foreach (var exam in exams)
         {
@@ -249,7 +265,7 @@ public partial class ExamViewModel : ViewModelBase
         var terms = AppService.ExamService.GetTermList();
         foreach (var term in terms)
             StudyTerm.Add(term);
-      
+
         // Lấy danh sách phòng thi
         RoomList = new ObservableCollection<RoomModel>();
         var rooms = AppService.ExamService.GetRoomList();
@@ -325,7 +341,7 @@ public partial class ExamViewModel : ViewModelBase
             }
             return false;
         });
-    
+
     }
 
 }

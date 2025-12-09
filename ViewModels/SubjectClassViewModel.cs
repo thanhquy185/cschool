@@ -7,13 +7,14 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using Utils;
 using Avalonia;
+using Services;
 
 namespace ViewModels;
 public partial class SubjectClassViewModel : ViewModelBase
 {
     public ObservableCollection<SubjectClassModel> SubjectClasses { get; }
     public ObservableCollection<StudentScoreModel> StudentScores { get; }
-
+    public int TeacherId { get; set;}
 
     private List<SubjectClassModel> _allSubjectClasses = new List<SubjectClassModel>();
     private string _searchText = string.Empty;
@@ -54,19 +55,33 @@ public partial class SubjectClassViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> ExportToExcelCommand { get ; }
     public ReactiveCommand<Unit, bool> UpdateScoreColumnsCommand { get; }
 
-    public SubjectClassViewModel()
+public SubjectClassViewModel()
+{
+    SubjectClasses = new ObservableCollection<SubjectClassModel>();
+    StudentScores = new ObservableCollection<StudentScoreModel>();
+    TeacherId = 0;
+}
+    public SubjectClassViewModel(int teacherId)
     {
         SubjectClasses = new ObservableCollection<SubjectClassModel>();
         StudentScores = new ObservableCollection<StudentScoreModel>();
 
-        int teacherId = 1; // Example teacher ID
-        Console.WriteLine($"Loading subject classes for Teacher ID: {teacherId}");
-        LoadData(teacherId);
-
-
-        GetSubjectClassesByTeacherIdCommand = ReactiveCommand.CreateFromTask<int, ObservableCollection<SubjectClassModel>>(async teacherId =>
+        if(teacherId > 0)
         {
-            var classes = AppService.SubjectClassService?.GetSubjectClassesByTeacherId(teacherId) ?? new List<SubjectClassModel>();
+            TeacherId = teacherId;
+        }
+        else
+        {
+            TeacherId = 0;
+        }
+         // Example teacher ID
+        Console.WriteLine($"Loading subject classes for Teacher ID: {teacherId}");
+        LoadData(TeacherId);
+
+
+        GetSubjectClassesByTeacherIdCommand = ReactiveCommand.CreateFromTask<int, ObservableCollection<SubjectClassModel>>(async TeacherId =>
+        {
+            var classes = AppService.SubjectClassService?.GetSubjectClassesByTeacherId(TeacherId) ?? new List<SubjectClassModel>();
             _allSubjectClasses = classes;
             SubjectClasses.Clear();
 

@@ -14,8 +14,9 @@ namespace ViewModels;
 
 public partial class HomeClassViewModel : ViewModelBase
 {
+   
     private readonly HomeClassService _service;
-    private const int CURRENT_TEACHER_ID = 2; // ID giáo viên cố định
+    public int CURRENT_TEACHER_ID{get; set;} // ID giáo viên cố định
 
     [ObservableProperty]
     private string _nameTeacher = "";
@@ -59,9 +60,12 @@ public partial class HomeClassViewModel : ViewModelBase
     };
 
     #region Constructor và Load dữ liệu ban đầu
-    public HomeClassViewModel(HomeClassService service)
+    public HomeClassViewModel()
     {
-        _service = service;
+        var currentUserLogin = SessionService.currentUserLogin;
+        Console.WriteLine("Trang lớp chủ nhiệm: " + currentUserLogin?.Username);
+
+        this._service = AppService.HomeClassService;
         
         // Load danh sách học kỳ của giáo viên ID = 3
         LoadTermsCommand.Execute(null);
@@ -96,7 +100,25 @@ public partial class HomeClassViewModel : ViewModelBase
         }
     }
     #endregion
-
+    public HomeClassViewModel(int teacherId)
+    {
+        
+        if (teacherId > 0)
+        {
+            CURRENT_TEACHER_ID = teacherId;
+        }
+        else
+        {
+            CURRENT_TEACHER_ID = 0;
+        }
+        
+        this._service = AppService.HomeClassService;
+        
+        // Load danh sách học kỳ của giáo viên
+        LoadTermsCommand.Execute(null);
+        
+        Console.WriteLine($"Khởi tạo HomeClassViewModel với Teacher ID: {CURRENT_TEACHER_ID}");
+    }
     #region Load dữ liệu khi chọn học kỳ
     [RelayCommand]
     private void LoadDataByTerm()
@@ -320,30 +342,7 @@ public partial class HomeClassViewModel : ViewModelBase
         Console.WriteLine($"Đã load {StudentDetailScores.Count} môn học có điểm");
     }
 
-    // private float CalculateAverageScore(List<float> diemMieng, List<float> diem15p, float diemGK, float diemCK)
-    // {
-    //     float avgMieng = diemMieng.Count > 0 ? diemMieng.Average() : 0;
-    //     float avg15p = diem15p.Count > 0 ? diem15p.Average() : 0;
-    //     if(diemGK ==0 && diemCK==0)
-    //     {
-    //         return (avgMieng * 1 + avg15p * 1) / 2;
-    //     }
-    //     else if(diemCK==0)
-    //     {
-    //         return (avgMieng * 1 + avg15p * 1 + diemGK * 2) / 4;
-    //     }
-    //     else if(diemGK==0)
-    //     {
-    //         return (avgMieng * 1 + avg15p * 1 + diemCK * 3) / 5;
-    //     }else if(avgMieng==0 && avg15p==0)
-    //     {
-    //         return (diemGK * 2 + diemCK * 3) / 5;
-    //     }
-
-
-        
-    //     return (avgMieng * 1 + avg15p * 1 + diemGK * 2 + diemCK * 3) / 7;
-    // }
+    
     #endregion
 
     #region Xuất Excel
@@ -706,5 +705,6 @@ public partial class HomeClassViewModel : ViewModelBase
         //     .FirstOrDefault()?
         //     .Close(false);
     }
+
     #endregion
 }

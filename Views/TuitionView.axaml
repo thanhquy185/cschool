@@ -15,24 +15,30 @@
   </Design.DataContext>
   <Grid Classes="MainLayout" RowDefinitions="Auto,Auto,*,Auto">
 
-    <!-- HEADER -->
+    <!--  HEADER  -->
     <Grid Classes="MainLayoutHeader" ColumnDefinitions="*,Auto">
       <StackPanel Classes="MainLayoutHeaderInfo">
-        <TextBlock Classes="Title" Text="Quản lý học phí" />
+        <!--  Titlte  -->
+        <TextBlock Classes="Title" Text="{Binding TitlePage}" />
+        <!--  SubTitle  -->
+        <TextBlock Classes="SubTitle" Text="{Binding DescriptionPage}" />
       </StackPanel>
       <StackPanel Grid.Column="1" Classes="MainLayoutHeaderButtons">
-        <Button x:Name="CreateButton" Classes="CrudButton Create" Padding="20,10"   >
+        <Button
+          x:Name="CreateButton"
+          Padding="20,10"
+          Classes="CrudButton Create">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource SettingIcon}"/>
-              <TextBlock Text="Thiết lập" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+              <Image Source="{DynamicResource SettingIcon}" />
+              <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="Thiết lập" />
             </StackPanel>
           </Border>
         </Button>
         <Button x:Name="InfoButton" Classes="CrudButton Info">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource InfoIcon}"/>
+              <Image Source="{DynamicResource InfoIcon}" />
               <TextBlock Text="Chi tiết" />
             </StackPanel>
           </Border>
@@ -40,7 +46,7 @@
         <Button x:Name="UpdateButton" Classes="CrudButton Update">
           <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
             <StackPanel>
-              <Image Source="{DynamicResource UpdateIcon}"/>
+              <Image Source="{DynamicResource UpdateIcon}" />
               <TextBlock Text="Cập nhật" />
             </StackPanel>
           </Border>
@@ -48,28 +54,40 @@
       </StackPanel>
     </Grid>
 
-    <!-- FILTER -->
+    <!--  FILTER  -->
     <Border Grid.Row="1" Classes="FilterDataWarper">
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox Watermark="Nhập tên học sinh hoặc lớp" x:Name="SearchBox"/>
+            <TextBox x:Name="SearchBox" Watermark="Nhập tên học sinh hoặc lớp" />
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
 
-          <ComboBox x:Name="StatusFilterBox" Classes="FilterDataFindSelect" MaxDropDownHeight="200" SelectedIndex="0">
+          <ComboBox
+            x:Name="StatusFilterBox"
+            Classes="FilterDataFindSelect"
+            MaxDropDownHeight="200"
+            SelectedIndex="0">
             <ComboBoxItem>Tất cả trạng thái</ComboBoxItem>
             <ComboBoxItem>Đã đóng</ComboBoxItem>
             <ComboBoxItem>Chưa đóng</ComboBoxItem>
             <ComboBoxItem>Đóng một phần</ComboBoxItem>
           </ComboBox>
 
-          <ComboBox x:Name="FilterYear" Classes="FilterDataFindSelect" MaxDropDownHeight="200" SelectedIndex="0">
+          <ComboBox
+            x:Name="FilterYear"
+            Classes="FilterDataFindSelect"
+            MaxDropDownHeight="200"
+            SelectedIndex="0">
             <ComboBoxItem>Năm 2024-2025</ComboBoxItem>
             <ComboBoxItem>Năm 2025-2026</ComboBoxItem>
           </ComboBox>
-          
-          <ComboBox x:Name="FilterClass" Classes="FilterDataFindSelect" MaxDropDownHeight="200" SelectedIndex="0">
+
+          <ComboBox
+            x:Name="FilterClass"
+            Classes="FilterDataFindSelect"
+            MaxDropDownHeight="200"
+            SelectedIndex="0">
             <ComboBoxItem>Năm 2024-2025</ComboBoxItem>
             <ComboBoxItem>Năm 2025-2026</ComboBoxItem>
           </ComboBox>
@@ -88,28 +106,41 @@
       </Grid>
     </Border>
 
-    <!-- BODY: TAB CONTROL -->
+    <!--  BODY: TAB CONTROL  -->
     <Border Grid.Row="2" Classes="TableDataWarper">
 
       <TabControl x:Name="TuitionTabControl">
 
 
-        <!-- TAB 1: Mức học phí -->
-        <TabItem Header="Mức học phí" >
+        <!--  TAB 1: Mức học phí  -->
+        <TabItem Header="Mức học phí">
           <Border Classes="TableDataWarper">
-            <DataGrid x:Name="Tuition_Class"
-                      Classes="TableData"
-                      ItemsSource="{Binding FeeClassListView}"
-                      SelectedItem="{Binding SelectedClass, Mode=TwoWay}"
-                      AutoGenerateColumns="False">
+            <DataGrid
+              x:Name="Tuition_Class"
+              AutoGenerateColumns="False"
+              Classes="TableData"
+              ItemsSource="{Binding FeeClassListView}"
+              SelectedItem="{Binding SelectedClass, Mode=TwoWay}">
 
               <DataGrid.Columns>
-                <DataGridTextColumn Width="*" Header="Khối" Binding="{Binding Grade}" />
-                <DataGridTextColumn Width="*" Header="Lớp" Binding="{Binding Name}" />
-                <DataGridTextColumn Width="*" Header="Năm học" Binding="{Binding Year}" />
-                <DataGridTextColumn Width="*" Header="Trạng thái" Binding="{Binding Status}" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Grade}"
+                  Header="Khối" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Name}"
+                  Header="Lớp" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Year}"
+                  Header="Năm học" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding Status}"
+                  Header="Trạng thái" />
 
-                
+
 
               </DataGrid.Columns>
 
@@ -118,43 +149,53 @@
         </TabItem>
 
 
-        <!-- TAB 2: Quản lý học phí -->
+        <!--  TAB 2: Quản lý học phí  -->
         <TabItem Header="Quản lý học phí">
           <Border Classes="TableDataWarper">
-            <DataGrid Classes="TableData"
-                      ItemsSource="{Binding TuitionListView}"
-                      AutoGenerateColumns="False"
-                      >
+            <DataGrid
+              AutoGenerateColumns="False"
+              Classes="TableData"
+              ItemsSource="{Binding TuitionListView}">
 
               <DataGrid.Columns>
 
-                <DataGridTextColumn Width="2*" Header="Học sinh" Binding="{Binding StudentName}" />
-                <DataGridTextColumn Width="1.2*" Header="Lớp" Binding="{Binding ClassName}" />
-                <DataGridTextColumn Width="*" Header="Năm học" Binding="{Binding ClassYear}" />
-            
+                <DataGridTextColumn
+                  Width="2*"
+                  Binding="{Binding StudentName}"
+                  Header="Học sinh" />
+                <DataGridTextColumn
+                  Width="1.2*"
+                  Binding="{Binding ClassName}"
+                  Header="Lớp" />
+                <DataGridTextColumn
+                  Width="*"
+                  Binding="{Binding ClassYear}"
+                  Header="Năm học" />
+
 
                 <DataGridTemplateColumn Width="120" Header="Thu tiền">
                   <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                      <Button Content="Thu"
-                              Classes="TableActionButton Create"
-                              Click="CollectionFee_Click"
-                              DataContext="{Binding}"
-                          />
+                      <Button
+                        Classes="TableActionButton Create"
+                        Click="CollectionFee_Click"
+                        Content="Thu"
+                        DataContext="{Binding}" />
                     </DataTemplate>
                   </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-            <DataGridTemplateColumn Width="120" Header="Chi tiết">
-              <DataGridTemplateColumn.CellTemplate>
-                <DataTemplate>
-                  <Button Content="Xem"
-                          Classes="TableActionButton Info"
-                          Click="StudentDetail_Click"
-                          DataContext="{Binding }"/>
-                </DataTemplate>
-              </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="120" Header="Chi tiết">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Button
+                        Classes="TableActionButton Info"
+                        Click="StudentDetail_Click"
+                        Content="Xem"
+                        DataContext="{Binding}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
 
               </DataGrid.Columns>

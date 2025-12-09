@@ -12,7 +12,7 @@ public class SubjectClassService
     {
         _db = dbService;
     }
-    
+
     public List<SubjectClassModel> GetSubjectClassesByTeacherId(int teacherId = 1)
     {
         try
@@ -167,7 +167,7 @@ public class SubjectClassService
                         {
                             StudentId = id,
                             FullName = reader["fullName"].ToString()!,
-                            OralScores =  Enumerable.Repeat<double?>(null, subjectClass.OralCount).ToList(),
+                            OralScores = Enumerable.Repeat<double?>(null, subjectClass.OralCount).ToList(),
                             Quizzes = Enumerable.Repeat<double?>(null, subjectClass.QuizCount).ToList(),
                             MidtermScore = null,
                             FinalScore = null
@@ -217,8 +217,8 @@ public class SubjectClassService
     public bool SaveStudentScores(SubjectClassModel subjectClass, List<StudentScoreModel> studentScores)
     {
         var conn = _db.GetConnection();
-        try 
-        {   
+        try
+        {
             int subjectId = subjectClass.SubjectId;
             int assignClassId = subjectClass.Assign_class_id;
             // xóa điểm cũ
@@ -295,7 +295,7 @@ public class SubjectClassService
                     if (student.OralScores[i].HasValue)
                     {
                         totalScore += student.OralScores[i].Value;
-                        totalWeight ++;
+                        totalWeight++;
                     }
                 }
 
@@ -305,7 +305,7 @@ public class SubjectClassService
                     if (student.Quizzes[i].HasValue)
                     {
                         totalScore += student.Quizzes[i].Value;
-                        totalWeight ++;
+                        totalWeight++;
                     }
                 }
 
@@ -367,77 +367,77 @@ public class SubjectClassService
             int subjectId = subjectClass.SubjectId;
             int assignClassId = subjectClass.Assign_class_id;
 
-        // 1️⃣ Lấy danh sách studentId hợp lệ
-        var validStudentIds = new HashSet<int>();
-        string studentQuery = @"SELECT student_id 
+            // 1️⃣ Lấy danh sách studentId hợp lệ
+            var validStudentIds = new HashSet<int>();
+            string studentQuery = @"SELECT student_id 
                                 FROM assign_class_students 
                                 WHERE assign_class_id = @AssignClassId";
 
-        using (var cmd = new MySqlCommand(studentQuery, conn))
-        {
-            cmd.Parameters.AddWithValue("@AssignClassId", assignClassId);
-            using (var reader = cmd.ExecuteReader())
+            using (var cmd = new MySqlCommand(studentQuery, conn))
             {
-                while (reader.Read())
+                cmd.Parameters.AddWithValue("@AssignClassId", assignClassId);
+                using (var reader = cmd.ExecuteReader())
                 {
-                    validStudentIds.Add(reader.GetInt32("student_id"));
+                    while (reader.Read())
+                    {
+                        validStudentIds.Add(reader.GetInt32("student_id"));
+                    }
                 }
             }
-        }
 
-        // 2️⃣ Đọc Excel và validate trước
-        ExcelPackage.License.SetNonCommercialOrganization("cschool");
+            // 2️⃣ Đọc Excel và validate trước
+            ExcelPackage.License.SetNonCommercialOrganization("cschool");
 
-        using (var package = new ExcelPackage(new FileInfo(excelFilePath)))
-        {
-            var ws = package.Workbook.Worksheets[0];
-            int rowCount = ws.Dimension.Rows;
-
-            int oralStart = 3;
-            int quizStart = oralStart + subjectClass.OralCount;
-            int midCol = quizStart + subjectClass.QuizCount;
-            int finalCol = midCol + 1;
-
-            for (int row = 2; row <= rowCount; row++)
+            using (var package = new ExcelPackage(new FileInfo(excelFilePath)))
             {
-                int studentId = Convert.ToInt32(ws.Cells[row, 1].Value);
+                var ws = package.Workbook.Worksheets[0];
+                int rowCount = ws.Dimension.Rows;
 
-                if (!validStudentIds.Contains(studentId))
-                {
-                    return (false, "StudentId không hợp lệ");
-                }
+                int oralStart = 3;
+                int quizStart = oralStart + subjectClass.OralCount;
+                int midCol = quizStart + subjectClass.QuizCount;
+                int finalCol = midCol + 1;
 
-                for (int i = 0; i < subjectClass.OralCount; i++)
+                for (int row = 2; row <= rowCount; row++)
                 {
-                    var v = ws.Cells[row, oralStart + i].Value;
-                    if (v != null && !double.TryParse(v.ToString(), out _))
+                    int studentId = Convert.ToInt32(ws.Cells[row, 1].Value);
+
+                    if (!validStudentIds.Contains(studentId))
+                    {
+                        return (false, "StudentId không hợp lệ");
+                    }
+
+                    for (int i = 0; i < subjectClass.OralCount; i++)
+                    {
+                        var v = ws.Cells[row, oralStart + i].Value;
+                        if (v != null && !double.TryParse(v.ToString(), out _))
+                        {
+                            return (false, "Điểm nhập không hợp lệ");
+                        }
+                    }
+
+                    for (int i = 0; i < subjectClass.QuizCount; i++)
+                    {
+                        var v = ws.Cells[row, quizStart + i].Value;
+                        if (v != null && !double.TryParse(v.ToString(), out _))
+                        {
+                            return (false, "Điểm nhập không hợp lệ");
+                        }
+                    }
+
+                    var mid = ws.Cells[row, midCol].Value;
+                    if (mid != null && !double.TryParse(mid.ToString(), out _))
+                    {
+                        return (false, "Điểm nhập không hợp lệ");
+                    }
+
+                    var final = ws.Cells[row, finalCol].Value;
+                    if (final != null && !double.TryParse(final.ToString(), out _))
                     {
                         return (false, "Điểm nhập không hợp lệ");
                     }
                 }
-
-                for (int i = 0; i < subjectClass.QuizCount; i++)
-                {
-                    var v = ws.Cells[row, quizStart + i].Value;
-                    if (v != null && !double.TryParse(v.ToString(), out _))
-                    {
-                        return (false, "Điểm nhập không hợp lệ");
-                    }
-                }
-
-                var mid = ws.Cells[row, midCol].Value;
-                if (mid != null && !double.TryParse(mid.ToString(), out _))
-                {
-                    return (false, "Điểm nhập không hợp lệ");
-                }
-
-                var final = ws.Cells[row, finalCol].Value;
-                if (final != null && !double.TryParse(final.ToString(), out _))
-                {
-                    return (false, "Điểm nhập không hợp lệ");
-                }
             }
-        }
             string deleteQuery = @"DELETE FROM score_details 
                                 WHERE subject_id=@SubjectId 
                                 AND assign_class_id=@AssignClassId;";
@@ -467,7 +467,7 @@ public class SubjectClassService
                     int midtermCol = quizStartCol + subjectClass.QuizCount;
                     int finalCol = midtermCol + 1;
 
-                    for (int row = 2; row <= rowCount; row++) 
+                    for (int row = 2; row <= rowCount; row++)
                     {
                         int studentId = Convert.ToInt32(worksheet.Cells[row, 1].Value);
                         // FullName is ignored for import, as it's display-only
@@ -482,7 +482,7 @@ public class SubjectClassService
                                 cmd.Parameters.AddWithValue("@StudentId", studentId);
                                 cmd.Parameters.AddWithValue("@SubjectId", subjectId);
                                 cmd.Parameters.AddWithValue("@AssignClassId", assignClassId);
-                                cmd.Parameters.AddWithValue("@ExamTypeId", 1); 
+                                cmd.Parameters.AddWithValue("@ExamTypeId", 1);
                                 cmd.Parameters.AddWithValue("@Attempt", i + 1);
                                 cmd.Parameters.AddWithValue("@Score", score);
                                 cmd.ExecuteNonQuery();
@@ -514,7 +514,7 @@ public class SubjectClassService
                             cmd.Parameters.AddWithValue("@StudentId", studentId);
                             cmd.Parameters.AddWithValue("@SubjectId", subjectId);
                             cmd.Parameters.AddWithValue("@AssignClassId", assignClassId);
-                            cmd.Parameters.AddWithValue("@ExamTypeId", 3); 
+                            cmd.Parameters.AddWithValue("@ExamTypeId", 3);
                             cmd.Parameters.AddWithValue("@Attempt", 1);
                             cmd.Parameters.AddWithValue("@Score", midtermScore);
                             cmd.ExecuteNonQuery();
@@ -528,7 +528,7 @@ public class SubjectClassService
                             cmd.Parameters.AddWithValue("@StudentId", studentId);
                             cmd.Parameters.AddWithValue("@SubjectId", subjectId);
                             cmd.Parameters.AddWithValue("@AssignClassId", assignClassId);
-                            cmd.Parameters.AddWithValue("@ExamTypeId", 4); 
+                            cmd.Parameters.AddWithValue("@ExamTypeId", 4);
                             cmd.Parameters.AddWithValue("@Attempt", 1);
                             cmd.Parameters.AddWithValue("@Score", finalScore);
                             cmd.ExecuteNonQuery();
@@ -625,5 +625,5 @@ public class SubjectClassService
             throw new Exception("Error exporting student scores to Excel: " + ex.Message);
         }
     }
-    
+
 }

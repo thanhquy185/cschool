@@ -5,16 +5,20 @@ using Utils;
 using Views.Teacher;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Interactivity;
+using Services;
 
 
 namespace Views;
 
 public partial class TeacherView : UserControl
 {
+    private TeacherViewModel _teacherViewModel { get; set; }
+
     public TeacherView()
     {
         InitializeComponent();
-        DataContext = new TeacherViewModel();
+        this._teacherViewModel = new TeacherViewModel();
+        DataContext = this._teacherViewModel;
 
         InfoButton.Click += async (_, _) => await ShowTeacherDialog(DialogModeEnum.Info);
         CreateButton.Click += async (_, _) => await ShowTeacherDialog(DialogModeEnum.Create);
@@ -36,6 +40,23 @@ public partial class TeacherView : UserControl
                 vm.ExportToExcelCommand.Execute().ToTask();
             }
         };
+
+        // Phân quyền các nút chức năng
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Xem");
+            CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Thêm");
+            UpdateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Cập nhật");
+            LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Xoá / Khoá");
+            ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Thêm");
+            ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Xem");
+        }
     }
 
     private async Task ShowTeacherDialog(DialogModeEnum mode)
@@ -65,7 +86,7 @@ public partial class TeacherView : UserControl
                 vm.ClearTeacherDetails();
                 dialog = new TeacherCreateDialog(vm);
                 break;
-            
+
             case DialogModeEnum.Update:
                 vm.TeacherDetails = await vm.GetTeacherByIdCommand.Execute().ToTask() ?? vm.SelectedTeacher;
                 vm.SetTeacherForEdit(vm.TeacherDetails);

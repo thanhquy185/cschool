@@ -13,6 +13,10 @@ namespace ViewModels;
 
 public partial class AssignTeacherViewModel : ViewModelBase
 {
+    // Tiêu đề trang
+    public string TitlePage { get; } = "Quản lý phân công giáo viên";
+    // Mô tả trang
+    public string DescriptionPage { get; } = "Quản lý phân công dạy học cho giáo viên";
     private readonly AssignTeacherService _service;
 
     public ObservableCollection<AssignTeacher> AssignTeachers { get; } = new();
@@ -21,7 +25,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     public ObservableCollection<Subjects> Subjects { get; } = new();
     public ObservableCollection<ClassModel> Classes { get; } = new();
     public ObservableCollection<string> DaysOfWeek { get; } = new();
-    
+
     [ObservableProperty]
     private string _loadingStatus = "Chọn môn học để hiển thị giáo viên";
 
@@ -61,13 +65,13 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private string _end;
 
     private AssignTeacher? _editingItem;
-    
-      // SỬA: Thêm property để theo dõi việc đang tải giáo viên
+
+    // SỬA: Thêm property để theo dõi việc đang tải giáo viên
     [ObservableProperty]
     private bool _isLoadingTeachers = false;
 
     // SỬA: Xử lý khi chọn môn học thay đổi
-     partial void OnSelectedSubjectChanged(Subjects? value)
+    partial void OnSelectedSubjectChanged(Subjects? value)
     {
         if (value != null)
         {
@@ -80,29 +84,29 @@ public partial class AssignTeacherViewModel : ViewModelBase
             LoadingStatus = "Chọn môn học để hiển thị giáo viên";
         }
     }
-      private async void LoadTeachersBySubject(int subjectId)
+    private async void LoadTeachersBySubject(int subjectId)
     {
         try
         {
             IsLoadingTeachers = true;
             LoadingStatus = "Đang tải danh sách giáo viên...";
-            
+
             // Clear danh sách giáo viên hiện tại
             Teachers.Clear();
-            
+
             // Lấy danh sách giáo viên theo môn học
             var teachersBySubject = await Task.Run(() => _service.GetTeachers(subjectId));
-            
+
             // Thêm giáo viên vào danh sách
             foreach (var teacher in teachersBySubject)
             {
                 Teachers.Add(teacher);
             }
-            
-            LoadingStatus = teachersBySubject.Count > 0 
-                ? $"Đã tải {teachersBySubject.Count} giáo viên" 
+
+            LoadingStatus = teachersBySubject.Count > 0
+                ? $"Đã tải {teachersBySubject.Count} giáo viên"
                 : "Không có giáo viên nào cho môn học này";
-            
+
 
         }
         catch (Exception ex)
@@ -122,35 +126,35 @@ public partial class AssignTeacherViewModel : ViewModelBase
         try
         {
             var assignTeachers = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
-           
+
             var subjects = _service.GetCourses() ?? new List<Subjects>();
-            var teacher1 = _service.GetTeachers()?? new BindingList<TeacherModel>();
+            var teacher1 = _service.GetTeachers() ?? new BindingList<TeacherModel>();
             var classes = _service.GetClasses() ?? new List<ClassModel>();
             var days = _service.GetDaysOfWeek(DateTime.Now) ?? new List<string>();
 
-                AssignTeachers.Clear();        
-                Subjects.Clear();
-                Classes.Clear();
-                DaysOfWeek.Clear();
-                Teachers.Clear();
-                Teachers1.Clear();
+            AssignTeachers.Clear();
+            Subjects.Clear();
+            Classes.Clear();
+            DaysOfWeek.Clear();
+            Teachers.Clear();
+            Teachers1.Clear();
 
-                foreach (var a in assignTeachers)
-                    AssignTeachers.Add(a);
+            foreach (var a in assignTeachers)
+                AssignTeachers.Add(a);
 
-                foreach (var s in subjects)
-                    Subjects.Add(s);
+            foreach (var s in subjects)
+                Subjects.Add(s);
 
-                foreach (var c in classes)
-                    Classes.Add(c);
-                
-                foreach(var t in teacher1)
-                    Teachers1.Add(t);
+            foreach (var c in classes)
+                Classes.Add(c);
 
-                foreach (var d in days)
-                DaysOfWeek.Add(d);   
+            foreach (var t in teacher1)
+                Teachers1.Add(t);
 
-                Console.WriteLine("📘 Data loaded successfully.");    
+            foreach (var d in days)
+                DaysOfWeek.Add(d);
+
+            Console.WriteLine("📘 Data loaded successfully.");
         }
         catch (Exception ex)
         {
@@ -170,36 +174,37 @@ public partial class AssignTeacherViewModel : ViewModelBase
     {
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-        if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay) || Start=="" || End=="")
+        if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay) || Start == "" || End == "")
         {
             await MessageBoxUtil.ShowError("Vui lòng chọn đầy đủ dữ liệu", owner: owner);
             return;
         }
-        if(Rules.IsNumeric(Start)|| Rules.IsNumeric(End))
+        if (Rules.IsNumeric(Start) || Rules.IsNumeric(End))
         {
             await MessageBoxUtil.ShowError("vui lòng nhập dữ liệu số", owner: owner);
             return;
         }
-        if (int.Parse(Start)<=0 || int.Parse(End)<=0)
+        if (int.Parse(Start) <= 0 || int.Parse(End) <= 0)
         {
             await MessageBoxUtil.ShowError("Tiết bắt đầu và kết thúc phải là số dương", owner: owner);
             return;
-        }  
+        }
         if (int.Parse(End) > 10)
         {
             await MessageBoxUtil.ShowError("Tiết kết thúc tối thiểu là 10", owner: owner);
             return;
         }
-        
+
         if (int.Parse(Start) >= int.Parse(End))
         {
             await MessageBoxUtil.ShowError("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc", owner: owner);
             return;
         }
-        
-            try
+
+        try
+        {
+            var assign = new AssignTeacher
             {
-            var assign = new AssignTeacher{
                 Assign_class_id = SelectedClass.Assign_class_Id,
                 Teachers_id = SelectedTeacher.Id,
                 Subject_id = SelectedSubject.Id,
@@ -213,8 +218,8 @@ public partial class AssignTeacherViewModel : ViewModelBase
                 QuizCount = 2,
                 OralCount = 2
             };
-           
-            if (_service.IsTeacherBusy(assign.Teachers_id, assign.Day, assign.Start, assign.End,assign.Assign_class_id))
+
+            if (_service.IsTeacherBusy(assign.Teachers_id, assign.Day, assign.Start, assign.End, assign.Assign_class_id))
             {
                 await MessageBoxUtil.ShowError("Giáo viên đã có lịch dạy vào khung giờ này!", owner: owner);
                 return;
@@ -225,73 +230,73 @@ public partial class AssignTeacherViewModel : ViewModelBase
                 return;
             }
 
-                if (_service.AddAssignmentTeacher(assign))
-                {
-                    await MessageBoxUtil.ShowSuccess("Thêm phân công thành công", owner: owner);
-                    RequestCloseAddDialog?.Invoke(this, EventArgs.Empty);
-                    // (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
-                    // .MainWindow?.OwnedWindows
-                    // .OfType<AssignTeacherAddDialog>()
-                    // .FirstOrDefault()?
-                    // .Close(true);
-                    LoadDataCommand.Execute(null);
-
-                }
-                else
-                {
-                    await MessageBoxUtil.ShowError("Thêm phân công thất bại", owner: owner);
-                    Console.WriteLine("Error: Could not add assignment.");
-                }
-
-            }
-            catch (Exception ex)
+            if (_service.AddAssignmentTeacher(assign))
             {
-                Console.WriteLine($"Error adding assignment: {ex.Message}");
+                await MessageBoxUtil.ShowSuccess("Thêm phân công thành công", owner: owner);
+                RequestCloseAddDialog?.Invoke(this, EventArgs.Empty);
+                // (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
+                // .MainWindow?.OwnedWindows
+                // .OfType<AssignTeacherAddDialog>()
+                // .FirstOrDefault()?
+                // .Close(true);
+                LoadDataCommand.Execute(null);
+
             }
+            else
+            {
+                await MessageBoxUtil.ShowError("Thêm phân công thất bại", owner: owner);
+                Console.WriteLine("Error: Could not add assignment.");
+            }
+
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding assignment: {ex.Message}");
+        }
+    }
 
     public event EventHandler? RequestCloseEditDialog;
     [RelayCommand]
     public async Task SaveEdit()
     {
-    var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-        
-            if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay)|| Start=="" || End=="" || OralCount=="" || QuizCount=="")
-            {
-                await MessageBoxUtil.ShowError("Vui lòng chọn đầy đủ dữ liệu", owner: owner);
-                return;
-            }
-            if(Rules.IsNumeric(Start ) || Rules.IsNumeric(End))
-            {
-                await MessageBoxUtil.ShowError("Tiết bắt đầu và kết thúc phải là số", owner: owner);
-                return;
-            }
-            if(Rules.IsNumeric(OralCount) || Rules.IsNumeric(QuizCount))
-            {
-                await MessageBoxUtil.ShowError("Số bài kiểm tra phải là số", owner: owner);
-                return;
-            }
-                if (Convert.ToInt32(OralCount) <=0  || Convert.ToInt32(QuizCount)<=0)
-            {
-                await MessageBoxUtil.ShowError("Số bài kiểm tra phải là số dương", owner: owner);
-                return;
-            }
-            if (Convert.ToInt32(Start) <=0  || Convert.ToInt32(End)<=0)
-            {
-                await MessageBoxUtil.ShowError("Tiết bắt đầu và tiết kết thúc phải là số dương", owner: owner);
-                return;
-            }
-            if (int.Parse(End) > 10)
-            {
-                await MessageBoxUtil.ShowError("Tiết kết thúc tối thiểu là 10", owner: owner);
-                return;
-            }
+        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-            if (Convert.ToInt32(Start) >= Convert.ToInt32(End))
-            {
-                await MessageBoxUtil.ShowError("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc", owner: owner);
-                return;
-            }
+        if (SelectedTeacher == null || SelectedSubject == null || SelectedClass == null || string.IsNullOrEmpty(SelectedDay) || Start == "" || End == "" || OralCount == "" || QuizCount == "")
+        {
+            await MessageBoxUtil.ShowError("Vui lòng chọn đầy đủ dữ liệu", owner: owner);
+            return;
+        }
+        if (Rules.IsNumeric(Start) || Rules.IsNumeric(End))
+        {
+            await MessageBoxUtil.ShowError("Tiết bắt đầu và kết thúc phải là số", owner: owner);
+            return;
+        }
+        if (Rules.IsNumeric(OralCount) || Rules.IsNumeric(QuizCount))
+        {
+            await MessageBoxUtil.ShowError("Số bài kiểm tra phải là số", owner: owner);
+            return;
+        }
+        if (Convert.ToInt32(OralCount) <= 0 || Convert.ToInt32(QuizCount) <= 0)
+        {
+            await MessageBoxUtil.ShowError("Số bài kiểm tra phải là số dương", owner: owner);
+            return;
+        }
+        if (Convert.ToInt32(Start) <= 0 || Convert.ToInt32(End) <= 0)
+        {
+            await MessageBoxUtil.ShowError("Tiết bắt đầu và tiết kết thúc phải là số dương", owner: owner);
+            return;
+        }
+        if (int.Parse(End) > 10)
+        {
+            await MessageBoxUtil.ShowError("Tiết kết thúc tối thiểu là 10", owner: owner);
+            return;
+        }
+
+        if (Convert.ToInt32(Start) >= Convert.ToInt32(End))
+        {
+            await MessageBoxUtil.ShowError("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc", owner: owner);
+            return;
+        }
 
         if (_service.IsConflict(_editingItem))
         {
@@ -310,10 +315,10 @@ public partial class AssignTeacherViewModel : ViewModelBase
             _editingItem.QuizCount = Convert.ToInt32(QuizCount);
             _editingItem.OralCount = Convert.ToInt32(OralCount);
 
-        // Gọi update
+            // Gọi update
             if (_service.Update(_editingItem))
             {
-                await MessageBoxUtil.ShowSuccess("Cập nhật thành công",owner: owner);
+                await MessageBoxUtil.ShowSuccess("Cập nhật thành công", owner: owner);
                 LoadDataCommand.Execute(null);
                 // (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?
                 // .MainWindow?.OwnedWindows
@@ -324,11 +329,12 @@ public partial class AssignTeacherViewModel : ViewModelBase
             }
             else
             {
-                await MessageBoxUtil.ShowError("Cập nhật thất bại ",owner:owner);
+                await MessageBoxUtil.ShowError("Cập nhật thất bại ", owner: owner);
                 Console.WriteLine("Error: Could not update assignment.");
                 Console.WriteLine($"Giáo viên đc chọn để sửa: ID={SelectedTeacher.Id}, Name={SelectedTeacher.Name}, Address={SelectedTeacher.Address}, Department={SelectedTeacher.DepartmentName}");
             }
-        }catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             Console.WriteLine($"Error updating assignment: {ex.Message}");
         }
@@ -372,28 +378,28 @@ public partial class AssignTeacherViewModel : ViewModelBase
         RequestOpenEditDialog?.Invoke(this, a);
     }
 
-public event EventHandler<AssignTeacher>? RequestOpenDetailDialog;
-[RelayCommand]
-private async Task OpenDetailDialog(AssignTeacher a)
-{
-    var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-    LoadDataCommand.Execute(null);
-    // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
-    await Task.Delay(100);
+    public event EventHandler<AssignTeacher>? RequestOpenDetailDialog;
+    [RelayCommand]
+    private async Task OpenDetailDialog(AssignTeacher a)
+    {
+        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        LoadDataCommand.Execute(null);
+        // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
+        await Task.Delay(100);
 
-    _editingItem = a;
+        _editingItem = a;
 
-    SelectedTeacher = Teachers1.FirstOrDefault(t => t.Id == a.Teachers_id);
-    SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
-    SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
-    SelectedDay = a.Day;
-    Start = a.Start.ToString();
-    End = a.End.ToString();
-    QuizCount = a.QuizCount.ToString();
-    OralCount = a.OralCount.ToString();
-    
-    RequestOpenDetailDialog?.Invoke(this, a);
-}
+        SelectedTeacher = Teachers1.FirstOrDefault(t => t.Id == a.Teachers_id);
+        SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
+        SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
+        SelectedDay = a.Day;
+        Start = a.Start.ToString();
+        End = a.End.ToString();
+        QuizCount = a.QuizCount.ToString();
+        OralCount = a.OralCount.ToString();
+
+        RequestOpenDetailDialog?.Invoke(this, a);
+    }
     [RelayCommand]
     public async Task Delete(AssignTeacher a)
     {
@@ -420,47 +426,47 @@ private async Task OpenDetailDialog(AssignTeacher a)
     }
 
     [RelayCommand]
-public void Search()
-{
-    try
+    public void Search()
     {
-        // _editingItem = a;
-        // SelectedTeacher = TeacherModels.FirstOrDefault(t => t.Id == a.Teachers_id);
-        // SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
-        // SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
-        // SelectedDay = a.Day;
-        // Start = a.Start;
-        // End = a.End;
-        // QuizCount = a.QuizCount;
-        // OralCount = a.OralCount;
-        // IsFormVisible = true;
-    
-        var keyword = _searchText?.Trim() ?? "";
-        IEnumerable<AssignTeacher> results;
+        try
+        {
+            // _editingItem = a;
+            // SelectedTeacher = TeacherModels.FirstOrDefault(t => t.Id == a.Teachers_id);
+            // SelectedSubject = Subjects.FirstOrDefault(s => s.Id == a.Subject_id);
+            // SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
+            // SelectedDay = a.Day;
+            // Start = a.Start;
+            // End = a.End;
+            // QuizCount = a.QuizCount;
+            // OralCount = a.OralCount;
+            // IsFormVisible = true;
 
-        if (string.IsNullOrWhiteSpace(keyword))
-        {
-            // Nếu trống → load lại toàn bộ
-            results = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
-        }
-        else
-        {
-            results = _service.Search(keyword);
-        }
+            var keyword = _searchText?.Trim() ?? "";
+            IEnumerable<AssignTeacher> results;
 
-        Dispatcher.UIThread.Post(() =>
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                // Nếu trống → load lại toàn bộ
+                results = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
+            }
+            else
+            {
+                results = _service.Search(keyword);
+            }
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                AssignTeachers.Clear();
+                foreach (var a in results)
+                    AssignTeachers.Add(a);
+            });
+        }
+        catch (Exception ex)
         {
-            AssignTeachers.Clear();
-            foreach (var a in results)
-                AssignTeachers.Add(a);
-        });
+            Console.WriteLine($"Search error: {ex.Message}");
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Search error: {ex.Message}");
-    }
-}
-     [RelayCommand]
+    [RelayCommand]
     public void SearchNameSubject()
     {
         var results = _service.Search(SelectedSubjectSearch.Name_Subject ?? "");
@@ -472,52 +478,77 @@ public void Search()
         });
     }
 
-// [RelayCommand]
-// private async Task OpenAddDialog()
-// {
-//     try
-//     {
-//         var dialog = new AssignTeacherAddDialog
-//         {
-//             DataContext = this
-//         };
-        
-//         var result = await dialog.ShowDialog<bool>(
-//             (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
-//         );
-        
-//         if (result)
-//         {
-//             LoadDataCommand.Execute(null);
-//         }
-//     }
-//     catch (Exception ex)
-//     {
-//         Console.WriteLine($"❌ Error opening add dialog: {ex.Message}");
-//     }
-// }
+    // [RelayCommand]
+    // private async Task OpenAddDialog()
+    // {
+    //     try
+    //     {
+    //         var dialog = new AssignTeacherAddDialog
+    //         {
+    //             DataContext = this
+    //         };
 
-[RelayCommand]
-public void ResetSearch()
-{
-    SearchText = string.Empty;
-    LoadDataCommand.Execute(null); // 🔁 Hiển thị lại toàn bộ danh sách
-}
-public void ClearForm()
+    //         var result = await dialog.ShowDialog<bool>(
+    //             (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
+    //         );
+
+    //         if (result)
+    //         {
+    //             LoadDataCommand.Execute(null);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine($"❌ Error opening add dialog: {ex.Message}");
+    //     }
+    // }
+
+    [RelayCommand]
+    public void ResetSearch()
     {
-         _editingItem = null;
-            SelectedTeacher = null;
-            SelectedSubject = null;
-            SelectedClass = null;
-            SelectedDay = null;
-            Start = "";
-            End = "";
+        SearchText = string.Empty;
+        LoadDataCommand.Execute(null); // 🔁 Hiển thị lại toàn bộ danh sách
+    }
+    public void ClearForm()
+    {
+        _editingItem = null;
+        SelectedTeacher = null;
+        SelectedSubject = null;
+        SelectedClass = null;
+        SelectedDay = null;
+        Start = "";
+        End = "";
     }
 
-    public AssignTeacherViewModel(AssignTeacherService service)
+
+
+    [ObservableProperty]
+    public bool _infoButtonEnabled;
+    [ObservableProperty]
+    public bool _createButtonEnabled;
+    [ObservableProperty]
+    public bool _updateButtonEnabled;
+    [ObservableProperty]
+    public bool _lockButtonEnabled;
+
+    public AssignTeacherViewModel()
     {
-        _service = service;
+        // Phân quyền các nút chức năng
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            this.InfoButtonEnabled = AppService.RoleDetailService.HasPermission(
+                        SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Xem");
+            this.CreateButtonEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Thêm");
+            this.UpdateButtonEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Cập nhật");
+            this.LockButtonEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Xoá / Khoá");
+
+        }
+
+        this._service = AppService.AssignTeacherService;
         LoadDataCommand.Execute(null);
     }
-    
+
 }

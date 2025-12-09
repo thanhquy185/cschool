@@ -27,15 +27,13 @@ CREATE TABLE `assign_classes` (
 
 INSERT INTO `assign_classes` (`id`, `class_id`, `head_teacher_id`, `term_id`, `status`) VALUES
 (11, 1, 1, 9, 1),
-(12, 2, 2, 9, 9),
-(13, 3, 3, 9, 9),
-(14, 4, 4, 9, 9),
-(15, 5, 5, 9, 9),
-(16, 6, 6, 9, 9),
-(17, 7, 7, 9, 9),
-(18, 8, 8, 9, 9),
-(19, 2, 9, 9, 10),
-(20, 1, 10, 9, 10);
+(12, 2, 2, 9, 1),
+(13, 3, 3, 9, 1),
+(14, 4, 4, 9, 1),
+(15, 5, 5, 9, 1),
+(16, 6, 6, 9, 1),
+(17, 7, 7, 9, 1),
+(18, 8, 8, 9, 1);
 
 -- --------------------------------------------------------
 
@@ -66,8 +64,6 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (17, 10, 'Thành viên'),
 
 (18, 11, 'Lớp trưởng'),
-(19, 12, 'Lớp phó học tập'),
-(20, 13, 'Lớp phó lao động'),
 (11, 14, 'Thành viên'),
 (11, 15, 'Thành viên'),
 (15, 16, 'Thành viên'),
@@ -84,8 +80,6 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (16, 26, 'Thành viên'),
 (17, 27, 'Thành viên'),
 (18, 28, 'Thành viên'),
-(19, 29, 'Thành viên'),
-(20, 30, 'Thành viên'),
 
 (11, 31, 'Lớp trưởng'),
 (13, 32, 'Lớp phó học tập'),
@@ -98,8 +92,6 @@ INSERT INTO `assign_class_students` (`assign_class_id`, `student_id`, `role`) VA
 (17, 39, 'Thành viên'),
 (18, 40, 'Thành viên'),
 
-(19, 41, 'Lớp trưởng'),
-(20, 42, 'Lớp phó học tập'),
 (11, 43, 'Lớp phó lao động'),
 (16, 44, 'Thành viên'),
 (17, 45, 'Thành viên'),
@@ -140,10 +132,7 @@ INSERT INTO `assign_class_teachers` (`assign_class_id`, `teacher_id`, `subject_i
 (13, 3, 5, 1, 1, 'Thứ Ba', 2, 3),
 (14, 4, 1, 2, 2, 'Thứ Năm', 4, 5),
 (15, 5, 6, 3, 1, 'Thứ Ba', 1, 2),
-(16, 6, 9, 2, 2, 'Thứ Tư', 3, 4),
-(19, 2, 1, 1, 2, 'Thứ Hai', 2, 4),
-(19, 9, 3, 1, 1, 'Thứ Năm', 1, 2),
-(20, 10, 4, 2, 2, 'Thứ Ba', 3, 4);
+(16, 6, 9, 2, 2, 'Thứ Tư', 3, 4);
 
 -- --------------------------------------------------------
 
@@ -371,19 +360,27 @@ INSERT INTO `exam_types` (`id`, `name`, `weight`) VALUES
 CREATE TABLE `functions` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `icon` varchar(255) DEFAULT NULL
+  `is_teacher_function` TINYINT(1) DEFAULT 0,
+  `actions` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `functions`
 --
 
-INSERT INTO `functions` (`id`, `name`, `icon`) VALUES
-(1, 'Thêm', 'fa-plus'),
-(2, 'Sửa', 'fa-edit'),
-(3, 'Xóa', 'fa-trash'),
-(4, 'Phân lớp', 'fa-users'),
-(5, 'Nhập điểm', 'fa-keyboard');
+INSERT INTO `functions` (`id`, `name`, `is_teacher_function`,`actions`) VALUES
+(1, 'Lớp chủ nhiệm', 1, null),
+(2, 'Điểm danh', 1, null),
+(3, 'Nhập điểm', 1, null),
+(4, 'Thống kê', 0, 'Xem'),
+(5, 'Phân công giáo viên', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
+(6, 'Lịch thi', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
+(7, 'Học phí', 0, 'Xem|Thêm|Cập nhật'),
+(8, 'Lớp học', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
+(9, 'Giáo viên', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
+(10, 'Học sinh', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
+(11, 'Nhóm quyền', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
+(12, 'Người dùng', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá');
 
 -- --------------------------------------------------------
 
@@ -467,7 +464,7 @@ INSERT INTO `relations` (`id`, `student_id`, `fullname`, `phone`, `birthday`, `e
 CREATE TABLE `roles` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `status` tinyint(4) DEFAULT 1
+  `status` varchar(100) DEFAULT 'Hoạt động'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -475,12 +472,12 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id`, `name`, `status`) VALUES
-(1, 'Quản trị viên', 1),
-(2, 'Giáo viên', 1),
-(3, 'Học sinh', 1),
-(4, 'Phụ huynh', 1),
-(5, 'Khách', 1);
-
+(1, 'Giáo viên trường', 'Hoạt động'),
+(2, 'Quản trị viên', 'Hoạt động'),
+(3, 'Quản lý đào tạo', 'Hoạt động'),
+(4, 'Quản lý tài chính', 'Hoạt động'),
+(5, 'Quản lý thông tin', 'Hoạt động'),
+(6, 'Quản lý người dùng', 'Hoạt động');
 -- --------------------------------------------------------
 
 --
@@ -498,15 +495,23 @@ CREATE TABLE `role_details` (
 --
 
 INSERT INTO `role_details` (`role_id`, `function_id`, `action`) VALUES
-(1, 1, 'Thêm'),
-(1, 2, 'Sửa'),
-(1, 3, 'Xóa'),
-(1, 4, 'Phân lớp'),
-(1, 5, 'Nhập điểm'),
-(2, 4, 'Phân lớp'),
-(2, 5, 'Nhập điểm'),
-(3, 5, 'Xem điểm'),
-(4, 5, 'Xem điểm');
+(1, 1, ''), (1, 2, ''), (1, 3, ''),
+(2, 4, 'Xem'), (2, 5, 'Xem'), (2, 5, 'Thêm'), (2, 5, 'Cập nhật'), (2, 5, 'Xoá / Khoá'),
+	(2, 6, 'Xem'), (2, 6, 'Thêm'), (2, 6, 'Cập nhật'), (2, 6, 'Xoá / Khoá'),
+    (2, 7, 'Xem'), (2, 7, 'Thêm'), (2, 7, 'Cập nhật'),
+    (2, 8, 'Xem'), (2, 8, 'Thêm'), (2, 8, 'Cập nhật'), (2, 8, 'Xoá / Khoá'),
+    (2, 9, 'Xem'), (2, 9, 'Thêm'), (2, 9, 'Cập nhật'), (2, 9, 'Xoá / Khoá'),
+    (2, 10, 'Xem'), (2, 10, 'Thêm'), (2, 10, 'Cập nhật'), (2, 10, 'Xoá / Khoá'),
+    (2, 11, 'Xem'), (2, 11, 'Thêm'), (2, 11, 'Cập nhật'), (2, 11, 'Xoá / Khoá'),
+    (2, 12, 'Xem'), (2, 12, 'Thêm'), (2, 12, 'Cập nhật'), (2, 12, 'Xoá / Khoá'),
+(3, 5, 'Xem'), (3, 5, 'Thêm'), (3, 5, 'Cập nhật'), (3, 5, 'Xoá / Khoá'),
+	(3, 6, 'Xem'), (3, 6, 'Thêm'), (3, 6, 'Cập nhật'), (3, 6, 'Xoá / Khoá'),
+(4, 7, 'Xem'), (4, 7, 'Thêm'), (4, 7, 'Cập nhật'),
+(5, 8, 'Xem'), (5, 8, 'Thêm'), (5, 8, 'Cập nhật'), (5, 8, 'Xoá / Khoá'),
+    (5, 9, 'Xem'), (5, 9, 'Thêm'), (5, 9, 'Cập nhật'), (5, 9, 'Xoá / Khoá'),
+    (5, 10, 'Xem'), (5, 10, 'Thêm'), (5, 10, 'Cập nhật'), (5, 10, 'Xoá / Khoá'),
+(6, 11, 'Xem'), (6, 11, 'Thêm'), (6, 11, 'Cập nhật'), (6, 11, 'Xoá / Khoá'),
+    (6, 12, 'Xem'), (6, 12, 'Thêm'), (6, 12, 'Cập nhật'), (6, 12, 'Xoá / Khoá');
 
 -- --------------------------------------------------------
 
@@ -948,7 +953,7 @@ CREATE TABLE `users` (
   `phone` varchar(15) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
-  `status` varchar(100) DEFAULT '1'
+  `status` varchar(100) DEFAULT 'Hoạt động'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -956,19 +961,23 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `role_id`, `username`, `password`, `fullname`, `avatar`, `phone`, `email`, `address`, `status`) VALUES
-(1, 1, 'admin01', '123456', 'Nguyễn Văn Quản Trị', NULL, '0909123456', 'admin@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
-(2, 2, 'gv01', '123456', 'Trần Thị Giáo Viên', NULL, '0909234567', 'giaovien@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
-(4, 1, 'abc', 'abc123', 'Nguyễn Văn A', '', '0967548341', 'abc@gmail.com', '1', 'Hoạt động'),
-(5, 2, 'nvhung', '123456', 'Nguyễn Văn Hùng', NULL, '0901234567', 'nvhung@example.com', '123 Lê Lợi, TP.HCM', 'Hoạt động'),
-(6, 2, 'ttmai', '123456', 'Trần Thị Mai', NULL, '0902345678', 'ttmai@example.com', '456 Nguyễn Huệ, TP.HCM', 'Hoạt động'),
-(7, 2, 'lvphuc', '123456', 'Lê Văn Phúc', NULL, '0903456789', 'lvphuc@example.com', '789 Hai Bà Trưng, TP.HCM', 'Hoạt động'),
-(8, 2, 'pthuong', '123456', 'Phạm Thị Hương', NULL, '0904567890', 'pthuong@example.com', '321 Trần Hưng Đạo, TP.HCM', 'Hoạt động'),
-(9, 2, 'hvtam', '123456', 'Hoàng Văn Tâm', NULL, '0905678901', 'hvtam@example.com', '654 Võ Văn Tần, TP.HCM', 'Hoạt động'),
-(10, 2, 'dtlan', '123456', 'Đặng Thị Lan', NULL, '0906789012', 'dtlan@example.com', '987 Nguyễn Thị Minh Khai, TP.HCM', 'Hoạt động'),
-(11, 2, 'vvquang', '123456', 'Vũ Văn Quang', NULL, '0907890123', 'vvquang@example.com', '159 Cách Mạng Tháng 8, TP.HCM', 'Hoạt động'),
-(12, 2, 'btngoc', '123456', 'Bùi Thị Ngọc', NULL, '0908901234', 'btngoc@example.com', '753 Điện Biên Phủ, TP.HCM', 'Hoạt động'),
-(13, 2, 'nvson', '123456', 'Ngô Văn Sơn', NULL, '0909012345', 'nvson@example.com', '852 Nguyễn Đình Chiểu, TP.HCM', 'Hoạt động'),
-(14, 2, 'dtthu', '123456', 'Dương Thị Thu', NULL, '0910123456', 'dtthu@example.com', '951 Lý Tự Trọng, TP.HCM', 'Hoạt động');
+(1, 1, 'gv01', '123456', 'Trần Thị Giáo Viên', NULL, '0909234567', 'giaovien@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+(2, 1, 'abc', 'abc123', 'Nguyễn Văn A', '', '0967548341', 'abc@gmail.com', '1', 'Hoạt động'),
+(3, 1, 'nvhung', '123456', 'Nguyễn Văn Hùng', NULL, '0901234567', 'nvhung@example.com', '123 Lê Lợi, TP.HCM', 'Hoạt động'),
+(4, 1, 'ttmai', '123456', 'Trần Thị Mai', NULL, '0902345678', 'ttmai@example.com', '456 Nguyễn Huệ, TP.HCM', 'Hoạt động'),
+(5, 1, 'lvphuc', '123456', 'Lê Văn Phúc', NULL, '0903456789', 'lvphuc@example.com', '789 Hai Bà Trưng, TP.HCM', 'Hoạt động'),
+(6, 1, 'pthuong', '123456', 'Phạm Thị Hương', NULL, '0904567890', 'pthuong@example.com', '321 Trần Hưng Đạo, TP.HCM', 'Hoạt động'),
+(7, 1, 'hvtam', '123456', 'Hoàng Văn Tâm', NULL, '0905678901', 'hvtam@example.com', '654 Võ Văn Tần, TP.HCM', 'Hoạt động'),
+(8, 1, 'dtlan', '123456', 'Đặng Thị Lan', NULL, '0906789012', 'dtlan@example.com', '987 Nguyễn Thị Minh Khai, TP.HCM', 'Hoạt động'),
+(9, 1, 'vvquang', '123456', 'Vũ Văn Quang', NULL, '0907890123', 'vvquang@example.com', '159 Cách Mạng Tháng 8, TP.HCM', 'Hoạt động'),
+(10, 1, 'btngoc', '123456', 'Bùi Thị Ngọc', NULL, '0908901234', 'btngoc@example.com', '753 Điện Biên Phủ, TP.HCM', 'Hoạt động'),
+(11, 1, 'nvson', '123456', 'Ngô Văn Sơn', NULL, '0909012345', 'nvson@example.com', '852 Nguyễn Đình Chiểu, TP.HCM', 'Hoạt động'),
+(12, 1, 'dtthu', '123456', 'Dương Thị Thu', NULL, '0910123456', 'dtthu@example.com', '951 Lý Tự Trọng, TP.HCM', 'Hoạt động'),
+(13, 2, 'qtvien', '123456', 'Nguyễn Văn Quản Trị', NULL, '0000000001', 'qtvien@example.com', '001 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+(14, 3, 'qldaotao', '123456', 'Trần Thị Đào Tạo', NULL, '0000000002', 'qldaotao@example.com', '002 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+(15, 4, 'qltaichinh', '123456', 'Lê Tài chính', NULL, '0000000003', 'qltaichinh@example.com', '003 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+(16, 5, 'qlthongtin', '123456', 'Nguyễn Thông Tin', NULL, '0000000004', 'qlthongtin@example.com', '004 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+(17, 6, 'qlnguoidung', '123456', 'Võ Người dùng', NULL, '0000000005', 'qlnguoidung@example.com', '005 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động');
 
 -- --------------------------------------------------------
 
@@ -1009,7 +1018,7 @@ INSERT INTO `violations` (`id`, `student_id`, `assign_class_id`, `rule_id`, `dat
 -- Indexes for table `assign_classes`
 --
 ALTER TABLE `assign_classes`
-  ADD PRIMARY KEY (`id`,`class_id`,`term_id`,`head_teacher_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `class_id` (`class_id`),
   ADD KEY `head_teacher_id` (`head_teacher_id`),
   ADD KEY `term_id` (`term_id`);
@@ -1060,7 +1069,7 @@ ALTER TABLE `department_details`
 -- Indexes for table `exams`
 --
 ALTER TABLE `exams`
-  ADD PRIMARY KEY (`id`,`exam_detail_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `exam_detail_id` (`exam_detail_id`);
 
 --
@@ -1073,7 +1082,7 @@ ALTER TABLE `rooms`
 -- Indexes for table `exam_details`
 --
 ALTER TABLE `exam_details`
-  ADD PRIMARY KEY (`id`,`subject_id`,`term_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `subject_id` (`subject_id`),
   ADD KEY `term_id` (`term_id`);
 

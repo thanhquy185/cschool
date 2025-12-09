@@ -5,15 +5,19 @@ using System.Threading.Tasks;
 using Utils;
 using Views.Tuition;
 using System;
+using Services;
 
 namespace Views;
 
 public partial class TuitionView : UserControl
 {
+    private TuitionViewModel _tuitionViewModel { get; set; }
+
     public TuitionView()
     {
         InitializeComponent();
-        DataContext = new TuitionViewModel();
+        this._tuitionViewModel = new TuitionViewModel();
+        DataContext = this._tuitionViewModel;
 
         InfoButton.Click += async (_, _) => await ShowTuitionDialog(DialogModeEnum.Info);
         CreateButton.Click += async (_, _) => await ShowTuitionDialog(DialogModeEnum.Create);
@@ -22,6 +26,17 @@ public partial class TuitionView : UserControl
         var tabControl = this.FindControl<TabControl>("TuitionTabControl");
         if (tabControl != null)
             tabControl.SelectionChanged += TuitionTabControl_SelectionChanged;
+
+        // Phân quyền các nút chức năng
+        if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+        {
+            InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Tuition, "Xem");
+            CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Tuition, "Thêm");
+            UpdateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Tuition, "Cập nhật");
+        }
     }
 
     private async Task ShowTuitionDialog(DialogModeEnum mode)
@@ -60,6 +75,7 @@ public partial class TuitionView : UserControl
                 dialog = new TuitionUpdateDialog(vm);
                 break;
             case DialogModeEnum.Create:
+                await vm.LoadData();
                 dialog = new TuitionCreateDialog(vm);
                 break;
             case DialogModeEnum.Info:

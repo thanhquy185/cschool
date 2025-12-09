@@ -6,10 +6,12 @@ public class UserModel
     // Properties
     // - Cột trong bảng dữ liệu
     public int Id { get; set; }
+    public int? Teacher_id { get; set; }
     public string Avatar { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
     public int RoleId { get; set; }
+    public string RoleName { get; set; }
     public string Fullname { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
@@ -33,9 +35,9 @@ public class UserModel
 
     // Constructors
     public UserModel() { }
-    public UserModel(int Id, string Avatar, string Username, string Password,
-        int RoleId, string Fullname, string Phone, string Email,
-        string Address, string Status)
+    public UserModel(int Id, string? Avatar, string Username, string Password,
+        int RoleId, string Fullname, string? Phone, string? Email,
+        string? Address, string Status)
     {
         this.Id = Id;
         this.Avatar = Avatar;
@@ -47,5 +49,21 @@ public class UserModel
         this.Email = Email;
         this.Address = Address;
         this.Status = Status;
+    }
+    public UserModel(int Id, string? Avatar, string Username, string Password,
+        int RoleId, string Fullname, string? Phone, string? Email,
+        string? Address, string Status, string RoleName)
+    {
+        this.Id = Id;
+        this.Avatar = Avatar;
+        this.Username = Username;
+        this.Password = Password;
+        this.RoleId = RoleId;
+        this.Fullname = Fullname;
+        this.Phone = Phone;
+        this.Email = Email;
+        this.Address = Address;
+        this.Status = Status;
+        this.RoleName = RoleName;
     }
 }

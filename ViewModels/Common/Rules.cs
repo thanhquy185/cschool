@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Avalonia.Controls;
 
-class Rules
+public class Rules
 {
     public static bool ruleRequiredForTextBox(string content)
     {
