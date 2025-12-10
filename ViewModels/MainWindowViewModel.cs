@@ -36,9 +36,9 @@ public partial class MainWindowViewModel : ViewModelBase
     = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/business-persentation.png")));
     public string HomeClassButtonLabel => "Lớp chủ nhiệm";
     // -- Điểm danh
-    public Bitmap AttendanceButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/attendance-icon.png")));
-    public string AttendanceButtonLabel { get; } = "Điểm danh";
+    // public Bitmap AttendanceButtonImage { get; }
+    //     = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/attendance-icon.png")));
+    // public string AttendanceButtonLabel { get; } = "Điểm danh";
     // -- Lớp môn học
     public Bitmap SubjectClassButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/scoreboard.png")));
@@ -249,7 +249,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public void GoToClassView() => this.CurrentPage = this._classViewModel;
     // - Chuyển đến trang Giáo viên
     [RelayCommand]
-    public void GoToTeacherView() => this.CurrentPage = this._teacherViewModel;
+    public void GoToTeacherView() => this.CurrentPage = new TeacherViewModel();
     // - Chuyển đến trang Học sinh
     [RelayCommand]
     public void GoToStudentView() => this.CurrentPage = this._studentViewModel;
@@ -258,6 +258,6 @@ public partial class MainWindowViewModel : ViewModelBase
     public void GoToRoleView() => this.CurrentPage = this._roleViewModel;
     // - Chuyển đến trang Người dùng
     [RelayCommand]
-    public void GoToUserView() => this.CurrentPage = this._userViewModel;
+    public void GoToUserView() => this.CurrentPage = new UserViewModel();
 
 }

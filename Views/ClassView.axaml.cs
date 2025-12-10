@@ -74,7 +74,7 @@ namespace Views
                     break;
 
                 case DialogModeEnum.Create:
-
+                    vm.ClearForm();
                     dialog = new ClassCreateDialog(vm);
                  
                     break;

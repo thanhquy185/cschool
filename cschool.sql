@@ -768,16 +768,16 @@ CREATE TABLE `teachers` (
 INSERT INTO `teachers`
 (`id`, `fullname`, `avatar`, `birthday`, `gender`, `address`, `phone`, `email`, `status`, `user_id`)
 VALUES
-(1, 'Nguyễn Văn Hùng', NULL, '1980-03-15', 'Nam', '123 Lê Lợi, TP.HCM', '0901234567', 'nvhung@example.com', 1, 5),
-(2, 'Trần Thị Mai', NULL, '1982-07-22', 'Nữ', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttmai@example.com', 1, 6),
-(3, 'Lê Văn Phúc', NULL, '1979-11-30', 'Nam', '789 Hai Bà Trưng, TP.HCM', '0903456789', 'lvphuc@example.com', 1, 7),
-(4, 'Phạm Thị Hương', NULL, '1985-05-10', 'Nữ', '321 Trần Hưng Đạo, TP.HCM', '0904567890', 'pthuong@example.com', 1, 8),
-(5, 'Hoàng Văn Tâm', NULL, '1981-09-05', 'Nam', '654 Võ Văn Tần, TP.HCM', '0905678901', 'hvtam@example.com', 1, 9),
-(6, 'Đặng Thị Lan', NULL, '1983-01-18', 'Nữ', '987 Nguyễn Thị Minh Khai, TP.HCM', '0906789012', 'dtlan@example.com', 1, 10),
-(7, 'Vũ Văn Quang', NULL, '1978-06-25', 'Nam', '159 Cách Mạng Tháng 8, TP.HCM', '0907890123', 'vvquang@example.com', 1, 11),
-(8, 'Bùi Thị Ngọc', NULL, '1984-10-10', 'Nữ', '753 Điện Biên Phủ, TP.HCM', '0908901234', 'btngoc@example.com', 1, 12),
-(9, 'Ngô Văn Sơn', NULL, '1980-12-01', 'Nam', '852 Nguyễn Đình Chiểu, TP.HCM', '0909012345', 'nvson@example.com', 1, 13),
-(10, 'Dương Thị Thu', NULL, '1986-04-09', 'Nữ', '951 Lý Tự Trọng, TP.HCM', '0910123456', 'dtthu@example.com', 1, 14);
+(1, 'Nguyễn Văn Hùng', NULL, '1980-03-15', 'Nam', '123 Lê Lợi, TP.HCM', '0901234567', 'nvhung@example.com', 1, 3),
+(2, 'Trần Thị Mai', NULL, '1982-07-22', 'Nữ', '456 Nguyễn Huệ, TP.HCM', '0902345678', 'ttmai@example.com', 1, 4),
+(3, 'Lê Văn Phúc', NULL, '1979-11-30', 'Nam', '789 Hai Bà Trưng, TP.HCM', '0903456789', 'lvphuc@example.com', 1, 5),
+(4, 'Phạm Thị Hương', NULL, '1985-05-10', 'Nữ', '321 Trần Hưng Đạo, TP.HCM', '0904567890', 'pthuong@example.com', 1, 6),
+(5, 'Hoàng Văn Tâm', NULL, '1981-09-05', 'Nam', '654 Võ Văn Tần, TP.HCM', '0905678901', 'hvtam@example.com', 1, 7),
+(6, 'Đặng Thị Lan', NULL, '1983-01-18', 'Nữ', '987 Nguyễn Thị Minh Khai, TP.HCM', '0906789012', 'dtlan@example.com', 1, 8),
+(7, 'Vũ Văn Quang', NULL, '1978-06-25', 'Nam', '159 Cách Mạng Tháng 8, TP.HCM', '0907890123', 'vvquang@example.com', 1, 9),
+(8, 'Bùi Thị Ngọc', NULL, '1984-10-10', 'Nữ', '753 Điện Biên Phủ, TP.HCM', '0908901234', 'btngoc@example.com', 1, 10),
+(9, 'Ngô Văn Sơn', NULL, '1980-12-01', 'Nam', '852 Nguyễn Đình Chiểu, TP.HCM', '0909012345', 'nvson@example.com', 1, 11),
+(10, 'Dương Thị Thu', NULL, '1986-04-09', 'Nữ', '951 Lý Tự Trọng, TP.HCM', '0910123456', 'dtthu@example.com', 1, 12);
 -- --------------------------------------------------------
 
 --
@@ -860,8 +860,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `role_id`, `username`, `password`, `fullname`, `avatar`, `phone`, `email`, `address`, `status`) VALUES
-(1, 1, 'gv01', '123456', 'Trần Thị Giáo Viên', NULL, '0909234567', 'giaovien@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
-(2, 1, 'abc', 'abc123', 'Nguyễn Văn A', '', '0967548341', 'abc@gmail.com', '1', 'Hoạt động'),
+-- (1, 1, 'gv01', '123456', 'Trần Thị Giáo Viên', NULL, '0909234567', 'giaovien@example.com', '232 hưng phú phường chợ lớn Tp.HCM', 'Hoạt động'),
+-- (2, 1, 'abc', 'abc123', 'Nguyễn Văn A', '', '0967548341', 'abc@gmail.com', '1', 'Hoạt động'),
 (3, 1, 'nvhung', '123456', 'Nguyễn Văn Hùng', NULL, '0901234567', 'nvhung@example.com', '123 Lê Lợi, TP.HCM', 'Hoạt động'),
 (4, 1, 'ttmai', '123456', 'Trần Thị Mai', NULL, '0902345678', 'ttmai@example.com', '456 Nguyễn Huệ, TP.HCM', 'Hoạt động'),
 (5, 1, 'lvphuc', '123456', 'Lê Văn Phúc', NULL, '0903456789', 'lvphuc@example.com', '789 Hai Bà Trưng, TP.HCM', 'Hoạt động'),

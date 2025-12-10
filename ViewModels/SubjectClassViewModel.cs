@@ -171,7 +171,7 @@ public SubjectClassViewModel()
             foreach (var student in students)
             {
                 StudentScores.Add(student);
-                Console.WriteLine($"Added StudentScore: StudentID={student.StudentId}, Name={student.FullName}, OralScores={student.OralScores.Count}, QuizScores={student.Quizzes.Count}, Midterm={student.MidtermScore}, Final={student.FinalScore}");
+                // Console.WriteLine($"Added StudentScore: StudentID={student.StudentId}, Name={student.FullName}, OralScores={student.OralScores.Count}, QuizScores={student.Quizzes.Count}, Midterm={student.MidtermScore}, Final={student.FinalScore}");
             }
         }
         catch (Exception ex)

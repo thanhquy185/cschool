@@ -250,6 +250,20 @@ public string Year
             ClassTypes.Add(ct);
     }
 
+    public void ClearForm()
+    {
+        SelectedClass = null;
+        SelectedClassTypeModel = null;
+        SelectedTeacherHK1 = null;
+        SelectedTeacherHK2 = null;
+        StudentsAvailableHK1.Clear();
+        StudentInClassHK1.Clear();
+        StudentsAvailableHK2.Clear();
+        StudentInClassHK2.Clear();
+        SearchStudentTextHK1 = string.Empty;
+        SearchStudentTextHK2 = string.Empty;
+    }
+
     public ClassViewModel()
     {
         LoadData();
@@ -286,10 +300,10 @@ public string Year
         });
 
         ResetFilterCommand = ReactiveCommand.Create(() =>
-{
-    SearchClassText = "";
-    SelectedYear = "Chọn năm học";
-});
+        {
+            SearchClassText = "";
+            SelectedYear = "Chọn năm học";
+        });
 
 
 

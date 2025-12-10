@@ -188,13 +188,13 @@ namespace Services
                 var hk2End = new DateTime(endYear, 6, 30);
 
                 _db.ExecuteNonQuery($@"
-                    INSERT INTO cschool.terms(name, learnyear, start_date, end_date, status)
-                    VALUES('Học kỳ 1', '{year}', '{hk1Start:yyyy-MM-dd}', '{hk1End:yyyy-MM-dd}', 1)
+                    INSERT INTO cschool.terms(name, year, learnyear, start_date, end_date, status)
+                    VALUES('Học kỳ 1','{startYear}', '{year}', '{hk1Start:yyyy-MM-dd}', '{hk1End:yyyy-MM-dd}', 1)
                 ");
 
                 _db.ExecuteNonQuery($@"
-                    INSERT INTO cschool.terms(name, learnyear, start_date, end_date, status)
-                    VALUES('Học kỳ 2', '{year}', '{hk2Start:yyyy-MM-dd}', '{hk2End:yyyy-MM-dd}', 1)
+                    INSERT INTO cschool.terms(name, year, learnyear, start_date, end_date, status)
+                    VALUES('Học kỳ 2', '{startYear}', '{year}', '{hk2Start:yyyy-MM-dd}', '{hk2End:yyyy-MM-dd}', 1)
                 ");
 
                 dt = _db.ExecuteQuery($@"SELECT * FROM cschool.terms WHERE learnyear = '{year}'");

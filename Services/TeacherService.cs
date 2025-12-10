@@ -47,7 +47,7 @@ public class TeacherService
                     Password = data["password"].ToString()!,
                     UserId = Convert.ToInt32(data["user_id"]),
                 });
-                Console.WriteLine($" Teacher Loaded: ID={data["id"]}, Name={data["fullname"]}");
+                // Console.WriteLine($" Teacher Loaded: ID={data["id"]}, Name={data["fullname"]}");
 
             }
             return ds;

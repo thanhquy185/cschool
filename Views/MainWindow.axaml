@@ -85,7 +85,7 @@
                                 </StackPanel>
                             </Border>
                         </Button>
-                        <Button
+                        <!-- <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding AttendanceButtonActive}"
                             Command="{Binding GoToAttendanceViewCommand}"
@@ -96,7 +96,7 @@
                                     <TextBlock Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Text="{Binding AttendanceButtonLabel}" />
                                 </StackPanel>
                             </Border>
-                        </Button>
+                        </Button> -->
                         <Button
                             Classes="ButtonInMenu"
                             Classes.active="{Binding SubjectClassButtonActive}"
