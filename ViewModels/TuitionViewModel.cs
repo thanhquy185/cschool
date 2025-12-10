@@ -120,21 +120,41 @@ namespace ViewModels
             get => _selectedClass;
             set
             {
-                _selectedClass = value;
-                OnPropertyChanged();
-
-                if (value != null)
+                if (_selectedClass != value)
                 {
-                    // 1. Load months cho class
-                    _ = LoadFeeMonths(value.Id)
-                        .ContinueWith(_ =>
-                        {
-                            // 2. Sau khi months đã load, load các fee đã chọn từ DB
-                            _ = LoadSelectedFeesForClass(value);
-                        });
+                    _selectedClass = value;
+                    OnPropertyChanged();
+
+                    if (value != null)
+                    {
+                        System.Console.WriteLine("Selected Class changed: " + value.Name);
+                        LoadFeeMonths(value.Id);
+                    }
                 }
             }
         }
+        
+       private MonthFeeItem? _selectedMonthTuition;
+        public MonthFeeItem? SelectedMonthTuition
+        {
+            get => _selectedMonthTuition;
+            set
+            {
+                if (_selectedMonthTuition != value)
+                {
+                    _selectedMonthTuition = value;
+                    OnPropertyChanged();
+
+                    if (value != null)
+                    {
+                        System.Console.WriteLine("Selected Month changed: " + value.MonthName);
+                        LoadSelectedMonthDetail();
+                    }
+                        // LoadFeesForSelectedMonth(value);
+                }
+            }
+        }
+
 
         public TuitionViewModel()
         {
@@ -184,6 +204,7 @@ namespace ViewModels
             ExtraFees1.Clear();
             ExtraFees2.Clear();
 
+            
             var ft = AppService.TuitionService.GetFeeTemplates();
 
             foreach (var ftTemplate in ft)
@@ -261,6 +282,30 @@ namespace ViewModels
             }
         }
 
+        public async Task LoadSelectedMonthDetail()
+        {
+            
+            if (SelectedMonthTuition == null) return;
+
+            int monthId = SelectedMonthTuition.MonthId;
+
+            // Lọc dữ liệu từ _allStudentFeeMonthDetail
+            var filteredDetails = _allStudentFeeMonthDetail
+                .Where(f => f.MonthId == monthId)
+                .ToList();
+           var baseFees = SelectedTerm.TermName == "Học kỳ 1" ? BaseFees1 : BaseFees2;
+
+            StudentFeeMonthDetail.Clear();
+          foreach (var detail in filteredDetails)
+            {
+                var fee = baseFees.FirstOrDefault(bf => bf.Id == detail.FeeTemplateId);
+                if (fee != null)
+                {
+                    fee.IsSelected = true;
+                }
+            }
+
+        }
         public void AddFee(string name = "", string type = "BASE", decimal amount = 0)
         {
             var newFee = new FeeTemplateModel
@@ -307,7 +352,24 @@ namespace ViewModels
 
             ClassModel classHK1 = FeeClassList.FirstOrDefault(c => c.Id == ClassId && c.Term == "Học kỳ 1");
             ClassModel classHK2 = FeeClassList.FirstOrDefault(c => c.Id == ClassId && c.Term == "Học kỳ 2");
-
+            var FeeHK1 = new ObservableCollection<FeeClassMonthModel>();
+            var FeeHK2 = new ObservableCollection<FeeClassMonthModel>();
+            var savedFeeMonths1 = AppService.TuitionService.GetSavedFeeClassMonths(classHK1?.AssignClassId ?? 0);
+                    if (savedFeeMonths1 != null)
+                    {
+                        foreach (var feeMonth in savedFeeMonths1)
+                        {
+                            FeeHK1.Add(feeMonth);
+                        }
+                    }
+                var savedFeeMonths2 = AppService.TuitionService.GetSavedFeeClassMonths(classHK2?.AssignClassId ?? 0);
+                    if (savedFeeMonths2 != null)
+                    {
+                        foreach (var feeMonth in savedFeeMonths2)
+                        {
+                            FeeHK2.Add(feeMonth);
+                        }
+                    }
             if (classHK1 == null && classHK2 == null)
                 return;
 
@@ -319,17 +381,7 @@ namespace ViewModels
             MonthsHK1 = new ObservableCollection<MonthFeeItem>();
             MonthsHK2 = new ObservableCollection<MonthFeeItem>();
 
-            // Hàm gán UpdateTotalAmount
-            Action<MonthFeeItem, ObservableCollection<FeeTemplateModel>, ObservableCollection<FeeTemplateModel>> setUpdateAmount =
-                (month, baseFees, extraFees) =>
-                {
-                    month.UpdateTotalAmount = (m) =>
-                    {
-                        m.Amount = baseFees.Where(f => f.IsSelected).Sum(f => f.Amount)
-                                    + extraFees.Where(f => f.IsSelected).Sum(f => f.Amount);
-                    };
-                };
-
+           
             // Học kỳ 1
             if (T1 != null)
             {
@@ -339,15 +391,27 @@ namespace ViewModels
 
                 foreach (var m in months1)
                 {
+                    // Lọc các fee cho tháng m
+                    var filteredDetails = FeeHK1
+                        .Where(f => f.MonthId == m)
+                        .ToList();
+
+                    // Tính tổng tiền cho tháng
+                    decimal totalAmount = filteredDetails.Sum(f => f.Amount);
+
+                    // Tạo MonthFeeItem
                     var monthItem = new MonthFeeItem
                     {
                         MonthId = m,
                         MonthName = "Tháng " + m,
-                        Term = T1.Id
+                        Term = T1.Id,
+                        Amount = totalAmount
                     };
-                    setUpdateAmount(monthItem, BaseFees1, ExtraFees1);
+                    
                     MonthsHK1.Add(monthItem);
                 }
+                SelectedMonthTuition = MonthsHK1.FirstOrDefault();
+                LoadSelectedFeeForMonth(SelectedMonthTuition);
             }
 
             // Học kỳ 2
@@ -358,16 +422,27 @@ namespace ViewModels
                 var months2 = GetMonthsInTerm(startDate, endDate);
 
                 foreach (var m in months2)
+            {
+                // Lọc các fee cho tháng m
+                var filteredDetails = FeeHK2
+                    .Where(f => f.MonthId == m)
+                    .ToList();
+
+                // Tính tổng tiền cho tháng
+                decimal totalAmount = filteredDetails.Sum(f => f.Amount);
+
+                // Tạo MonthFeeItem
+                var monthItem = new MonthFeeItem
                 {
-                    var monthItem = new MonthFeeItem
-                    {
-                        MonthId = m,
-                        MonthName = "Tháng " + m,
-                        Term = T2.Id
-                    };
-                    setUpdateAmount(monthItem, BaseFees2, ExtraFees2);
-                    MonthsHK2.Add(monthItem);
-                }
+                    MonthId = m,
+                    MonthName = "Tháng " + m,
+                    Term = T2.Id,
+                    Amount = totalAmount
+                };
+                
+                MonthsHK2.Add(monthItem);
+            }
+
             }
 
             // Notify UI
@@ -403,6 +478,12 @@ namespace ViewModels
                 // Lấy AssignClassId riêng cho từng học kỳ
                 int assignClassId = term == 1 ? classHK1?.AssignClassId ?? 0 : classHK2?.AssignClassId ?? 0;
 
+                // XÓA DỮ LIỆU CŨ cho từng tháng được chọn trước khi lưu dữ liệu mới
+                foreach (var month in selectedMonths)
+                {
+                    AppService.TuitionService.DeleteFeeClassMonthsByClassAndMonth(assignClassId, month.MonthId);
+                }
+
                 // Lấy ngày bắt đầu/kết thúc
                 string startDate = term == 1
                     ? DateTime.Parse(T1Model.StartDate).ToString("yyyy-MM-dd HH:mm:ss")
@@ -432,39 +513,81 @@ namespace ViewModels
 
             return feeClassMonths; // <- Trả về ngoài vòng lặp
         }
-        public async Task LoadSelectedFeesForClass(ClassModel classModel)
+        public async Task LoadSelectedFeeForMonth(MonthFeeItem monthItem)
         {
-            if (classModel == null) return;
+
+              var ft = AppService.TuitionService.GetFeeTemplates();
+            BaseFees1.Clear();
+            BaseFees2.Clear();
+            foreach (var ftTemplate in ft)
+            {
+             
+    
+
+                    BaseFees1.Add(new FeeTemplateModel
+                    {
+                        Id = ftTemplate.Id,
+                        Name = ftTemplate.Name,
+                        Type = ftTemplate.Type,
+                        Amount = ftTemplate.Amount,
+                        CreatedAt = ftTemplate.CreatedAt,
+                        UpdatedAt = ftTemplate.UpdatedAt,
+                        IsReadOnly = ftTemplate.IsReadOnly
+                    });
+
+                    BaseFees2.Add(new FeeTemplateModel
+                    {
+                        Id = ftTemplate.Id,
+                        Name = ftTemplate.Name,
+                        Type = ftTemplate.Type,
+                        Amount = ftTemplate.Amount,
+                        CreatedAt = ftTemplate.CreatedAt,
+                        UpdatedAt = ftTemplate.UpdatedAt,
+                        IsReadOnly = ftTemplate.IsReadOnly
+                    });
+            }
+            if (monthItem == null) return;
+
+            System.Console.WriteLine("Loading fees for month: " + monthItem.MonthName+ " (ID: " + monthItem.MonthId + ")");
+            System.Console.WriteLine("Selected Class ID: " + SelectedClass?.Id);
 
             // Lấy assign_class_id theo từng học kỳ
-            var classHK1 = FeeClassList.FirstOrDefault(c => c.Id == classModel.Id && c.Term == "Học kỳ 1");
-            var classHK2 = FeeClassList.FirstOrDefault(c => c.Id == classModel.Id && c.Term == "Học kỳ 2");
+            var classHK1 = FeeClassList.FirstOrDefault(c => c.Id == SelectedClass.Id && c.Term == "Học kỳ 1");
+            var classHK2 = FeeClassList.FirstOrDefault(c => c.Id == SelectedClass.Id && c.Term == "Học kỳ 2");
 
             int assignHK1 = classHK1?.AssignClassId ?? 0;
             int assignHK2 = classHK2?.AssignClassId ?? 0;
 
+            System.Console.WriteLine("AssignClassId HK1: " + assignHK1);
+
+            System.Console.WriteLine("AssignClassId HK2: " + assignHK2);
             // Lấy dữ liệu từ DB
             var savedFeesHK1 = await Task.Run(() => AppService.TuitionService.GetSavedFeeClassMonths(assignHK1));
             var savedFeesHK2 = await Task.Run(() => AppService.TuitionService.GetSavedFeeClassMonths(assignHK2));
+          
 
-            // Load tháng HK1
-            foreach (var month in MonthsHK1)
-                month.IsSelected = savedFeesHK1.Any(f => f.MonthId == month.MonthId);
-
-            // Load tháng HK2
-            foreach (var month in MonthsHK2)
-                month.IsSelected = savedFeesHK2.Any(f => f.MonthId == month.MonthId);
-
+            foreach (var fee in BaseFees1)
+            {
+                fee.IsSelected = false;
+            }
+            foreach (var fee in BaseFees2)
+            {
+                fee.IsSelected = false;
+            }
             // Load fee HK1
-            foreach (var fee in BaseFees1.Concat(ExtraFees1))
-                fee.IsSelected = savedFeesHK1.Any(f => f.FeeTemplateId == fee.Id);
+            foreach (var fee in BaseFees1)
+                {fee.IsSelected = savedFeesHK1.Any(f => f.FeeTemplateId == fee.Id && f.MonthId == monthItem.MonthId);
+                System.Console.WriteLine("Name: " + fee.Name + "isselected" + fee.IsSelected);}
+
 
             // Load fee HK2
-            foreach (var fee in BaseFees2.Concat(ExtraFees2))
-                fee.IsSelected = savedFeesHK2.Any(f => f.FeeTemplateId == fee.Id);
+            foreach (var fee in BaseFees2)
+                fee.IsSelected = savedFeesHK2.Any(f => f.FeeTemplateId == fee.Id && f.MonthId == monthItem.MonthId);
+            OnPropertyChanged(nameof(BaseFees1));  
+            OnPropertyChanged(nameof(BaseFees2)); 
 
-            OnPropertyChanged(nameof(MonthsHK1));
-            OnPropertyChanged(nameof(MonthsHK2));
+
+
         }
 
         public static List<int> GetMonthsInTerm(string startStr, string endStr)

@@ -1,8 +1,9 @@
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Models
 {
-    public class FeeTemplateModel
+    public class FeeTemplateModel : ObservableObject
     {
         public int Id { get; set; }
 
@@ -15,24 +16,13 @@ namespace Models
         public string CreatedAt { get; set; }    // đổi từ string sang DateTime
 
         public string UpdatedAt { get; set; }    // đổi từ string sang DateTime
+        
         private bool _isSelected;
         public bool IsReadOnly { get; set; } = true;
         public bool IsSelected
         {
             get => _isSelected;
-            set
-            {
-                if (_isSelected != value)
-                {
-                    _isSelected = value;
-                    OnPropertyChanged(nameof(IsSelected));
-                }
-            }
+            set => SetProperty(ref _isSelected, value);
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged(string name)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
     }
 }

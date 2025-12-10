@@ -1,5 +1,5 @@
 using System.ComponentModel;
-
+using System.Runtime.CompilerServices;
 namespace Models
 {
     // Model học phí của học sinh
@@ -41,7 +41,7 @@ namespace Models
                 {
                     _isSelected = value;
                     OnPropertyChanged(nameof(IsSelected));
-                    UpdateTotalAmount?.Invoke(this); // trigger tính tổng
+                    UpdateTotalAmount?.Invoke(this); 
                 }
             }
         }
@@ -75,5 +75,37 @@ namespace Models
         public string ClassYear { get; set; } = "";
         public decimal TotalAmount { get; set; }
 
+
     }
+
+    public class FeeMonthItemViewModel : INotifyPropertyChanged
+{
+    public int AssignClassId { get; set; }
+    public int FeeTemplateId { get; set; }
+    public string FeeTemplateName { get; set; }
+    public int MonthId { get; set; }
+    public decimal Amount { get; set; }
+
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Total));
+            }
+        }
+    }
+
+    public decimal Total => IsSelected ? Amount : 0;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+
 }

@@ -329,13 +329,10 @@ public class TuitionService
                 FROM class_fee_months cfm
                 LEFT JOIN fee_templates ft ON cfm.fee_template_id = ft.id
                 WHERE cfm.assign_class_id = {assignClassId}";
-
-            Console.WriteLine("► SQL Query:");
-            Console.WriteLine(sql);
+;
 
             DataTable dt = _db.ExecuteQuery(sql);
 
-            Console.WriteLine($"► Số dòng lấy được từ DB: {dt.Rows.Count}");
 
             foreach (DataRow row in dt.Rows)
             {
@@ -356,10 +353,7 @@ public class TuitionService
 
                 list.Add(model);
 
-                // 🔥 Log chi tiết từng row
-                Console.WriteLine(
-                    $"  • Row: Id={model.Id}, FeeTemplateId={model.FeeTemplateId}, Name={model.FeeTemplateName}, MonthId={model.MonthId}, Term={model.Term}, Amount={model.Amount}, Start={model.StartDate}, End={model.EndDate}"
-                );
+               
             }
         }
         catch (Exception ex)
@@ -372,4 +366,45 @@ public class TuitionService
         return list;
     }
 
+    public void DeleteFeeClassMonthsByClass(int assignClassId1, int assignClassId2)
+    {
+        try
+        {
+            // Xóa dữ liệu cũ cho HK1
+            if (assignClassId1 > 0)
+            {
+                string sqlDelete1 = $"DELETE FROM class_fee_months WHERE assign_class_id = {assignClassId1}";
+                _db.ExecuteNonQuery(sqlDelete1);
+            }
+
+            // Xóa dữ liệu cũ cho HK2
+            if (assignClassId2 > 0)
+            {
+                string sqlDelete2 = $"DELETE FROM class_fee_months WHERE assign_class_id = {assignClassId2}";
+                _db.ExecuteNonQuery(sqlDelete2);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Lỗi xóa class_fee_months: {ex.Message}");
+        }
+    }
+
+    public void DeleteFeeClassMonthsByClassAndMonth(int assignClassId, int monthId)
+    {
+        try
+        {
+            if (assignClassId > 0 && monthId > 0)
+            {
+                string sqlDelete = $"DELETE FROM class_fee_months WHERE assign_class_id = {assignClassId} AND month_id = {monthId}";
+                _db.ExecuteNonQuery(sqlDelete);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Lỗi xóa class_fee_months theo tháng: {ex.Message}");
+        }
+    }
+
 }
+

@@ -65,13 +65,15 @@ public partial class TuitionView : UserControl
         if (selectedClass != null)
         {
             await vm.LoadFeeMonths(selectedClass.Id);
-            await vm.LoadSelectedFeesForClass(selectedClass);
+          
+            // vm.GenerateFeeMonths();
         }
 
         Window? dialog = null;
         switch (mode)
         {
             case DialogModeEnum.Update:
+                 System.Console.WriteLine("Opening TuitionUpdateDialog for class Id: " + vm.SelectedClass?.Id);
                 dialog = new TuitionUpdateDialog(vm);
                 break;
             case DialogModeEnum.Create:

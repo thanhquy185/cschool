@@ -31,7 +31,7 @@ namespace Views.Tuition
     foreach (var month in vm.MonthsHK1)
     {
         System.Console.WriteLine(month.MonthName + " " + month.IsSelected);
-        if (month.IsSelected)  // Chỉ update các tháng đang tick
+        if (month.IsSelected)  
             month.Amount = totalSelectedFeesHK1;
     }
 
@@ -63,8 +63,46 @@ namespace Views.Tuition
         
 
        
+        private void MonthHK1_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            System.Console.WriteLine("MonthHK1_SelectionChanged triggered");
+            if (sender is not DataGrid dg) return;
+            if (dg.SelectedItem is not MonthFeeItem selectedItem) return;
 
+            // Lấy danh sách tháng học kỳ 1 từ DataContext
+            if (dg.DataContext is not TuitionViewModel vm) return;
 
+            // Bỏ chọn tất cả
+            foreach (var m in vm.MonthsHK1)
+                m.IsSelected = false;
+            foreach (var fee in vm.BaseFees1)
+                fee.IsSelected = false;
+           
+            selectedItem.IsSelected = true;
+            vm.LoadSelectedFeeForMonth(selectedItem);
+            // vm.LoadSelectedFeesForClass(vm.SelectedClass);
+        }
+
+        private void MonthHK2_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (sender is not DataGrid dg) return;
+            if (dg.SelectedItem is not MonthFeeItem selectedItem) return;
+
+            // Lấy danh sách tháng học kỳ 2 từ DataContext
+            if (dg.DataContext is not TuitionViewModel vm) return;
+
+            // Bỏ chọn tất cả
+            foreach (var m in vm.MonthsHK2)
+                m.IsSelected = false;
+
+            // Chọn dòng hiện tại
+            selectedItem.IsSelected = true;
+
+            // Cập nhật tiền nếu có
+            selectedItem.UpdateTotalAmount?.Invoke(selectedItem);
+
+            // vm.LoadSelectedFeesForClass(vm.SelectedClass);
+        }
 private async void Save(object? sender, RoutedEventArgs e)
 {
     try
