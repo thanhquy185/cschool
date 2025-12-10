@@ -53,9 +53,9 @@ public partial class TeacherView : UserControl
             LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Xoá / Khoá");
             ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Thêm");
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Nhập Excel");
             ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Xem");
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xuất Excel");
         }
     }
 

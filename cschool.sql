@@ -375,11 +375,11 @@ INSERT INTO `functions` (`id`, `name`, `is_teacher_function`,`actions`) VALUES
 (5, 'Phân công giáo viên', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
 (6, 'Lịch thi', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
 (7, 'Học phí', 0, 'Xem|Thêm|Cập nhật'),
-(8, 'Lớp học', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
-(9, 'Giáo viên', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
-(10, 'Học sinh', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
-(11, 'Nhóm quyền', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá'),
-(12, 'Người dùng', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá');
+(8, 'Lớp học', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá|Xuất Excel'),
+(9, 'Giáo viên', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá|Nhập Excel|Xuất Excel'),
+(10, 'Học sinh', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá|Nhập Excel|Xuất Excel'),
+(11, 'Nhóm quyền', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá|Nhập Excel|Xuất Excel'),
+(12, 'Người dùng', 0, 'Xem|Thêm|Cập nhật|Xoá / Khoá|Nhập Excel|Xuất Excel');
 
 -- --------------------------------------------------------
 
@@ -425,19 +425,19 @@ INSERT INTO `role_details` (`role_id`, `function_id`, `action`) VALUES
 (2, 4, 'Xem'), (2, 5, 'Xem'), (2, 5, 'Thêm'), (2, 5, 'Cập nhật'), (2, 5, 'Xoá / Khoá'),
 	(2, 6, 'Xem'), (2, 6, 'Thêm'), (2, 6, 'Cập nhật'), (2, 6, 'Xoá / Khoá'),
     (2, 7, 'Xem'), (2, 7, 'Thêm'), (2, 7, 'Cập nhật'),
-    (2, 8, 'Xem'), (2, 8, 'Thêm'), (2, 8, 'Cập nhật'), (2, 8, 'Xoá / Khoá'),
-    (2, 9, 'Xem'), (2, 9, 'Thêm'), (2, 9, 'Cập nhật'), (2, 9, 'Xoá / Khoá'),
-    (2, 10, 'Xem'), (2, 10, 'Thêm'), (2, 10, 'Cập nhật'), (2, 10, 'Xoá / Khoá'),
-    (2, 11, 'Xem'), (2, 11, 'Thêm'), (2, 11, 'Cập nhật'), (2, 11, 'Xoá / Khoá'),
-    (2, 12, 'Xem'), (2, 12, 'Thêm'), (2, 12, 'Cập nhật'), (2, 12, 'Xoá / Khoá'),
+    (2, 8, 'Xem'), (2, 8, 'Thêm'), (2, 8, 'Cập nhật'), (2, 8, 'Xoá / Khoá'), (2, 8, 'Xuất Excel'),
+    (2, 9, 'Xem'), (2, 9, 'Thêm'), (2, 9, 'Cập nhật'), (2, 9, 'Xoá / Khoá'), (2, 9, 'Nhập Excel'), (2, 9, 'Xuất Excel'),
+    (2, 10, 'Xem'), (2, 10, 'Thêm'), (2, 10, 'Cập nhật'), (2, 10, 'Xoá / Khoá'), (2, 10, 'Nhập Excel'), (2, 10, 'Xuất Excel'),
+    (2, 11, 'Xem'), (2, 11, 'Thêm'), (2, 11, 'Cập nhật'), (2, 11, 'Xoá / Khoá'), (2, 11, 'Nhập Excel'), (2, 11, 'Xuất Excel'),
+    (2, 12, 'Xem'), (2, 12, 'Thêm'), (2, 12, 'Cập nhật'), (2, 12, 'Xoá / Khoá'), (2, 12, 'Nhập Excel'), (2, 12, 'Xuất Excel'),
 (3, 5, 'Xem'), (3, 5, 'Thêm'), (3, 5, 'Cập nhật'), (3, 5, 'Xoá / Khoá'),
 	(3, 6, 'Xem'), (3, 6, 'Thêm'), (3, 6, 'Cập nhật'), (3, 6, 'Xoá / Khoá'),
 (4, 7, 'Xem'), (4, 7, 'Thêm'), (4, 7, 'Cập nhật'),
-(5, 8, 'Xem'), (5, 8, 'Thêm'), (5, 8, 'Cập nhật'), (5, 8, 'Xoá / Khoá'),
-    (5, 9, 'Xem'), (5, 9, 'Thêm'), (5, 9, 'Cập nhật'), (5, 9, 'Xoá / Khoá'),
-    (5, 10, 'Xem'), (5, 10, 'Thêm'), (5, 10, 'Cập nhật'), (5, 10, 'Xoá / Khoá'),
-(6, 11, 'Xem'), (6, 11, 'Thêm'), (6, 11, 'Cập nhật'), (6, 11, 'Xoá / Khoá'),
-    (6, 12, 'Xem'), (6, 12, 'Thêm'), (6, 12, 'Cập nhật'), (6, 12, 'Xoá / Khoá');
+(5, 8, 'Xem'), (5, 8, 'Thêm'), (5, 8, 'Cập nhật'), (5, 8, 'Xoá / Khoá'), (5, 8, 'Xuất Excel'),
+    (5, 9, 'Xem'), (5, 9, 'Thêm'), (5, 9, 'Cập nhật'), (5, 9, 'Xoá / Khoá'), (5, 9, 'Nhập Excel'), (5, 9, 'Xuất Excel'),
+    (5, 10, 'Xem'), (5, 10, 'Thêm'), (5, 10, 'Cập nhật'), (5, 10, 'Xoá / Khoá'), (5, 10, 'Nhập Excel'), (5, 10, 'Xuất Excel'),
+(6, 11, 'Xem'), (6, 11, 'Thêm'), (6, 11, 'Cập nhật'), (6, 11, 'Xoá / Khoá'), (6, 11, 'Nhập Excel'), (6, 11, 'Xuất Excel'),
+    (6, 12, 'Xem'), (6, 12, 'Thêm'), (6, 12, 'Cập nhật'), (6, 12, 'Xoá / Khoá'), (6, 12, 'Nhập Excel'), (6, 12, 'Xuất Excel'); 
 
 -- --------------------------------------------------------
 

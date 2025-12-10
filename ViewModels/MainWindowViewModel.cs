@@ -155,8 +155,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
             this.IsLoggedIn = true;
             this.CurrentUserLogin = user;
+
             _homeClassViewModel = new HomeClassViewModel(user.Teacher_id??0);
-            
             _subjectClassViewModel = new SubjectClassViewModel(user.Teacher_id??0);
 
             if (this.CurrentUserLogin != null && IsLoggedIn)
@@ -249,7 +249,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public void GoToClassView() => this.CurrentPage = this._classViewModel;
     // - Chuyển đến trang Giáo viên
     [RelayCommand]
-    public void GoToTeacherView() => this.CurrentPage = new TeacherViewModel();
+    public void GoToTeacherView() => this.CurrentPage = this._teacherViewModel;
     // - Chuyển đến trang Học sinh
     [RelayCommand]
     public void GoToStudentView() => this.CurrentPage = this._studentViewModel;
@@ -258,6 +258,6 @@ public partial class MainWindowViewModel : ViewModelBase
     public void GoToRoleView() => this.CurrentPage = this._roleViewModel;
     // - Chuyển đến trang Người dùng
     [RelayCommand]
-    public void GoToUserView() => this.CurrentPage = new UserViewModel();
+    public void GoToUserView() => this.CurrentPage = this._userViewModel;
 
 }

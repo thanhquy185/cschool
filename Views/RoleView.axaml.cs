@@ -37,9 +37,9 @@ public partial class RoleView : UserControl
         if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
         {
             ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-              SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Thêm");
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Nhập Excel");
             ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xuất Excel");
             InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                 SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
             CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
@@ -341,7 +341,7 @@ public partial class RoleView : UserControl
             roleDetailsGrid.Columns.Add(new DataGridTextColumn
             {
                 Header = "Tên chức năng",
-                Width = new DataGridLength(3, DataGridLengthUnitType.Star),
+                Width = new DataGridLength(1, DataGridLengthUnitType.Star),
                 Binding = new Avalonia.Data.Binding("FunctionName")
             });
             // --- Xem
@@ -372,6 +372,20 @@ public partial class RoleView : UserControl
                 Width = new DataGridLength(1, DataGridLengthUnitType.Star),
                 CellTemplate = CreateCheckboxTemplate("CanDelete", "AllowDelete", mode),
             });
+            // --- Nhập Excel
+            roleDetailsGrid.Columns.Add(new DataGridTemplateColumn
+            {
+                Header = "Nhập Excel",
+                Width = new DataGridLength(1, DataGridLengthUnitType.Star),
+                CellTemplate = CreateCheckboxTemplate("CanImportExcel", "AllowImportExcel", mode),
+            });
+            // --- Xuất Excel
+            roleDetailsGrid.Columns.Add(new DataGridTemplateColumn
+            {
+                Header = "Xuất Excel",
+                Width = new DataGridLength(1, DataGridLengthUnitType.Star),
+                CellTemplate = CreateCheckboxTemplate("CanExportExcel", "AllowExportExcel", mode),
+            });
             // -- Thêm các dòng chức năng
             var roleDetails = new ObservableCollection<RoleDetailRowFormat>();
             roleDetailsGrid.ItemsSource = roleDetails;
@@ -390,11 +404,15 @@ public partial class RoleView : UserControl
                         CanCreate = !isCreate ? AppService.RoleDetailService.HasPermission(selectedRole.Id, function.Id, "Thêm") : false,
                         CanUpdate = !isCreate ? AppService.RoleDetailService.HasPermission(selectedRole.Id, function.Id, "Cập nhật") : false,
                         CanDelete = !isCreate ? AppService.RoleDetailService.HasPermission(selectedRole.Id, function.Id, "Xoá / Khoá") : false,
+                        CanImportExcel = !isCreate ? AppService.RoleDetailService.HasPermission(selectedRole.Id, function.Id, "Nhập Excel") : false,
+                        CanExportExcel = !isCreate ? AppService.RoleDetailService.HasPermission(selectedRole.Id, function.Id, "Xuất Excel") : false,
 
                         AllowView = actions.Contains("Xem"),
                         AllowCreate = actions.Contains("Thêm"),
                         AllowUpdate = actions.Contains("Cập nhật"),
                         AllowDelete = actions.Contains("Xoá / Khoá"),
+                        AllowImportExcel = actions.Contains("Nhập Excel"),
+                        AllowExportExcel = actions.Contains("Xuất Excel"),
                     });
                 }
             }
@@ -464,6 +482,20 @@ public partial class RoleView : UserControl
                                 RoleDetailModel newRoleDetailForDelete = new RoleDetailModel();
                                 newRoleDetailForDelete.FunctionId = roleDetail.FunctionId;
                                 newRoleDetailForDelete.Action = "Xoá / Khoá";
+                                roleDetailsValue.Add(newRoleDetailForDelete);
+                            }
+                            if (roleDetail.CanImportExcel)
+                            {
+                                RoleDetailModel newRoleDetailForDelete = new RoleDetailModel();
+                                newRoleDetailForDelete.FunctionId = roleDetail.FunctionId;
+                                newRoleDetailForDelete.Action = "Nhập Excel";
+                                roleDetailsValue.Add(newRoleDetailForDelete);
+                            }
+                            if (roleDetail.CanExportExcel)
+                            {
+                                RoleDetailModel newRoleDetailForDelete = new RoleDetailModel();
+                                newRoleDetailForDelete.FunctionId = roleDetail.FunctionId;
+                                newRoleDetailForDelete.Action = "Xuất Excel";
                                 roleDetailsValue.Add(newRoleDetailForDelete);
                             }
                         }

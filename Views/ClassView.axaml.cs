@@ -28,7 +28,8 @@ namespace Views
             // Phân quyền các nút chức năng
             if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
             {
-                ExportExcelButton.IsEnabled = 
+                ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                 SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xuất Excel");
                 InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                     SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Xem");
                 CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
@@ -76,7 +77,7 @@ namespace Views
                 case DialogModeEnum.Create:
                     vm.ClearForm();
                     dialog = new ClassCreateDialog(vm);
-                 
+
                     break;
 
                 case DialogModeEnum.Update:
@@ -137,38 +138,38 @@ namespace Views
             }
         }
 
-         private async Task ExportExcelButton_Click()
-    {
-        var dialog = new SaveFileDialog
+        private async Task ExportExcelButton_Click()
         {
-            Title = "Chọn nơi lưu file Excel",
-            Filters = new List<FileDialogFilter>
+            var dialog = new SaveFileDialog
+            {
+                Title = "Chọn nơi lưu file Excel",
+                Filters = new List<FileDialogFilter>
             {
                 new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
             },
-            InitialFileName = "DanhSachLophoc.xlsx"
-        };
+                InitialFileName = "DanhSachLophoc.xlsx"
+            };
 
-        var owner = TopLevel.GetTopLevel(this) as Window;
-        var filePath = await dialog.ShowAsync(owner);
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            var filePath = await dialog.ShowAsync(owner);
 
-        if (string.IsNullOrWhiteSpace(filePath))
-            return;
+            if (string.IsNullOrWhiteSpace(filePath))
+                return;
 
-        var vm = DataContext as ClassViewModel;
-        if (vm != null)
-        {
-            try
+            var vm = DataContext as ClassViewModel;
+            if (vm != null)
             {
-                await vm.ExportExcel(filePath);
-                await MessageBoxUtil.ShowSuccess("Xuất file Excel thành công!\n", owner: owner);
-            }
-            catch (Exception ex)
-            {
-                await MessageBoxUtil.ShowError(ex.Message, owner: owner);
+                try
+                {
+                    await vm.ExportExcel(filePath);
+                    await MessageBoxUtil.ShowSuccess("Xuất file Excel thành công!\n", owner: owner);
+                }
+                catch (Exception ex)
+                {
+                    await MessageBoxUtil.ShowError(ex.Message, owner: owner);
+                }
             }
         }
-    }
 
     }
 }
