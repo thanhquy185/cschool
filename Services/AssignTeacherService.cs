@@ -365,11 +365,12 @@ public bool IsConflict(AssignTeacher at)
     {
         try
         {
+            Console.WriteLine("Updating AssignTeacher with ID: " + at.Assign_class_id + ", Teacher ID: " + at.Teachers_id + ", Subject ID: " + at.Subject_id);
             var connection = _db.GetConnection();
             string sql = @"UPDATE assign_class_teachers SET 
-                            subject_id = @subject_id, quiz_count = @quiz_count,
+                            quiz_count = @quiz_count,
                             oral_count = @oral_count, day = @day, start_period = @start_period, end_period = @end_period
-                            WHERE assign_class_id = @assign_class_id AND teacher_id = @teacher_id ";
+                            WHERE assign_class_id = @assign_class_id AND teacher_id = @teacher_id AND subject_id = @subject_id";
             var command = new MySqlCommand(sql, connection);
             command.Parameters.AddWithValue("@subject_id", at.Subject_id);
             command.Parameters.AddWithValue("@quiz_count", at.QuizCount);
@@ -379,6 +380,8 @@ public bool IsConflict(AssignTeacher at)
             command.Parameters.AddWithValue("@end_period", at.End);
             command.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
             command.Parameters.AddWithValue("@teacher_id", at.Teachers_id);
+            // command.Parameters.AddWithValue("@subject_id", at.Subject_id);
+
 
             
             return command.ExecuteNonQuery() > 0;

@@ -20,9 +20,8 @@ public partial class StatisticalView : UserControl
         this._statisticalViewModel = new StatisticalViewModel();
         DataContext = this._statisticalViewModel;
 
-        this.DataContextChanged += OnDataContextChanged;
-
-        this.AttachedToVisualTree += StatisticalView_AttachedToVisualTree;
+        this.AttachedToVisualTree += OnAttachedToVisualTree_Handler;
+        this.DetachedFromVisualTree += OnDetachedFromVisualTree_Handler;
 
     }
 
@@ -31,27 +30,34 @@ public partial class StatisticalView : UserControl
         AvaloniaXamlLoader.Load(this);
     }
 
-    private void OnDataContextChanged(object? sender, EventArgs e)
+    private void OnAttachedToVisualTree_Handler(object? sender, VisualTreeAttachmentEventArgs e)
     {
         if (DataContext is StatisticalViewModel vm)
         {
+            // Unsub trước để safe, tránh duplicate handler
+            vm.RequestOpenDetailDialog -= Vm_RequestOpenDetailDialog;
             vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
-            // vm.RequestCloseDetailDialog += Vm_RequestCloseDetailDialog;
-        }
-    }
 
-    private void StatisticalView_AttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
-    {
+        }
+
         if (InfoButton != null)
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
                 InfoButton.IsEnabled = this._statisticalViewModel.InfoButtonEnabled;
                 Console.WriteLine("++++++++++++++++++" + this._statisticalViewModel.InfoButtonEnabled);
-
             });
         }
     }
+
+    private void OnDetachedFromVisualTree_Handler(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (DataContext is StatisticalViewModel vm)
+        {
+            vm.RequestOpenDetailDialog -= Vm_RequestOpenDetailDialog;
+        }
+    }
+
 
     private async void Vm_RequestOpenDetailDialog(object? sender, EventArgs e)
 {

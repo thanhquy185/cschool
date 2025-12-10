@@ -59,6 +59,7 @@
                     <Button
                         x:Name="LockButton"
                         Classes="CrudButton Lock"
+                        Command="{Binding Delete}"
                         CommandParameter="{Binding SelectedAssignTeacher}">
                         <Border BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}">
                             <StackPanel>

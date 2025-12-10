@@ -345,7 +345,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     [RelayCommand]
     private async Task OpenEditDialog(AssignTeacher a)
     {
-        LoadDataCommand.Execute(null);
+        // LoadDataCommand.Execute(null);
         await Task.Delay(100);
 
         _editingItem = a;
@@ -383,7 +383,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private async Task OpenDetailDialog(AssignTeacher a)
     {
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-        LoadDataCommand.Execute(null);
+        // LoadDataCommand.Execute(null);
         // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
         await Task.Delay(100);
 

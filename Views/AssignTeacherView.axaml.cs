@@ -16,43 +16,78 @@ namespace Views;
 public partial class AssignTeacherView : UserControl
 {
     // AssignTeacherViewModel ViewModel => DataContext as AssignTeacherViewModel;
-    private AssignTeacherViewModel _assignTeacherViewModel { get; set; }
+    // private static AssignTeacherViewModel _assignTeacherViewModel { get; set; } = new AssignTeacherViewModel();
+     private AssignTeacherViewModel _assignTeacherViewModel { get; set; }
 
     public AssignTeacherView()
     {
         InitializeComponent();
         this._assignTeacherViewModel = new AssignTeacherViewModel();
-        DataContext = this._assignTeacherViewModel;
+        DataContext = _assignTeacherViewModel;
 
-        this.AttachedToVisualTree += (_, _) =>
-       {
-           if (DataContext is AssignTeacherViewModel vm)
-           {
-               vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
-               vm.RequestOpenEditDialog += Vm_RequestOpenEditDialog;
-               vm.RequestCloseAddDialog += Vm_RequestCloseAddAssignTeacher;
-               vm.RequestCloseEditDialog += Vm_RequestCloseEditAssignTeacher;
+        // Subscribe events ở đây (chạy chỉ một lần)
+        if (DataContext is AssignTeacherViewModel vm)
+        {
+            vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
+            vm.RequestOpenEditDialog += Vm_RequestOpenEditDialog;
+            vm.RequestCloseAddDialog += Vm_RequestCloseAddAssignTeacher;
+            vm.RequestCloseEditDialog += Vm_RequestCloseEditAssignTeacher;
+        }
 
-               Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                {
-                    if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
-                    {
-                        if (InfoButton != null)
-                            InfoButton.IsEnabled = this._assignTeacherViewModel.InfoButtonEnabled;
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
+            {
+                if (InfoButton != null)
+                    InfoButton.IsEnabled = this._assignTeacherViewModel.InfoButtonEnabled;
 
-                        if (CreateButton != null)
-                            CreateButton.IsEnabled = this._assignTeacherViewModel.CreateButtonEnabled;
+                if (CreateButton != null)
+                    CreateButton.IsEnabled = this._assignTeacherViewModel.CreateButtonEnabled;
 
-                        if (UpdateButton != null)
-                            UpdateButton.IsEnabled = this._assignTeacherViewModel.UpdateButtonEnabled;
+                if (UpdateButton != null)
+                    UpdateButton.IsEnabled = this._assignTeacherViewModel.UpdateButtonEnabled;
 
-                        if (LockButton != null)
-                            LockButton.IsEnabled = this._assignTeacherViewModel.LockButtonEnabled;
-                    }
-                });
+                if (LockButton != null)
+                    LockButton.IsEnabled = this._assignTeacherViewModel.LockButtonEnabled;
+            }
+        });
 
-           }
-       };
+        this.AttachedToVisualTree += OnAttachedToVisualTree_Handler;
+        this.DetachedFromVisualTree += OnDetachedFromVisualTree_Handler;
+
+
+    }
+
+    private void OnAttachedToVisualTree_Handler(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (DataContext is AssignTeacherViewModel vm)
+        {
+            // Unsub trước để safe, tránh duplicate handler
+            vm.RequestOpenDetailDialog -= Vm_RequestOpenDetailDialog;
+            vm.RequestOpenDetailDialog += Vm_RequestOpenDetailDialog;
+
+            vm.RequestOpenEditDialog -= Vm_RequestOpenEditDialog;
+            vm.RequestOpenEditDialog += Vm_RequestOpenEditDialog;
+
+            vm.RequestCloseAddDialog -= Vm_RequestCloseAddAssignTeacher;
+            vm.RequestCloseAddDialog += Vm_RequestCloseAddAssignTeacher;
+
+            vm.RequestCloseEditDialog -= Vm_RequestCloseEditAssignTeacher;
+            vm.RequestCloseEditDialog += Vm_RequestCloseEditAssignTeacher;
+
+        }
+    }
+
+    private void OnDetachedFromVisualTree_Handler(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (DataContext is AssignTeacherViewModel vm)
+        {
+            vm.RequestOpenDetailDialog -= Vm_RequestOpenDetailDialog;
+            vm.RequestOpenEditDialog -= Vm_RequestOpenEditDialog;
+            vm.RequestCloseAddDialog -= Vm_RequestCloseAddAssignTeacher;
+            vm.RequestCloseEditDialog -= Vm_RequestCloseEditAssignTeacher;
+
+        }
     }
 
     private void InitializeComponent()
@@ -108,10 +143,19 @@ public partial class AssignTeacherView : UserControl
                 DataContext = vm   // vẫn dùng VM chính
             };
 
-            var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            // var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+            // await dialog.ShowDialog(owner);
+            var owner = this.VisualRoot as Window;
+            if (owner == null)
+            {
+                Console.WriteLine("Error: Owner window not found!");
+                await MessageBoxUtil.ShowError("Không tìm thấy cửa sổ chính!", null);
+                return;
+            }
 
             await dialog.ShowDialog(owner);
-        }
+            }
     }
 
 
@@ -121,7 +165,6 @@ public partial class AssignTeacherView : UserControl
         {
             if (vm.SelectedAssignTeacher != null)
             {
-                // DataContext = vm;
                 await vm.OpenEditDialogCommand.ExecuteAsync(vm.SelectedAssignTeacher);
             }
             else
@@ -135,16 +178,33 @@ public partial class AssignTeacherView : UserControl
 
     private async void Vm_RequestOpenEditDialog(object? sender, AssignTeacher a)
     {
-        if (DataContext is AssignTeacherViewModel vm)
+        try
         {
-            var dialog = new AssignTeacherEditDialog
+            if (DataContext is AssignTeacherViewModel vm)
             {
-                DataContext = vm
-            };
+                var dialog = new AssignTeacherEditDialog
+                {
+                    DataContext = vm
+                };
 
-            var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                // var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-            await dialog.ShowDialog(owner);
+                // await dialog.ShowDialog(owner);
+                var owner = this.VisualRoot as Window;
+                if (owner == null)
+                {
+                    Console.WriteLine("Error: Owner window not found!");
+                    await MessageBoxUtil.ShowError("Không tìm thấy cửa sổ chính!", null);
+                    return;
+                }
+
+                await dialog.ShowDialog(owner);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error opening dialog: " + ex.Message);
+            await MessageBoxUtil.ShowError("Lỗi mở dialog: " + ex.Message, null);
         }
     }
 
