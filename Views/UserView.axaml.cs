@@ -27,9 +27,9 @@ public partial class UserView : UserControl
         if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
         {
             ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Thêm");
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Nhập Excel");
             ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xuất Excel");
             InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                 SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xem");
             CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(

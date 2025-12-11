@@ -36,9 +36,9 @@ public partial class MainWindowViewModel : ViewModelBase
     = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/business-persentation.png")));
     public string HomeClassButtonLabel => "Lớp chủ nhiệm";
     // -- Điểm danh
-    public Bitmap AttendanceButtonImage { get; }
-        = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/attendance-icon.png")));
-    public string AttendanceButtonLabel { get; } = "Điểm danh";
+    // public Bitmap AttendanceButtonImage { get; }
+    //     = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/attendance-icon.png")));
+    // public string AttendanceButtonLabel { get; } = "Điểm danh";
     // -- Lớp môn học
     public Bitmap SubjectClassButtonImage { get; }
     = new Bitmap(AssetLoader.Open(new Uri("avares://Views/Assets/Images/Others/scoreboard.png")));
@@ -155,8 +155,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
             this.IsLoggedIn = true;
             this.CurrentUserLogin = user;
+
             _homeClassViewModel = new HomeClassViewModel(user.Teacher_id??0);
-            
             _subjectClassViewModel = new SubjectClassViewModel(user.Teacher_id??0);
 
             if (this.CurrentUserLogin != null && IsLoggedIn)

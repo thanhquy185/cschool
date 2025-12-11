@@ -87,7 +87,7 @@ public class StatisticalService
                 {
                     Id = (int)data["id"],
                     Name = data["name"].ToString()!,
-                    Year = (int)data["year"],
+                    Year = data["year"] != DBNull.Value ? Convert.ToInt32(data["year"]) : 0,
                     LearnYear = data["learnyear"].ToString()!,
                     Start = Convert.ToDateTime(data["start_date"]),
                     End = Convert.ToDateTime(data["end_date"]),

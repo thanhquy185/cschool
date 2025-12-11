@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using ReactiveUI;
 using System.Reactive;
 using Avalonia.Threading;
+using ClosedXML.Excel;
 using Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -123,12 +124,25 @@ public partial class ClassViewModel : ViewModelBase
 
 
 
-    private string _year;
-    public string Year
+private string _year;
+public string Year
+{
+    get => _year;
+    set
     {
-        get => _year;
-        set => SetProperty(ref _year, value);
+        if (_year != value)
+        {
+            _year = value;
+            OnPropertyChanged(nameof(Year));
+
+            ValidateAndFormatYear();
+        }
     }
+}
+
+
+
+
 
     private string _searchStudentTextHK1 = "";
     public string SearchStudentTextHK1
@@ -236,6 +250,20 @@ public partial class ClassViewModel : ViewModelBase
             ClassTypes.Add(ct);
     }
 
+    public void ClearForm()
+    {
+        SelectedClass = null;
+        SelectedClassTypeModel = null;
+        SelectedTeacherHK1 = null;
+        SelectedTeacherHK2 = null;
+        StudentsAvailableHK1.Clear();
+        StudentInClassHK1.Clear();
+        StudentsAvailableHK2.Clear();
+        StudentInClassHK2.Clear();
+        SearchStudentTextHK1 = string.Empty;
+        SearchStudentTextHK2 = string.Empty;
+    }
+
     public ClassViewModel()
     {
         LoadData();
@@ -272,10 +300,10 @@ public partial class ClassViewModel : ViewModelBase
         });
 
         ResetFilterCommand = ReactiveCommand.Create(() =>
-{
-    SearchClassText = "";
-    SelectedYear = "Chọn năm học";
-});
+        {
+            SearchClassText = "";
+            SelectedYear = "Chọn năm học";
+        });
 
 
 
@@ -426,17 +454,54 @@ public partial class ClassViewModel : ViewModelBase
     }
 
 
-    public void ValidateSchoolYear()
+ private void ValidateAndFormatYear()
+{
+    if (string.IsNullOrWhiteSpace(Year))
+        return;
+
+    // Chỉ cho số và dấu '-'
+    var filtered = new string(Year.Where(c => char.IsDigit(c) || c == '-').ToArray());
+
+    // Nếu có thay đổi (do loại bỏ chữ) → update lại
+    if (filtered != Year)
     {
-        if (string.IsNullOrWhiteSpace(Year))
-            return;
-
-        if (Year.Length == 4 && int.TryParse(Year, out int startYear))
-            Year = $"{startYear}-{startYear + 1}";
-
-        if (SelectedGrade != 0)
-            LoadStudentsWithoutClass();
+        Year = filtered;
+        return;
     }
+
+    // Không cho nhập nhiều hơn 9 ký tự (VD: 2025-2026)
+    if (Year.Length > 9)
+    {
+        Year = Year.Substring(0, 9);
+        return;
+    }
+
+    // Khi đủ 4 số → format thành "YYYY-YYYY+1"
+    if (Year.Length == 4 && int.TryParse(Year, out int startYear))
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            Year = $"{startYear}-{startYear + 1}";
+        });
+        return;
+    }
+
+    // Khi đã đúng format "YYYY-YYYY" → kiểm tra hợp lệ
+    if (Year.Contains('-'))
+    {
+        var parts = Year.Split('-');
+        if (parts.Length == 2 &&
+            parts[0].Length == 4 &&
+            int.TryParse(parts[0], out int y1) &&
+            parts[1].Length == 4 &&
+            int.TryParse(parts[1], out int y2))
+        {
+            // Hợp lệ → load data
+            LoadStudentsWithoutClass();
+        }
+    }
+}
+
 
     public void LoadClassData()
     {
@@ -527,6 +592,97 @@ public partial class ClassViewModel : ViewModelBase
         foreach (var c in filtered)
             Classes_list.Add(c);
     }
+
+  public async Task ExportExcel(string filePath)
+{
+    try
+    {
+        // Lấy dữ liệu lớp
+        var classes = AppService.ClassService.GetClasses();
+        if (classes == null || !classes.Any())
+            throw new InvalidOperationException("Không có dữ liệu để xuất!");
+
+        // Lọc lớp active và lấy 1 lớp mỗi Id
+        var classesList = classes
+            .Where(x => x.Status != 0)
+            .GroupBy(x => x.Id)
+            .Select(g => g.First())
+            .ToList();
+
+        if (!classesList.Any())
+            throw new InvalidOperationException("Không có lớp active để xuất!");
+
+        // Lấy danh sách Id giáo viên duy nhất để giảm số lần gọi DB
+        var teacherIds = classes
+            .Where(c => !string.IsNullOrEmpty(c.HeadTeacher))
+            .Select(c => c.HeadTeacher)
+            .Distinct()
+            .Select(ht => int.TryParse(ht, out var id) ? id : (int?)null)
+            .Where(id => id.HasValue)
+            .Select(id => id.Value)
+            .ToList();
+
+        // Lấy thông tin giáo viên 1 lần
+        var teacherDict = teacherIds
+            .ToDictionary(id => id, id => AppService.TeacherService.GetTeacherById(id));
+
+        // Gán giáo viên HK1 và HK2
+        foreach (var cl in classesList)
+        {
+            var clsHK1 = classes.FirstOrDefault(c => c.Id == cl.Id && c.Term == "Học kỳ 1");
+            var clsHK2 = classes.FirstOrDefault(c => c.Id == cl.Id && c.Term == "Học kỳ 2");
+
+            if (clsHK1 != null && int.TryParse(clsHK1.HeadTeacher, out int t1) && teacherDict.ContainsKey(t1))
+                cl.TeacherHK1 = teacherDict[t1];
+
+            if (clsHK2 != null && int.TryParse(clsHK2.HeadTeacher, out int t2) && teacherDict.ContainsKey(t2))
+                cl.TeacherHK2 = teacherDict[t2];
+        }
+
+        // ===== Xuất Excel =====
+        using (var workbook = new XLWorkbook())
+        {
+            var worksheet = workbook.Worksheets.Add("Lớp");
+
+            // Header
+            string[] headers = { "ID", "Tên lớp", "Loại lớp", "Khối", "GVCN HK1", "GVCN HK2" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                var cell = worksheet.Cell(1, i + 1);
+                cell.Value = headers[i];
+                cell.Style.Font.Bold = true;
+                cell.Style.Fill.BackgroundColor = XLColor.LightGray;
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            }
+
+            // Dữ liệu
+            int row = 2;
+            foreach (var c in classesList)
+            {
+                worksheet.Cell(row, 1).Value = c.Id;
+                worksheet.Cell(row, 2).Value = c.Name;
+                worksheet.Cell(row, 3).Value = c.ClassTypeName ?? "";
+                worksheet.Cell(row, 4).Value = c.Grade;
+                worksheet.Cell(row, 5).Value = c.TeacherHK1?.Name ?? "";
+                worksheet.Cell(row, 6).Value = c.TeacherHK2?.Name ?? "";
+
+                // Viền
+                for (int col = 1; col <= headers.Length; col++)
+                    worksheet.Cell(row, col).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                row++;
+            }
+
+            worksheet.Columns().AdjustToContents();
+            workbook.SaveAs(filePath);
+        }
+    }
+    catch (Exception ex)
+    {
+        throw new Exception("Lỗi khi xuất Excel: " + ex.Message, ex);
+    }
+}
 
 
 

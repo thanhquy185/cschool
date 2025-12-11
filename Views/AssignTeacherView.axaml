@@ -86,7 +86,16 @@
 
 
                     </Grid>
-                    <ComboBox
+                    
+                        <ComboBox
+                        Width="250"
+                        Height="40"
+                        DisplayMemberBinding="{Binding DisplayTextTermYear}"
+                        ItemsSource="{Binding Terms}"
+                        PlaceholderText="Chọn học kỳ"
+                        SelectedItem="{Binding SelectedTerm, Mode=TwoWay}"
+                        />
+                        <ComboBox
                         Width="150"
                         Height="40"
                         DisplayMemberBinding="{Binding Name_Subject}"

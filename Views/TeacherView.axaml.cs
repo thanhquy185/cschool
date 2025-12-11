@@ -53,9 +53,9 @@ public partial class TeacherView : UserControl
             LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Xoá / Khoá");
             ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Thêm");
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Nhập Excel");
             ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Teacher, "Xem");
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xuất Excel");
         }
     }
 
@@ -70,7 +70,7 @@ public partial class TeacherView : UserControl
 
         if (vm.SelectedTeacher == null && mode != DialogModeEnum.Create)
         {
-            await MessageBoxUtil.ShowError("Vui lòng chọn người dùng để thực hiện thao tác!");
+            await MessageBoxUtil.ShowError("Vui lòng chọn giáo viên để thực hiện thao tác!");
             return;
         }
 

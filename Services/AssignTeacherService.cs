@@ -126,7 +126,7 @@ public bool IsConflict(AssignTeacher at)
     return count > 0;
 }
 
-    public List<Classes> GetClasses()
+    public List<Classes> GetClasses(int term_id)
     {
         try
         {
@@ -134,7 +134,7 @@ public bool IsConflict(AssignTeacher at)
             string sql = @"SELECT c.id as class_id, c.name,c.area,c.room, ac.class_id, ac.id as assign_class_id
                     FROM classes c
                     JOIN assign_classes ac ON c.id = ac.class_id
-                    WHERE ac.term_id = (SELECT MAX(term_id) FROM assign_classes)";
+                    WHERE ac.term_id = " + term_id;
             var dt = _db.ExecuteQuery(sql);
             foreach (DataRow data in dt.Rows)
             {
@@ -183,6 +183,32 @@ public bool IsConflict(AssignTeacher at)
         {
             Console.WriteLine("Lỗi không thể lấy dữ liệu giáo viên: " + ex);
             return new BindingList<TeacherModel>();
+        }
+    }
+    public List<TermModel> GetTerms()
+    {
+        try
+        {
+            List<TermModel> ds = new List<TermModel>();
+            string sql = "SELECT * FROM terms WHERE status = 1 ";
+            var dt = _db.ExecuteQuery(sql);
+            foreach(DataRow data in dt.Rows)
+            {
+                ds.Add(new TermModel
+                {
+                    Id = (int)data["id"],
+                    Name = data["name"].ToString()!,
+                    Year = data["year"] != DBNull.Value ? Convert.ToInt32(data["year"]) : 0,
+                    LearnYear = data["learnyear"].ToString()!,
+                    Start = Convert.ToDateTime(data["start_date"]),
+                    End = Convert.ToDateTime(data["end_date"]),
+                });
+            }
+            return ds;
+        }catch(Exception e)
+        {
+            Console.WriteLine("Không thể lấy các kì học"+ e);
+            return new List<TermModel>();
         }
     }
 
@@ -248,7 +274,7 @@ public bool IsConflict(AssignTeacher at)
  
     }
 
-    public List<AssignTeacher> GetAssignTeachers()
+    public List<AssignTeacher> GetAssignTeachers(int term_id)
     {
         try
         {
@@ -260,8 +286,7 @@ public bool IsConflict(AssignTeacher at)
                             JOIN classes c ON c.id = ac.class_id
                             JOIN subjects s ON s.id = at.subject_id
                             JOIN teachers t ON t.id = at.teacher_id
-                            WHERE ac.term_id = (SELECT MAX(term_id) FROM assign_classes)
-                            ";
+                            WHERE ac.term_id =" +term_id; 
 
             var dt = _db.ExecuteQuery(sql);
             foreach (DataRow data in dt.Rows)
@@ -314,7 +339,7 @@ public bool IsConflict(AssignTeacher at)
         }
     }
 
-  public List<AssignTeacher> Search(string s)
+  public List<AssignTeacher> Search(int term_id , string s)
 {
     try
     {
@@ -328,11 +353,12 @@ public bool IsConflict(AssignTeacher at)
                        JOIN classes c ON c.id = ac.class_id
                        JOIN subjects s ON s.id = at.subject_id
                        JOIN teachers t ON t.id = at.teacher_id
-                       WHERE t.fullname LIKE @search OR c.name LIKE @search OR s.name LIKE @search AND ac.term_id = (SELECT MAX(term_id) FROM assign_classes)";
+                       WHERE ac.term_id = @termId AND t.fullname LIKE @search OR c.name LIKE @search OR s.name LIKE @search AND ac.term_id = (SELECT MAX(term_id) FROM assign_classes)";
 
         var connection = _db.GetConnection();
         var command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@search", $"%{s}%");
+        command.Parameters.AddWithValue("@termId", term_id);
+        command.Parameters.AddWithValue("@search", $"%{s}%");
          // Sử dụng LIKE cho tìm kiếm
         var reader = command.ExecuteReader();
         while (reader.Read())
@@ -365,11 +391,12 @@ public bool IsConflict(AssignTeacher at)
     {
         try
         {
+            Console.WriteLine("Updating AssignTeacher with ID: " + at.Assign_class_id + ", Teacher ID: " + at.Teachers_id + ", Subject ID: " + at.Subject_id);
             var connection = _db.GetConnection();
             string sql = @"UPDATE assign_class_teachers SET 
-                            subject_id = @subject_id, quiz_count = @quiz_count,
+                            quiz_count = @quiz_count,
                             oral_count = @oral_count, day = @day, start_period = @start_period, end_period = @end_period
-                            WHERE assign_class_id = @assign_class_id AND teacher_id = @teacher_id ";
+                            WHERE assign_class_id = @assign_class_id AND teacher_id = @teacher_id AND subject_id = @subject_id";
             var command = new MySqlCommand(sql, connection);
             command.Parameters.AddWithValue("@subject_id", at.Subject_id);
             command.Parameters.AddWithValue("@quiz_count", at.QuizCount);
@@ -379,6 +406,8 @@ public bool IsConflict(AssignTeacher at)
             command.Parameters.AddWithValue("@end_period", at.End);
             command.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
             command.Parameters.AddWithValue("@teacher_id", at.Teachers_id);
+            // command.Parameters.AddWithValue("@subject_id", at.Subject_id);
+
 
             
             return command.ExecuteNonQuery() > 0;

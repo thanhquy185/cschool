@@ -37,7 +37,7 @@ public class RoleDetailService
 
     public int DeleteAllByRoleId(int roleId)
     {
-        string sql = $"DELETE FROM role_details WHERE role_id = {roleId}";
+        string sql = $"DELETE FROM role_details WHERE role_id = {roleId} AND function_id != 1 AND function_id != 2 AND function_id != 3";
         return _db.ExecuteNonQuery(sql);
     }
 

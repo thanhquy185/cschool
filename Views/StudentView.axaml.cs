@@ -31,6 +31,10 @@ public partial class StudentView : UserControl
         // Phân quyền các nút chức năng
         if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
         {
+            ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Nhập Excel");
+            ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xuất Excel");
             InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                 SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Xem");
             CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
@@ -39,10 +43,6 @@ public partial class StudentView : UserControl
                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Cập nhật");
             LockButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Xoá / Khoá");
-            ImportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-             SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Thêm");
-            ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
-               SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Student, "Xem");
         }
     }
 
@@ -53,7 +53,7 @@ public partial class StudentView : UserControl
 
         if (selectedStudent == null && mode != DialogModeEnum.Create)
         {
-            await MessageBoxUtil.ShowError("Vui lòng chọn người dùng để thực hiện thao tác!");
+            await MessageBoxUtil.ShowError("Vui lòng chọn học sinh để thực hiện thao tác!");
             return;
         }
 

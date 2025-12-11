@@ -195,6 +195,8 @@ namespace ViewModels
                             var email = row.Cell(9).GetString();
                             var learnYear = row.Cell(10).GetString();
                             var learnStatus = row.Cell(11).GetString();
+                            var parentName = row.Cell(12).GetString();
+                            var parentPhone = row.Cell(13).GetString();
 
                             // check trùng
                             bool exists = AllStudents.Any(s =>
@@ -227,7 +229,9 @@ namespace ViewModels
                                 Phone = phone,
                                 Email = email,
                                 LearnYear = learnYear,
-                                LearnStatus = learnStatus
+                                LearnStatus = learnStatus,
+                                ParentName = parentName,
+                                ParentPhone = parentPhone,
                             };
 
                             bool isSuccess = await CreateStudentCommand.Execute(student).ToTask();
@@ -282,8 +286,8 @@ namespace ViewModels
                     string[] headers =
                     {
                         "ID", "Họ và tên", "Ảnh đại diện", "Ngày sinh", "Giới tính",
-                        "Dân tộc", "Tôn giáo", "Số điện thoại", "Email", "Địa chỉ",
-                        "Năm học", "Tình trạng học", "Trạng thái"
+                        "Dân tộc", "Tôn giáo", "Số điện thoại", "Email", "Họ tên phụ huynh",
+                        "Số điện thoại phụ huynh", "Địa chỉ", "Năm học", "Tình trạng học", "Trạng thái"
                     };
 
                     for (int i = 0; i < headers.Length; i++)
@@ -309,10 +313,13 @@ namespace ViewModels
                         worksheet.Cell(row, 7).Value = s.Religion;
                         worksheet.Cell(row, 8).Value = s.Phone;
                         worksheet.Cell(row, 9).Value = s.Email;
-                        worksheet.Cell(row, 10).Value = s.Address;
-                        worksheet.Cell(row, 11).Value = s.LearnYear;
-                        worksheet.Cell(row, 12).Value = s.LearnStatus;
-                        worksheet.Cell(row, 13).Value = s.Status == 1 ? "Hoạt động" : "Đã khóa";
+                        worksheet.Cell(row, 10).Value = s.ParentName;
+                        worksheet.Cell(row, 11).Value = s.ParentPhone;
+                        worksheet.Cell(row, 12).Value = s.Address;
+                        worksheet.Cell(row, 13).Value = s.LearnYear;
+                        worksheet.Cell(row, 14).Value = s.LearnStatus;
+                        worksheet.Cell(row, 15).Value = s.Status == 1 ? "Hoạt động" : "Đã khóa";
+                        
 
                         // Viền mỏng quanh ô
                         for (int col = 1; col <= headers.Length; col++)

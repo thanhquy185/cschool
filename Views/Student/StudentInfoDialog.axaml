@@ -99,6 +99,11 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <!-- Mã học sinh -->
@@ -161,12 +166,22 @@
                         <TextBox Grid.Row="16" Grid.Column="1" Text="{Binding StudentDetails.Email}" IsHitTestVisible="False"
                                  Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
 
+                        <!-- Họ tên phụ huynh -->
+                        <TextBlock Grid.Row="18" Grid.Column="0" Text="Họ tên phụ huynh" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="19" Grid.Column="0" Text="{Binding StudentDetails.ParentName}" IsHitTestVisible="False"
+                                 Background="#E5E5E5" Foreground="#555" Margin="0,0,0,10"/>
+
+                        <!-- Số điện thoại phụ huynh -->
+                        <TextBlock Grid.Row="18" Grid.Column="1" Text="Số điện thoại phụ huynh" FontSize="15" FontWeight="Bold" Margin="20,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="19" Grid.Column="1" Text="{Binding StudentDetails.ParentPhone}" IsHitTestVisible="False"
+                                 Background="#E5E5E5" Foreground="#555" Margin="20,0,0,10"/>
+
                         <!-- Địa chỉ -->
-                        <TextBlock Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
-                        <TextBox Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2"
-                                 Text="{Binding StudentDetails.Address}"
-                                 IsHitTestVisible="False"
-                                 Background="#E5E5E5" Foreground="#555" Margin="0,0,0,60"/>
+                        <TextBlock Grid.Row="21" Grid.Column="0" Grid.ColumnSpan="2" Text="Địa chỉ" FontSize="15" FontWeight="Bold" Margin="0,10,0,5" Foreground="Black"/>
+                        <TextBox Grid.Row="22" Grid.Column="0" Grid.ColumnSpan="2"
+                                Text="{Binding StudentDetails.Address}"
+                                IsHitTestVisible="False"
+                                Background="#E5E5E5" Foreground="#555" Margin="0,0,0,90"/>
 
                     </Grid>
                 </Grid>

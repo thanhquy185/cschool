@@ -6,9 +6,13 @@ public class RoleDetailRowFormat
     public bool CanCreate { get; set; }
     public bool CanUpdate { get; set; }
     public bool CanDelete { get; set; }
+    public bool CanImportExcel { get; set; }
+    public bool CanExportExcel { get; set; }
 
     public bool AllowView { get; set; }
     public bool AllowCreate { get; set; }
     public bool AllowUpdate { get; set; }
     public bool AllowDelete { get; set; }
+    public bool AllowImportExcel { get; set; }
+    public bool AllowExportExcel { get; set; }
 }

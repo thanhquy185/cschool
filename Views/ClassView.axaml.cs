@@ -6,6 +6,8 @@ using ViewModels;
 using Views.Class;
 using System.Reactive.Threading.Tasks;
 using Services;
+using System.Collections.Generic;
+using System;
 
 namespace Views
 {
@@ -17,7 +19,7 @@ namespace Views
             InitializeComponent();
             this._classViewModel = new ClassViewModel();
             DataContext = this._classViewModel;
-
+            ExportExcelButton.Click += async (_, _) => await ExportExcelButton_Click();
             InfoButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Info);
             CreateButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Create);
             UpdateButton.Click += async (_, _) => await ShowClassDialog(DialogModeEnum.Update);
@@ -26,6 +28,8 @@ namespace Views
             // Phân quyền các nút chức năng
             if (SessionService.currentUserLogin != null && AppService.RoleDetailService != null)
             {
+                ExportExcelButton.IsEnabled = AppService.RoleDetailService.HasPermission(
+                 SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.User, "Xuất Excel");
                 InfoButton.IsEnabled = AppService.RoleDetailService.HasPermission(
                     SessionService.currentUserLogin.RoleId, (int)FunctionIdEnum.Class, "Xem");
                 CreateButton.IsEnabled = AppService.RoleDetailService.HasPermission(
@@ -71,7 +75,9 @@ namespace Views
                     break;
 
                 case DialogModeEnum.Create:
-                    dialog = new ClassCreateDialog(new ClassViewModel());
+                    vm.ClearForm();
+                    dialog = new ClassCreateDialog(vm);
+
                     break;
 
                 case DialogModeEnum.Update:
@@ -131,5 +137,39 @@ namespace Views
                 vm.LoadData();
             }
         }
+
+        private async Task ExportExcelButton_Click()
+        {
+            var dialog = new SaveFileDialog
+            {
+                Title = "Chọn nơi lưu file Excel",
+                Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "Excel Files", Extensions = { "xlsx" } }
+            },
+                InitialFileName = "DanhSachLophoc.xlsx"
+            };
+
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            var filePath = await dialog.ShowAsync(owner);
+
+            if (string.IsNullOrWhiteSpace(filePath))
+                return;
+
+            var vm = DataContext as ClassViewModel;
+            if (vm != null)
+            {
+                try
+                {
+                    await vm.ExportExcel(filePath);
+                    await MessageBoxUtil.ShowSuccess("Xuất file Excel thành công!\n", owner: owner);
+                }
+                catch (Exception ex)
+                {
+                    await MessageBoxUtil.ShowError(ex.Message, owner: owner);
+                }
+            }
+        }
+
     }
 }
