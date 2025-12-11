@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using System.Reactive.Threading.Tasks; 
 using Utils;
 using Models;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 namespace Views.Tuition
 {
@@ -22,30 +23,50 @@ namespace Views.Tuition
 
         // ==================== Khi tick/untick phí ====================
         private void FeeCheckBox_Changed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-{
-    // Học kỳ 1
-    decimal totalSelectedFeesHK1 = vm.BaseFees1.Concat(vm.ExtraFees1)
-                                        .Where(f => f.IsSelected)
-                                        .Sum(f => f.Amount);
+        {
+            // If sender is a CheckBox inside the DataGrid, ensure the model reflects its state immediately
+            if (sender is CheckBox cb && cb.DataContext is FeeTemplateModel ftModel)
+            {
+                ftModel.IsSelected = cb.IsChecked ?? false;
+            }
 
-    foreach (var month in vm.MonthsHK1)
-    {
-        System.Console.WriteLine(month.MonthName + " " + month.IsSelected);
-        if (month.IsSelected)  
-            month.Amount = totalSelectedFeesHK1;
-    }
+            // Học kỳ 1: compute based on model state (now synced)
+            decimal totalSelectedFeesHK1 = vm.BaseFees1.Concat(vm.ExtraFees1)
+                                                .Where(f => f.IsSelected)
+                                                .Sum(f => f.Amount);
 
-    // Học kỳ 2
-    decimal totalSelectedFeesHK2 = vm.BaseFees2.Concat(vm.ExtraFees2)
-                                        .Where(f => f.IsSelected)
-                                        .Sum(f => f.Amount);
+            foreach (var month in vm.MonthsHK1)
+            {
+                System.Console.WriteLine(month.MonthName + " " + month.IsSelected);
+                if (month.IsSelected)
+                    month.Amount = totalSelectedFeesHK1;
+            }
 
-    foreach (var month in vm.MonthsHK2)
-    {
-        if (month.IsSelected)
-            month.Amount = totalSelectedFeesHK2;
-    }
-}
+            // Học kỳ 2
+            decimal totalSelectedFeesHK2 = vm.BaseFees2.Concat(vm.ExtraFees2)
+                                                .Where(f => f.IsSelected)
+                                                .Sum(f => f.Amount);
+
+            foreach (var month in vm.MonthsHK2)
+            {
+                if (month.IsSelected)
+                    month.Amount = totalSelectedFeesHK2;
+            }
+
+            // Diagnostic: print fee selection states and computed totals
+            System.Console.WriteLine("[DEBUG] FeeCheckBox_Changed: HK1 fees:");
+            foreach (var f in vm.BaseFees1.Concat(vm.ExtraFees1))
+            {
+                System.Console.WriteLine($"  Fee: {f.Name}, Id={f.Id}, IsSelected={f.IsSelected}, Amount={f.Amount}");
+            }
+            System.Console.WriteLine($"  Computed total HK1 = {totalSelectedFeesHK1}");
+            System.Console.WriteLine("[DEBUG] FeeCheckBox_Changed: HK2 fees:");
+            foreach (var f in vm.BaseFees2.Concat(vm.ExtraFees2))
+            {
+                System.Console.WriteLine($"  Fee: {f.Name}, Id={f.Id}, IsSelected={f.IsSelected}, Amount={f.Amount}");
+            }
+            System.Console.WriteLine($"  Computed total HK2 = {totalSelectedFeesHK2}");
+        }
 
         // ==================== Khi tick/untick tháng ====================
         private void MonthCheckBox_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -65,22 +86,22 @@ namespace Views.Tuition
        
         private void MonthHK1_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            System.Console.WriteLine("MonthHK1_SelectionChanged triggered");
+            
             if (sender is not DataGrid dg) return;
             if (dg.SelectedItem is not MonthFeeItem selectedItem) return;
-
-            // Lấy danh sách tháng học kỳ 1 từ DataContext
-            if (dg.DataContext is not TuitionViewModel vm) return;
-
-            // Bỏ chọn tất cả
-            foreach (var m in vm.MonthsHK1)
-                m.IsSelected = false;
-            foreach (var fee in vm.BaseFees1)
-                fee.IsSelected = false;
-           
-            selectedItem.IsSelected = true;
+            System.Console.WriteLine("Selected HK1 month: " + selectedItem.MonthName);
+            foreach (var month in vm.MonthsHK1)
+            {
+                System.Console.WriteLine(month.MonthName + " " + month.IsSelected);
+                if (month.MonthId == selectedItem.MonthId)
+                {
+                    month.IsSelected = true;
+                }
+               
+            }
+            
+            
             vm.LoadSelectedFeeForMonth(selectedItem);
-            // vm.LoadSelectedFeesForClass(vm.SelectedClass);
         }
 
         private void MonthHK2_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -88,25 +109,22 @@ namespace Views.Tuition
             if (sender is not DataGrid dg) return;
             if (dg.SelectedItem is not MonthFeeItem selectedItem) return;
 
-            // Lấy danh sách tháng học kỳ 2 từ DataContext
-            if (dg.DataContext is not TuitionViewModel vm) return;
-
-            // Bỏ chọn tất cả
-            foreach (var m in vm.MonthsHK2)
-                m.IsSelected = false;
-
-            // Chọn dòng hiện tại
-            selectedItem.IsSelected = true;
-
-            // Cập nhật tiền nếu có
-            selectedItem.UpdateTotalAmount?.Invoke(selectedItem);
-
-            // vm.LoadSelectedFeesForClass(vm.SelectedClass);
+            // Load fee data for the selected month (don't reset month or fee selections)
+            vm.LoadSelectedFeeForMonth(selectedItem);
         }
 private async void Save(object? sender, RoutedEventArgs e)
 {
     try
     {
+        // Ensure any in-progress checkbox edits commit by moving focus away
+        try
+        {
+            this.Focus();
+            // small delay to let bindings update
+            await System.Threading.Tasks.Task.Delay(60);
+        }
+        catch { }
+
         // Thực hiện lệnh lưu
         await vm.SaveMonthFeeCommand.Execute().ToTask();
 

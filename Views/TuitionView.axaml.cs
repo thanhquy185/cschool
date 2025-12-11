@@ -81,7 +81,25 @@ public partial class TuitionView : UserControl
                 dialog = new TuitionCreateDialog(vm);
                 break;
             case DialogModeEnum.Info:
-                dialog = new TuitionInfoDialog(vm);
+                // Kiểm tra tab hiện tại để điều hướng đúng dialog
+                var tabControl = this.FindControl<TabControl>("TuitionTabControl");
+                if (tabControl?.SelectedItem is TabItem selectedTab)
+                {
+                    if (selectedTab.Header?.ToString() == "Mức học phí")
+                    {
+                        // Tab "Mức học phí" → hiển thị chi tiết fee
+                        dialog = new TuitionFeeDetailDialog(vm);
+                    }
+                    else
+                    {
+                        // Tab "Quản lý học phí" → hiển thị chi tiết học sinh
+                        dialog = new TuitionInfoDialog(vm);
+                    }
+                }
+                else
+                {
+                    dialog = new TuitionInfoDialog(vm);
+                }
                 break;
         }
 
@@ -100,6 +118,30 @@ public partial class TuitionView : UserControl
 
                 CreateButton.Opacity = isManageTab ? 0 : 1;
                 CreateButton.IsHitTestVisible = !isManageTab;
+
+                // Reset search/filter khi chuyển tab
+                var vm = DataContext as TuitionViewModel;
+                if (vm != null)
+                {
+                    var searchBox = this.FindControl<TextBox>("SearchBox");
+                    if (searchBox != null)
+                        searchBox.Text = string.Empty;
+
+                    if (isManageTab)
+                    {
+                        // Tab "Quản lý học phí" - reset student filters
+                        vm.StudentSearchText = string.Empty;
+                        vm.SelectedFilterClassYear = "Tất cả";
+                        vm.SelectedFilterClassName = "Tất cả";
+                        vm.FilterTuitionSummary();
+                    }
+                    else
+                    {
+                        // Tab "Mức học phí" - reset fee class search
+                        vm.FeeClassSearchText = string.Empty;
+                        vm.FilterFeeClassList();
+                    }
+                }
 
                 Console.WriteLine($"Tab changed: {selectedTab.Header}");
             }
@@ -169,6 +211,76 @@ public partial class TuitionView : UserControl
         catch (Exception ex)
         {
             Console.WriteLine("CollectionFee_Click error: " + ex.Message);
+        }
+    }
+
+    private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (DataContext is TuitionViewModel vm && sender is TextBox tb)
+        {
+            var tabControl = this.FindControl<TabControl>("TuitionTabControl");
+            if (tabControl?.SelectedItem is TabItem selectedTab)
+            {
+                bool isManageTab = selectedTab.Header?.ToString() == "Quản lý học phí";
+
+                if (isManageTab)
+                {
+                    // "Quản lý học phí" tab - tìm kiếm theo tên học sinh
+                    vm.StudentSearchText = tb.Text?.Trim();
+                }
+                else
+                {
+                    // "Mức học phí" tab - tìm kiếm theo tên lớp/khối
+                    vm.FeeClassSearchText = tb.Text?.Trim();
+                }
+            }
+        }
+    }
+
+    private void FilterYear_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is TuitionViewModel vm)
+        {
+            vm.FilterTuitionSummary();
+        }
+    }
+
+    private void FilterClass_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is TuitionViewModel vm)
+        {
+            vm.FilterTuitionSummary();
+        }
+    }
+
+    private void ResetFilter_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is TuitionViewModel vm)
+        {
+            var searchBox = this.FindControl<TextBox>("SearchBox");
+            if (searchBox != null)
+                searchBox.Text = string.Empty;
+
+            var tabControl = this.FindControl<TabControl>("TuitionTabControl");
+            if (tabControl?.SelectedItem is TabItem selectedTab)
+            {
+                bool isManageTab = selectedTab.Header?.ToString() == "Quản lý học phí";
+
+                if (isManageTab)
+                {
+                    // "Quản lý học phí" - reset student filters
+                    vm.StudentSearchText = string.Empty;
+                    vm.SelectedFilterClassYear = "Tất cả";
+                    vm.SelectedFilterClassName = "Tất cả";
+                    vm.FilterTuitionSummary();
+                }
+                else
+                {
+                    // "Mức học phí" - reset fee class search
+                    vm.FeeClassSearchText = string.Empty;
+                    vm.FilterFeeClassList();
+                }
+            }
         }
     }
 }

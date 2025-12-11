@@ -59,8 +59,8 @@
                   <!-- Template column để IsSelected hiển thị đúng -->
                   <DataGridTemplateColumn Header="Chọn">
                     <DataGridTemplateColumn.CellTemplate>
-                      <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                        <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Checked="FeeCheckBox_Changed" Unchecked="FeeCheckBox_Changed" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
@@ -113,8 +113,8 @@
 
                   <DataGridTemplateColumn Header="Chọn">
                     <DataGridTemplateColumn.CellTemplate>
-                      <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                        <DataTemplate>
+                      <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Checked="FeeCheckBox_Changed" Unchecked="FeeCheckBox_Changed" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>

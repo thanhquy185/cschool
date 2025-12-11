@@ -59,48 +59,35 @@
       <Grid Classes="FilterData" RowDefinitions="*,Auto">
         <StackPanel Classes="FilterDataInputs">
           <Grid Classes="FilterDataFindInput">
-            <TextBox x:Name="SearchBox" Watermark="Nhập tên học sinh hoặc lớp" />
+            <TextBox x:Name="SearchBox" Watermark="Nhập tên học sinh hoặc lớp" TextChanged="SearchBox_TextChanged" />
             <Image Source="{DynamicResource SearchIcon}" />
           </Grid>
-
-          <ComboBox
-            x:Name="StatusFilterBox"
-            Classes="FilterDataFindSelect"
-            MaxDropDownHeight="200"
-            SelectedIndex="0">
-            <ComboBoxItem>Tất cả trạng thái</ComboBoxItem>
-            <ComboBoxItem>Đã đóng</ComboBoxItem>
-            <ComboBoxItem>Chưa đóng</ComboBoxItem>
-            <ComboBoxItem>Đóng một phần</ComboBoxItem>
-          </ComboBox>
 
           <ComboBox
             x:Name="FilterYear"
             Classes="FilterDataFindSelect"
             MaxDropDownHeight="200"
-            SelectedIndex="0">
-            <ComboBoxItem>Năm 2024-2025</ComboBoxItem>
-            <ComboBoxItem>Năm 2025-2026</ComboBoxItem>
+            ItemsSource="{Binding ClassYearList}"
+            SelectedItem="{Binding SelectedFilterClassYear, Mode=TwoWay}"
+            SelectionChanged="FilterYear_SelectionChanged">
           </ComboBox>
 
           <ComboBox
             x:Name="FilterClass"
             Classes="FilterDataFindSelect"
             MaxDropDownHeight="200"
-            SelectedIndex="0">
-            <ComboBoxItem>Năm 2024-2025</ComboBoxItem>
-            <ComboBoxItem>Năm 2025-2026</ComboBoxItem>
+            ItemsSource="{Binding ClassNameList}"
+            SelectedItem="{Binding SelectedFilterClassName, Mode=TwoWay}"
+            SelectionChanged="FilterClass_SelectionChanged">
           </ComboBox>
-
-
-
         </StackPanel>
 
         <Button
           x:Name="ResetFilterButton"
           HorizontalAlignment="Right"
           VerticalAlignment="Center"
-          Classes="FilterDataResetButton">
+          Classes="FilterDataResetButton"
+          Click="ResetFilter_Click">
           <Image Source="{DynamicResource ResetIcon}" />
         </Button>
       </Grid>

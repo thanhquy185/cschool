@@ -1,4 +1,5 @@
 using System.Data;
+using System.Globalization;
 using Models;
 
 namespace Services;
@@ -228,14 +229,27 @@ public class TuitionService
             // --- LƯU class_fee_months ---
             foreach (var item in feeClassMonths)
             {
+                // Use invariant culture when formatting decimals to avoid comma decimal separators
+                string amountStr = item.Amount.ToString(CultureInfo.InvariantCulture);
                 string sql = $@"
                     INSERT INTO class_fee_months
                         (assign_class_id, fee_template_id, month_id, term, amount, start_date, end_date, created_at, updated_at)
                     VALUES
-                        ({item.AssignClassId}, {item.FeeTemplateId}, {item.MonthId}, {item.Term}, {item.Amount},
+                        ({item.AssignClassId}, {item.FeeTemplateId}, {item.MonthId}, {item.Term}, {amountStr},
                             '{item.StartDate}', '{item.EndDate}', '{item.CreatedAt}', '{item.UpdatedAt}');";
 
-                _db.ExecuteNonQuery(sql);
+                try
+                {
+                    _db.ExecuteNonQuery(sql);
+                }
+                catch (Exception ex)
+                {
+                    // Log the SQL and the exception to help debugging intermittent failures
+                    Console.WriteLine("❌ Lỗi khi Insert vào class_fee_months");
+                    Console.WriteLine("SQL: " + sql);
+                    Console.WriteLine("Exception: " + ex);
+                    return false;
+                }
             }
 
             // --- LẤY ASSIGN_CLASS_ID của các assign class khác nhau ---
@@ -289,11 +303,13 @@ public class TuitionService
                     // total_amount có thể trả về int/decimal tùy database => dùng Convert.ToDecimal
                     decimal total = Convert.ToDecimal(mfRow["total_amount"]);
 
+                    // Ensure decimal formatted with invariant culture
+                    string totalStr = total.ToString(CultureInfo.InvariantCulture);
                     string insertSql = $@"
                         INSERT INTO tuition_monthly
                             (student_id, assign_class_id, month_id, total_amount, is_paid, created_at, updated_at)
                         VALUES
-                            ({studentId}, {assignClassId}, {monthId}, {total}, 0, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}');";
+                            ({studentId}, {assignClassId}, {monthId}, {totalStr}, 0, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}');";
 
                     _db.ExecuteNonQuery(insertSql);
                 }
@@ -387,6 +403,22 @@ public class TuitionService
         catch (Exception ex)
         {
             Console.WriteLine($"❌ Lỗi xóa class_fee_months: {ex.Message}");
+        }
+    }
+
+    public void DeleteTuitionMonthlyByAssignClass(int assignClassId)
+    {
+        try
+        {
+            if (assignClassId > 0)
+            {
+                string sqlDelete = $"DELETE FROM tuition_monthly WHERE assign_class_id = {assignClassId}";
+                _db.ExecuteNonQuery(sqlDelete);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Lỗi xóa tuition_monthly: {ex.Message}");
         }
     }
 

@@ -6,6 +6,7 @@ using ReactiveUI;
 using System.Reactive;
 using System.Globalization;
 using Services;
+using ClosedXML.Excel;
 
 namespace ViewModels
 {
@@ -34,6 +35,7 @@ namespace ViewModels
         public ObservableCollection<FeeTemplateModel> BaseFees2 { get; set; } = new ObservableCollection<FeeTemplateModel>();
         public ObservableCollection<FeeTemplateModel> ExtraFees2 { get; set; } = new ObservableCollection<FeeTemplateModel>();
         private ObservableCollection<FeeClassMonthModel> _allStudentFeeMonthDetail = new ObservableCollection<FeeClassMonthModel>();
+        public ObservableCollection<FeeClassMonthModel> AllStudentFeeMonthDetail => _allStudentFeeMonthDetail;
         public ObservableCollection<MonthFeeItem> MonthsHK1 { get; set; }
         public ObservableCollection<MonthFeeItem> MonthsHK2 { get; set; }
 
@@ -61,6 +63,23 @@ namespace ViewModels
             }
         }
 
+        // Danh sách học kỳ hiển thị (bao gồm "Tất cả")
+        public ObservableCollection<string> TermDisplayList { get; set; } = new ObservableCollection<string>();
+        private string? _selectedTermDisplay;
+        public string? SelectedTermDisplay
+        {
+            get => _selectedTermDisplay;
+            set
+            {
+                if (_selectedTermDisplay != value)
+                {
+                    _selectedTermDisplay = value;
+                    OnPropertyChanged();
+                    LoadMonthsForSelectedTerm();
+                }
+            }
+        }
+
         // Danh sách tháng theo học kỳ
         public ObservableCollection<string> MonthList { get; set; } = new ObservableCollection<string>();
 
@@ -75,6 +94,132 @@ namespace ViewModels
                     _selectedMonth = value;
                     OnPropertyChanged();
                     FilterTuitionDetailByMonth();
+                }
+            }
+        }
+
+        // Text tìm kiếm chung
+        private string? _searchText;
+        public string? SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        // Tìm kiếm danh sách học sinh trong Quản lý học phí
+        private string? _studentSearchText;
+        public string? StudentSearchText
+        {
+            get => _studentSearchText;
+            set
+            {
+                if (_studentSearchText != value)
+                {
+                    _studentSearchText = value;
+                    OnPropertyChanged();
+                    FilterTuitionSummary();
+                }
+            }
+        }
+
+        private string? _selectedFilterClassName;
+        public string? SelectedFilterClassName
+        {
+            get => _selectedFilterClassName;
+            set
+            {
+                if (_selectedFilterClassName != value)
+                {
+                    _selectedFilterClassName = value;
+                    OnPropertyChanged();
+                    FilterTuitionSummary();
+                }
+            }
+        }
+
+        private string? _selectedFilterClassYear;
+        public string? SelectedFilterClassYear
+        {
+            get => _selectedFilterClassYear;
+            set
+            {
+                if (_selectedFilterClassYear != value)
+                {
+                    _selectedFilterClassYear = value;
+                    OnPropertyChanged();
+                    FilterTuitionSummary();
+                }
+            }
+        }
+
+        // Tìm kiếm danh sách lớp (Mức học phí tab)
+        private string? _feeClassSearchText;
+        public string? FeeClassSearchText
+        {
+            get => _feeClassSearchText;
+            set
+            {
+                if (_feeClassSearchText != value)
+                {
+                    _feeClassSearchText = value;
+                    OnPropertyChanged();
+                    FilterFeeClassList();
+                }
+            }
+        }
+
+        // Filter bộ lọc chi tiết mức phí theo khối, năm học, lớp
+        public ObservableCollection<string> ClassLevelList { get; set; } = new ObservableCollection<string>();
+        private string? _selectedClassLevel;
+        public string? SelectedClassLevel
+        {
+            get => _selectedClassLevel;
+            set
+            {
+                if (_selectedClassLevel != value)
+                {
+                    _selectedClassLevel = value;
+                    OnPropertyChanged();
+                    LoadClassYearsForLevel();
+                }
+            }
+        }
+
+        public ObservableCollection<string> ClassYearList { get; set; } = new ObservableCollection<string>();
+        private string? _selectedClassYear;
+        public string? SelectedClassYear
+        {
+            get => _selectedClassYear;
+            set
+            {
+                if (_selectedClassYear != value)
+                {
+                    _selectedClassYear = value;
+                    OnPropertyChanged();
+                    LoadClassNamesForYearAndLevel();
+                }
+            }
+        }
+
+        public ObservableCollection<string> ClassNameList { get; set; } = new ObservableCollection<string>();
+        private string? _selectedClassName;
+        public string? SelectedClassName
+        {
+            get => _selectedClassName;
+            set
+            {
+                if (_selectedClassName != value)
+                {
+                    _selectedClassName = value;
+                    OnPropertyChanged();
+                    FilterFeeDetailByClass();
                 }
             }
         }
@@ -187,7 +332,11 @@ namespace ViewModels
                     var feeClassMonths = SaveMonthFeeTemplates();
 
                     // gọi service lưu (nếu service thread-safe, không thao tác UI thì ok)
-                    await Task.Run(() => AppService.TuitionService.SaveFeeClassMonths(feeClassMonths));
+                    var saved = await Task.Run(() => AppService.TuitionService.SaveFeeClassMonths(feeClassMonths));
+                    if (!saved)
+                    {
+                        Console.WriteLine("❌ SaveFeeClassMonths returned false");
+                    }
                 });
 
 
@@ -271,6 +420,22 @@ namespace ViewModels
             {
                 FeeClassList.Add(c);
             }
+
+            // Populate class filter lists (Grade/Year/Name)
+            ClassLevelList.Clear();
+            ClassLevelList.Add("Tất cả");
+            foreach (var g in FeeClassList.Select(c => c.Grade.ToString()).Distinct().OrderBy(x => x))
+                ClassLevelList.Add(g);
+
+            ClassYearList.Clear();
+            ClassYearList.Add("Tất cả");
+            foreach (var y in FeeClassList.Select(c => c.Year).Distinct().OrderBy(y => y))
+                ClassYearList.Add(y);
+
+            ClassNameList.Clear();
+            ClassNameList.Add("Tất cả");
+            foreach (var n in FeeClassList.Select(c => c.Name).Distinct().OrderBy(n => n))
+                ClassNameList.Add(n);
 
             var distinctClasses = FeeClassList
                 .GroupBy(c => new { c.Name, c.Year })
@@ -370,6 +535,14 @@ namespace ViewModels
                             FeeHK2.Add(feeMonth);
                         }
                     }
+            
+            // Load toàn bộ dữ liệu fee vào _allStudentFeeMonthDetail cho dialog chi tiết
+            _allStudentFeeMonthDetail.Clear();
+            foreach (var fee in FeeHK1.Concat(FeeHK2))
+            {
+                _allStudentFeeMonthDetail.Add(fee);
+            }
+            
             if (classHK1 == null && classHK2 == null)
                 return;
 
@@ -405,13 +578,15 @@ namespace ViewModels
                         MonthId = m,
                         MonthName = "Tháng " + m,
                         Term = T1.Id,
-                        Amount = totalAmount
+                        Amount = totalAmount,
+                        IsSelected = false  // Thêm default value
                     };
                     
                     MonthsHK1.Add(monthItem);
                 }
                 SelectedMonthTuition = MonthsHK1.FirstOrDefault();
-                LoadSelectedFeeForMonth(SelectedMonthTuition);
+                if (SelectedMonthTuition != null)
+                    LoadSelectedFeeForMonth(SelectedMonthTuition);
             }
 
             // Học kỳ 2
@@ -422,32 +597,46 @@ namespace ViewModels
                 var months2 = GetMonthsInTerm(startDate, endDate);
 
                 foreach (var m in months2)
-            {
-                // Lọc các fee cho tháng m
-                var filteredDetails = FeeHK2
-                    .Where(f => f.MonthId == m)
-                    .ToList();
-
-                // Tính tổng tiền cho tháng
-                decimal totalAmount = filteredDetails.Sum(f => f.Amount);
-
-                // Tạo MonthFeeItem
-                var monthItem = new MonthFeeItem
                 {
-                    MonthId = m,
-                    MonthName = "Tháng " + m,
-                    Term = T2.Id,
-                    Amount = totalAmount
-                };
-                
-                MonthsHK2.Add(monthItem);
-            }
+                    // Lọc các fee cho tháng m
+                    var filteredDetails = FeeHK2
+                        .Where(f => f.MonthId == m)
+                        .ToList();
 
+                    // Tính tổng tiền cho tháng
+                    decimal totalAmount = filteredDetails.Sum(f => f.Amount);
+
+                    // Tạo MonthFeeItem
+                    var monthItem = new MonthFeeItem
+                    {
+                        MonthId = m,
+                        MonthName = "Tháng " + m,
+                        Term = T2.Id,
+                        Amount = totalAmount,
+                        IsSelected = false  // Thêm default value
+                    };
+                    
+                    MonthsHK2.Add(monthItem);
+                }
             }
 
             // Notify UI
             OnPropertyChanged(nameof(MonthsHK1));
             OnPropertyChanged(nameof(MonthsHK2));
+
+            // Load TermList và MonthList cho dialog chi tiết
+            TermList.Clear();
+            if (T1 != null)
+                TermList.Add(T1);
+            if (T2 != null)
+                TermList.Add(T2);
+            
+            MonthList.Clear();
+            // Lấy tất cả tháng từ MonthsHK1 và MonthsHK2
+            foreach (var month in MonthsHK1.Concat(MonthsHK2).DistinctBy(m => m.MonthId))
+            {
+                MonthList.Add(month.MonthName);
+            }
 
             T1Model = T1;
             T2Model = T2;
@@ -465,6 +654,14 @@ namespace ViewModels
 
             if (classHK1 == null && classHK2 == null)
                 return feeClassMonths;
+
+            // XÓA dữ liệu cũ trong tuition_monthly trước khi lưu
+            var assignId1 = classHK1?.AssignClassId ?? 0;
+            var assignId2 = classHK2?.AssignClassId ?? 0;
+            if (assignId1 > 0)
+                AppService.TuitionService.DeleteTuitionMonthlyByAssignClass(assignId1);
+            if (assignId2 > 0)
+                AppService.TuitionService.DeleteTuitionMonthlyByAssignClass(assignId2);
 
             // Duyệt 2 học kỳ
             foreach (var term in new[] { 1, 2 })
@@ -510,6 +707,29 @@ namespace ViewModels
 
                 feeClassMonths.AddRange(monthFeeModels);
             }
+
+            // Diagnostic logging: what we are about to save
+            Console.WriteLine("[DEBUG] SaveMonthFeeTemplates: selected months and fees to save:");
+            foreach (var m in MonthsHK1 ?? new ObservableCollection<MonthFeeItem>())
+            {
+                if (m.IsSelected)
+                    Console.WriteLine($"  HK1 Month: {m.MonthName} (Id={m.MonthId}), Amount={m.Amount}");
+            }
+            foreach (var m in MonthsHK2 ?? new ObservableCollection<MonthFeeItem>())
+            {
+                if (m.IsSelected)
+                    Console.WriteLine($"  HK2 Month: {m.MonthName} (Id={m.MonthId}), Amount={m.Amount}");
+            }
+
+            Console.WriteLine("[DEBUG] Selected fees HK1:");
+            foreach (var f in BaseFees1.Concat(ExtraFees1))
+                if (f.IsSelected) Console.WriteLine($"  Fee: {f.Name} (Id={f.Id}), Amount={f.Amount}");
+
+            Console.WriteLine("[DEBUG] Selected fees HK2:");
+            foreach (var f in BaseFees2.Concat(ExtraFees2))
+                if (f.IsSelected) Console.WriteLine($"  Fee: {f.Name} (Id={f.Id}), Amount={f.Amount}");
+
+            Console.WriteLine($"[DEBUG] Total feeClassMonths to insert: {feeClassMonths.Count}");
 
             return feeClassMonths; // <- Trả về ngoài vòng lặp
         }
@@ -732,10 +952,186 @@ namespace ViewModels
         private void LoadMonthsForSelectedTerm()
         {
             MonthList.Clear();
-            if (SelectedTerm == null || !TermMonthMap.ContainsKey(SelectedTerm.DisplayName)) return;
 
-            foreach (var m in TermMonthMap[SelectedTerm.DisplayName])
-                MonthList.Add("Tháng " + m);
+            // Nếu chọn "Tất cả" -> hiển thị tất cả tháng
+            if (SelectedTermDisplay == "Tất cả")
+            {
+                MonthList.Add("Tất cả");
+                foreach (var month in MonthsHK1.Concat(MonthsHK2).DistinctBy(m => m.MonthId).OrderBy(m => m.MonthId))
+                {
+                    MonthList.Add(month.MonthName);
+                }
+                SelectedMonth = "Tất cả";
+                return;
+            }
+
+            // Nếu chọn học kỳ cụ thể
+            if (string.IsNullOrEmpty(SelectedTermDisplay)) return;
+
+            MonthList.Add("Tất cả");
+            if (SelectedTermDisplay == "Học kỳ 1")
+            {
+                foreach (var month in MonthsHK1.OrderBy(m => m.MonthId))
+                    MonthList.Add(month.MonthName);
+            }
+            else if (SelectedTermDisplay == "Học kỳ 2")
+            {
+                foreach (var month in MonthsHK2.OrderBy(m => m.MonthId))
+                    MonthList.Add(month.MonthName);
+            }
+
+            SelectedMonth = "Tất cả";
+        }
+
+        // Load danh sách năm học cho khối đã chọn
+        private void LoadClassYearsForLevel()
+        {
+            ClassYearList.Clear();
+            if (string.IsNullOrEmpty(SelectedClassLevel) || SelectedClassLevel == "Tất cả")
+            {
+                ClassYearList.Add("Tất cả");
+                var years = FeeClassList.DistinctBy(c => c.Year).Select(c => c.Year).OrderBy(y => y);
+                foreach (var year in years)
+                    ClassYearList.Add(year);
+                SelectedClassYear = "Tất cả";
+                return;
+            }
+
+            ClassYearList.Add("Tất cả");
+            var yearsForLevel = FeeClassList
+                .Where(c => c.Grade.ToString() == SelectedClassLevel)
+                .DistinctBy(c => c.Year)
+                .Select(c => c.Year)
+                .OrderBy(y => y);
+            foreach (var year in yearsForLevel)
+                ClassYearList.Add(year);
+
+            SelectedClassYear = "Tất cả";
+        }
+
+        // Load danh sách lớp cho khối và năm học đã chọn
+        private void LoadClassNamesForYearAndLevel()
+        {
+            ClassNameList.Clear();
+            if ((string.IsNullOrEmpty(SelectedClassLevel) || SelectedClassLevel == "Tất cả") &&
+                (string.IsNullOrEmpty(SelectedClassYear) || SelectedClassYear == "Tất cả"))
+            {
+                ClassNameList.Add("Tất cả");
+                var names = FeeClassList.DistinctBy(c => c.Name).Select(c => c.Name).OrderBy(n => n);
+                foreach (var name in names)
+                    ClassNameList.Add(name);
+                SelectedClassName = "Tất cả";
+                return;
+            }
+
+            ClassNameList.Add("Tất cả");
+            var query = FeeClassList.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(SelectedClassLevel) && SelectedClassLevel != "Tất cả")
+                query = query.Where(c => c.Grade.ToString() == SelectedClassLevel);
+
+            if (!string.IsNullOrEmpty(SelectedClassYear) && SelectedClassYear != "Tất cả")
+                query = query.Where(c => c.Year == SelectedClassYear);
+
+            var names2 = query.DistinctBy(c => c.Name).Select(c => c.Name).OrderBy(n => n);
+            foreach (var name in names2)
+                ClassNameList.Add(name);
+
+            SelectedClassName = "Tất cả";
+        }
+
+        // Filter danh sách học sinh (Quản lý học phí) theo tên, lớp, năm
+        public void FilterTuitionSummary()
+        {
+            try
+            {
+                if (TuitionList == null) return;
+
+                var q = TuitionList.AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(StudentSearchText))
+                {
+                    var s = StudentSearchText.Trim().ToLowerInvariant();
+                    q = q.Where(t => (!string.IsNullOrEmpty(t.StudentName) && t.StudentName.ToLowerInvariant().Contains(s)));
+                }
+
+                if (!string.IsNullOrWhiteSpace(SelectedFilterClassName) && SelectedFilterClassName != "Tất cả")
+                {
+                    q = q.Where(t => (t.ClassName ?? string.Empty) == SelectedFilterClassName);
+                }
+
+                if (!string.IsNullOrWhiteSpace(SelectedFilterClassYear) && SelectedFilterClassYear != "Tất cả")
+                {
+                    q = q.Where(t => (t.ClassYear ?? string.Empty) == SelectedFilterClassYear);
+                }
+
+                // Deduplication: mỗi học sinh mỗi năm chỉ 1 record
+                var distinctFiltered = q
+                    .GroupBy(t => new { t.StudentId, t.StudentName, t.ClassYear })
+                    .Select(g => g.First())
+                    .ToList();
+
+                TuitionListView.Clear();
+                foreach (var item in distinctFiltered)
+                    TuitionListView.Add(item);
+            }
+            catch (Exception)
+            {
+                // ignore filter exceptions to keep UI responsive
+            }
+        }
+
+        // Filter danh sách lớp (Mức học phí tab) theo tên lớp + khối
+        public void FilterFeeClassList()
+        {
+            try
+            {
+                if (FeeClassList == null) return;
+
+                var q = FeeClassList.AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(FeeClassSearchText))
+                {
+                    var s = FeeClassSearchText.Trim().ToLowerInvariant();
+                    q = q.Where(c => 
+                        (!string.IsNullOrEmpty(c.Name) && c.Name.ToLowerInvariant().Contains(s)) ||
+                        (!string.IsNullOrEmpty(c.Grade.ToString()) && c.Grade.ToString().ToLowerInvariant().Contains(s))
+                    );
+                }
+
+                // Deduplication: mỗi lớp (Name + Year) chỉ 1 record
+                var distinctFiltered = q
+                    .GroupBy(c => new { c.Name, c.Year })
+                    .Select(g => g.First())
+                    .ToList();
+
+                FeeClassListView.Clear();
+                foreach (var item in distinctFiltered)
+                    FeeClassListView.Add(item);
+            }
+            catch (Exception)
+            {
+                // ignore filter exceptions
+            }
+        }
+
+        // Filter chi tiết phí theo lớp
+        private void FilterFeeDetailByClass()
+        {
+            StudentFeeMonthDetail.Clear();
+
+            var filtered = AllStudentFeeMonthDetail.AsEnumerable();
+
+            // Filter theo lớp nếu chọn cụ thể
+            if (!string.IsNullOrEmpty(SelectedClassName) && SelectedClassName != "Tất cả")
+            {
+                var selectedClass = FeeClassList.FirstOrDefault(c => c.Name == SelectedClassName);
+                if (selectedClass != null)
+                    filtered = filtered.Where(f => f.AssignClassId == selectedClass.AssignClassId);
+            }
+
+            foreach (var fee in filtered)
+                StudentFeeMonthDetail.Add(fee);
         }
 
         // Filter chi tiết học phí theo tháng
@@ -744,9 +1140,14 @@ namespace ViewModels
             Console.WriteLine("===== FilterTuitionDetailByMonth START =====");
             Console.WriteLine($"SelectedMonth = '{SelectedMonth}'");
 
-            if (string.IsNullOrEmpty(SelectedMonth))
+            if (string.IsNullOrEmpty(SelectedMonth) || SelectedMonth == "Tất cả")
             {
-                Console.WriteLine("SelectedMonth is null or empty. Returning...");
+                Console.WriteLine("SelectedMonth is null or 'Tất cả'. Showing all...");
+                StudentFeeMonthDetail.Clear();
+                foreach (var f in _allStudentFeeMonthDetail)
+                {
+                    StudentFeeMonthDetail.Add(f);
+                }
                 return;
             }
 
@@ -777,13 +1178,117 @@ namespace ViewModels
             foreach (var f in filtered)
                 StudentFeeMonthDetail.Add(f);
 
+            // Thêm hàng tổng tiền ở cuối
+            decimal totalMonth = filtered.Sum(f => f.Amount);
+            StudentFeeMonthDetail.Add(new FeeClassMonthModel
+            {
+                MonthId = 0,
+                FeeTemplateName = "TỔNG CỘNG",
+                Amount = totalMonth,
+                StartDate = "",
+                EndDate = ""
+            });
+
             Console.WriteLine("===== FilterTuitionDetailByMonth END =====");
         }
 
-        // INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        public void LoadFeeMonthsSummary()
+        {
+            try
+            {
+                Console.WriteLine("===== LoadFeeMonthsSummary START =====");
+                
+                StudentFeeMonthDetail.Clear();
+                
+                // Lấy tất cả fee và tính tổng từng tháng
+                var monthFees = _allStudentFeeMonthDetail
+                    .GroupBy(f => f.MonthId)
+                    .Select(g => new FeeClassMonthModel
+                    {
+                        MonthId = g.Key,
+                        FeeTemplateName = $"Tổng phí tháng {g.Key}",
+                        Amount = g.Sum(x => x.Amount),
+                        StartDate = g.FirstOrDefault()?.StartDate ?? "",
+                        EndDate = g.FirstOrDefault()?.EndDate ?? ""
+                    })
+                    .ToList();
+
+                foreach (var fee in monthFees)
+                {
+                    StudentFeeMonthDetail.Add(fee);
+                }
+
+                // Thêm hàng tổng tiền ở cuối
+                decimal totalAll = monthFees.Sum(f => f.Amount);
+                StudentFeeMonthDetail.Add(new FeeClassMonthModel
+                {
+                    MonthId = 0,
+                    FeeTemplateName = "TỔNG CỘNG",
+                    Amount = totalAll,
+                    StartDate = "",
+                    EndDate = ""
+                });
+
+                Console.WriteLine("===== LoadFeeMonthsSummary END =====");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi LoadFeeMonthsSummary: {ex.Message}");
+            }
+        }
+
+        // Xuất Excel chi tiết học phí
+        public async Task ExportExcel(string filePath)
+        {
+            try
+            {
+                if (StudentFeeMonthDetail == null || !StudentFeeMonthDetail.Any())
+                    throw new InvalidOperationException("Không có dữ liệu để xuất!");
+
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Chi tiết học phí");
+
+                    // ===== HEADER =====
+                    string[] headers = { "Diễn giải", "Số tiền", "Từ ngày", "Đến ngày" };
+
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        var cell = worksheet.Cell(1, i + 1);
+                        cell.Value = headers[i];
+                        cell.Style.Font.Bold = true;
+                        cell.Style.Fill.BackgroundColor = XLColor.LightGray;
+                        cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    }
+
+                    // ===== DATA =====
+                    int row = 2;
+                    foreach (var fee in StudentFeeMonthDetail)
+                    {
+                        worksheet.Cell(row, 1).Value = fee.FeeTemplateName;
+                        worksheet.Cell(row, 2).Value = fee.Amount;
+                        worksheet.Cell(row, 3).Value = fee.StartDate;
+                        worksheet.Cell(row, 4).Value = fee.EndDate;
+
+                        // Viền mỏng quanh ô
+                        for (int col = 1; col <= headers.Length; col++)
+                            worksheet.Cell(row, col).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                        row++;
+                    }
+
+                    worksheet.Columns().AdjustToContents();
+                    workbook.SaveAs(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi xuất Excel: " + ex.Message, ex);
+            }
+        }
+
+        // Use ObservableObject / ViewModelBase's property change support
     }
 
 }

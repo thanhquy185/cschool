@@ -22,7 +22,7 @@ namespace Views.Tuition
     this.Opened += (_, __) =>
     {
         vm.LoadData();
-        Console.WriteLine("LoadData chạy! Số phí: " + vm.FeeTemplateList.Count);
+      
     };
 
     NewFeeType.SelectedIndex = 0;
