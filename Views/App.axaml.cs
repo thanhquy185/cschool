@@ -26,7 +26,7 @@ public partial class App : Application
         {
             DisableAvaloniaDataAnnotationValidation();
 
-            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=19102005;SslMode=None;";
+            var connectionString = "Server=localhost;Database=cschool;User ID=root;Password=;SslMode=None;";
             AppService.DBService = new DBService(connectionString);
             AppService.StatisticalService = new StatisticalService(AppService.DBService);
             AppService.AssignTeacherService = new AssignTeacherService(AppService.DBService);

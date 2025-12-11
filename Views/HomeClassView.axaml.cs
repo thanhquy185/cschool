@@ -18,15 +18,33 @@ public partial class HomeClassView : UserControl
         this._homeClassViewModel = new HomeClassViewModel();
         DataContext = this._homeClassViewModel;
 
-        this.AttachedToVisualTree += (_, _) =>
+        this.AttachedToVisualTree += OnAttachedToVisualTree_Handler;
+        this.DetachedFromVisualTree += OnDetachedFromVisualTree_Handler;
+    }
+
+    private void OnAttachedToVisualTree_Handler(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (DataContext is HomeClassViewModel vm)
         {
-            if (DataContext is HomeClassViewModel vm)
-            {
-                vm.RequestShowStudentDetail += Vm_RequestShowStudentDetail;
-                vm.RequestAddConduct += Vm_RequestAddConduct;
-                vm.RequestCancelConduct += Vm_RequestCancelConduct;
-            }
-        };
+            vm.RequestShowStudentDetail -= Vm_RequestShowStudentDetail;
+            vm.RequestShowStudentDetail += Vm_RequestShowStudentDetail;
+
+            vm.RequestAddConduct -= Vm_RequestAddConduct;
+            vm.RequestAddConduct += Vm_RequestAddConduct;
+
+            vm.RequestCancelConduct -= Vm_RequestCancelConduct;
+            vm.RequestCancelConduct += Vm_RequestCancelConduct;
+        }
+    }
+
+    private void OnDetachedFromVisualTree_Handler(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (DataContext is HomeClassViewModel vm)
+        {
+            vm.RequestShowStudentDetail -= Vm_RequestShowStudentDetail;
+            vm.RequestAddConduct -= Vm_RequestAddConduct;
+            vm.RequestCancelConduct -= Vm_RequestCancelConduct;
+        }
     }
 
     private async void Vm_RequestShowStudentDetail(object? sender, Models.HomeClass selected)

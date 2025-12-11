@@ -16,7 +16,10 @@ public partial class HomeClassViewModel : ViewModelBase
 {
    
     private readonly HomeClassService _service;
-    public int CURRENT_TEACHER_ID{get; set;} // ID giáo viên cố định
+    public int CURRENT_TEACHER_ID{get; set;} 
+
+    [ObservableProperty]
+    private bool _hasHomeroomClass = true; // Mặc định là có lớp chủ nhiệm
 
     [ObservableProperty]
     private string _nameTeacher = "";
@@ -63,8 +66,9 @@ public partial class HomeClassViewModel : ViewModelBase
     public HomeClassViewModel()
     {
         var currentUserLogin = SessionService.currentUserLogin;
-        Console.WriteLine("Trang lớp chủ nhiệm: " + currentUserLogin?.Username);
+        Console.WriteLine("Trang lớp chủ nhiệm: " + currentUserLogin?.Fullname);
 
+        
         this._service = AppService.HomeClassService;
         
         // Load danh sách học kỳ của giáo viên ID = 3
@@ -80,6 +84,16 @@ public partial class HomeClassViewModel : ViewModelBase
         {
             Terms.Clear();
             var terms = _service.GetTerm(CURRENT_TEACHER_ID);
+        if (terms == null || !terms.Any())
+            {
+                HasHomeroomClass = false;
+            
+                
+                var currentUserLogin = SessionService.currentUserLogin;
+                NameTeacher = currentUserLogin?.Fullname ?? "Giáo viên";
+                
+                return;
+            }
             
             foreach (var term in terms)
             {
@@ -110,6 +124,7 @@ public partial class HomeClassViewModel : ViewModelBase
         else
         {
             CURRENT_TEACHER_ID = 0;
+            
         }
         
         this._service = AppService.HomeClassService;
@@ -138,7 +153,7 @@ public partial class HomeClassViewModel : ViewModelBase
             // Clear dữ liệu cũ
             Students.Clear();
             Information.Clear();
-            
+    
             // Thêm dữ liệu mới
             foreach (var student in students)
             {
@@ -149,6 +164,7 @@ public partial class HomeClassViewModel : ViewModelBase
             {
                 Information.Add(info);
             }
+          
             
             // Cập nhật thông tin hiển thị
             var firstInfo = information.FirstOrDefault();

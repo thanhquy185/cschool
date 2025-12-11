@@ -25,12 +25,15 @@ public partial class AssignTeacherViewModel : ViewModelBase
     public ObservableCollection<Subjects> Subjects { get; } = new();
     public ObservableCollection<ClassModel> Classes { get; } = new();
     public ObservableCollection<string> DaysOfWeek { get; } = new();
+    public ObservableCollection<TermModel> Terms { get; set; } = new();
 
     [ObservableProperty]
     private string _loadingStatus = "Chọn môn học để hiển thị giáo viên";
 
     [ObservableProperty]
     private AssignTeacher? _selectedAssignTeacher;
+      [ObservableProperty]
+    private TermModel? _selectedTerm;
 
     [ObservableProperty]
     private TeacherModel? _selectedTeacher;
@@ -119,17 +122,36 @@ public partial class AssignTeacherViewModel : ViewModelBase
             IsLoadingTeachers = false;
         }
     }
+
+    [RelayCommand]
+    public void LoadTerms()
+    {
+        try
+        {
+            var terms = _service.GetTerms() ?? new List<TermModel>();
+            Terms.Clear();
+            foreach (var t in terms)
+                Terms.Add(t);
+
+            // Mặc định chọn học kỳ hiện tại (nếu có)
+             SelectedTerm = Terms.LastOrDefault();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading terms: {ex.Message}");
+        }
+    }
     // SỬA: Sử dụng RelayCommand của CommunityToolkit
     [RelayCommand]
     public void LoadData()
     {
         try
         {
-            var assignTeachers = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
 
+            var assignTeachers = _service.GetAssignTeachers(SelectedTerm.Id) ?? new List<AssignTeacher>();
             var subjects = _service.GetCourses() ?? new List<Subjects>();
             var teacher1 = _service.GetTeachers() ?? new BindingList<TeacherModel>();
-            var classes = _service.GetClasses() ?? new List<ClassModel>();
+            var classes = _service.GetClasses(SelectedTerm.Id) ?? new List<ClassModel>();
             var days = _service.GetDaysOfWeek(DateTime.Now) ?? new List<string>();
 
             AssignTeachers.Clear();
@@ -138,7 +160,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             DaysOfWeek.Clear();
             Teachers.Clear();
             Teachers1.Clear();
-
+            
             foreach (var a in assignTeachers)
                 AssignTeachers.Add(a);
 
@@ -345,7 +367,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     [RelayCommand]
     private async Task OpenEditDialog(AssignTeacher a)
     {
-        LoadDataCommand.Execute(null);
+        // LoadDataCommand.Execute(null);
         await Task.Delay(100);
 
         _editingItem = a;
@@ -383,7 +405,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private async Task OpenDetailDialog(AssignTeacher a)
     {
         var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-        LoadDataCommand.Execute(null);
+        // LoadDataCommand.Execute(null);
         // ⚙️ Dừng một chút để UI thread cập nhật (nếu cần)
         await Task.Delay(100);
 
@@ -447,11 +469,11 @@ public partial class AssignTeacherViewModel : ViewModelBase
             if (string.IsNullOrWhiteSpace(keyword))
             {
                 // Nếu trống → load lại toàn bộ
-                results = _service.GetAssignTeachers() ?? new List<AssignTeacher>();
+                results = _service.GetAssignTeachers(SelectedTerm.Id) ?? new List<AssignTeacher>();
             }
             else
             {
-                results = _service.Search(keyword);
+                results = _service.Search(SelectedTerm.Id,keyword);
             }
 
             Dispatcher.UIThread.Post(() =>
@@ -469,13 +491,21 @@ public partial class AssignTeacherViewModel : ViewModelBase
     [RelayCommand]
     public void SearchNameSubject()
     {
-        var results = _service.Search(SelectedSubjectSearch.Name_Subject ?? "");
+        var results = _service.Search(SelectedTerm.Id,SelectedSubjectSearch.Name_Subject ?? "");
         Dispatcher.UIThread.Post(() =>
         {
             AssignTeachers.Clear();
             foreach (var a in results)
                 AssignTeachers.Add(a);
         });
+    }
+    partial void OnSelectedTermChanged(TermModel? value)
+    {
+        if (value != null)
+        {
+            Console.WriteLine($"Đã chọn học kỳ: {value.Name} - Năm: {value.Year}");
+            LoadDataCommand.Execute(null);
+        }
     }
 
     // [RelayCommand]
@@ -548,7 +578,9 @@ public partial class AssignTeacherViewModel : ViewModelBase
         }
 
         this._service = AppService.AssignTeacherService;
-        LoadDataCommand.Execute(null);
+     
+
+        LoadTermsCommand.Execute(null);
     }
 
 }
