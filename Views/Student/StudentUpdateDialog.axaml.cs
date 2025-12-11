@@ -130,21 +130,21 @@ namespace Views.Student
                 return;
             }
 
-            if (Rules.rulePhone(phone))
+            if (!string.IsNullOrWhiteSpace(phone) && (phone.Length != 10 || Rules.rulePhone(phone)))
             {
                 await MessageBoxUtil.ShowError("Số điện thoại không hợp lệ!", owner: this);
-                return;
-            }
-
-            if (Rules.rulePhone(parentPhone))
-            {
-                await MessageBoxUtil.ShowError("Số điện thoại phụ huynh không hợp lệ!", owner: this);
                 return;
             }
 
             if (Rules.ruleEmail(email))
             {
                 await MessageBoxUtil.ShowError("Email không đúng định dạng!", owner: this);
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(parentPhone) && (parentPhone.Length != 10 || Rules.rulePhone(parentPhone)))
+            {
+                await MessageBoxUtil.ShowError("Số điện thoại phụ huynh không hợp lệ!", owner: this);
                 return;
             }
 
