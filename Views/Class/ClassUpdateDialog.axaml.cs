@@ -166,5 +166,15 @@ public partial class ClassUpdateDialog : Window
     }
 }
 
+        private void SearchTextChange(object? sender, Avalonia.Controls.TextChangedEventArgs e)
+        {
+            if (sender is TextBox tb && DataContext is ClassViewModel vm)
+            {
+                vm.SearchStudentTextHK1 = tb.Text;
+                vm.FilterStudentsAvailableClass(); // gọi filter nếu muốn
+            }
+        }
+
+
 
 }

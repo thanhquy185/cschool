@@ -686,6 +686,74 @@ public string Year
 
 
 
+  public void FilterStudentsInClass()
+    {
+        
+        FilteredStudentHK1.Clear();
+        if (string.IsNullOrWhiteSpace(SearchStudentTextHK1))
+        {
+            foreach (var s in StudentInClassHK1)
+                FilteredStudentHK1.Add(s);
+        }
+        else
+        {
+            string lower = SearchStudentTextHK1.ToLower();
+            foreach (var s in StudentInClassHK1.Where(x =>
+                       x.Fullname?.ToLower().Contains(lower) == true ||
+                       x.Id.ToString().Contains(lower)))
+                FilteredStudentHK1.Add(s);
+        }
 
+        // Lọc học sinh trong lớp HK2
+        FilteredStudentHK2.Clear();
+        if (string.IsNullOrWhiteSpace(SearchStudentTextHK2))
+        {
+            foreach (var s in StudentInClassHK2)
+                FilteredStudentHK2.Add(s);
+        }
+        else
+        {
+            string lower = SearchStudentTextHK2.ToLower();
+            foreach (var s in StudentInClassHK2.Where(x =>
+                       x.Fullname?.ToLower().Contains(lower) == true ||
+                       x.Id.ToString().Contains(lower)))
+                FilteredStudentHK2.Add(s);
+        }
+    }
+
+    public void FilterStudentsAvailableClass()
+    {
+        // Lọc học sinh chưa có lớp HK1
+        FilteredStudentHK1.Clear();
+        if (string.IsNullOrWhiteSpace(SearchStudentTextHK1))
+        {
+            foreach (var s in StudentsAvailableHK1)
+                FilteredStudentHK1.Add(s);
+        }
+        else
+        {
+            string lower = SearchStudentTextHK1.ToLower();
+            foreach (var s in StudentsAvailableHK1.Where(x =>
+                       x.Fullname?.ToLower().Contains(lower) == true ||
+                       x.Id.ToString().Contains(lower)))
+                FilteredStudentHK1.Add(s);
+        }
+
+        // Lọc học sinh chưa có lớp HK2
+        FilteredStudentHK2.Clear();
+        if (string.IsNullOrWhiteSpace(SearchStudentTextHK2))
+        {
+            foreach (var s in StudentsAvailableHK2)
+                FilteredStudentHK2.Add(s);
+        }
+        else
+        {
+            string lower = SearchStudentTextHK2.ToLower();
+            foreach (var s in StudentsAvailableHK2.Where(x =>
+                       x.Fullname?.ToLower().Contains(lower) == true ||
+                       x.Id.ToString().Contains(lower)))
+                FilteredStudentHK2.Add(s);
+        }
+    }
 
 }

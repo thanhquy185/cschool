@@ -83,7 +83,8 @@
                     <!-- HK1 -->
                     <TabItem Header="Học kỳ 1">
                         <StackPanel>
-                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK1}" Height="32"/>
+                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK1}"    x:Name="SearchBox"
+              TextChanged="OnSearchTextChanged" Height="32"/>
 
                             <DataGrid ItemsSource="{Binding FilteredStudentHK1}" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="32" VerticalAlignment="Stretch">
                                 <DataGrid.Columns>
@@ -100,9 +101,10 @@
                     <!-- HK2 -->
                     <TabItem Header="Học kỳ 2">
                         <StackPanel>
-                            <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK2}" Height="32"/>
+                            <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK2}" Height="32"   x:Name="SearchBox2"
+              TextChanged="OnSearchTextChanged"/>
 
-                            <DataGrid ItemsSource="{Binding FilteredStudentHK2}" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="32" VerticalAlignment="Stretch">
+                            <DataGrid  ItemsSource="{Binding FilteredStudentHK2}" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="32" VerticalAlignment="Stretch">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Mã" Binding="{Binding Id}" Width="80"/>
                                     <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="200"/>

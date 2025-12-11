@@ -97,9 +97,13 @@
                                 <!-- Học sinh chưa có lớp -->
                                 <Border Grid.Column="0" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
                                     <StackPanel>
-                                        <TextBox Watermark="Tìm kiếm học sinh..." 
-                                                 Text="{Binding SearchStudentTextHK1}" 
-                                                 Height="32" Margin="0,0,0,8"/>
+                                       <TextBox
+                                        Watermark="Tìm kiếm học sinh..."
+                                        Text="{Binding SearchStudentTextHK1, Mode=TwoWay}"
+                                        Height="32"
+                                        Margin="0,0,0,8"
+                                        TextChanged="SearchTextChange"/>
+
                                         <DataGrid x:Name="dataGridStudentsAvailableHK1"
                                                   ItemsSource="{Binding StudentsAvailableHK1}"
                                                   AutoGenerateColumns="False"

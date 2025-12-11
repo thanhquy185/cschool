@@ -29,5 +29,13 @@ namespace Views.Class
         {
             this.Close();
         }
+
+        private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
+        {
+            if (DataContext is ClassViewModel vm)
+            {
+                vm.FilterStudentsInClass();
+            }
+        }
     }
 }
