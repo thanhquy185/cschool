@@ -118,6 +118,12 @@ public partial class TuitionView : UserControl
 
                 CreateButton.Opacity = isManageTab ? 0 : 1;
                 CreateButton.IsHitTestVisible = !isManageTab;
+                
+                InfoButton.Opacity = isManageTab ? 0 : 1;
+                InfoButton.IsHitTestVisible = !isManageTab;
+
+                UpdateButton.Opacity = isManageTab ? 0 : 1;
+                UpdateButton.IsHitTestVisible = !isManageTab;
 
                 // Reset search/filter khi chuyển tab
                 var vm = DataContext as TuitionViewModel;
@@ -201,7 +207,7 @@ public partial class TuitionView : UserControl
             vm.SelectedStudent = studentRow;
             vm.LoadStudentTuitionDetail(studentRow.StudentId);
 
-            var dlg = new TuitionInfoDialog(vm);
+            var dlg = new TuitionCollectionDialog(vm);
             var owner = TopLevel.GetTopLevel(this) as Window;
             if (owner != null)
                 await dlg.ShowDialog(owner);

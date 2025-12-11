@@ -69,20 +69,7 @@ namespace Views.Tuition
         }
 
         // ==================== Khi tick/untick tháng ====================
-        private void MonthCheckBox_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            if (sender is CheckBox cb && cb.DataContext is MonthFeeItem month)
-            {
-                // Chỉ update tháng đang tick
-                var fees = vm.MonthsHK1.Contains(month)
-                           ? vm.BaseFees1.Concat(vm.ExtraFees1)
-                           : vm.BaseFees2.Concat(vm.ExtraFees2);
-
-                month.Amount = month.IsSelected ? fees.Where(f => f.IsSelected).Sum(f => f.Amount) : 0;
-            }
-        }
-        
-
+    
        
         private void MonthHK1_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
@@ -96,6 +83,9 @@ namespace Views.Tuition
                 if (month.MonthId == selectedItem.MonthId)
                 {
                     month.IsSelected = true;
+                }else
+                {
+                    month.IsSelected = false;
                 }
                
             }
@@ -108,6 +98,19 @@ namespace Views.Tuition
         {
             if (sender is not DataGrid dg) return;
             if (dg.SelectedItem is not MonthFeeItem selectedItem) return;
+                        foreach (var month in vm.MonthsHK2)
+            {
+                System.Console.WriteLine(month.MonthName + " " + month.IsSelected);
+                if (month.MonthId == selectedItem.MonthId)
+                {
+                    month.IsSelected = true;
+                }
+                else
+                {
+                    month.IsSelected = false;
+                }
+               
+            }
 
             // Load fee data for the selected month (don't reset month or fee selections)
             vm.LoadSelectedFeeForMonth(selectedItem);

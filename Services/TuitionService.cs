@@ -438,5 +438,44 @@ public class TuitionService
         }
     }
 
+    public bool CollectFee(int studentId, int assignClassId, int monthId, decimal amount, string paymentMethod, string note, int collectorId)
+{
+    try
+    {
+        // Chuyển decimal sang string dùng CultureInfo.InvariantCulture để tránh lỗi định dạng
+        string amountStr = amount.ToString(CultureInfo.InvariantCulture);
+
+        string sql = $@"
+UPDATE tuition_monthly
+SET total_amount = {amountStr},
+    is_paid = 1,
+    collected_by = {collectorId},
+    collected_at = '{DateTime.Now:yyyy-MM-dd HH:mm:ss}',
+    payment_method = '{paymentMethod}',
+    note = '{note}'
+WHERE student_id = {studentId}
+  AND assign_class_id = {assignClassId}
+  AND month_id = {monthId};
+";
+
+        int rows = _db.ExecuteNonQuery(sql);
+
+        if (rows == 0)
+        {
+            Console.WriteLine("❌ Không tìm thấy bản ghi tuition_monthly tương ứng.");
+            return false;
+        }
+
+        Console.WriteLine($"✅ Thu học phí thành công: StudentId={studentId}, AssignClassId={assignClassId}, MonthId={monthId}, Amount={amountStr}");
+        return true;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Lỗi CollectFee: {ex.Message}");
+        return false;
+    }
+}
+
+
 }
 

@@ -1636,6 +1636,12 @@ CREATE TABLE tuition_monthly (
 
     is_paid TINYINT(1) NOT NULL DEFAULT 0, -- 0 = chưa đóng, 1 = đã đóng
 
+    collected_by INT NULL, -- id người thu học phí (user)
+    collected_at DATETIME NULL, -- ngày giờ thu học phí
+
+    payment_method VARCHAR(50) NULL, -- hình thức thanh toán
+    note TEXT NULL, -- ghi chú
+
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -1649,8 +1655,13 @@ CREATE TABLE tuition_monthly (
 
     CONSTRAINT fk_tm_month
         FOREIGN KEY (month_id) REFERENCES months(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_tm_collected_by
+        FOREIGN KEY (collected_by) REFERENCES users(id)
+        ON DELETE SET NULL
 );
+
 
 
 

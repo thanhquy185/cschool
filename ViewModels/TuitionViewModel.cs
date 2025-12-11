@@ -1192,33 +1192,49 @@ namespace ViewModels
             Console.WriteLine("===== FilterTuitionDetailByMonth END =====");
         }
 
-        public void LoadFeeMonthsSummary()
+       public void LoadFeeMonthsSummary()
         {
             try
             {
                 Console.WriteLine("===== LoadFeeMonthsSummary START =====");
-                
+
                 StudentFeeMonthDetail.Clear();
-                
-                // Lấy tất cả fee và tính tổng từng tháng
+
+                // 1) Lấy danh sách học sinh đã đóng tiền theo tháng
+                var students = AppService.TuitionService.GetAllStudents();   // trả về List<TuitionModel>
+
+                // 2) Ghép thông tin FeeMonth + thông tin Student
                 var monthFees = _allStudentFeeMonthDetail
                     .GroupBy(f => f.MonthId)
-                    .Select(g => new FeeClassMonthModel
+                    .Select(g =>
                     {
-                        MonthId = g.Key,
-                        FeeTemplateName = $"Tổng phí tháng {g.Key}",
-                        Amount = g.Sum(x => x.Amount),
-                        StartDate = g.FirstOrDefault()?.StartDate ?? "",
-                        EndDate = g.FirstOrDefault()?.EndDate ?? ""
+                        int monthId = g.Key;
+
+                        // Tìm thông tin học sinh theo StudentId + MonthId
+                        var studentPay = students
+                            .FirstOrDefault(s => s.MonthId == monthId && s.StudentId == SelectedStudent.StudentId);
+
+                        string paymentStatus = studentPay?.IsPaid == true ? "Đã thu" : "Chưa thu";
+
+                        return new FeeClassMonthModel
+                        {
+                            MonthId = monthId,
+                            FeeTemplateName = $"Tổng phí tháng {monthId}",
+                            Amount = g.Sum(x => x.Amount),
+                            StartDate = g.FirstOrDefault()?.StartDate ?? "",
+                            EndDate = g.FirstOrDefault()?.EndDate ?? "",
+                            PaymentStatus = paymentStatus
+                        };
                     })
                     .ToList();
 
+                // 3) Add item vào ObservableCollection
                 foreach (var fee in monthFees)
                 {
                     StudentFeeMonthDetail.Add(fee);
                 }
 
-                // Thêm hàng tổng tiền ở cuối
+                // 4) tổng cộng
                 decimal totalAll = monthFees.Sum(f => f.Amount);
                 StudentFeeMonthDetail.Add(new FeeClassMonthModel
                 {
@@ -1226,7 +1242,8 @@ namespace ViewModels
                     FeeTemplateName = "TỔNG CỘNG",
                     Amount = totalAll,
                     StartDate = "",
-                    EndDate = ""
+                    EndDate = "",
+                    PaymentStatus = ""
                 });
 
                 Console.WriteLine("===== LoadFeeMonthsSummary END =====");
@@ -1236,6 +1253,7 @@ namespace ViewModels
                 Console.WriteLine($"Lỗi LoadFeeMonthsSummary: {ex.Message}");
             }
         }
+
 
         // Xuất Excel chi tiết học phí
         public async Task ExportExcel(string filePath)
@@ -1271,7 +1289,6 @@ namespace ViewModels
                         worksheet.Cell(row, 3).Value = fee.StartDate;
                         worksheet.Cell(row, 4).Value = fee.EndDate;
 
-                        // Viền mỏng quanh ô
                         for (int col = 1; col <= headers.Length; col++)
                             worksheet.Cell(row, col).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
@@ -1288,7 +1305,7 @@ namespace ViewModels
             }
         }
 
-        // Use ObservableObject / ViewModelBase's property change support
+   
     }
 
 }

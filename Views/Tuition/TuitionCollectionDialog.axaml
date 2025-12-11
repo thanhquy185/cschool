@@ -1,70 +1,132 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:ViewModels"
-        xmlns:models="using:Models"
-        mc:Ignorable="d" 
-        d:DesignWidth="800" d:DesignHeight="500"
         x:Class="Views.Tuition.TuitionCollectionDialog"
-        x:DataType="vm:TuitionViewModel"
         Title="Thu học phí"
-        WindowStartupLocation="CenterOwner">
+        Width="900"
+        Height="650"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CornerRadius="10"
+        Padding="0"
+        x:DataType="vm:TuitionViewModel">
 
-    <Design.DataContext>
-        <vm:TuitionViewModel />
-    </Design.DataContext>
-
-    <Border CornerRadius="8" Background="White" BorderBrush="#0078D4" BorderThickness="2">
-        <Grid RowDefinitions="Auto,*" Margin="0">
-            
+    <Border CornerRadius="10" Background="White" BorderBrush="#E0E0E0" BorderThickness="1" BoxShadow="0 4 16 #1A000000">
+        <Grid RowDefinitions="Auto,*,Auto">
             <!-- Header -->
-            <Border Background="#4285F4" Padding="16,10" CornerRadius="8,8,0,0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="1"
-                               Text="Thu học phí"
-                               FontSize="18"
+               <Border Padding="20,16" CornerRadius="10,10,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FF4285F4" Offset="0" />
+                            <GradientStop Color="#FF1E88E5" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                       <StackPanel Grid.Column="0" Spacing="4">
+                           <TextBlock Text="Chi tiết học phí"
+                                      FontSize="20"
+                                      FontWeight="Bold"
+                                      Foreground="White"/>
+                           <TextBlock Text="Xem chi tiết khoản phí theo tháng"
+                                      FontSize="12"
+                                      Foreground="#E3F2FD"
+                                      Opacity="0.9"/>
+                       </StackPanel>
+                       <Button Grid.Column="1"
+                               Content="📥 Xuất Excel"
+                               Background="White"
+                               Foreground="#1E88E5"
                                FontWeight="Bold"
-                               Foreground="White"
-                               HorizontalAlignment="Center"/>
-
+                               Padding="14,8"
+                               BorderThickness="0"
+                               CornerRadius="6"
+                               Margin="0,0,12,0"
+                               Click="ExportExcel_Click"
+                               Cursor="Hand"/>
                     <Button Grid.Column="2"
                             Content="✕"
                             Background="Transparent"
                             Foreground="White"
-                            FontSize="18"
+                               FontSize="20"
                             BorderThickness="0"
-                            HorizontalAlignment="Right"
-                            Click="Close_Click"/>
+                               Padding="10"
+                               Click="Close_Click"
+                               Cursor="Hand"/>
                 </Grid>
             </Border>
 
             <!-- Nội dung -->
-            <ScrollViewer Grid.Row="1">
-                <StackPanel Margin="20" Spacing="10">
+               <ScrollViewer Grid.Row="1" Padding="24">
+                   <StackPanel Spacing="20">
+                    <!-- Filter panel -->
+                       <Border Padding="16" Background="#F5F5F5" CornerRadius="8" BorderBrush="#E8E8E8" BorderThickness="1">
+                           <StackPanel Spacing="12">
+                               <StackPanel Orientation="Horizontal" Spacing="8">
+                                   <Path Data="M 9 1 Q 16 1 16 8 L 16 14 M 1 16 L 14 3" 
+                                         Stroke="#666" StrokeThickness="1.5" 
+                                         Width="16" Height="16" 
+                                         VerticalAlignment="Center"/>
+                                   <TextBlock Text="Bộ lọc" FontWeight="SemiBold" FontSize="13" Foreground="#333" />
+                               </StackPanel>
+                               <StackPanel Orientation="Horizontal" Spacing="16">
+                                   <StackPanel Spacing="6">
+                                       <TextBlock Text="Học kỳ" FontSize="12" FontWeight="Medium" Foreground="#555"/>
+                                    <ComboBox ItemsSource="{Binding TermDisplayList}" 
+                                              SelectedItem="{Binding SelectedTermDisplay}"
+                                                 Width="200"
+                                                 Padding="8,6"/>
+                                </StackPanel>
 
-                    <!-- Thông tin học sinh -->
-                    <Border Background="#F5F5F5" Padding="10" CornerRadius="6" BorderBrush="#DDD" BorderThickness="1">
-                        <StackPanel>
-                            <!-- <TextBlock Text="Lâm Tú Nhi" FontWeight="Bold" FontSize="16"/> -->
-                            <!-- <TextBlock Text="{Binding SelectedTuition.ClassName}" FontSize="14"/>
-                            <TextBlock Text="{Binding SelectedTuition.ClassYear}" FontSize="14"/> -->
+                                   <StackPanel Spacing="6">
+                                       <TextBlock Text="Tháng" FontSize="12" FontWeight="Medium" Foreground="#555"/>
+                                    <ComboBox ItemsSource="{Binding MonthList}" 
+                                              SelectedItem="{Binding SelectedMonth}"
+                                                 Width="180"
+                                                 Padding="8,6"
+                                              SelectionChanged="MonthComboBox_SelectionChanged"/>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    Danh sách tháng học phí
-            
+                    <!-- Summary: danh sách học sinh (Quản lý học phí) -->
+                    <!-- REMOVED: Danh sách học sinh không cần hiển thị -->
 
-              
-
+                    <!-- DataGrid chi tiết học phí -->
+                       <StackPanel Spacing="12">
+                           <TextBlock Text="Chi tiết khoản phí"
+                                      FontSize="16"
+                                      FontWeight="Bold"
+                                      Foreground="#333"/>
+                        <DataGrid x:Name="TuitionDetailGrid"
+                                  AutoGenerateColumns="False"
+                                  CanUserResizeColumns="True"
+                                     Height="380"
+                                  ItemsSource="{Binding StudentFeeMonthDetail}"  
+                                     GridLinesVisibility="Horizontal"
+                                     BorderThickness="1"
+                                     BorderBrush="#E0E0E0">
+                            <DataGrid.Columns>
+                                   <DataGridTextColumn Width="*" Header="Diễn giải" Binding="{Binding FeeTemplateName}" />
+                                <DataGridTextColumn Width="150" Header="Số tiền" Binding="{Binding Amount, StringFormat='{}{0:N0} đ'}" />
+                                   <DataGridTextColumn Width="140" Header="Từ ngày" Binding="{Binding StartDate}" />
+                                   <DataGridTextColumn Width="140" Header="Đến ngày" Binding="{Binding EndDate}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
+
+            <!-- Footer -->
+               <Border Grid.Row="2" Padding="20" BorderThickness="0,1,0,0" BorderBrush="#E0E0E0" Background="#FAFAFA">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                       <Button Content="Đóng" Click="Close_Click" Padding="18,10" Background="#1E88E5" Foreground="White" FontWeight="Bold" BorderThickness="0" CornerRadius="6" Cursor="Hand" />
+                </StackPanel>
+            </Border>
         </Grid>
     </Border>
 </Window>

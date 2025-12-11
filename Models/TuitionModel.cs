@@ -14,7 +14,7 @@ namespace Models
         public string ClassYear { get; set; } = "";
         public int Grade { get; set; }             // giữ int
         public decimal TotalAmount { get; set; }   // mapping từ total_amount
-        public bool IsPaid { get; set; }           // mapping từ is_paid
+        public bool IsPaid { get; set; }       
         public int MonthId { get; set; }
         public string MonthName { get; set; } = "";
         public string YearMonthDisplay => $"{ClassYear} - {MonthName}";

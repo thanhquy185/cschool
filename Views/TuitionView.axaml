@@ -159,19 +159,6 @@
                   Binding="{Binding ClassYear}"
                   Header="Năm học" />
 
-
-                <DataGridTemplateColumn Width="120" Header="Thu tiền">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                      <Button
-                        Classes="TableActionButton Create"
-                        Click="CollectionFee_Click"
-                        Content="Thu"
-                        DataContext="{Binding}" />
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
                 <DataGridTemplateColumn Width="120" Header="Chi tiết">
                   <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>

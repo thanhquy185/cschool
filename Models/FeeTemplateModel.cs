@@ -24,5 +24,8 @@ namespace Models
             get => _isSelected;
             set => SetProperty(ref _isSelected, value);
         }
+
+        public UserModel CreatedBy { get; set; } = new UserModel();
+        public String UpdatedBy { get;}
     }
 }

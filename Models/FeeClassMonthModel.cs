@@ -12,6 +12,12 @@ namespace Models
         public String StartDate { get; set; }      // Ngày bắt đầu học kỳ
         public String EndDate { get; set; }        // Ngày kết thúc học kỳ
         public String CreatedAt { get; set; }      // Thời gian tạo
-        public String UpdatedAt { get; set; }      // Thời gian cập nhật
+
+        public int StudentId { get; set; }
+        public String UpdatedAt { get; set; }    
+        public String PaymentStatus { get; set; }
+   
+
+        
     }
 }
