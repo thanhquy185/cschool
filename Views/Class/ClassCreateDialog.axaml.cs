@@ -235,5 +235,17 @@ namespace Views.Class
                 e.Handled = true;
             }
         }
+
+        private void SearchTextChange(object? sender, Avalonia.Controls.TextChangedEventArgs e)
+        {
+            if (sender is TextBox tb && DataContext is ClassViewModel vm)
+            {
+                
+                vm.SearchStudentTextHK1 = tb.Text;
+                vm.FilterStudents(vm.StudentsAvailableHK1,vm.SearchStudentTextHK1,vm.FilteredAvailableStudentHK1); 
+                vm.FilterStudents(vm.StudentsAvailableHK2,vm.SearchStudentTextHK2,vm.FilteredAvailableStudentHK2);
+                
+            }
+        }
     }
 }

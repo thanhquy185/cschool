@@ -477,5 +477,49 @@ WHERE student_id = {studentId}
 }
 
 
+        public void AddTuitionMonthlyForStudent(int studentId, int assignClassId)
+        {
+            try
+            {
+                // 1. Lấy tất cả tháng + tổng học phí theo tháng
+                string sqlMonthFees = $@"
+                    SELECT month_id, SUM(amount) AS total_amount
+                    FROM class_fee_months
+                    WHERE assign_class_id = {assignClassId} AND is_selected = 1
+                    GROUP BY month_id;";
+
+                DataTable monthFeesTable = _db.ExecuteQuery(sqlMonthFees);
+
+                if (monthFeesTable.Rows.Count == 0)
+                {
+                    Console.WriteLine($"❌ Không tìm thấy học phí cho assign_class_id={assignClassId}");
+                    return;
+                }
+
+                // 2. Tạo tuition_monthly cho học sinh này
+                foreach (DataRow row in monthFeesTable.Rows)
+                {
+                    int monthId = Convert.ToInt32(row["month_id"]);
+                    decimal totalAmount = Convert.ToDecimal(row["total_amount"]);
+
+                    string insertSql = $@"
+        INSERT INTO tuition_monthly
+        (student_id, assign_class_id, month_id, total_amount, is_paid, created_at, updated_at)
+        VALUES
+        ({studentId}, {assignClassId}, {monthId}, {totalAmount.ToString(CultureInfo.InvariantCulture)}, 0, '{DateTime.Now:yyyy-MM-dd HH:mm:ss}', '{DateTime.Now:yyyy-MM-dd HH:mm:ss}');";
+
+                    _db.ExecuteNonQuery(insertSql);
+                }
+
+                Console.WriteLine($"✅ Tạo tuition_monthly thành công cho StudentId={studentId}, AssignClassId={assignClassId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Lỗi AddTuitionMonthlyForStudent: {ex.Message}");
+            }
+        }
+
+
+
 }
 

@@ -81,7 +81,7 @@ public partial class TuitionView : UserControl
                 dialog = new TuitionCreateDialog(vm);
                 break;
             case DialogModeEnum.Info:
-                // Kiểm tra tab hiện tại để điều hướng đúng dialog
+                
                 var tabControl = this.FindControl<TabControl>("TuitionTabControl");
                 if (tabControl?.SelectedItem is TabItem selectedTab)
                 {
@@ -136,6 +136,7 @@ public partial class TuitionView : UserControl
                     if (isManageTab)
                     {
                         // Tab "Quản lý học phí" - reset student filters
+                        FilterClass.IsVisible = true;
                         vm.StudentSearchText = string.Empty;
                         vm.SelectedFilterClassYear = "Tất cả";
                         vm.SelectedFilterClassName = "Tất cả";
@@ -143,7 +144,8 @@ public partial class TuitionView : UserControl
                     }
                     else
                     {
-                        // Tab "Mức học phí" - reset fee class search
+                        FilterClass.IsVisible = false;
+                        vm.SelectedFilterClassName = "Tất cả";
                         vm.FeeClassSearchText = string.Empty;
                         vm.FilterFeeClassList();
                     }

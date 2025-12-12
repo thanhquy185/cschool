@@ -123,8 +123,8 @@
                                 <!-- Chưa có lớp -->
                                 <Border Grid.Column="0" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
                                     <StackPanel>
-                                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK1}" Height="32" Margin="0,0,0,8"/>
-                                        <DataGrid x:Name="dataGridStudentsAvailableHK1" ItemsSource="{Binding StudentsAvailableHK1}" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="DataGridStudentsAvailableHK1_SelectionChanged">
+                                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK1}" Height="32" Margin="0,0,0,8"  TextChanged="SearchTextChange"/>
+                                        <DataGrid x:Name="dataGridStudentsAvailableHK1" ItemsSource="{Binding FilteredAvailableStudentHK1}" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="DataGridStudentsAvailableHK1_SelectionChanged">
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
                                                 <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>
@@ -159,8 +159,8 @@
                             <Grid ColumnDefinitions="3*,Auto,3*" ColumnSpacing="12" VerticalAlignment="Stretch">
                                 <Border Grid.Column="0" Padding="12" Background="#FAFAFA" CornerRadius="8" BorderBrush="#E6E6E6" BorderThickness="1">
                                     <StackPanel>
-                                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK2}" Height="32" Margin="0,0,0,8"/>
-                                        <DataGrid x:Name="dataGridStudentsAvailableHK2" ItemsSource="{Binding StudentsAvailableHK2}" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="DataGridStudentsAvailableHK2_SelectionChanged">
+                                        <TextBox Watermark="Tìm kiếm học sinh..." Text="{Binding SearchStudentTextHK2}" Height="32" Margin="0,0,0,8"  TextChanged="SearchTextChange"/>
+                                        <DataGrid x:Name="dataGridStudentsAvailableHK2" ItemsSource="{Binding FilteredAvailableStudentHK2}" AutoGenerateColumns="False" RowHeight="36" MaxHeight="400" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="DataGridStudentsAvailableHK2_SelectionChanged">
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
                                                 <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>

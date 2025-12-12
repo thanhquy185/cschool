@@ -22,7 +22,10 @@ public partial class ClassViewModel : ViewModelBase
 
     // Filter list
     public ObservableCollection<StudentModel> FilteredStudentHK1 { get; } = new();
+    public ObservableCollection<StudentModel> FilteredAvailableStudentHK2 { get; } = new();
+    public ObservableCollection<StudentModel> FilteredAvailableStudentHK1 { get; } = new();
     public ObservableCollection<StudentModel> FilteredStudentHK2 { get; } = new();
+
 
     public ObservableCollection<int> Grades { get; } = new() { 10, 11, 12 };
     public int SelectedGrade { get; set; }
@@ -199,8 +202,9 @@ public string Year
         {
             StudentsAvailableHK1.Add(s);
             StudentsAvailableHK2.Add(s);
-            FilteredStudentHK1.Add(s);
-            FilteredStudentHK2.Add(s);
+            
+            FilteredAvailableStudentHK1.Add(s);
+            FilteredAvailableStudentHK2.Add(s);
         }
     }
 
@@ -382,6 +386,9 @@ public string Year
             if (StudentInClassHK2.Count > 0)
                 await AppService.ClassService.AssignStudentsToClassAsync(classId, 2, Year, StudentInClassHK2.ToList());
 
+              //   Thêm học phí tuition_monthly
+     
+
             // Thông báo UI
             await Dispatcher.UIThread.InvokeAsync(() =>
                 Console.WriteLine("Lưu lớp học thành công!"));
@@ -394,6 +401,9 @@ public string Year
                 Console.WriteLine("Lỗi khi lưu lớp: " + ex.Message));
             return false;
         }
+
+
+  
     }, outputScheduler: RxApp.MainThreadScheduler);
 
 
@@ -417,7 +427,7 @@ public string Year
     }
 
 
-    private void FilterStudents(
+    public void FilterStudents(
         ObservableCollection<StudentModel> source,
         string text,
         ObservableCollection<StudentModel> target)
@@ -724,7 +734,7 @@ public string Year
     public void FilterStudentsAvailableClass()
     {
         // Lọc học sinh chưa có lớp HK1
-        FilteredStudentHK1.Clear();
+        StudentsAvailableHK1.Clear();
         if (string.IsNullOrWhiteSpace(SearchStudentTextHK1))
         {
             foreach (var s in StudentsAvailableHK1)
@@ -736,15 +746,15 @@ public string Year
             foreach (var s in StudentsAvailableHK1.Where(x =>
                        x.Fullname?.ToLower().Contains(lower) == true ||
                        x.Id.ToString().Contains(lower)))
-                FilteredStudentHK1.Add(s);
+                StudentsAvailableHK1.Add(s);
         }
 
         // Lọc học sinh chưa có lớp HK2
-        FilteredStudentHK2.Clear();
+        StudentsAvailableHK2.Clear();
         if (string.IsNullOrWhiteSpace(SearchStudentTextHK2))
         {
             foreach (var s in StudentsAvailableHK2)
-                FilteredStudentHK2.Add(s);
+                StudentsAvailableHK2.Add(s);
         }
         else
         {
@@ -752,7 +762,7 @@ public string Year
             foreach (var s in StudentsAvailableHK2.Where(x =>
                        x.Fullname?.ToLower().Contains(lower) == true ||
                        x.Id.ToString().Contains(lower)))
-                FilteredStudentHK2.Add(s);
+                StudentsAvailableHK2.Add(s);
         }
     }
 

@@ -105,7 +105,7 @@
                                         TextChanged="SearchTextChange"/>
 
                                         <DataGrid x:Name="dataGridStudentsAvailableHK1"
-                                                  ItemsSource="{Binding StudentsAvailableHK1}"
+                                                  ItemsSource="{Binding FilteredAvailableStudentHK1}"
                                                   AutoGenerateColumns="False"
                                                   RowHeight="36"  MaxHeight="400"
                                                   IsReadOnly="True"
@@ -147,14 +147,16 @@
                                     <StackPanel>
                                         <TextBox Watermark="Tìm kiếm học sinh..." 
                                                  Text="{Binding SearchStudentTextHK2}" 
-                                                 Height="32" Margin="0,0,0,8"/>
+                                                 Height="32" Margin="0,0,0,8"
+                                                  TextChanged="SearchTextChange"/>
                                         <DataGrid x:Name="dataGridStudentsAvailableHK2"
-                                                  ItemsSource="{Binding StudentsAvailableHK2}"
+                                                  ItemsSource="{Binding FilteredAvailableStudentHK1}"
                                                   AutoGenerateColumns="False"
                                                   RowHeight="36"  MaxHeight="400"
                                                   IsReadOnly="True"
                                                   SelectionMode="Extended"
-                                                  SelectionChanged="DataGridStudentsAvailableHK2_SelectionChanged">
+                                                  SelectionChanged="DataGridStudentsAvailableHK2_SelectionChanged"
+                                                 >
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn Header="Mã HS" Binding="{Binding Id}" Width="90"/>
                                                 <DataGridTextColumn Header="Họ và tên" Binding="{Binding Fullname}" Width="*"/>

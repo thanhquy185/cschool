@@ -78,7 +78,8 @@
             MaxDropDownHeight="200"
             ItemsSource="{Binding ClassNameList}"
             SelectedItem="{Binding SelectedFilterClassName, Mode=TwoWay}"
-            SelectionChanged="FilterClass_SelectionChanged">
+            SelectionChanged="FilterClass_SelectionChanged"
+            IsVisible="False">
           </ComboBox>
         </StackPanel>
 

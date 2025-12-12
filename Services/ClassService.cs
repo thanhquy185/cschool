@@ -405,6 +405,8 @@ namespace Services
                     INSERT INTO assign_class_students (assign_class_id, student_id, role)
                     VALUES ({assignClassId}, {id}, 'Student')
                 ");
+               
+                AppService.TuitionService.AddTuitionMonthlyForStudent(id,assignClassId);
                 Console.WriteLine($"Added student: {id}");
             }
 
@@ -417,6 +419,8 @@ namespace Services
                 ");
                 Console.WriteLine($"Removed student: {id}");
             }
+
+            
 
             Console.WriteLine($"====== DONE HK{termNumber}: +{toAdd.Count}, -{toRemove.Count} ======\n");
         }

@@ -170,8 +170,10 @@ public partial class ClassUpdateDialog : Window
         {
             if (sender is TextBox tb && DataContext is ClassViewModel vm)
             {
+                
                 vm.SearchStudentTextHK1 = tb.Text;
-                vm.FilterStudentsAvailableClass(); // gọi filter nếu muốn
+                vm.FilterStudents(vm.StudentsAvailableHK1,vm.SearchStudentTextHK1,vm.FilteredAvailableStudentHK1); 
+                vm.FilterStudents(vm.StudentsAvailableHK2,vm.SearchStudentTextHK2,vm.FilteredAvailableStudentHK2);
             }
         }
 
