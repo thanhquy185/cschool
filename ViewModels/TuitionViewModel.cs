@@ -304,6 +304,7 @@ namespace ViewModels
         public TuitionViewModel()
         {
             LoadData();
+            LoadSelectedMonthDetail();
             // Lấy full list học sinh
             var listStudent = AppService.TuitionService.GetAllStudents();
             TuitionList.Clear();

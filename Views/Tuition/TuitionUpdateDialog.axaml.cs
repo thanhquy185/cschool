@@ -133,6 +133,7 @@ private async void Save(object? sender, RoutedEventArgs e)
 
         // Hiện thông báo thành công dùng Util
         await MessageBoxUtil.ShowSuccess("Lưu học phí thành công", owner: this);
+        vm.LoadData();
 
         // Đóng dialog
         this.Close();
