@@ -256,6 +256,19 @@ public partial class TeacherViewModel : ViewModelBase
             {
                 return await Task.Run(() =>
                 {
+                    var user = new UserModel
+                    {
+                        Id = SelectedTeacher.UserId,
+                        RoleId = 1,
+                        Fullname = SelectedTeacher.Name,
+                        Avatar = SelectedTeacher.Avatar ?? "",
+                        Phone = SelectedTeacher.Phone,
+                        Email = SelectedTeacher.Email,
+                        Address = SelectedTeacher.Address,
+                        Status = "Không hoạt động"
+                    };
+                    var userResult = AppService.UserService.LockUser(user);
+                    if (userResult <= 0) return false;
                     var result = AppService.TeacherService.LockTeacher(teacherId);
                     return result;
                 });
@@ -402,11 +415,12 @@ public partial class TeacherViewModel : ViewModelBase
         try
         {
             AppService.TeacherService.ExportTeachersToExcel(Teachers.ToList(), filePath);
-            Console.WriteLine("Exported teachers successfully.");
+            await MessageBoxUtil.ShowSuccess("Xuất file excel thành công");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error during export: {ex.Message}");
+            await MessageBoxUtil.ShowError("Xuất file thất bại");
         }
     }
     private void ApplyFilter()

@@ -7,7 +7,7 @@ using Avalonia.Threading;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Utils;
-using ClassModel = Models.Classes;
+using ClassModel1 = Models.Classes;
 using System.ComponentModel;
 namespace ViewModels;
 
@@ -23,7 +23,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     public ObservableCollection<TeacherModel> Teachers { get; } = new();
     public ObservableCollection<TeacherModel> Teachers1 { get; } = new();
     public ObservableCollection<Subjects> Subjects { get; } = new();
-    public ObservableCollection<ClassModel> Classes { get; } = new();
+    public ObservableCollection<ClassModel1> Classes { get; } = new();
     public ObservableCollection<string> DaysOfWeek { get; } = new();
     public ObservableCollection<TermModel> Terms { get; set; } = new();
 
@@ -44,7 +44,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
     private Subjects? _selectedSubjectSearch;
 
     [ObservableProperty]
-    private ClassModel? _selectedClass;
+    private ClassModel1? _selectedClass;
 
     [ObservableProperty]
     private string? _selectedDay;
@@ -151,7 +151,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             var assignTeachers = _service.GetAssignTeachers(SelectedTerm.Id) ?? new List<AssignTeacher>();
             var subjects = _service.GetCourses() ?? new List<Subjects>();
             var teacher1 = _service.GetTeachers() ?? new BindingList<TeacherModel>();
-            var classes = _service.GetClasses(SelectedTerm.Id) ?? new List<ClassModel>();
+            var classes = _service.GetClasses(SelectedTerm.Id) ?? new List<ClassModel1>();
             var days = _service.GetDaysOfWeek(DateTime.Now) ?? new List<string>();
 
             AssignTeachers.Clear();
@@ -320,7 +320,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             return;
         }
 
-        if (_service.IsConflict(_editingItem))
+        if (!_service.IsConflict(_editingItem))
         {
             await MessageBoxUtil.ShowError("Giáo viên đã có lịch dạy vào khung giờ này!", owner: owner);
             return;
@@ -388,7 +388,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             }
         }
 
-        SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id == a.Assign_class_id);
+        SelectedClass = Classes.FirstOrDefault(c => c.Assign_class_Id== a.Assign_class_id);
 
         SelectedDay = a.Day;
         Start = a.Start.ToString();

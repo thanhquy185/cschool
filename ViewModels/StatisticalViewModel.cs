@@ -78,7 +78,7 @@ public partial class StatisticalViewModel : ViewModelBase
     [ObservableProperty]
     private string selectedGroupHeader = "";
 
-    public IAsyncRelayCommand LoadDataCommand { get; }
+    // public IAsyncRelayCommand LoadDataCommand { get; }
 
     // Keep raw stats so we can filter quickly on click
     private List<Statistical> _rawStats = new();
@@ -100,22 +100,23 @@ public partial class StatisticalViewModel : ViewModelBase
         }
 
         _statService = AppService.StatisticalService;
-        LoadDataCommand = new AsyncRelayCommand(LoadDataAsync);
+        // LoadDataCommand = new AsyncRelayCommand(LoadDataAsync);
 
         // auto-load once constructed
-        _ = LoadDataAsync();
+        LoadDataAsyncCommand.Execute(null);
     }
 
     [RelayCommand]
     public void ResetSearch()
     {
-        LoadDataCommand.Execute(null);
+        // LoadDataCommand.Execute(null);
+        LoadDataAsyncCommand.Execute(null);
     }
 
-    private Task LoadDataAsync()
+  [RelayCommand]
+    private void LoadDataAsync()
     {
-        return Task.Run(() =>
-        {
+       
             try
             {
                 var stats = _statService.GetStatistics() ?? new List<Statistical>();
@@ -126,6 +127,11 @@ public partial class StatisticalViewModel : ViewModelBase
                 int total3 = _statService.GetCountClass();
                 int total4 = _statService.GetCountSubject();
 
+                totalStudents = " " ;
+                totalTeacher = " " ;
+                totalClass = " " ;
+                totalSubject = " " ;
+                
                 totalStudents = " " + total1;
                 totalTeacher = " " + total2;
                 totalClass = " " + total3;
@@ -158,7 +164,6 @@ public partial class StatisticalViewModel : ViewModelBase
             {
                 HandleError(ex);
             }
-        });
     }
 
     [RelayCommand]

@@ -60,7 +60,7 @@
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Tên phí" Binding="{Binding Name}" Width="2*" />
-                            <DataGridTextColumn Header="Loại phí" Binding="{Binding Type}" Width="*" />
+                            <DataGridTextColumn Header="Loại phí" Binding="{Binding Type}" Width="*" IsVisible="False" />
                             <DataGridTextColumn Header="Số tiền" Binding="{Binding Amount, StringFormat='{}{0:N0}'}" Width="*" />
 
                             <DataGridTemplateColumn Header="Hành động" Width="180">
@@ -109,7 +109,8 @@
                                 <ComboBox x:Name="NewFeeType"
                                           Width="150"
                                           Height="34"
-                                          SelectedIndex="0">
+                                          SelectedIndex="0"
+                                          IsVisible="False">
                                     <ComboBoxItem Content="BASE"/>
                                     <ComboBoxItem Content="OTHER"/>
                                 </ComboBox>

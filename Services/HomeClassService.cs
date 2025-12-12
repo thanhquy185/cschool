@@ -52,7 +52,7 @@ public List<Information> GetInformation (int teacherId,int termId)
         try
         {
             List<TermModel> ds = new List<TermModel>();
-            string sql = @"SELECT DISTINCT tr.id, tr.name, tr.year
+            string sql = @"SELECT DISTINCT tr.id, tr.name, tr.year,tr.learnyear
                         FROM assign_classes ac
                         JOIN terms tr ON tr.id = ac.term_id
                         WHERE ac.head_teacher_id = @teacherId";
@@ -66,7 +66,8 @@ public List<Information> GetInformation (int teacherId,int termId)
                 {
                     Id = (int)reader["id"],
                     Name = reader["name"].ToString()!,
-                    Year = (int)reader["year"]
+                    Year = (int)reader["year"],
+                    LearnYear = reader["learnyear"].ToString()!
                 });
             }
             return ds;

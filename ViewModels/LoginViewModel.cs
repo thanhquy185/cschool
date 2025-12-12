@@ -39,7 +39,7 @@ public partial class LoginViewModel : ViewModelBase
         {
             this.Username = "";
             this.Password = "";
-            await MessageBoxUtil.ShowSuccess("Đăng nhập thành công!", owner: null);
+            // await MessageBoxUtil.ShowSuccess("Đăng nhập thành công!", owner: null);
             OnLoginSuccess?.Invoke(user);
         }
         else if (user != null && user.Status == "Tạm dừng")

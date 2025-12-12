@@ -82,18 +82,18 @@ public partial class MainWindowViewModel : ViewModelBase
 
     // - Các biến models
     private readonly LoginViewModel _loginViewModel = new();
-    private HomeClassViewModel _homeClassViewModel ;
-    private readonly AttendanceViewModel _attendanceViewModel = new();
-    private  SubjectClassViewModel _subjectClassViewModel ;
-    private readonly StatisticalViewModel _statisticalViewModel = new();
-    private readonly AssignTeacherViewModel _assignTeacherViewModel = new();
-    private readonly ExamViewModel _examViewModel = new();
-    private readonly TuitionViewModel _tuitionViewModel = new();
-    private readonly ClassViewModel _classViewModel = new();
-    private readonly TeacherViewModel _teacherViewModel = new();
-    private readonly StudentViewModel _studentViewModel = new();
-    private readonly RoleViewModel _roleViewModel = new();
-    private readonly UserViewModel _userViewModel = new();
+    private HomeClassViewModel _homeClassViewModel  = new();
+    private readonly AttendanceViewModel _attendanceViewModel  = new();
+    private  SubjectClassViewModel _subjectClassViewModel  = new();
+    private StatisticalViewModel _statisticalViewModel  = new();
+    private AssignTeacherViewModel _assignTeacherViewModel  = new();
+    private ExamViewModel _examViewModel  = new();
+    private TuitionViewModel _tuitionViewModel = new();
+    private  ClassViewModel _classViewModel = new();
+    private TeacherViewModel _teacherViewModel = new();
+    private StudentViewModel _studentViewModel = new();
+    private readonly RoleViewModel _roleViewModel = new ();
+    private UserViewModel _userViewModel  = new();
 
     // Các biến giữ trạng thái thể hiện nút được nhấn hoặc không được nhấn
     public bool HomeClassButtonActive => this.CurrentPage == this._homeClassViewModel;
@@ -225,39 +225,78 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     // - Chuyển đến trang Lớp chủ nhiệm
     [RelayCommand]
-    public void GoToHomeClassView() => this.CurrentPage = this._homeClassViewModel;
+    public void GoToHomeClassView()
+    {
+        this._homeClassViewModel = new HomeClassViewModel();
+        this.CurrentPage = this._homeClassViewModel;
+    }
     // - Chuyển đến trang Điểm danh
     [RelayCommand]
     public void GoToAttendanceView() => this.CurrentPage = this._attendanceViewModel;
     // - Chuyển đến trang Nhập điểm học sinh
     [RelayCommand]
-    public void GoToSubjectClassView() => this.CurrentPage = this._subjectClassViewModel;
+    public void GoToSubjectClassView()
+    {
+        this._subjectClassViewModel = new SubjectClassViewModel();
+        this.CurrentPage = this._subjectClassViewModel;
+    }
     // - Chuyển đến trang Thống kê
     [RelayCommand]
-    public void GoToStatisticalView() => this.CurrentPage = this._statisticalViewModel;
+    public void GoToStatisticalView()
+    {
+        this._statisticalViewModel = new StatisticalViewModel();
+        this.CurrentPage = this._statisticalViewModel;
+    }
     // - Chuyển đến trang Phân công giáo viên
     [RelayCommand]
-    public void GoToAssignTeacherView() => this.CurrentPage = this._assignTeacherViewModel;
+    public void GoToAssignTeacherView()
+    {
+        this._assignTeacherViewModel = new AssignTeacherViewModel();
+        this.CurrentPage = this._assignTeacherViewModel;
+    }
     // - Chuyển đến trang Lịch thi
     [RelayCommand]
-    public void GoToExamView() => this.CurrentPage = this._examViewModel;
+    public void GoToExamView()
+    {
+        this._examViewModel = new ExamViewModel();
+        this.CurrentPage = this._examViewModel;
+    }
     // - Chuyển đến trang Học phí
     [RelayCommand]
-    public void GoToTuitionView() => this.CurrentPage = this._tuitionViewModel;
+    public void GoToTuitionView()
+    {
+        this._tuitionViewModel = new TuitionViewModel();
+        this.CurrentPage = this._tuitionViewModel;
+    }
     // - Chuyển đến trang Lớp học
     [RelayCommand]
-    public void GoToClassView() => this.CurrentPage = this._classViewModel;
+    public void GoToClassView()
+    {
+        this._classViewModel = new ClassViewModel();
+        this.CurrentPage = this._classViewModel;
+    }
     // - Chuyển đến trang Giáo viên
     [RelayCommand]
-    public void GoToTeacherView() => this.CurrentPage = this._teacherViewModel;
+    public void GoToTeacherView() {
+        this._teacherViewModel = new TeacherViewModel();
+        this.CurrentPage = this._teacherViewModel;
+    }
     // - Chuyển đến trang Học sinh
     [RelayCommand]
-    public void GoToStudentView() => this.CurrentPage = this._studentViewModel;
+    public void GoToStudentView()
+    {
+        this._studentViewModel = new StudentViewModel();
+        this.CurrentPage = this._studentViewModel;
+    }
     // - Chuyển đến trang Nhóm quyền
     [RelayCommand]
     public void GoToRoleView() => this.CurrentPage = this._roleViewModel;
     // - Chuyển đến trang Người dùng
     [RelayCommand]
-    public void GoToUserView() => this.CurrentPage = this._userViewModel;
+    public void GoToUserView()
+    {
+        this._userViewModel = new UserViewModel();
+        this.CurrentPage = this._userViewModel;
+    }
 
 }

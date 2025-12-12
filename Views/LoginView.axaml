@@ -88,13 +88,13 @@
                     FontWeight="SemiBold"
                     Foreground="White" />
                 <!--  Optional: link quên mật khẩu  -->
-                <TextBlock
+                <!-- <TextBlock
                     Margin="0,4,0,0"
                     HorizontalAlignment="Right"
                     Cursor="Hand"
                     FontSize="14"
                     Foreground="#3B82F6"
-                    Text="Quên mật khẩu?" />
+                    Text="Quên mật khẩu?" /> -->
             </StackPanel>
         </StackPanel>
     </Border>

@@ -44,7 +44,7 @@ public class AssignTeacherService
         SELECT COUNT(*)
         FROM assign_class_teachers
         JOIN assign_classes ac ON ac.id = assign_class_teachers.assign_class_id
-        WHERE assign_class_id = @assignClassId AND ac.term_id = (SELECT  term_id FROM assign_classes WHERE id = @assignClassId1 LIMIT 1)
+        WHERE assign_class_id = @assignClassId AND ac.term_id = (SELECT term_id FROM assign_classes WHERE id = @assignClassId1 LIMIT 1)
           AND day = @day      
           AND (
                 (@start BETWEEN start_period AND end_period)
@@ -79,7 +79,7 @@ public class AssignTeacherService
         SELECT COUNT(*)
         FROM assign_class_teachers
         JOIN assign_classes ac ON ac.id = assign_class_teachers.assign_class_id
-        WHERE teacher_id = @teacherId AND ac.term_id = (SELECT  term_id FROM assign_classes WHERE id = @assign_class_id LIMIT 1)
+        WHERE teacher_id = @teacherId AND ac.term_id = (SELECT term_id FROM assign_classes WHERE id = @assign_class_id)
           AND day = @day      
           AND (
                 (@start BETWEEN start_period AND end_period)
@@ -108,7 +108,7 @@ public bool IsConflict(AssignTeacher at)
         JOIN assign_classes ac ON ac.id = assign_class_teachers.assign_class_id
         WHERE teacher_id = @teacher_id
           AND day = @day
-          AND ac.term_id = (SELECT term_id FROM assign_classes WHERE id = @assign_class_id1  LIMIT 1)
+          AND ac.term_id = (SELECT term_id FROM assign_classes WHERE id = @assign_class_id1)
           AND assign_class_id != @assign_class_id
           AND (
                 (start_period < @end_period AND end_period > @start_period)
@@ -119,9 +119,9 @@ public bool IsConflict(AssignTeacher at)
     cmd.Parameters.AddWithValue("@day", at.Day);
     cmd.Parameters.AddWithValue("@assign_class_id1", at.Assign_class_id);
     cmd.Parameters.AddWithValue("@assign_class_id", at.Assign_class_id);
-    cmd.Parameters.AddWithValue("@start_period", at.Start);
     cmd.Parameters.AddWithValue("@end_period", at.End);
-
+    cmd.Parameters.AddWithValue("@start_period", at.Start);
+  
     int count = Convert.ToInt32(cmd.ExecuteScalar());
     return count > 0;
 }
