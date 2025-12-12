@@ -134,7 +134,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
                 Terms.Add(t);
 
             // Mặc định chọn học kỳ hiện tại (nếu có)
-             SelectedTerm = Terms.LastOrDefault();
+             SelectedTerm = Terms[Terms.Count - 2];
         }
         catch (Exception ex)
         {
@@ -320,7 +320,7 @@ public partial class AssignTeacherViewModel : ViewModelBase
             return;
         }
 
-        if (!_service.IsConflict(_editingItem))
+        if (_service.IsConflict(_editingItem))
         {
             await MessageBoxUtil.ShowError("Giáo viên đã có lịch dạy vào khung giờ này!", owner: owner);
             return;
@@ -476,12 +476,10 @@ public partial class AssignTeacherViewModel : ViewModelBase
                 results = _service.Search(SelectedTerm.Id,keyword);
             }
 
-            Dispatcher.UIThread.Post(() =>
-            {
                 AssignTeachers.Clear();
                 foreach (var a in results)
                     AssignTeachers.Add(a);
-            });
+           
         }
         catch (Exception ex)
         {
@@ -492,12 +490,11 @@ public partial class AssignTeacherViewModel : ViewModelBase
     public void SearchNameSubject()
     {
         var results = _service.Search(SelectedTerm.Id,SelectedSubjectSearch.Name_Subject ?? "");
-        Dispatcher.UIThread.Post(() =>
-        {
+       
             AssignTeachers.Clear();
             foreach (var a in results)
                 AssignTeachers.Add(a);
-        });
+        
     }
     partial void OnSelectedTermChanged(TermModel? value)
     {

@@ -122,16 +122,16 @@ CREATE TABLE `assign_class_teachers` (
 --
 
 INSERT INTO `assign_class_teachers` (`assign_class_id`, `teacher_id`, `subject_id`, `quiz_count`, `oral_count`, `day`, `start_period`, `end_period`) VALUES
-(11, 2, 1, 2, 2, 'Thứ Ba', 2, 5),
-(11, 3, 7, 2, 2, 'Thứ Bảy', 1, 5),
-(11, 1, 9, 1, 1, 'Thứ Hai', 1, 2),
+-- (11, 2, 1, 2, 2, 'Thứ Ba', 2, 5),
+(11, 7, 7, 2, 2, 'Thứ Bảy', 1, 5),
+(11, 9, 9, 1, 1, 'Thứ Hai', 1, 2),
 (12, 1, 1, 2, 2, 'Thứ Hai', 1, 3),  -- Thêm để nhất quán với score_details (Toán học)
 (12, 2, 2, 2, 2, 'Thứ Tư', 2, 4),  -- Thêm để nhất quán với score_details (Ngữ văn)
-(13, 1, 4, 1, 2, 'Thứ Ba', 2, 4),
-(13, 3, 5, 1, 1, 'Thứ Ba', 2, 3),
-(14, 4, 1, 2, 2, 'Thứ Năm', 4, 5),
-(15, 5, 6, 3, 1, 'Thứ Ba', 1, 2),
-(16, 6, 9, 2, 2, 'Thứ Tư', 3, 4);
+(13, 4, 4, 1, 2, 'Thứ Ba', 2, 4),
+(13, 5, 5, 1, 1, 'Thứ Ba', 2, 3),
+(14, 1, 1, 2, 2, 'Thứ Năm', 4, 5),
+(15, 6, 6, 3, 1, 'Thứ Ba', 1, 2),
+(16, 9, 9, 2, 2, 'Thứ Tư', 3, 4);
 
 -- --------------------------------------------------------
 
@@ -933,7 +933,7 @@ ALTER TABLE `assign_class_students`
 -- Indexes for table `assign_class_teachers`
 --
 ALTER TABLE `assign_class_teachers`
-  ADD PRIMARY KEY (`assign_class_id`,`teacher_id`,`subject_id`),
+  ADD PRIMARY KEY (`assign_class_id`,`teacher_id`,`subject_id`, `day`),
   ADD KEY `teacher_id` (`teacher_id`),
   ADD KEY `subject_id` (`subject_id`);
 
@@ -1309,6 +1309,14 @@ ALTER TABLE `violations`
   ADD CONSTRAINT `violations_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`),
   ADD CONSTRAINT `violations_ibfk_2` FOREIGN KEY (`assign_class_id`) REFERENCES `assign_classes` (`id`),
   ADD CONSTRAINT `violations_ibfk_3` FOREIGN KEY (`rule_id`) REFERENCES `rules` (`id`);
+
+
+-- ALTER TABLE assign_class_teachers
+-- DROP PRIMARY KEY;
+
+-- ALTER TABLE assign_class_teacher
+-- ADD PRIMARY KEY (assign_class, teacher_id, subject_id, day);
+
 
 -- cập nhật trung bình môn
 DELIMITER //

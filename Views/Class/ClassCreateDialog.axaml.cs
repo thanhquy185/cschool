@@ -172,6 +172,15 @@ namespace Views.Class
                 return;
             }
 
+            if (vm.Classes_list.Any(c =>
+                c.Year == vm.Year &&
+                c.Name == vm.SelectedClass.Name))
+            {
+                await MessageBoxUtil.ShowError("Tên lớp đã tồn tại trong năm học này",owner: this);
+                return;
+            }
+        
+
             try
             {
                 // Lưu lớp

@@ -353,7 +353,7 @@ public bool IsConflict(AssignTeacher at)
                        JOIN classes c ON c.id = ac.class_id
                        JOIN subjects s ON s.id = at.subject_id
                        JOIN teachers t ON t.id = at.teacher_id
-                       WHERE ac.term_id = @termId AND t.fullname LIKE @search OR c.name LIKE @search OR s.name LIKE @search AND ac.term_id = (SELECT MAX(term_id) FROM assign_classes)";
+                       WHERE ac.term_id = @termId AND t.fullname LIKE @search OR c.name LIKE @search OR s.name LIKE @search";
 
         var connection = _db.GetConnection();
         var command = new MySqlCommand(sql, connection);

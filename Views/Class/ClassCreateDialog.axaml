@@ -51,7 +51,7 @@
                             <!-- HÀNG 1: Tên lớp + Khối -->
                             <Grid ColumnDefinitions="2*,1*" ColumnSpacing="12">
                                 <StackPanel>
-                                    <TextBlock Text="Tên lớp" FontWeight="Bold"/>
+                                    <TextBlock Text="Tên lớp" FontWeight="Bold" />
                                     <TextBox Text="{Binding SelectedClass.Name}" Height="34"/>
                                 </StackPanel>
 
@@ -196,6 +196,7 @@
             <!-- FOOTER -->
             <Border Grid.Row="2" Padding="20" Background="White">
                 <Button Content="Xác nhận"
+                    
                         Width="200"
                         Height="44"
                         FontSize="16"
@@ -204,6 +205,7 @@
                         BorderThickness="0"
                         CornerRadius="8"
                         HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Click="ConfirmButton_Click"/>
             </Border>
 
