@@ -45,6 +45,7 @@ namespace Views.Student
                 if (existing != null)
                 {
                     studentViewModel.StudentsTemp.Remove(existing);
+                    studentViewModel.Students.Remove(existing);
                 }
                 await MessageBoxUtil.ShowSuccess("Xóa thông tin học sinh thành công!", owner: this);
                 this.Close();
