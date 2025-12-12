@@ -306,26 +306,7 @@ namespace ViewModels
             LoadData();
             LoadSelectedMonthDetail();
             // Lấy full list học sinh
-            var listStudent = AppService.TuitionService.GetAllStudents();
-            TuitionList.Clear();
-            foreach (var student in listStudent)
-            {
-                TuitionList.Add(student);
-            }
-
-            // Lọc cho ListView: mỗi học sinh mỗi năm chỉ 1 record
-            var distinctTuition = TuitionList
-                .GroupBy(t => new { t.StudentId, t.StudentName, t.ClassYear }) // nhóm theo học sinh + năm
-                .Select(g => g.First())  // lấy bản ghi đầu tiên trong nhóm
-                .ToList();
-
-            // Thêm vào TuitionListView (giả sử là ObservableCollection hoặc List)
-            TuitionListView.Clear();
-            foreach (var tuition in distinctTuition)
-            {
-                TuitionListView.Add(tuition);
-            }
-
+            
             SaveCommand = ReactiveCommand.Create(SaveFeeTemplates);
             SaveMonthFeeCommand = ReactiveCommand.CreateFromTask(async () =>
                 {
@@ -353,6 +334,26 @@ namespace ViewModels
             BaseFees2.Clear();
             ExtraFees1.Clear();
             ExtraFees2.Clear();
+
+            var listStudent = AppService.TuitionService.GetAllStudents();
+            TuitionList.Clear();
+            foreach (var student in listStudent)
+            {
+                TuitionList.Add(student);
+            }
+
+            // Lọc cho ListView: mỗi học sinh mỗi năm chỉ 1 record
+            var distinctTuition = TuitionList
+                .GroupBy(t => new { t.StudentId, t.StudentName, t.ClassYear }) // nhóm theo học sinh + năm
+                .Select(g => g.First())  // lấy bản ghi đầu tiên trong nhóm
+                .ToList();
+
+            // Thêm vào TuitionListView (giả sử là ObservableCollection hoặc List)
+            TuitionListView.Clear();
+            foreach (var tuition in distinctTuition)
+            {
+                TuitionListView.Add(tuition);
+            }
 
             
             var ft = AppService.TuitionService.GetFeeTemplates();
