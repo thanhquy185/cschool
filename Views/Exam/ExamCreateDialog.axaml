@@ -234,14 +234,17 @@
                             <DataGridTextColumn 
                                 Header="Phòng thi" 
                                 Binding="{Binding RoomName}" 
+                                IsReadOnly="True"
                                 Width="*"/>
                             <DataGridTextColumn 
                                 Header="Giáo viên" 
                                 Binding="{Binding TeacherName}" 
+                                IsReadOnly="True"
                                 Width="*"/>
                             <DataGridTextColumn 
                                 Header="Sức chứa" 
                                 Binding="{Binding RoomQuantity}" 
+                                IsReadOnly="True"
                                 Width="*"/>
                             <DataGridTemplateColumn Header="Số lượng học sinh">
                                 <DataGridTemplateColumn.CellTemplate>
